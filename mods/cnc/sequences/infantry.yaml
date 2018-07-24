@@ -35,103 +35,114 @@ pvice:
 	Inherits: vice
 
 e1:
-	stand:
-		Facings: 8
-	stand2:
-		Start: 8
-		Facings: 8
-	run:
-		Start: 16
-		Length: 6
-		Facings: 8
-		Tick: 100
-	shoot:
-		Start: 64
-		Length: 8
-		Facings: 8
-	prone-stand:
-		Start: 144
-		Stride: 4
-		Facings: 8
-	prone-stand2:
-		Start: 144
-		Stride: 4
-		Facings: 8
-	prone-run:
-		Start: 144
-		Length: 4
-		Facings: 8
-		Tick: 100
-	# stand -> prone transition
-	liedown:
-		Start: 128
-		Length: 2
-		Facings: 8
-	# prone -> stand transition
-	standup:
-		Start: 176
-		Length: 2
-		Facings: 8
-	prone-shoot:
-		Start: 192
-		Length: 8
-		Facings: 8
-	idle1:
-		Start: 257
-		Length: 15
-		Tick: 120
-	idle2:
-		Start: 272
-		Length: 16
-		Tick: 120
-	idle3:
-		Start: 289
-		Length: 22
-		Tick: 120
-	cheer:
-		Start: 460
+	stand: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
+	stand2: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
+	run: bunny.png
 		Length: 3
-		Facings: 8
-		Tick: 120
+		Facings: -4
+		AddExtension: false
+		Tick: 200
+	shoot: bunny.png
+		Length: 3
+		Facings: -4
+		AddExtension: false
+		Tick: 200
+	prone-stand: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
+	prone-stand2: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
+	prone-run: bunny.png
+		Length: 3
+		Facings: -4
+		AddExtension: false
+		Tick: 200
+	# stand -> prone transition
+	liedown: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
+	# prone -> stand transition
+	standup: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
+	prone-shoot: bunny.png
+		Length: 3
+		Facings: -4
+		AddExtension: false
+		Tick: 200
+	idle1: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
+	idle2: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
+	idle3: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
+	cheer: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
 	# Dancing
-	idle4:
-		Start: 517
-		Length: 9
-		Tick: 120
+	idle4: bunny.png
+		Start: 12
+		Facings: -4
+		AddExtension: false
 	# Shot
-	die1:
-		Start: 381
-		Length: 9
-		Tick: 80
-	# Explode
-	die2:
-		Start: 390
-		Length: 8
-		Tick: 80
-	# Fly and explode in air
-	die3:
-		Start: 398
-		Length: 8
-		Tick: 80
-	# Fly through air squish on ground
-	die4:
-		Start: 406
-		Length: 12
-		Tick: 80
-	# Burn
-	die5:
-		Start: 418
-		Length: 18
-		Tick: 80
-	# Tib
-	die6:
-		Start: 366
-		Length: 11
-		Tick: 80
-	die-crushed: e1rot
+	die1: bunny.png
 		Start: 16
-		Length: 4
-		Tick: 1600
+		Length: 11
+		AddExtension: false
+		Tick: 200
+	# Explode
+	die2: bunny.png
+		Start: 16
+		Length: 11
+		AddExtension: false
+		Tick: 200
+	# Fly and explode in air
+	die3: bunny.png
+		Start: 16
+		Length: 11
+		AddExtension: false
+		Tick: 200
+	# Fly through air squish on ground
+	die4: bunny.png
+		Start: 16
+		Length: 11
+		AddExtension: false
+		Tick: 200
+	# Burn
+	die5: bunny.png
+		Start: 16
+		Length: 11
+		AddExtension: false
+		Tick: 200
+	# Tib
+	die6: bunny.png
+		Start: 16
+		Length: 11
+		AddExtension: false
+		Tick: 200
+	die-crushed: bunny.png
+		Start: 16
+		Length: 11
+		AddExtension: false
+		Tick: 200
 		ZOffset: -511
 	icon: e1icnh.tem
 		AddExtension: False

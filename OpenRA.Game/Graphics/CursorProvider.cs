@@ -36,9 +36,24 @@ namespace OpenRA.Graphics
 					out shadowIndex[shadowIndex.Length - 1]);
 			}
 
+			var paletteLoaders = new Dictionary<string, string>();
+			if (nodesDict.ContainsKey("PaletteLoaders"))
+			{
+				foreach (var p in nodesDict["PaletteLoaders"].Nodes)
+					paletteLoaders.Add(p.Key, p.Value.Value);
+			}
+
 			var palettes = new Dictionary<string, ImmutablePalette>();
 			foreach (var p in nodesDict["Palettes"].Nodes)
-				palettes.Add(p.Key, new ImmutablePalette(fileSystem.Open(p.Value.Value), shadowIndex));
+			{
+				string paletteLoaderName;
+
+				if (!paletteLoaders.TryGetValue(p.Key, out paletteLoaderName))
+					paletteLoaderName = "PaletteFromFile";
+
+				var paletteLoader = modData.ObjectCreator.GetLoaders<IPaletteLoader>(new[] { paletteLoaderName }, "palette");
+				palettes.Add(p.Key, paletteLoader.First().ReadPalette(fileSystem.Open(p.Value.Value), shadowIndex));
+			}
 
 			Palettes = palettes.AsReadOnly();
 

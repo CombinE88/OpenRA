@@ -62,6 +62,9 @@
 		Name: effect
 		Filename: temperat.pal
 		ShadowIndex: 4
+	PaletteFromPng@bunny:
+		Name: bunny
+		Filename: bunny.png
 	PaletteFromFile@colorpicker:
 		Name: colorpicker
 		Filename: temperat.pal

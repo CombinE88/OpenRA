@@ -25,6 +25,11 @@ namespace OpenRA.Graphics
 		void CopyToArray(Array destination, int destinationOffset);
 	}
 
+	public interface IPaletteLoader
+	{
+		ImmutablePalette ReadPalette(Stream stream, int[] remap);
+	}
+
 	public interface IPaletteRemap { Color GetRemappedColor(Color original, int index); }
 
 	public static class Palette

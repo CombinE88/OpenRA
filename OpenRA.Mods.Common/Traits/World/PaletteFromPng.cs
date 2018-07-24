@@ -11,13 +11,15 @@
 
 using System.Collections.Generic;
 using System.IO;
+using OpenRA.FileFormats;
 using OpenRA.Graphics;
+using OpenRA.Mods.Common.FileFormats;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
-	[Desc("Load VGA palette (.pal) registers.")]
-	class PaletteFromFileInfo : ITraitInfo
+	[Desc("Load a PNG and use its embedded palette.")]
+	class PaletteFromPngInfo : ITraitInfo
 	{
 		[FieldLoader.Require, PaletteDefinition]
 		[Desc("internal palette name")]
@@ -35,22 +37,28 @@ namespace OpenRA.Mods.Common.Traits
 
 		public readonly bool AllowModifiers = true;
 
-		public object Create(ActorInitializer init) { return new PaletteFromFile(init.World, this); }
+		public object Create(ActorInitializer init) { return new PaletteFromPng(init.World, this); }
 	}
 
-	class PaletteFromFileLoader : IPaletteLoader
+	class PaletteFromPngLoader : IPaletteLoader
 	{
 		public ImmutablePalette ReadPalette(Stream stream, int[] remap)
 		{
-			return new ImmutablePalette(stream, remap);
+			var png = new Png(stream);
+			var colors = new uint[Palette.Size];
+
+			for (var i = 0; i < png.Palette.Length; i++)
+				colors[i] = (uint)png.Palette[i].ToArgb();
+
+			return new ImmutablePalette(colors);
 		}
 	}
 
-	class PaletteFromFile : ILoadsPalettes, IProvidesAssetBrowserPalettes
+	class PaletteFromPng : ILoadsPalettes, IProvidesAssetBrowserPalettes
 	{
 		readonly World world;
-		readonly PaletteFromFileInfo info;
-		public PaletteFromFile(World world, PaletteFromFileInfo info)
+		readonly PaletteFromPngInfo info;
+		public PaletteFromPng(World world, PaletteFromPngInfo info)
 		{
 			this.world = world;
 			this.info = info;
@@ -58,8 +66,10 @@ namespace OpenRA.Mods.Common.Traits
 
 		public void LoadPalettes(WorldRenderer wr)
 		{
-			if (info.Tileset == null || info.Tileset.ToLowerInvariant() == world.Map.Tileset.ToLowerInvariant())
-				wr.AddPalette(info.Name, new PaletteFromFileLoader().ReadPalette(world.Map.Open(info.Filename), info.ShadowIndex), info.AllowModifiers);
+			if (info.Tileset != null && info.Tileset.ToLowerInvariant() != world.Map.Tileset.ToLowerInvariant())
+				return;
+
+			wr.AddPalette(info.Name, new PaletteFromPngLoader().ReadPalette(world.Map.Open(info.Filename), new int[0]), info.AllowModifiers);
 		}
 
 		public IEnumerable<string> PaletteNames
