@@ -35,7 +35,21 @@ namespace OpenRA.Mods.Common.UtilityCommands
 		{
 			var inputFiles = GlobArgs(args).OrderBy(a => a).ToList();
 			var dest = inputFiles[0].Split('-').First() + ".shp";
-			var frames = inputFiles.Select(a => PngLoader.Load(a));
+
+			var frames = inputFiles.Select(a =>
+			{
+				var png = new Png(File.OpenRead(a));
+				var bitmap = new Bitmap(png.Width, png.Height, png.PixelFormat);
+
+				for (var i = 0; i < png.Palette.Length; i++)
+					bitmap.Palette.Entries[i] = png.Palette[i];
+
+				for (var y = 0; y < png.Height; y++)
+				for (var x = 0; x < png.Width; x++)
+					bitmap.SetPixel(x, y, png.Palette[png.Data[x + y * png.Width]]);
+
+				return bitmap;
+			}).ToArray();
 
 			var size = frames.First().Size;
 			if (frames.Any(f => f.Size != size))
