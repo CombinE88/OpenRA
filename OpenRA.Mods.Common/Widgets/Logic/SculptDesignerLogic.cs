@@ -81,6 +81,33 @@ namespace OpenRA.Mods.Common.Widgets.Logic
             var deletebutton = widget.Get<ButtonWidget>("DELETE_BUTTON");
             deletebutton.OnClick = () => DeleteSculpt();
 
+            var clonebutton = widget.Get<ButtonWidget>("CLONE_BUTTON");
+            clonebutton.OnClick = () => CloneSculpt(world);
+
+            var remx5 = widget.Get<ButtonWidget>("SHAPE_X_5_NEGATIVE");
+            remx5.OnClick = () => ShiftSculptXY(-5, 0);
+
+            var remx1 = widget.Get<ButtonWidget>("SHAPE_X_1_NEGATIVE");
+            remx1.OnClick = () => ShiftSculptXY(-1, 0);
+
+            var addx5 = widget.Get<ButtonWidget>("SHAPE_X_1_POSITIVE");
+            addx5.OnClick = () => ShiftSculptXY(1, 0);
+
+            var addx1 = widget.Get<ButtonWidget>("SHAPE_X_5_POSITIVE");
+            addx1.OnClick = () => ShiftSculptXY(5, 0);
+
+            var remY5 = widget.Get<ButtonWidget>("SHAPE_Y_5_NEGATIVE");
+            remY5.OnClick = () => ShiftSculptXY(0, -5);
+
+            var remY1 = widget.Get<ButtonWidget>("SHAPE_Y_1_NEGATIVE");
+            remY1.OnClick = () => ShiftSculptXY(0, -1);
+
+            var addy1 = widget.Get<ButtonWidget>("SHAPE_Y_1_POSITIVE");
+            addy1.OnClick = () => ShiftSculptXY(0, 1);
+
+            var addy5 = widget.Get<ButtonWidget>("SHAPE_Y_5_POSITIVE");
+            addy5.OnClick = () => ShiftSculptXY(0, 5);
+
             sculptsList = widget.Get<ScrollPanelWidget>("SCULPTS_LIST");
             sculptsTemplate = sculptsList.Get<ScrollItemWidget>("SCULPTS_TEMPLATE");
             sculptsList.RemoveChild(sculptsTemplate);
@@ -99,6 +126,8 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
         void CreateSculpt(World world)
         {
+
+
             var sculpt = new Sculpt(
                 4,
                 10,
@@ -109,6 +138,42 @@ namespace OpenRA.Mods.Common.Widgets.Logic
                 1,
                 0,
                 0);
+
+            var name = "Shape: " + ++nextSculpt;
+
+            var sculptItem = ScrollItemWidget.Setup(
+                sculptsTemplate,
+                () => current == name,
+                () =>
+                {
+                    current = name;
+                    UpdatedUiSelectedSculpt();
+                });
+
+            sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetText = () => name;
+            sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetColor = () => Color.FromArgb((int)(layer.Sculpts[name].Color.ToArgb() | 0xff000000));
+            sculptsList.AddChild(sculptItem);
+
+            layer.Sculpts.Add(name, sculpt);
+            current = name;
+            UpdatedUiSelectedSculpt();
+        }
+
+        void CloneSculpt(World world)
+        {
+            if (current == null || !layer.Sculpts.ContainsKey(current))
+                return;
+;
+            var sculpt = new Sculpt(
+                layer.Sculpts[current].Corner,
+                layer.Sculpts[current].Radius,
+                new CPos(world.Map.MapSize.X / 2, world.Map.MapSize.Y / 2),
+                layer.Sculpts[current].Rot,
+                layer.Sculpts[current].Color,
+                world.Map.Grid.TileSize,
+                layer.Sculpts[current].Slice,
+                layer.Sculpts[current].Sliceradius,
+                layer.Sculpts[current].Slicerot);
 
             var name = "Shape: " + ++nextSculpt;
 
@@ -161,6 +226,18 @@ namespace OpenRA.Mods.Common.Widgets.Logic
             yPosition.Text = sculpt.Pos.Y.ToString();
             alpha.Value = sculpt.Color.A;
             colorMixer.Set(HSLColor.FromRGB(sculpt.Color.R, sculpt.Color.G, sculpt.Color.B));
+        }
+
+        void ShiftSculptXY(int x, int y)
+        {
+            if (current == null || !layer.Sculpts.ContainsKey(current))
+                return;
+
+            var sculpt = layer.Sculpts[current];
+
+            sculpt.Pos += new CVec(x, y);
+
+            UpdatedUiSelectedSculpt();
         }
 
         void UpdateSculpt()

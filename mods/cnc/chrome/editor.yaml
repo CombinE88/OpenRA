@@ -432,7 +432,7 @@ Container@EDITOR_WORLD_ROOT:
 					Children:
 						Background:
 							Width: 61
-							Height: 120
+							Height: 90
 							Background: panel-black
 							Children:
 								Label@CORNERS_LABEL:
@@ -458,7 +458,7 @@ Container@EDITOR_WORLD_ROOT:
 									Font: TinyBold
 						Background:
 							Width: 189
-							Height: 120
+							Height: 90
 							X: 61
 							Background: panel-gray
 							Children:
@@ -479,7 +479,7 @@ Container@EDITOR_WORLD_ROOT:
 									Ticks: 10
 									Value: 1
 									MinimumValue: 1
-									MaximumValue: 100
+									MaximumValue: 50
 								Slider@ROTATION_SLIDER:
 									X: PARENT_RIGHT - WIDTH - 5
 									Y: 65
@@ -487,8 +487,8 @@ Container@EDITOR_WORLD_ROOT:
 									Height: 20
 									Ticks: 18
 									Value: 0
-									MinimumValue: 0
-									MaximumValue: 360
+									MinimumValue: -180
+									MaximumValue: 180
 				Background@bg:
 					Width: PARENT_RIGHT
 					Height: PARENT_BOTTOM - 360
@@ -520,48 +520,48 @@ Container@EDITOR_WORLD_ROOT:
 					Width: 62
 					Height: 25
 					X: PARENT_RIGHT - WIDTH
-					Y: 120
+					Y: 90
 					Text: Center
 					Font: Bold
 				Button@CENTERX_BUTTON:
 					Width: 31
 					Height: 25
 					X: PARENT_RIGHT - 62 - 62
-					Y: 120
-					Text: X:
+					Y: 90
+					Text: X
 					Font: Bold
 				Button@CENTERY_BUTTON:
 					Width: 31
 					Height: 25
 					X: PARENT_RIGHT - WIDTH - 62
-					Y: 120
-					Text: Y:
+					Y: 90
+					Text: Y
 					Font: Bold
 				Button@CREATE_BUTTON:
 					Width: 62
 					Height: 25
 					X: 0
-					Y: 120
+					Y: 90
 					Text: Create
 					Font: Bold
 				Button@DELETE_BUTTON:
 					Width: 62
 					Height: 25
 					X: 62
-					Y: 120
+					Y: 90
 					Text: Delete
 					Font: Bold
 				Background@POSITION_X:
 					Width: 250
 					Height: 25
 					X: 0
-					Y: 145
+					Y: 115
 					Background: panel-gray
 					Children:
 						Background@POSTIONTEXT_X:
 							Width: 25
 							Height: 25
-							X: 0
+							X: 62
 							Y: 0
 							Background: panel-black
 							Children:
@@ -575,7 +575,7 @@ Container@EDITOR_WORLD_ROOT:
 						Background@POSTIONTEXT_Y:
 							Width: 25
 							Height: 25
-							X: PARENT_RIGHT / 2
+							X: (PARENT_RIGHT - 62) / 2 + 50 + 12
 							Y: 0
 							Background: panel-black
 							Children:
@@ -587,17 +587,87 @@ Container@EDITOR_WORLD_ROOT:
 									Align: Right
 									Font: TinyBold
 						TextField@X_TEXTFIELD:
-							Width: (PARENT_RIGHT / 2) - 25
+							Width: (PARENT_RIGHT -62 - 50) / 2
 							Height: 25
-							X: 25
+							X: 62 + 25
 							Y: 0
 							Type: Integer
 						TextField@Y_TEXTFIELD:
-							Width: (PARENT_RIGHT / 2) - 25
+							Width: (PARENT_RIGHT -62 - 50) / 2
 							Height: 25
-							X: 25 + (PARENT_RIGHT / 2)
+							X: 62 + 50 + (PARENT_RIGHT -62 - 50) / 2
 							Y: 0
 							Type: Integer
+						Button@CLONE_BUTTON:
+							Width: 62
+							Height: 25
+							X: 0
+							Y: 0
+							Text: Clone
+							Font: Bold
+				Background@QUICK_MOVE_SHAPES:
+					Width: 250
+					Height: 30
+					X: 0
+					Y: 140
+					Background: panel-gray
+					Children:
+						Button@SHAPE_X_5_NEGATIVE:
+							Width: 40
+							Height: 30
+							X: 0
+							Y: 0
+							Text: X--
+							Font: Bold
+						Button@SHAPE_X_1_NEGATIVE:
+							Width: 22
+							Height: 30
+							X: 40
+							Y: 0
+							Text: X-
+							Font: Bold
+						Button@SHAPE_X_1_POSITIVE:
+							Width: 22
+							Height: 30
+							X: 64
+							Y: 0
+							Text: X+
+							Font: Bold
+						Button@SHAPE_X_5_POSITIVE:
+							Width: 40
+							Height: 30
+							X: 86
+							Y: 0
+							Text: X++
+							Font: Bold
+						Button@SHAPE_Y_5_NEGATIVE:
+							Width: 40
+							Height: 30
+							X: 124
+							Y: 0
+							Text: Y--
+							Font: Bold
+						Button@SHAPE_Y_1_NEGATIVE:
+							Width: 22
+							Height: 30
+							X: 164
+							Y: 0
+							Text: Y-
+							Font: Bold
+						Button@SHAPE_Y_1_POSITIVE:
+							Width: 22
+							Height: 30
+							X: 188
+							Y: 0
+							Text: Y+
+							Font: Bold
+						Button@SHAPE_Y_5_POSITIVE:
+							Width: 40
+							Height: 30
+							X: 210
+							Y: 0
+							Text: Y++
+							Font: Bold
 				Container@SCULPTS_SLICER_BG:
 					Width: PARENT_RIGHT
 					Height: PARENT_BOTTOM
@@ -661,8 +731,8 @@ Container@EDITOR_WORLD_ROOT:
 									Height: 20
 									Ticks: 18
 									Value: 0
-									MinimumValue: 0
-									MaximumValue: 360
+									MinimumValue: -180
+									MaximumValue: 180
 				Container@MIXER_TAB:
 					X: 5
 					Y: PARENT_BOTTOM - HEIGHT - 25
