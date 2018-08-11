@@ -17,7 +17,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 {
 	public class MapEditorTabsLogic : ChromeLogic
 	{
-		protected enum MenuType { Tiles, Layers, Actors }
+		protected enum MenuType { Tiles, Layers, Actors, Sculpts }
 		protected MenuType menuType = MenuType.Tiles;
 
 		[ObjectCreator.UseCtor]
@@ -37,6 +37,10 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			actorsTab.IsHighlighted = () => menuType == MenuType.Actors;
 			actorsTab.OnClick = () => { menuType = MenuType.Actors; };
 
+			var sculptsTab = tabContainer.Get<ButtonWidget>("SCULPTS_TAB");
+			sculptsTab.IsHighlighted = () => menuType == MenuType.Sculpts;
+			sculptsTab.OnClick = () => { menuType = MenuType.Sculpts; };
+
 			var tileContainer = widget.Parent.Get<ContainerWidget>("TILE_WIDGETS");
 			tileContainer.IsVisible = () => menuType == MenuType.Tiles;
 
@@ -45,6 +49,9 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
 			var actorContainer = widget.Parent.Get<ContainerWidget>("ACTOR_WIDGETS");
 			actorContainer.IsVisible = () => menuType == MenuType.Actors;
+
+			var sculptsContainer = widget.Parent.Get<ContainerWidget>("SCULPTS_WIDGETS");
+			sculptsContainer.IsVisible = () => menuType == MenuType.Sculpts;
 		}
 	}
 }
