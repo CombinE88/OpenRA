@@ -126,8 +126,6 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 
         void CreateSculpt(World world)
         {
-
-
             var sculpt = new Sculpt(
                 4,
                 10,
@@ -163,7 +161,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
         {
             if (current == null || !layer.Sculpts.ContainsKey(current))
                 return;
-;
+
             var sculpt = new Sculpt(
                 layer.Sculpts[current].Corner,
                 layer.Sculpts[current].Radius,
