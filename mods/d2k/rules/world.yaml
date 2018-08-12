@@ -239,3 +239,5 @@ EditorWorld:
 	EditorSelectionLayer:
 	LoadWidgetAtGameStart:
 	Sculptlayer:
+	TerrainPassableOverlay:
+		CheckOnBuilding: construction_yard

@@ -805,8 +805,18 @@ Container@EDITOR_WORLD_ROOT:
 			TooltipContainer: TOOLTIP_CONTAINER
 			Font: Bold
 			Key: f1
+		Button@LOCK_BUTTON:
+			X: 350
+			Width: 100
+			Height: 25
+			Text: Buildable
+			Font: Bold
+			Key: f1
+			TooltipTemplate: BUTTON_TOOLTIP
+			TooltipText: Toggle unbiuldable cells
+			TooltipContainer: TOOLTIP_CONTAINER
 		Label@ZOOM_LABEL:
-			X: 345
+			X: 420 + 50
 			Width: 50
 			Height: 25
 			Text: Zoom:
@@ -814,20 +824,20 @@ Container@EDITOR_WORLD_ROOT:
 			Font: Bold
 			Contrast: true
 		DropDownButton@ZOOM_BUTTON:
-			X: 400
+			X: 490 + 50
 			Width: 70
 			Height: 25
 			Font: Bold
 			Key: TogglePixelDouble
 		Label@COORDINATE_LABEL:
-			X: 485
+			X: 490 + 90 + 50
 			Width: 50
 			Height: 25
 			Align: Left
 			Font: Bold
 			Contrast: true
 		Label@CASH_LABEL:
-			X: 600
+			X: 490 + 90 + 70 + 50
 			Width: 50
 			Height: 25
 			Align: Left

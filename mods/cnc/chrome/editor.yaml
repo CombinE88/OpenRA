@@ -321,7 +321,7 @@ Container@EDITOR_WORLD_ROOT:
 											X: 4
 											Y: 4
 		Container@LAYER_WIDGETS:
-			#Logic: LayerSelectorLogic
+			Logic: LayerSelectorLogic
 			X: WINDOW_RIGHT - 255
 			Y: 278
 			Width: 250
@@ -839,8 +839,19 @@ Container@EDITOR_WORLD_ROOT:
 			TooltipTemplate: BUTTON_TOOLTIP
 			TooltipText: Toggle the terrain grid
 			TooltipContainer: TOOLTIP_CONTAINER
+		Button@LOCK_BUTTON:
+			X: WINDOW_RIGHT - 590 - 25
+			Y: 5
+			Width: 100
+			Height: 25
+			Text: Buildable
+			Font: Bold
+			Key: f1
+			TooltipTemplate: BUTTON_TOOLTIP
+			TooltipText: Toggle unbiuldable cells
+			TooltipContainer: TOOLTIP_CONTAINER
 		Label@ZOOM_LABEL:
-			X: WINDOW_RIGHT - 580 - 55
+			X: WINDOW_RIGHT - 580 - 55 - 100 - 20
 			Y: 5
 			Width: 50
 			Height: 25
@@ -849,7 +860,7 @@ Container@EDITOR_WORLD_ROOT:
 			Font: Bold
 			Contrast: true
 		DropDownButton@ZOOM_BUTTON:
-			X: WINDOW_RIGHT - 580
+			X: WINDOW_RIGHT - 680 - 20
 			Y: 5
 			Width: 70
 			Height: 25

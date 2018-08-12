@@ -271,3 +271,5 @@ EditorWorld:
 	EditorSelectionLayer:
 	LoadWidgetAtGameStart:
 	Sculptlayer:
+	TerrainPassableOverlay:
+		CheckOnBuilding: fact
