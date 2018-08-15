@@ -273,3 +273,4 @@ EditorWorld:
 	Sculptlayer:
 	TerrainPassableOverlay:
 		CheckOnBuilding: fact
+	EditorBrushLayer:

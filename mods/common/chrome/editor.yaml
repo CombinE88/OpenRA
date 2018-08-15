@@ -245,7 +245,7 @@ Container@EDITOR_WORLD_ROOT:
 			Children:
 				Background@TILES_BG:
 					X: WINDOW_RIGHT - 250
-					Y: 290
+					Y: 315
 					Width: 240
 					Height: WINDOW_BOTTOM - 382
 					Children:
@@ -296,7 +296,7 @@ Container@EDITOR_WORLD_ROOT:
 			Children:
 				Background@LAYERS_BG:
 					X: WINDOW_RIGHT - 250
-					Y: 290
+					Y: 315
 					Width: 240
 					Height: WINDOW_BOTTOM - 382
 					Children:
@@ -323,7 +323,7 @@ Container@EDITOR_WORLD_ROOT:
 			Children:
 				Background@ACTORS_BG:
 					X: WINDOW_RIGHT - 250
-					Y: 290
+					Y: 315
 					Width: 240
 					Height: WINDOW_BOTTOM - 382
 					Children:
@@ -390,7 +390,7 @@ Container@EDITOR_WORLD_ROOT:
 			Children:
 				Background@ACTORS_BG:
 					X: WINDOW_RIGHT - 250
-					Y: 290
+					Y: 315
 					Width: 240
 					Height: WINDOW_BOTTOM - 350
 					Children:
@@ -751,7 +751,7 @@ Container@EDITOR_WORLD_ROOT:
 			X: WINDOW_RIGHT - 245
 			Y: 260
 			Width: 240
-			Height: 25
+			Height: 40
 			Children:
 				Button@TILES_TAB:
 					X: 0
@@ -777,6 +777,36 @@ Container@EDITOR_WORLD_ROOT:
 					Height: 25
 					Text: Shapes
 					Font: Bold
+				Button@PASTES_TAB:
+					X: 0
+					Y: 25
+					Width: 55
+					Height: 25
+					Text: Shapes
+					Font: Bold
+		Container@MAP_EDITOR_TAB_CONTAINER2:
+			X: 5
+			Y: 260
+			Width: 240
+			Height: 40
+			Children:
+				Button@LAYERS_TAB:
+					X: 0
+					Width: 120
+					Height: 25
+					Text: Layer
+					Font: Bold
+				Button@SOMETHING_TAB:
+					X: 120
+					Width: 120
+					Height: 25
+					Text: ???
+					Font: Bold
+				Background@LAYERS_BG:
+					X: 5
+					Y: 25
+					Width: 240
+					Height: WINDOW_BOTTOM - 350
 		MenuButton@OPTIONS_BUTTON:
 			Logic: MenuButtonsChromeLogic
 			MenuContainer: INGAME_MENU
@@ -789,15 +819,30 @@ Container@EDITOR_WORLD_ROOT:
 			TooltipContainer: TOOLTIP_CONTAINER
 			Font: Bold
 			Key: escape
+		Button@SETTINGS_BUTTON:
+			X: 170 + 50
+			Width: 100
+			Height: 25
+			Text: Settings
+			Font: Bold
+		Button@NODE_BUTTON:
+			X: 290 + 50
+			Width: 100
+			Height: 25
+			Text: Node Tool
+			TooltipTemplate: BUTTON_TOOLTIP
+			TooltipText: Edit Nodes
+			TooltipContainer: TOOLTIP_CONTAINER
+			Font: Bold
 		Button@COPYPASTE_BUTTON:
-			X: 170
-			Width: 90
+			X: 410 + 50
+			Width: 100
 			Height: 25
 			Text: Copy/Paste
 			Font: Bold
 		Button@GRID_BUTTON:
-			X: 270
-			Width: 70
+			X: 520 + 50
+			Width: 100
 			Height: 25
 			Text: Grid
 			TooltipTemplate: BUTTON_TOOLTIP
@@ -806,17 +851,16 @@ Container@EDITOR_WORLD_ROOT:
 			Font: Bold
 			Key: f1
 		Button@LOCK_BUTTON:
-			X: 350
+			X: 640 + 50
 			Width: 100
 			Height: 25
 			Text: Buildable
 			Font: Bold
-			Key: f1
 			TooltipTemplate: BUTTON_TOOLTIP
 			TooltipText: Toggle unbiuldable cells
 			TooltipContainer: TOOLTIP_CONTAINER
 		Label@ZOOM_LABEL:
-			X: 420 + 50
+			X: 760 + 50
 			Width: 50
 			Height: 25
 			Text: Zoom:
@@ -824,25 +868,79 @@ Container@EDITOR_WORLD_ROOT:
 			Font: Bold
 			Contrast: true
 		DropDownButton@ZOOM_BUTTON:
-			X: 490 + 50
+			X: 830 + 50
 			Width: 70
 			Height: 25
 			Font: Bold
 			Key: TogglePixelDouble
 		Label@COORDINATE_LABEL:
-			X: 490 + 90 + 50
+			X: 920 + 50
 			Width: 50
 			Height: 25
 			Align: Left
 			Font: Bold
 			Contrast: true
 		Label@CASH_LABEL:
-			X: 490 + 90 + 70 + 50
+			X: 1100 + 50
 			Width: 50
 			Height: 25
 			Align: Left
 			Font: Bold
 			Contrast: true
+		#bottom Toolbar
+		Background@BOTTOM_TOOLBAR:
+			Logic: FormToolbarLogic
+			X: 270
+			Y: WINDOW_BOTTOM - 25 - HEIGHT
+			Width: 700
+			Height: 45
+			Children:
+				Label@TOOLS_LABEL:
+					X: 15
+					Y: 10
+					Width: 50
+					Height: 25
+					Align: Left
+					Font: Bold
+					Contrast: true
+					Text: Tools:
+				Button@SLECET_SQUARE_BUTTON:
+					X: 70
+					Y: 10
+					Width: 25
+					Height: 25
+					Text: [ ]
+					Font: Bold
+				Button@SLECET_CIRCLE_BUTTON:
+					X: 105
+					Y: 10
+					Width: 25
+					Height: 25
+					Text: ( )
+					Font: Bold
+				Button@SLECET_FREE_BUTTON:
+					X: 140 
+					Y: 10
+					Width: 25
+					Height: 25
+					Text: Select free
+					Font: TinyBold
+				Button@FILL_BUTTON:
+					X: 195 
+					Y: 10
+					Width: 25
+					Height: 25
+					Text: Fill
+					Font: TinyBold
+				Slider@BRUSHSIZE_SLIDER:
+					X: 195 + 45
+					Y: 10
+					Width: 200
+					Height: 25
+					Ticks: 10
+					Value: 5
+					MinimumValue: 1
+					MaximumValue: 20
 
 ScrollPanel@ACTOR_CATEGORY_FILTER_PANEL:
 	Width: 170

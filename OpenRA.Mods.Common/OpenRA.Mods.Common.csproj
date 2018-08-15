@@ -139,6 +139,7 @@
     <Compile Include="AudioLoaders\AudLoader.cs" />
     <Compile Include="AudioLoaders\VocLoader.cs" />
     <Compile Include="AudioLoaders\WavLoader.cs" />
+    <Compile Include="EditorBrushes\EditorToolbarBrush.cs" />
     <Compile Include="Effects\Beacon.cs" />
     <Compile Include="Effects\ContrailFader.cs" />
     <Compile Include="Effects\CrateEffect.cs" />
@@ -548,6 +549,7 @@
     <Compile Include="Traits\Valued.cs" />
     <Compile Include="Traits\Voiced.cs" />
     <Compile Include="Traits\Wanders.cs" />
+    <Compile Include="Traits\World\EditorBrushLayer.cs" />
     <Compile Include="Traits\World\EditorSculptureLayer.cs" />
     <Compile Include="Traits\World\LegacyBridgeLayer.cs" />
     <Compile Include="Traits\World\CrateSpawner.cs" />
@@ -599,6 +601,7 @@
     <Compile Include="UtilityCommands\ExtractTraitDocsCommand.cs" />
     <Compile Include="UtilityCommands\ExtractWeaponDocsCommand.cs" />
     <Compile Include="Warheads\ChangeOwnerWarhead.cs" />
+    <Compile Include="Widgets\Logic\Editor\FormToolbarLogic.cs" />
     <Compile Include="Widgets\Logic\MusicHotkeyLogic.cs" />
     <Compile Include="Widgets\Logic\SculptDesignerLogic.cs" />
     <Compile Include="WorldExtensions.cs" />
