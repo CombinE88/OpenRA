@@ -270,3 +270,9 @@ EditorWorld:
 	EditorResourceLayer:
 	EditorSelectionLayer:
 	LoadWidgetAtGameStart:
+<<<<<<< HEAD
+=======
+	Sculptlayer:
+	TerrainPassableOverlay:
+		CheckOnBuilding: fact
+>>>>>>> parent of 1681c5c... Burshtool

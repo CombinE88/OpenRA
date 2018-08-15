@@ -122,7 +122,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
                 });
 
             sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetText = () => name;
-            sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetColor = () => Color.FromArgb((int)(layer.Sculpts[name].Color.ToArgb() | 0xff000000));
+            sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetColor = () => Color.FromArgb(layer.Sculpts[name].Color.ToArgb());
             sculptsList.AddChild(sculptItem);
 
             layer.Sculpts.Add(name, sculpt);
