@@ -811,10 +811,6 @@ Container@EDITOR_WORLD_ROOT:
 			TooltipContainer: TOOLTIP_CONTAINER
 			Font: Bold
 			Key: f1
-<<<<<<< HEAD
-		Label@ZOOM_LABEL:
-			X: 345
-=======
 		Button@LOCK_BUTTON:
 			X: 350
 			Width: 100
@@ -827,7 +823,6 @@ Container@EDITOR_WORLD_ROOT:
 			TooltipContainer: TOOLTIP_CONTAINER
 		Label@ZOOM_LABEL:
 			X: 420 + 50
->>>>>>> parent of 1681c5c... Burshtool
 			Width: 50
 			Height: 25
 			Text: Zoom:
@@ -835,32 +830,20 @@ Container@EDITOR_WORLD_ROOT:
 			Font: Bold
 			Contrast: true
 		DropDownButton@ZOOM_BUTTON:
-<<<<<<< HEAD
-			X: 400
-=======
 			X: 490 + 50
->>>>>>> parent of 1681c5c... Burshtool
 			Width: 70
 			Height: 25
 			Font: Bold
 			Key: TogglePixelDouble
 		Label@COORDINATE_LABEL:
-<<<<<<< HEAD
-			X: 485
-=======
 			X: 490 + 90 + 50
->>>>>>> parent of 1681c5c... Burshtool
 			Width: 50
 			Height: 25
 			Align: Left
 			Font: Bold
 			Contrast: true
 		Label@CASH_LABEL:
-<<<<<<< HEAD
-			X: 600
-=======
 			X: 490 + 90 + 70 + 50
->>>>>>> parent of 1681c5c... Burshtool
 			Width: 50
 			Height: 25
 			Align: Left

@@ -238,3 +238,6 @@ EditorWorld:
 	D2kEditorResourceLayer:
 	EditorSelectionLayer:
 	LoadWidgetAtGameStart:
+	Sculptlayer:
+	TerrainPassableOverlay:
+		CheckOnBuilding: construction_yard
