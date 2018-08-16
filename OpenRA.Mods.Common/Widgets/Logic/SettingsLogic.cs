@@ -231,6 +231,8 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			// Player profile
 			var ps = Game.Settings.Player;
 
+			BindSliderPref(panel, "INF_SCALE", ps, "InfScale");
+
 			var nameTextfield = panel.Get<TextFieldWidget>("PLAYERNAME");
 			nameTextfield.IsDisabled = () => worldRenderer.World.Type != WorldType.Shellmap;
 			nameTextfield.Text = Settings.SanitizedPlayerName(ps.Name);
