@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRA.Mods.Common.Effects;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
@@ -103,7 +104,23 @@ namespace OpenRA.Mods.Common.Traits
 
 		public bool CanGiveResources(int amount)
 		{
-			return Resources + amount <= ResourceCapacity;
+			var purifier = owner.World.ActorsHavingTrait<ResourcePurifier>().Where(a => a.Owner == owner);
+			var extraammount = 0;
+			foreach (var actor in purifier)
+			{
+				var trait = actor.Info.TraitInfoOrDefault<ResourcePurifierInfo>();
+				
+				extraammount = (int)Math.Round(amount / 100.0 * trait.Percentage);
+				if (extraammount < 1)
+					extraammount = 1;
+
+				if (trait.ShowTicks)
+				{
+					if (actor.Owner.IsAlliedWith(actor.World.RenderPlayer))
+						actor.World.AddFrameEndTask(w => w.Add(new FloatingText(actor.CenterPosition, actor.Owner.Color.RGB, FloatingText.FormatCashTick(extraammount), trait.TickLifetime)));
+				}
+			}
+			return Resources + amount + extraammount <= ResourceCapacity;
 		}
 
 		public void GiveResources(int num)
