@@ -109,7 +109,7 @@ namespace OpenRA.Mods.Common.Traits
 			foreach (var actor in purifier)
 			{
 				var trait = actor.Info.TraitInfoOrDefault<ResourcePurifierInfo>();
-				
+
 				extraammount = (int)Math.Round(amount / 100.0 * trait.Percentage);
 				if (extraammount < 1)
 					extraammount = 1;
