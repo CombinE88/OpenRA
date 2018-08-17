@@ -66,15 +66,36 @@ namespace OpenRA.Mods.Common.Activities
 			foreach (var nt in self.TraitsImplementing<INotifyTransform>())
 				nt.BeforeTransform(self);
 
-			var makeAnimation = self.TraitOrDefault<WithMakeAnimation>();
-			if (!SkipMakeAnims && makeAnimation != null)
+			var makeAnimation = self.TraitsImplementing<WithMakeAnimation>();
+			if (!SkipMakeAnims && makeAnimation.Any())
 			{
-				// Once the make animation starts the activity must not be stopped anymore.
 				IsInterruptible = false;
+				if (makeAnimation.Count() == 1)
+				{
+					QueueChild(new WaitFor(() => false));
+					makeAnimation.First().Reverse(self, () => DoTransform(self));
+				}
+				else
+				{
+					var first = true;
+					foreach (var trait in makeAnimation)
+					{
+						if (first)
+						{
+							QueueChild(new WaitFor(() => false));
+							trait.Reverse(self, () =>
+							{
+								DoTransform(self);
+								first = false;
+							});
+						}
+						else
+							trait.Reverse(self, () => { });
+					}
+				}
+				// Once the make animation starts the activity must not be stopped anymore.
 
 				// Wait forever
-				QueueChild(new WaitFor(() => false));
-				makeAnimation.Reverse(self, () => DoTransform(self));
 				return this;
 			}
 

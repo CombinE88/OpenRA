@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using OpenRA.Mods.Common.Activities;
 using OpenRA.Mods.Common.Orders;
 using OpenRA.Mods.Common.Traits.Render;
@@ -72,10 +73,13 @@ namespace OpenRA.Mods.Common.Traits
 
 			if (!info.SkipMakeAnimation)
 			{
-				var makeAnimation = self.TraitOrDefault<WithMakeAnimation>();
-				if (makeAnimation != null)
+				var makeAnimation = self.TraitsImplementing<WithMakeAnimation>();
+				if (makeAnimation.Any())
 				{
-					makeAnimation.Reverse(self, new Sell(self, info.ShowTicks), false);
+					foreach (var trait in makeAnimation)
+					{
+						trait.Reverse(self, new Sell(self, info.ShowTicks), false);
+					}
 					return;
 				}
 			}

@@ -51,8 +51,11 @@ namespace OpenRA.Mods.Common.Traits.Render
 		{
 			conditionManager = self.TraitOrDefault<ConditionManager>();
 			var building = self.TraitOrDefault<Building>();
-			if (building != null && !building.SkipMakeAnimation)
-				Forward(self, () => building.NotifyBuildingComplete(self));
+			self.World.AddFrameEndTask(w =>
+			{
+				if (building != null && !building.SkipMakeAnimation)
+					Forward(self, () => building.NotifyBuildingComplete(self));
+			});
 		}
 
 		public void Forward(Actor self, Action onComplete)
