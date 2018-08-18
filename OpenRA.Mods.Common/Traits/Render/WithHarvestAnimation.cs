@@ -17,7 +17,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 {
 	public class WithHarvestAnimationInfo : ITraitInfo, Requires<WithSpriteBodyInfo>, Requires<HarvesterInfo>
 	{
-		[Desc("Prefix added to idle and harvest sequences depending on fullness of harvester.")]
+		[Desc("Prefix added to idle, move and harvest sequences depending on fullness of harvester.")]
 		[SequenceReference(null, true)] public readonly string[] PrefixByFullness = { "" };
 
 		[Desc("Displayed while harvesting.")]
@@ -33,7 +33,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 	{
 		public readonly WithHarvestAnimationInfo Info;
 		readonly WithSpriteBody wsb;
-		readonly Harvester harv;
+		public readonly Harvester harv;
 
 		// TODO: Remove this once WithSpriteBody has its own replacement
 		public bool IsModifying;
