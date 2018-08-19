@@ -81,6 +81,9 @@ namespace OpenRA.Mods.Common.Widgets.Logic
             var deletebutton = widget.Get<ButtonWidget>("DELETE_BUTTON");
             deletebutton.OnClick = () => DeleteSculpt();
 
+            var clonebutton = widget.Get<ButtonWidget>("CLONE_BUTTON");
+            clonebutton.OnClick = () => CloneSculpt(world);
+
             sculptsList = widget.Get<ScrollPanelWidget>("SCULPTS_LIST");
             sculptsTemplate = sculptsList.Get<ScrollItemWidget>("SCULPTS_TEMPLATE");
             sculptsList.RemoveChild(sculptsTemplate);
@@ -95,6 +98,42 @@ namespace OpenRA.Mods.Common.Widgets.Logic
             alpha.OnChange += x => { UpdateSculpt(); };
 
             layer = world.WorldActor.Trait<Sculptlayer>();
+        }
+
+        void CloneSculpt(World world)
+        {
+            if (current == null || !layer.Sculpts.ContainsKey(current))
+                return;
+
+            var sculpt = new Sculpt(
+                layer.Sculpts[current].Corner,
+                layer.Sculpts[current].Radius,
+                new CPos(world.Map.MapSize.X / 2, world.Map.MapSize.Y / 2),
+                layer.Sculpts[current].Rot,
+                layer.Sculpts[current].Color,
+                world.Map.Grid.TileSize,
+                layer.Sculpts[current].Slice,
+                layer.Sculpts[current].Sliceradius,
+                layer.Sculpts[current].Slicerot);
+
+            var name = "Shape: " + ++nextSculpt;
+
+            var sculptItem = ScrollItemWidget.Setup(
+                sculptsTemplate,
+                () => current == name,
+                () =>
+                {
+                    current = name;
+                    UpdatedUiSelectedSculpt();
+                });
+
+            sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetText = () => name;
+            sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetColor = () => Color.FromArgb(layer.Sculpts[name].Color.ToArgb());
+            sculptsList.AddChild(sculptItem);
+
+            layer.Sculpts.Add(name, sculpt);
+            current = name;
+            UpdatedUiSelectedSculpt();
         }
 
         void CreateSculpt(World world)
@@ -140,7 +179,10 @@ namespace OpenRA.Mods.Common.Widgets.Logic
             sculptsList.Layout.AdjustChildren();
 
             layer.Sculpts.Remove(current);
-            current = null;
+            if (layer.Sculpts.Any())
+                current = layer.Sculpts.Last().Key;
+            else
+                current = null;
         }
 
         void UpdatedUiSelectedSculpt()
