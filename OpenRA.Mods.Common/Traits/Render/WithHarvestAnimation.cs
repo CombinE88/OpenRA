@@ -34,6 +34,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 		public readonly WithHarvestAnimationInfo Info;
 		readonly WithSpriteBody wsb;
 		public readonly Harvester harv;
+		readonly IMove movement;
 
 		// TODO: Remove this once WithSpriteBody has its own replacement
 		public bool IsModifying;
@@ -42,6 +43,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 		{
 			Info = info;
 			harv = init.Self.Trait<Harvester>();
+			movement = init.Self.Trait<IMove>();
 			wsb = init.Self.TraitsImplementing<WithSpriteBody>().Single(w => w.Info.Name == Info.Body);
 		}
 
@@ -58,6 +60,11 @@ namespace OpenRA.Mods.Common.Traits.Render
 
 		void ITick.Tick(Actor self)
 		{
+			var isMoving = movement.IsMoving && !self.IsDead;
+
+			if (isMoving)
+				return;
+
 			var baseSequence = wsb.NormalizeSequence(self, wsb.Info.Sequence);
 			var sequence = NormalizeHarvesterSequence(self, baseSequence);
 			if (!IsModifying && wsb.DefaultAnimation.HasSequence(sequence) && wsb.DefaultAnimation.CurrentSequence.Name != sequence)
@@ -66,6 +73,11 @@ namespace OpenRA.Mods.Common.Traits.Render
 
 		void INotifyHarvesterAction.Harvested(Actor self, ResourceType resource)
 		{
+			var isMoving = movement.IsMoving && !self.IsDead;
+
+			if (isMoving)
+				return;
+
 			var baseSequence = wsb.NormalizeSequence(self, Info.HarvestSequence);
 			var sequence = NormalizeHarvesterSequence(self, baseSequence);
 			if (!IsModifying && wsb.DefaultAnimation.HasSequence(sequence))

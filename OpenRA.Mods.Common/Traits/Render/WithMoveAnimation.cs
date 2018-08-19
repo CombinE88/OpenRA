@@ -8,6 +8,7 @@
  * the License, or (at your option) any later version. For more
  * information, see COPYING.
  */
+
 #endregion
 
 using System.Drawing;
@@ -19,12 +20,15 @@ namespace OpenRA.Mods.Common.Traits.Render
 {
     public class WithMoveAnimationInfo : ConditionalTraitInfo, Requires<WithSpriteBodyInfo>, Requires<IMoveInfo>
     {
-        [Desc("Displayed while moving.")]
-        [SequenceReference] public readonly string MoveSequence = "move";
+        [Desc("Displayed while moving.")] [SequenceReference]
+        public readonly string MoveSequence = "move";
 
         [Desc("Which sprite body to modify.")] public readonly string Body = "body";
 
-        public override object Create(ActorInitializer init) { return new WithMoveAnimation(init, this); }
+        public override object Create(ActorInitializer init)
+        {
+            return new WithMoveAnimation(init, this);
+        }
 
         public override void RulesetLoaded(Ruleset rules, ActorInfo ai)
         {
@@ -57,16 +61,19 @@ namespace OpenRA.Mods.Common.Traits.Render
 
             var isMoving = movement.IsMoving && !self.IsDead;
 
-            if (isMoving ^ (wsb.DefaultAnimation.CurrentSequence.Name != moveanimation))
+            if (!isMoving)
+                return;
+
+            if (wsb.DefaultAnimation.CurrentSequence.Name == moveanimation)
                 return;
 
             moveanimation = self.Info.HasTraitInfo<WithHarvestAnimationInfo>() ? NormalizeMoveSequence(self, Info.MoveSequence) : Info.MoveSequence;
 
             //Game.AddChatLine(Color.Wheat, "Animation ", moveanimation + " " + wsb.DefaultAnimation.CurrentSequence.Name + " " + isMoving);
-            wsb.DefaultAnimation.ReplaceAnim(isMoving ? moveanimation : wsb.Info.Sequence);
+            wsb.DefaultAnimation.ReplaceAnim(moveanimation);
         }
 
-        public virtual string NormalizeMoveSequence(Actor self, string baseSequence)
+        string NormalizeMoveSequence(Actor self, string baseSequence)
         {
             var harvinfo = self.TraitOrDefault<WithHarvestAnimation>();
             if (harvinfo != null)
