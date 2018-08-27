@@ -38,6 +38,11 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			var lockButton = widget.GetOrNull<ButtonWidget>("LOCK_BUTTON");
 			var terrainpassableTrait = world.WorldActor.Trait<TerrainPassableOverlay>();
 
+			var undoButton = widget.GetOrNull<ButtonWidget>("UNDO_BUTTON");
+			undoButton.OnClick = () => world.WorldActor.Trait<EditorUndoRedoLayer>().Undo(worldRenderer.World);
+
+
+
 			if (gridButton != null && terrainGeometryTrait != null)
 			{
 				gridButton.OnClick = () => terrainGeometryTrait.Enabled ^= true;

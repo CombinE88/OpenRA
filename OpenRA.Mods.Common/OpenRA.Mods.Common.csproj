@@ -550,6 +550,7 @@
     <Compile Include="Traits\Voiced.cs" />
     <Compile Include="Traits\Wanders.cs" />
     <Compile Include="Traits\World\EditorSculptureLayer.cs" />
+    <Compile Include="Traits\World\EditorUndoRedoLayer.cs" />
     <Compile Include="Traits\World\LegacyBridgeLayer.cs" />
     <Compile Include="Traits\World\CrateSpawner.cs" />
     <Compile Include="Traits\World\CreateMPPlayers.cs" />

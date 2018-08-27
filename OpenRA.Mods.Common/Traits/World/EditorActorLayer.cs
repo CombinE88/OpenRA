@@ -139,8 +139,10 @@ namespace OpenRA.Mods.Common.Traits
 			return preview;
 		}
 
-		public void Remove(EditorActorPreview preview)
+		public void Remove(EditorActorPreview preview, bool undo = false)
 		{
+			var name = preview.Info.Name;
+
 			previews.Remove(preview);
 			screenMap.Remove(preview);
 
@@ -160,6 +162,16 @@ namespace OpenRA.Mods.Common.Traits
 
 			if (preview.Info.Name == "mpspawn")
 				SyncMultiplayerCount();
+
+			if (!undo)
+			{
+				var actorReference = new List<EditorAction>();
+				actorReference.Add(new EditorAction {ActorReference = preview.Export(), Addactor = true});
+
+				var editorUndoRedoLayer = worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>();
+				editorUndoRedoLayer.History.Add(actorReference.ToArray());
+				editorUndoRedoLayer.HistoryLog.Add("Resource: " + name + " removed");
+			}
 		}
 
 		void SyncMultiplayerCount()

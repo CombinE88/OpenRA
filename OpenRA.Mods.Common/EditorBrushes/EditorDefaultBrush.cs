@@ -87,12 +87,26 @@ namespace OpenRA.Mods.Common.Widgets
 			if (mi.Button == MouseButton.Right)
 			{
 				editorWidget.SetTooltip(null);
+				var undoStuff = new List<EditorAction>();
 
 				if (underCursor != null)
-					editorLayer.Remove(underCursor);
+				{
+					undoStuff.Add(new EditorAction {ActorReference = underCursor.Export(), Addactor = true});
+					editorLayer.Remove(underCursor, true);
+				}
 
 				if (mapResources.Contains(cell) && mapResources[cell].Type != 0)
+				{
+					undoStuff.Add(new EditorAction {Position = cell, NewResourceTile = world.Map.Resources[cell], Addrecource = true});
 					mapResources[cell] = new ResourceTile();
+				}
+
+				if (undoStuff.Any())
+				{
+					var editorUndoRedoLayer = worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>();
+					editorUndoRedoLayer.History.Add(undoStuff.ToArray());
+					editorUndoRedoLayer.HistoryLog.Add("Actor/ Resource deleted");
+				}
 			}
 			else if (mi.Event == MouseInputEvent.Scroll)
 			{

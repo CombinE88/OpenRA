@@ -384,8 +384,6 @@ Container@EDITOR_WORLD_ROOT:
 											X: 4
 											Y: 4
 											Visible: true
-<<<<<<< HEAD
-=======
 		Container@SCULPTS_WIDGETS:
 			Visible: false
 			Logic: SculptDesignerLogic
@@ -747,8 +745,6 @@ Container@EDITOR_WORLD_ROOT:
 											Ticks: 5
 											MinimumValue: 0
 											MaximumValue: 255
-										
->>>>>>> parent of 1681c5c... Burshtool
 		Container@MAP_EDITOR_TAB_CONTAINER:
 			Logic: MapEditorTabsLogic
 			X: WINDOW_RIGHT - 245
@@ -774,15 +770,12 @@ Container@EDITOR_WORLD_ROOT:
 					Height: 25
 					Text: Actors
 					Font: Bold
-<<<<<<< HEAD
-=======
 				Button@SCULPTS_TAB:
 					X: 165
 					Width: 55
 					Height: 25
 					Text: Shapes
 					Font: Bold
->>>>>>> parent of 1681c5c... Burshtool
 		MenuButton@OPTIONS_BUTTON:
 			Logic: MenuButtonsChromeLogic
 			MenuContainer: INGAME_MENU
@@ -821,8 +814,18 @@ Container@EDITOR_WORLD_ROOT:
 			TooltipTemplate: BUTTON_TOOLTIP
 			TooltipText: Toggle unbiuldable cells
 			TooltipContainer: TOOLTIP_CONTAINER
+		Button@UNDO_BUTTON:
+			X: 475
+			Y: 100
+			Height: 25
+			Text: Undo
+			Font: Bold
+			Key: f8
+			TooltipTemplate: BUTTON_TOOLTIP
+			TooltipText: Undo last step
+			TooltipContainer: TOOLTIP_CONTAINER
 		Label@ZOOM_LABEL:
-			X: 420 + 50
+			X: 420 + 50 + 125
 			Width: 50
 			Height: 25
 			Text: Zoom:
@@ -830,20 +833,20 @@ Container@EDITOR_WORLD_ROOT:
 			Font: Bold
 			Contrast: true
 		DropDownButton@ZOOM_BUTTON:
-			X: 490 + 50
+			X: 490 + 50 + 125
 			Width: 70
 			Height: 25
 			Font: Bold
 			Key: TogglePixelDouble
 		Label@COORDINATE_LABEL:
-			X: 490 + 90 + 50
+			X: 490 + 90 + 50 + 125
 			Width: 50
 			Height: 25
 			Align: Left
 			Font: Bold
 			Contrast: true
 		Label@CASH_LABEL:
-			X: 490 + 90 + 70 + 50
+			X: 490 + 90 + 70 + 50 + 125
 			Width: 50
 			Height: 25
 			Align: Left

@@ -103,6 +103,8 @@ namespace OpenRA.Mods.Common.Widgets
 			var previews = new Dictionary<string, ActorReference>();
 			var tiles = new Dictionary<CPos, Tuple<TerrainTile, ResourceTile, byte>>();
 
+			var undoTiles = new List<EditorAction>();
+
 			foreach (var cell in source)
 			{
 				if (!mapTiles.Contains(cell) || !mapTiles.Contains(cell + offset))
@@ -129,6 +131,18 @@ namespace OpenRA.Mods.Common.Widgets
 
 			foreach (var kv in tiles)
 			{
+				undoTiles.Add(new EditorAction
+				{
+					Position = kv.Key,
+					Index = mapTiles[kv.Key].Index,
+					Type = mapTiles[kv.Key].Type,
+					NewResourceTile = mapResources[kv.Key],
+					RemoveRecource = kv.Value.Item2.Type != 0,
+					Addrecource = mapResources[kv.Key].Type != 0,
+					Hight = mapHeight[kv.Key],
+					Pasteterrain = true,
+				});
+
 				mapTiles[kv.Key] = kv.Value.Item1;
 				mapResources[kv.Key] = kv.Value.Item2;
 				mapHeight[kv.Key] = kv.Value.Item3;
@@ -136,10 +150,20 @@ namespace OpenRA.Mods.Common.Widgets
 
 			var removeActors = dest.SelectMany(editorLayer.PreviewsAt).Distinct().ToList();
 			foreach (var preview in removeActors)
-				editorLayer.Remove(preview);
+			{
+				undoTiles.Add(new EditorAction {Addactor = true, ActorReference = preview.Export()});
+				editorLayer.Remove(preview, true);
+			}
 
 			foreach (var kv in previews)
-				editorLayer.Add(kv.Value);
+				undoTiles.Add(new EditorAction {RemoveActor = true, ActorPreview = editorLayer.Add(kv.Value)});
+
+			if (undoTiles.Any())
+			{
+				var editorUndoRedoLayer = worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>();
+				editorUndoRedoLayer.History.Add(undoTiles.ToArray());
+				editorUndoRedoLayer.HistoryLog.Add("Copy / Pasted");
+			}
 		}
 
 		public void Tick()

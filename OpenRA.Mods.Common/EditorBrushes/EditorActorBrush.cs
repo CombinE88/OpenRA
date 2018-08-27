@@ -9,6 +9,7 @@
  */
 #endregion
 
+using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
@@ -115,7 +116,14 @@ namespace OpenRA.Mods.Common.Widgets
 				if (Actor.HasTraitInfo<TurretedInfo>())
 					initDict.Add(new TurretFacingInit(facing));
 
-				editorLayer.Add(newActorReference);
+				var actorReference = new List<EditorAction>();
+
+				var newRef = editorLayer.Add(newActorReference);
+				actorReference.Add(new EditorAction {ActorPreview = newRef, RemoveActor = true});
+
+				var editorUndoRedoLayer = worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>();
+				editorUndoRedoLayer.History.Add(actorReference.ToArray());
+				editorUndoRedoLayer.HistoryLog.Add("Actor " + newRef.Info.Name + " added");
 			}
 
 			return true;
