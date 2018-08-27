@@ -384,8 +384,6 @@ Container@EDITOR_WORLD_ROOT:
 											X: 4
 											Y: 4
 											Visible: true
-<<<<<<< HEAD
-=======
 		Container@SCULPTS_WIDGETS:
 			Visible: false
 			Logic: SculptDesignerLogic

@@ -270,8 +270,6 @@ EditorWorld:
 	EditorResourceLayer:
 	EditorSelectionLayer:
 	LoadWidgetAtGameStart:
-<<<<<<< HEAD
-=======
 	Sculptlayer:
 	TerrainPassableOverlay:
 		CheckOnBuilding: fact
