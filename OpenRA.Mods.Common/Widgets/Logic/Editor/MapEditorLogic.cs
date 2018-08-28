@@ -41,8 +41,6 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			var undoButton = widget.GetOrNull<ButtonWidget>("UNDO_BUTTON");
 			undoButton.OnClick = () => world.WorldActor.Trait<EditorUndoRedoLayer>().Undo(worldRenderer.World);
 
-
-
 			if (gridButton != null && terrainGeometryTrait != null)
 			{
 				gridButton.OnClick = () => terrainGeometryTrait.Enabled ^= true;

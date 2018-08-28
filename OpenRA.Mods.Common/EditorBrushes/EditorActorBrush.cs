@@ -119,11 +119,16 @@ namespace OpenRA.Mods.Common.Widgets
 				var actorReference = new List<EditorAction>();
 
 				var newRef = editorLayer.Add(newActorReference);
-				actorReference.Add(new EditorAction {ActorPreview = newRef, RemoveActor = true});
+
+				actorReference.Add(
+					new EditorAction
+					{
+						ActorPreview = newRef,
+						RemoveActor = true
+					});
 
 				var editorUndoRedoLayer = worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>();
 				editorUndoRedoLayer.History.Add(actorReference.ToArray());
-				editorUndoRedoLayer.HistoryLog.Add("Actor " + newRef.Info.Name + " added");
 			}
 
 			return true;

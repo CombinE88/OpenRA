@@ -166,11 +166,15 @@ namespace OpenRA.Mods.Common.Traits
 			if (!undo)
 			{
 				var actorReference = new List<EditorAction>();
-				actorReference.Add(new EditorAction {ActorReference = preview.Export(), Addactor = true});
+				actorReference.Add(
+					new EditorAction
+					{
+						ActorReference = preview.Export(),
+						Addactor = true
+					});
 
 				var editorUndoRedoLayer = worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>();
 				editorUndoRedoLayer.History.Add(actorReference.ToArray());
-				editorUndoRedoLayer.HistoryLog.Add("Resource: " + name + " removed");
 			}
 		}
 

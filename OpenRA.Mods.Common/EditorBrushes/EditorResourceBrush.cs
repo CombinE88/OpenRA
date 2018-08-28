@@ -74,11 +74,14 @@ namespace OpenRA.Mods.Common.Widgets
 				world.Map.Resources[cell] = new ResourceTile(type, index);
 
 				var undoTiles = new List<EditorAction>();
-				undoTiles.Add(new EditorAction {Position = cell, OldResourceTile = world.Map.Resources[cell], RemoveRecource = true});
+				undoTiles.Add(new EditorAction
+				{
+					Position = cell,
+					RemoveRecource = true
+				});
 
 				var editorUndoRedoLayer = worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>();
 				editorUndoRedoLayer.History.Add(undoTiles.ToArray());
-				editorUndoRedoLayer.HistoryLog.Add("Resource: " + world.Map.Resources[cell].Type + " added");
 			}
 
 			return true;

@@ -84,6 +84,30 @@ namespace OpenRA.Mods.Common.Widgets.Logic
             var clonebutton = widget.Get<ButtonWidget>("CLONE_BUTTON");
             clonebutton.OnClick = () => CloneSculpt(world);
 
+            var remx5 = widget.Get<ButtonWidget>("SHAPE_X_5_NEGATIVE");
+            remx5.OnClick = () => ShiftSculptXY(-5, 0);
+
+            var remx1 = widget.Get<ButtonWidget>("SHAPE_X_1_NEGATIVE");
+            remx1.OnClick = () => ShiftSculptXY(-1, 0);
+
+            var addx5 = widget.Get<ButtonWidget>("SHAPE_X_1_POSITIVE");
+            addx5.OnClick = () => ShiftSculptXY(1, 0);
+
+            var addx1 = widget.Get<ButtonWidget>("SHAPE_X_5_POSITIVE");
+            addx1.OnClick = () => ShiftSculptXY(5, 0);
+
+            var remY5 = widget.Get<ButtonWidget>("SHAPE_Y_5_NEGATIVE");
+            remY5.OnClick = () => ShiftSculptXY(0, -5);
+
+            var remY1 = widget.Get<ButtonWidget>("SHAPE_Y_1_NEGATIVE");
+            remY1.OnClick = () => ShiftSculptXY(0, -1);
+
+            var addy1 = widget.Get<ButtonWidget>("SHAPE_Y_1_POSITIVE");
+            addy1.OnClick = () => ShiftSculptXY(0, 1);
+
+            var addy5 = widget.Get<ButtonWidget>("SHAPE_Y_5_POSITIVE");
+            addy5.OnClick = () => ShiftSculptXY(0, 5);
+
             sculptsList = widget.Get<ScrollPanelWidget>("SCULPTS_LIST");
             sculptsTemplate = sculptsList.Get<ScrollItemWidget>("SCULPTS_TEMPLATE");
             sculptsList.RemoveChild(sculptsTemplate);
@@ -161,7 +185,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
                 });
 
             sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetText = () => name;
-            sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetColor = () => Color.FromArgb((int)(layer.Sculpts[name].Color.ToArgb() | 0xff000000));
+            sculptItem.Get<LabelWidget>("SCULPT_LABEL").GetColor = () => Color.FromArgb(layer.Sculpts[name].Color.ToArgb());
             sculptsList.AddChild(sculptItem);
 
             layer.Sculpts.Add(name, sculpt);
@@ -183,6 +207,18 @@ namespace OpenRA.Mods.Common.Widgets.Logic
                 current = layer.Sculpts.Last().Key;
             else
                 current = null;
+        }
+
+        void ShiftSculptXY(int x, int y)
+        {
+            if (current == null || !layer.Sculpts.ContainsKey(current))
+                return;
+
+            var sculpt = layer.Sculpts[current];
+
+            sculpt.Pos += new CVec(x, y);
+
+            UpdatedUiSelectedSculpt();
         }
 
         void UpdatedUiSelectedSculpt()

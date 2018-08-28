@@ -241,3 +241,4 @@ EditorWorld:
 	Sculptlayer:
 	TerrainPassableOverlay:
 		CheckOnBuilding: construction_yard
+	EditorUndoRedoLayer:

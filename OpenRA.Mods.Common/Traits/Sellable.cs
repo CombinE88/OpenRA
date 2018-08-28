@@ -80,6 +80,7 @@ namespace OpenRA.Mods.Common.Traits
 					{
 						trait.Reverse(self, new Sell(self, info.ShowTicks), false);
 					}
+
 					return;
 				}
 			}

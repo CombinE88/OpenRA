@@ -117,9 +117,11 @@ namespace OpenRA.Mods.Common.Traits
 				if (trait.ShowTicks)
 				{
 					if (actor.Owner.IsAlliedWith(actor.World.RenderPlayer))
-						actor.World.AddFrameEndTask(w => w.Add(new FloatingText(actor.CenterPosition, actor.Owner.Color.RGB, FloatingText.FormatCashTick(extraammount), trait.TickLifetime)));
+						actor.World.AddFrameEndTask(
+							w => w.Add(new FloatingText(actor.CenterPosition, actor.Owner.Color.RGB, FloatingText.FormatCashTick(extraammount), trait.TickLifetime)));
 				}
 			}
+
 			return Resources + amount + extraammount <= ResourceCapacity;
 		}
 

@@ -69,7 +69,6 @@ namespace OpenRA.Mods.Common.Traits.Render
 
             moveanimation = self.Info.HasTraitInfo<WithHarvestAnimationInfo>() ? NormalizeMoveSequence(self, Info.MoveSequence) : Info.MoveSequence;
 
-            //Game.AddChatLine(Color.Wheat, "Animation ", moveanimation + " " + wsb.DefaultAnimation.CurrentSequence.Name + " " + isMoving);
             wsb.DefaultAnimation.ReplaceAnim(moveanimation);
         }
 

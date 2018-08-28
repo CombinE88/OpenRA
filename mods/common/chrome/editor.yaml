@@ -754,25 +754,25 @@ Container@EDITOR_WORLD_ROOT:
 			Children:
 				Button@TILES_TAB:
 					X: 0
-					Width: 70
+					Width: (240 - 10 ) / 4
 					Height: 25
 					Text: Tiles
 					Font: Bold
 				Button@OVERLAYS_TAB:
-					X: 70
-					Width: 90
+					X: ((240 - 10 ) / 4 ) * 1
+					Width: (240 - 10 ) / 4
 					Height: 25
 					Text: Overlays
 					Font: Bold
 				Button@ACTORS_TAB:
-					X: 160
-					Width: 70
+					X: ((240 - 10 ) / 4 ) * 2
+					Width: (240 - 10 ) / 4
 					Height: 25
 					Text: Actors
 					Font: Bold
 				Button@SCULPTS_TAB:
-					X: 165
-					Width: 55
+					X: ((240 - 10 ) / 4 ) * 3
+					Width: (240 - 10 ) / 4
 					Height: 25
 					Text: Shapes
 					Font: Bold
@@ -810,13 +810,13 @@ Container@EDITOR_WORLD_ROOT:
 			Height: 25
 			Text: Buildable
 			Font: Bold
-			Key: f1
+			Key: f2
 			TooltipTemplate: BUTTON_TOOLTIP
 			TooltipText: Toggle unbiuldable cells
 			TooltipContainer: TOOLTIP_CONTAINER
 		Button@UNDO_BUTTON:
 			X: 475
-			Y: 100
+			Width: 100
 			Height: 25
 			Text: Undo
 			Font: Bold

@@ -40,7 +40,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Custom PlayerColorPalette: BaseName")]
 		[PaletteReference(true)] public readonly string PlayerPalette = "player";
 
-		readonly public bool OptionsScale = false;
+		public readonly bool OptionsScale = false;
 
 		[Desc("Change the sprite image size.")]
 		public readonly float Scale = 1f;

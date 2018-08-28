@@ -23,16 +23,18 @@ namespace OpenRA.Mods.Common.Traits
         public CPos Position;
         public byte Index;
         public ushort Type;
-        public ResourceTile OldResourceTile;
         public ResourceTile NewResourceTile;
+        public ActorReference ActorReference;
+        public EditorActorPreview ActorPreview;
+        public byte Hight;
+        public EditorAction Action;
+
         public bool Addrecource;
         public bool RemoveRecource;
-        public ActorReference ActorReference;
         public bool Addactor;
         public bool RemoveActor;
-        public EditorActorPreview ActorPreview;
         public bool Pasteterrain;
-        public byte Hight;
+        public bool ReplacePreview;
     }
 
     public class EditorUndoRedoLayerInfo : ITraitInfo
@@ -46,10 +48,38 @@ namespace OpenRA.Mods.Common.Traits
     public class EditorUndoRedoLayer
     {
         public List<EditorAction[]> History = new List<EditorAction[]>();
-        public List<String> HistoryLog = new List<string>();
 
         public EditorUndoRedoLayer(Actor self)
         {
+        }
+
+        public void ReplaceBuffer(EditorActorPreview preview, EditorAction selfaction)
+        {
+            foreach (var actionscollections in History)
+            {
+                foreach (var action in actionscollections)
+                {
+                    if (action.ActorPreview == preview)
+                    {
+                        selfaction.Action = action;
+                        selfaction.ReplacePreview = true;
+                    }
+                }
+            }
+        }
+
+        public void ReInsertBuffered(EditorAction editorAction, EditorActorPreview preview)
+        {
+            foreach (var actionscollections in History)
+            {
+                foreach (var action in actionscollections)
+                {
+                    if (editorAction == action)
+                    {
+                        action.ActorPreview = preview;
+                    }
+                }
+            }
         }
 
         public void Undo(World world)
@@ -59,14 +89,17 @@ namespace OpenRA.Mods.Common.Traits
 
             foreach (var entry in History.Last())
             {
-                if (entry.ActorReference != null && entry.Addactor)
-                {
-                    world.WorldActor.Trait<EditorActorLayer>().Add(entry.ActorReference);
-                }
-
                 if (entry.ActorPreview != null && entry.RemoveActor)
                 {
+                    ReplaceBuffer(entry.ActorPreview, entry);
                     world.WorldActor.Trait<EditorActorLayer>().Remove(entry.ActorPreview, true);
+                }
+
+                if (entry.ActorReference != null && entry.Addactor)
+                {
+                    var actor = world.WorldActor.Trait<EditorActorLayer>().Add(entry.ActorReference);
+                    if (entry.ReplacePreview && entry.Action != null)
+                        ReInsertBuffered(entry.Action, actor);
                 }
 
                 if (entry.RemoveRecource)
@@ -90,8 +123,6 @@ namespace OpenRA.Mods.Common.Traits
             }
 
             History.Remove(History.Last());
-            if (HistoryLog.Any())
-                HistoryLog.Remove(HistoryLog.Last());
         }
     }
 }

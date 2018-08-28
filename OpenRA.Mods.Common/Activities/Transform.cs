@@ -93,7 +93,7 @@ namespace OpenRA.Mods.Common.Activities
 							trait.Reverse(self, () => { });
 					}
 				}
-				// Once the make animation starts the activity must not be stopped anymore.
+				//// Once the make animation starts the activity must not be stopped anymore.
 
 				// Wait forever
 				return this;

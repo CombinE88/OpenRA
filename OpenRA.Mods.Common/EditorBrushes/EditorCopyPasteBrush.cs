@@ -151,18 +151,30 @@ namespace OpenRA.Mods.Common.Widgets
 			var removeActors = dest.SelectMany(editorLayer.PreviewsAt).Distinct().ToList();
 			foreach (var preview in removeActors)
 			{
-				undoTiles.Add(new EditorAction {Addactor = true, ActorReference = preview.Export()});
+				var editorAction = new EditorAction
+				{
+					Addactor = true,
+					ActorReference = preview.Export()
+				};
+
+				worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>().ReplaceBuffer(preview, editorAction);
+				undoTiles.Add(editorAction);
+
 				editorLayer.Remove(preview, true);
 			}
 
 			foreach (var kv in previews)
-				undoTiles.Add(new EditorAction {RemoveActor = true, ActorPreview = editorLayer.Add(kv.Value)});
+				undoTiles.Add(
+					new EditorAction
+					{
+						RemoveActor = true,
+						ActorPreview = editorLayer.Add(kv.Value)
+					});
 
 			if (undoTiles.Any())
 			{
 				var editorUndoRedoLayer = worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>();
 				editorUndoRedoLayer.History.Add(undoTiles.ToArray());
-				editorUndoRedoLayer.HistoryLog.Add("Copy / Pasted");
 			}
 		}
 
