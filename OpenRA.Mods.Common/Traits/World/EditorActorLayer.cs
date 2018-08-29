@@ -141,8 +141,6 @@ namespace OpenRA.Mods.Common.Traits
 
 		public void Remove(EditorActorPreview preview, bool undo = false)
 		{
-			var name = preview.Info.Name;
-
 			previews.Remove(preview);
 			screenMap.Remove(preview);
 

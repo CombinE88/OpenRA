@@ -40,7 +40,7 @@ namespace OpenRA.Mods.Common.Traits.Render
         }
     }
 
-    public class WithMoveAnimation : ConditionalTrait<WithMoveAnimationInfo>, ITick
+    public class WithMoveAnimation : ConditionalTrait<WithMoveAnimationInfo>, ITick, INotifyCreated
     {
         readonly IMove movement;
         readonly WithSpriteBody wsb;
@@ -53,7 +53,11 @@ namespace OpenRA.Mods.Common.Traits.Render
             movement = init.Self.Trait<IMove>();
             wsb = init.Self.TraitsImplementing<WithSpriteBody>().Single(w => w.Info.Name == Info.Body);
             moveanimation = info.MoveSequence;
-            harvinfo = init.Self.TraitOrDefault<WithHarvestAnimation>();
+        }
+
+        void INotifyCreated.Created(Actor self)
+        {
+            harvinfo = self.TraitOrDefault<WithHarvestAnimation>();
         }
 
         void ITick.Tick(Actor self)
