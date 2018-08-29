@@ -45,6 +45,7 @@ namespace OpenRA.Mods.Common.Traits.Render
         readonly IMove movement;
         readonly WithSpriteBody wsb;
         string moveanimation;
+        private WithHarvestAnimation harvinfo;
 
         public WithMoveAnimation(ActorInitializer init, WithMoveAnimationInfo info)
             : base(info)
@@ -52,6 +53,7 @@ namespace OpenRA.Mods.Common.Traits.Render
             movement = init.Self.Trait<IMove>();
             wsb = init.Self.TraitsImplementing<WithSpriteBody>().Single(w => w.Info.Name == Info.Body);
             moveanimation = info.MoveSequence;
+            harvinfo = init.Self.TraitOrDefault<WithHarvestAnimation>();
         }
 
         void ITick.Tick(Actor self)
@@ -74,10 +76,9 @@ namespace OpenRA.Mods.Common.Traits.Render
 
         string NormalizeMoveSequence(Actor self, string baseSequence)
         {
-            var harvinfo = self.TraitOrDefault<WithHarvestAnimation>();
             if (harvinfo != null)
             {
-                var desiredState = harvinfo.harv.Fullness * (harvinfo.Info.PrefixByFullness.Length - 1) / 100;
+                var desiredState = harvinfo.Harv.Fullness * (harvinfo.Info.PrefixByFullness.Length - 1) / 100;
                 var desiredPrefix = harvinfo.Info.PrefixByFullness[desiredState];
 
                 if (wsb.DefaultAnimation.HasSequence(desiredPrefix + baseSequence))
