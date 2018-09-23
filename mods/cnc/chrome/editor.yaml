@@ -205,6 +205,7 @@ Container@EDITOR_ROOT:
 		Container@WORLD_ROOT:
 		Container@MENU_ROOT:
 		TooltipContainer@TOOLTIP_CONTAINER:
+		ScriptNode:
 
 Container@EDITOR_WORLD_ROOT:
 	Logic: LoadIngamePerfLogic, MapEditorLogic
