@@ -607,8 +607,11 @@
     <Compile Include="Widgets\ScriptNodes\AdvancedTextFieldWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorBackgroundWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorNodeScreenWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\PipetPickActorWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ScriptNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ShowWidgetsButton.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\EditorBrushes\EditorSelectActorBrush.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\ActorInfoOutPut.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\PlayerOutPut.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\SimpleNodeWidget.cs" />
     <Compile Include="WorldExtensions.cs" />

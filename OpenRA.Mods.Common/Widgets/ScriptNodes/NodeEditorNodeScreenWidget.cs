@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -52,7 +53,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public void AddNode()
         {
-            var newNode = new SimpleNodeWidget(this);
+            var newNode = new ActorInfoOutPutWidget(this);
             AddChild(newNode);
             Nodes.Add(newNode);
         }

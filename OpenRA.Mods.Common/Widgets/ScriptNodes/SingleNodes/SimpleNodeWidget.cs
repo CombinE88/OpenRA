@@ -48,6 +48,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         readonly EditorViewportControllerWidget editor;
 
+        public string WidgetName = "General Widget";
+
         /*
         public List<AdvancedTextFieldType> TextList = new List<AdvancedTextFieldType>();
         */
@@ -69,6 +71,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             GridPosY = PosY - screen.CenterCoordinates.Y + OffsetPosY;
 
             Bounds = new Rectangle(GridPosX + OffsetPosX, GridPosY + OffsetPosY, 200 + SizeX, 150 + SizeY);
+            // Bounds = new Rectangle(0, 0, 0, 0);
 
             /*
             Textfield = new AdvancedTextFieldType();
@@ -115,6 +118,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             SizeY = Math.Max(InConnections.Count, OutConnections.Count) * 35;
             Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);
+            // Bounds = new Rectangle(0, 0, 0, 0);
 
             WidgetBackground = new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height);
             DragBar = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 1, RenderBounds.Width - 27, 25);
@@ -167,6 +171,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             }
         }
 
+        public override bool TakeMouseFocus(MouseInput mi)
+        {
+            return false;
+        }
+
+        public override bool HandleMouseInput(MouseInput mi)
+        {
+            return false;
+        }
+
+        public override bool YieldMouseFocus(MouseInput mi)
+        {
+            return false;
+        }
+
+        public override void MouseEntered()
+        {
+        }
+
+        public override void MouseExited()
+        {
+        }
+
         public override void Draw()
         {
             Game.Renderer.EnableScissor(screen.RenderBounds);
@@ -205,7 +232,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 Color.White, Color.Black, 2);
 
             var text = "X: " + (OffsetPosX + SetOffsetPosX) + " Y: " + (OffsetPosY + SetOffsetPosY);
-            screen.Snw.FontRegular.DrawTextWithShadow(text, new float2(WidgetBackground.X + 2, WidgetBackground.Y + 2),
+            screen.Snw.FontRegular.DrawTextWithShadow(text,
+                new float2(WidgetBackground.X + WidgetBackground.Width - screen.Snw.FontRegular.Measure(text).X + 2, WidgetBackground.Y + WidgetBackground.Height - 25),
+                Color.White, Color.Black, 1);
+
+            screen.Snw.FontRegular.DrawTextWithShadow(WidgetName,
+                new float2(DragBar.X + 2, DragBar.Y + 2),
                 Color.White, Color.Black, 1);
 
             foreach (var rectangle in InConnections)

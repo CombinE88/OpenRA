@@ -14,6 +14,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
 
         public PlayerOutPutWidget(NodeEditorNodeScreenWidget screen) : base(screen)
         {
+            WidgetName = "Output: Player";
+
             AddChild(playerSelection = new DropDownButtonWidget(screen.Snw.ModData));
 
             var inRecangle = new Rectangle(0, 0, 0, 0);
@@ -47,26 +49,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
 
             playerSelection.Text = selectedOwner.Name;
             playerSelection.TextColor = selectedOwner.Color.RGB;
+
+            playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, FreeWidgetEntries.Width, 25);
         }
 
         public override void Tick()
         {
             playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, FreeWidgetEntries.Width, 25);
-            outconnection.Item.Player = selectedOwner;
             base.Tick();
-        }
-
-        public override void Draw()
-        {
-            if (outconnection.Item.Player != null)
-            {
-                text = outconnection.Item.Player.Name;
-                var meassureText = screen.Snw.FontRegular.Measure(text);
-                screen.Snw.FontRegular.DrawTextWithShadow(text, new float2(outconnection.Out.Item1.X - meassureText.X - 5, outconnection.Out.Item1.X),
-                    Color.White, Color.Black, 1);
-            }
-
-            base.Draw();
         }
     }
 }
