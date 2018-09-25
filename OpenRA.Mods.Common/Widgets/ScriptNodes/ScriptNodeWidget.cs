@@ -18,7 +18,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             World = world;
             WorldRenderer = worldRenderer;
             ModData = modData;
-
             Game.Renderer.Fonts.TryGetValue("Regular", out FontRegular);
 
             Children.Add(new ShowWidgetsButtonWidget(this));
