@@ -10,6 +10,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
     {
         public NodeEditorNodeScreenWidget Screen;
 
+        // BAckground
+        public readonly string Background = "dialog";
         // Node Coordiantions in the System
         public int GridPosX;
         public int GridPosY;
@@ -205,44 +207,34 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public override void MouseExited()
         {
         }
-
-        public virtual void DrawExtra()
-        {
-        }
-
         public override void Draw()
         {
-            DrawExtra();
-
             // Debug
             WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height), Color.Brown);
             // Outer
             if (Selected)
                 WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X - 1, WidgetBackground.Y - 1, WidgetBackground.Width + 2, WidgetBackground.Height + 2), Color.Blue);
 
-            WidgetUtils.FillRectWithColor(WidgetBackground, Color.Black);
+            WidgetUtils.DrawPanel(Background, WidgetBackground);
+            // WidgetUtils.FillRectWithColor(WidgetBackground, Color.Black);
             // Drag Leiste
             WidgetUtils.FillRectWithColor(DragBar, Color.DarkGray);
             WidgetUtils.FillRectWithColor(DeleteButton, Color.DarkRed);
             WidgetUtils.FillRectWithColor(WidgetEntries, Color.DarkGray);
 
             //InconnectioNButtons
-            WidgetUtils.FillRectWithColor(new Rectangle(AddOutput.X - 1, AddOutput.Y - 1, AddOutput.Width + 1, AddOutput.Height + 1), Color.Black);
             WidgetUtils.FillRectWithColor(AddOutput, Color.DarkGray);
             Screen.Snw.FontRegular.DrawTextWithShadow("+", new float2(AddOutput.X + 2, AddOutput.Y + 2),
                 Color.White, Color.Black, 2);
 
-            WidgetUtils.FillRectWithColor(new Rectangle(RemoveOutput.X - 1, RemoveOutput.Y - 1, RemoveOutput.Width + 1, RemoveOutput.Height + 1), Color.Black);
             WidgetUtils.FillRectWithColor(RemoveOutput, Color.DarkGray);
             Screen.Snw.FontRegular.DrawTextWithShadow("-", new float2(RemoveOutput.X + 2, RemoveOutput.Y + 2),
                 Color.White, Color.Black, 2);
 
-            WidgetUtils.FillRectWithColor(new Rectangle(AddInput.X - 1, AddInput.Y - 1, AddInput.Width + 1, AddInput.Height + 1), Color.Black);
             WidgetUtils.FillRectWithColor(AddInput, Color.DarkGray);
             Screen.Snw.FontRegular.DrawTextWithShadow("+", new float2(AddInput.X + 2, AddInput.Y + 2),
                 Color.White, Color.Black, 2);
 
-            WidgetUtils.FillRectWithColor(new Rectangle(RemoveInput.X - 1, RemoveInput.Y - 1, RemoveInput.Width + 1, RemoveInput.Height + 1), Color.Black);
             WidgetUtils.FillRectWithColor(RemoveInput, Color.DarkGray);
             Screen.Snw.FontRegular.DrawTextWithShadow("-", new float2(RemoveInput.X + 2, RemoveInput.Y + 2),
                 Color.White, Color.Black, 2);

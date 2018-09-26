@@ -77,7 +77,7 @@ namespace OpenRA.Mods.Common.Traits
         {
             if (!CellRegion.Contains(add) && Mode == CellPicking.Array)
                 CellRegion.Add(add);
-            else
+            else if (Mode != CellPicking.Array)
                 CellRegion.Add(add);
         }
 
@@ -101,7 +101,7 @@ namespace OpenRA.Mods.Common.Traits
 
         void IRenderAboveWorld.RenderAboveWorld(Actor self, WorldRenderer wr)
         {
-            if (wr.World.Type != WorldType.Editor)
+            if (wr.World.Type != WorldType.Editor || Mode == CellPicking.Path)
                 return;
 
             if (CellRegion != null && CellRegion.Any())
@@ -128,12 +128,18 @@ namespace OpenRA.Mods.Common.Traits
                     {
                         if (i >= 1)
                         {
-                            wcr.DrawLine(new float3(CellRegion[i - 1].X * self.World.Map.Grid.TileSize.Width, CellRegion[i - 1].Y * self.World.Map.Grid.TileSize.Height, 1),
-                                new float3(CellRegion[i].X * self.World.Map.Grid.TileSize.Width, CellRegion[i].Y * self.World.Map.Grid.TileSize.Height, 1),
+                            wcr.DrawLine(
+                                new float3(CellRegion[i - 1].X * self.World.Map.Grid.TileSize.Width + self.World.Map.Grid.TileSize.Width / 2,
+                                    CellRegion[i - 1].Y * self.World.Map.Grid.TileSize.Height + self.World.Map.Grid.TileSize.Height / 2, 1),
+                                new float3(CellRegion[i].X * self.World.Map.Grid.TileSize.Width + self.World.Map.Grid.TileSize.Width / 2,
+                                    CellRegion[i].Y * self.World.Map.Grid.TileSize.Height + self.World.Map.Grid.TileSize.Height / 2, 1),
                                 2 + (CellRegion.Count / i) / 2,
                                 Color.Black);
-                            wcr.DrawLine(new float3(CellRegion[i - 1].X * self.World.Map.Grid.TileSize.Width, CellRegion[i - 1].Y * self.World.Map.Grid.TileSize.Height, 1),
-                                new float3(CellRegion[i].X * self.World.Map.Grid.TileSize.Width, CellRegion[i].Y * self.World.Map.Grid.TileSize.Height, 1),
+                            wcr.DrawLine(
+                                new float3(CellRegion[i - 1].X * self.World.Map.Grid.TileSize.Width + self.World.Map.Grid.TileSize.Width / 2,
+                                    CellRegion[i - 1].Y * self.World.Map.Grid.TileSize.Height + self.World.Map.Grid.TileSize.Height / 2, 1),
+                                new float3(CellRegion[i].X * self.World.Map.Grid.TileSize.Width + self.World.Map.Grid.TileSize.Width / 2,
+                                    CellRegion[i].Y * self.World.Map.Grid.TileSize.Height + self.World.Map.Grid.TileSize.Height / 2, 1),
                                 1 + (CellRegion.Count / i) / 2,
                                 Color.DarkGreen, Color.GreenYellow);
                         }

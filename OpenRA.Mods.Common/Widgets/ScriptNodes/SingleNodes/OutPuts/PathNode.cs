@@ -32,10 +32,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
             base.Tick();
         }
 
-        public override void DrawExtra()
+        public override void Draw()
         {
+            base.Draw();
+
             string text = SelectedCells != null ? "Path Length: " + SelectedCells.Count : "-- No path defined --";
-            Screen.Snw.FontRegular.DrawTextWithShadow(text, new float2(FreeWidgetEntries.X + 2, FreeWidgetEntries.Y + 50),
+            Screen.Snw.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + FreeWidgetEntries.X + 2, RenderBounds.Y + FreeWidgetEntries.Y + 50),
                 Color.White, Color.Black, 1);
         }
     }

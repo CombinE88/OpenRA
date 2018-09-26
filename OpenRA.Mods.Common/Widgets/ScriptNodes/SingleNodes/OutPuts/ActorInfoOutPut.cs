@@ -79,8 +79,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
             base.Tick();
         }
 
-        public override void DrawExtra()
+        public override void Draw()
         {
+            base.Draw();
+
             if (actor != null && actor.TraitInfoOrDefault<RenderSpritesInfo>() != null && actor.TraitInfoOrDefault<RenderSpritesInfo>().Image != null)
             {
                 var palette = worldRenderer.Palette("terrain");
