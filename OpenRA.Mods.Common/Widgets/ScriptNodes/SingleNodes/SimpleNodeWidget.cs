@@ -34,9 +34,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         // Node Connections
         public List<InConnection> InConnections = new List<InConnection>();
-        public List<Rectangle> InConnectionsR = new List<Rectangle>();
         public List<OutConnection> OutConnections = new List<OutConnection>();
-        public List<Rectangle> OutConnectionsR = new List<Rectangle>();
 
         public Rectangle AddInput;
         public Rectangle AddOutput;
@@ -150,14 +148,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             for (int i = 0; i < InConnections.Count; i++)
             {
                 var rect = new Rectangle(RenderBounds.X - 10, RenderBounds.Y + splitHeight * (i + 1), 20, 20);
-                InConnectionsR[i] = rect;
+                OutConnections[i].InWidgetPosition = rect;
             }
 
             splitHeight = RenderBounds.Height / (OutConnections.Count + 1);
             for (int i = 0; i < OutConnections.Count; i++)
             {
                 var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 10, RenderBounds.Y + splitHeight * (i + 1), 20, 20);
-                OutConnectionsR[i] = rect;
+                OutConnections[i].InWidgetPosition = rect;
             }
 
             for (int i = 0; i < InConnections.Count; i++)
@@ -174,6 +172,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 }
             }
+        }
+
+        public override void DrawOuter()
+        {
+            Game.Renderer.EnableScissor(Screen.RenderBounds);
+
+            base.DrawOuter();
+
+            Game.Renderer.DisableScissor();
         }
 
         public override bool TakeMouseFocus(MouseInput mi)
@@ -205,8 +212,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public override void Draw()
         {
-            Game.Renderer.EnableScissor(Screen.RenderBounds);
-
             DrawExtra();
 
             // Debug
@@ -253,12 +258,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             for (int i = 0; i < InConnections.Count; i++)
             {
-                WidgetUtils.FillEllipseWithColor(InConnectionsR[i], InConnections[i].color);
+                WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, InConnections[i].color);
             }
 
             for (int i = 0; i < OutConnections.Count; i++)
             {
-                WidgetUtils.FillEllipseWithColor(OutConnectionsR[i], OutConnections[i].color);
+                WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].color);
             }
 
             for (int i = 0; i < InConnections.Count; i++)
@@ -266,7 +271,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 if (InConnections[i].In != null)
                 {
                     var found = false;
-                    Point conin = InConnectionsR[i].Location;
+                    Point conin = OutConnections[i].InWidgetPosition.Location;
                     Point conout = conin;
                     foreach (var node in Screen.Nodes)
                     {
@@ -274,7 +279,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                         {
                             if (node.OutConnections[j] == InConnections[i].In)
                             {
-                                conout = node.OutConnectionsR[j].Location;
+                                conout = node.OutConnections[j].InWidgetPosition.Location;
                                 found = true;
                                 break;
                             }
@@ -293,9 +298,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 }
             }
-
-
-            Game.Renderer.DisableScissor();
         }
     }
 }

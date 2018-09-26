@@ -19,9 +19,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
             startPath.OnClick = () => { Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Single, this, Editor, screen.Snw.WorldRenderer)); };
 
             var inRecangle = new Rectangle(0, 0, 0, 0);
-            outconnection = new OutConnection(ConnectionType.CellArray, this);
+            outconnection = new OutConnection(ConnectionType.Location, this);
             OutConnections.Add(outconnection);
-            OutConnectionsR.Add(inRecangle);
+            outconnection.InWidgetPosition = inRecangle;
         }
 
         public override void Tick()

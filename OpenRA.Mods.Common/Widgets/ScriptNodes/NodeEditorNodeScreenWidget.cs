@@ -117,7 +117,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {
                     for (int i = 0; i < node.InConnections.Count; i++)
                     {
-                        if (node.InConnectionsR[i].Contains(mi.Location) && currentBrush == NodeBrush.Connecting && BrushItem != null)
+                        if (node.OutConnections[i].InWidgetPosition.Contains(mi.Location) && currentBrush == NodeBrush.Connecting && BrushItem != null)
                         {
                             node.InConnections[i].In = BrushItem.Item2;
                         }
@@ -183,16 +183,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             if (currentBrush == NodeBrush.Frame)
             {
-                if (selectionStart.X > mi.Location.X)
-                {
-                    selectionEnd = selectionStart - mi.Location;
-                    selectionRectangle = new Rectangle(mi.Location.X, mi.Location.Y, selectionEnd.X, selectionEnd.Y);
-                }
-                else
-                {
-                    selectionEnd = mi.Location - selectionStart;
-                    selectionRectangle = new Rectangle(selectionStart.X, selectionStart.Y, selectionEnd.X, selectionEnd.Y);
-                }
+                var sizeX = Math.Max(selectionStart.X, mi.Location.X) - Math.Min(selectionStart.X, mi.Location.X);
+                var sizeY = Math.Max(selectionStart.Y, mi.Location.Y) - Math.Min(selectionStart.Y, mi.Location.Y);
+
+                selectionRectangle = new Rectangle(Math.Max(selectionStart.X, mi.Location.X), Math.Max(selectionStart.Y, mi.Location.Y), sizeX, sizeY);
             }
 
             oldCursorPosition = mi.Location;
@@ -276,22 +270,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             foreach (var node in Nodes)
             {
-
                 for (int i = 0; i < node.OutConnections.Count; i++)
                 {
-
-                    if (node.OutConnectionsR[i].Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && currentBrush == NodeBrush.Free)
+                    if (node.OutConnections[i].InWidgetPosition.Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down &&
+                        currentBrush == NodeBrush.Free)
                     {
                         currentBrush = NodeBrush.Connecting;
-                        BrushItem = new Tuple<Rectangle, OutConnection>(node.OutConnectionsR[i],node.OutConnections[i]); ;
+                        BrushItem = new Tuple<Rectangle, OutConnection>(node.OutConnections[i].InWidgetPosition, node.OutConnections[i]);
+                        ;
                         return true;
                     }
                 }
 
                 for (int i = 0; i < node.InConnections.Count; i++)
                 {
-
-                    if (node.InConnectionsR[i].Contains(mi.Location)
+                    if (node.OutConnections[i].InWidgetPosition.Contains(mi.Location)
                         && mi.Button == MouseButton.Right
                         && mi.Event == MouseInputEvent.Down
                         && currentBrush == NodeBrush.Free
@@ -337,9 +330,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             if (currentBrush == NodeBrush.Frame)
             {
-                WidgetUtils.FillRectWithColor(selectionRectangle, Color.White);
-                WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X + selectionRectangle.X + 2,RenderBounds.Y +  selectionRectangle.Y + 2, selectionRectangle.Width - 4, selectionRectangle.Height - 4),
-                    Color.DarkGray);
+                WidgetUtils.FillRectWithColor(selectionRectangle, Color.FromArgb(100, 255, 255, 255));
             }
         }
     }

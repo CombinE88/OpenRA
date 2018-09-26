@@ -21,7 +21,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
             var inRecangle = new Rectangle(0, 0, 0, 0);
             outconnection = new OutConnection(ConnectionType.CellArray, this);
             OutConnections.Add(outconnection);
-            OutConnectionsR.Add(inRecangle);
+            outconnection.InWidgetPosition = inRecangle;
         }
 
         public override void Tick()
@@ -35,7 +35,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
         public override void DrawExtra()
         {
             string text = SelectedCells != null ? "Path Length: " + SelectedCells.Count : "-- No path defined --";
-            Screen.Snw.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + FreeWidgetEntries.X + 2,RenderBounds.Y +  FreeWidgetEntries.Y + 50),
+            Screen.Snw.FontRegular.DrawTextWithShadow(text, new float2(FreeWidgetEntries.X + 2, FreeWidgetEntries.Y + 50),
                 Color.White, Color.Black, 1);
         }
     }

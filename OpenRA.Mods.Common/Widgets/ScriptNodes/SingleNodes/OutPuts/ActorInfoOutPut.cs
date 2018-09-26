@@ -33,7 +33,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
             var inRecangle = new Rectangle(0, 0, 0, 0);
             outconnection = new OutConnection(ConnectionType.ActorInfo, this);
             OutConnections.Add(outconnection);
-            OutConnectionsR.Add(inRecangle);
+            outconnection.InWidgetPosition = inRecangle;
 
             ruleActors = screen.Snw.World.Map.Rules.Actors;
             selectedOwner = ruleActors.First().Value;

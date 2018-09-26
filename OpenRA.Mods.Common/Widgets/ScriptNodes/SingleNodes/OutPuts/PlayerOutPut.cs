@@ -20,7 +20,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
             var inRecangle = new Rectangle(0, 0, 0, 0);
             outconnection = new OutConnection(ConnectionType.Player, this);
             OutConnections.Add(outconnection);
-            OutConnectionsR.Add(inRecangle);
+            outconnection.InWidgetPosition = inRecangle;
 
             var editorLayer = screen.Snw.World.WorldActor.Trait<EditorActorLayer>();
 

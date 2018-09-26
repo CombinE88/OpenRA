@@ -12,6 +12,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public readonly SimpleNodeWidget Widget;
         public readonly string ConnecitonName;
 
+        public Rectangle InWidgetPosition;
+
         public ConnectionType conTyp = ConnectionType.Undefined;
         public OutConnection In;
         public Color color;
@@ -66,6 +68,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public readonly string ConnecitonName;
         public readonly ConnectionType conTyp = ConnectionType.Undefined;
         public readonly SimpleNodeWidget Widget;
+
+        public Rectangle InWidgetPosition;
 
         public InConnection Out;
         public Color color;
