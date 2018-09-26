@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using OpenRA.Widgets;
 
@@ -7,7 +8,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     {
         public ScriptNodeWidget Snw;
         NodeEditorNodeScreenWidget screenWidget;
-        AddNewNodeWidget testAdd;
+        List<ButtonWidget> Buttons = new List<ButtonWidget>();
 
         [ObjectCreator.UseCtor]
         public NodeEditorBackgroundWidget(ScriptNodeWidget snw)
@@ -15,7 +16,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             Snw = snw;
 
             Children.Add(screenWidget = new NodeEditorNodeScreenWidget(Snw, this));
-            Children.Add(testAdd = new AddNewNodeWidget(Snw, screenWidget, this));
+
+            Bounds = new Rectangle(100, 100, Snw.RenderBounds.Width - 200, Snw.RenderBounds.Height - 200);
+
+            for (int i = 0; i < 5; i++)
+            {
+                var button = new ButtonWidget(snw.ModData);
+                Buttons.Add(button);
+                button.Bounds = new Rectangle(5, 5 + i * 26, 115, 25);
+                AddChild(button);
+            }
+
+            Buttons[0].OnClick = () => { screenWidget.AddNode(NodeType.ActorOutPut); };
+            Buttons[0].Text = "Add Actor Output";
+            Buttons[1].OnClick = () => { screenWidget.AddNode(NodeType.PathNode); };
+            Buttons[1].Text = "Add Path Output";
+            Buttons[2].OnClick = () => { screenWidget.AddNode(NodeType.PlayerOutput); };
+            Buttons[2].Text = "Add Player Output";
+            Buttons[3].OnClick = () => { screenWidget.AddNode(NodeType.LocationOutput); };
+            Buttons[3].Text = "Add Location Output";
+            Buttons[4].OnClick = () => { screenWidget.AddNode(NodeType.CelLArrayOutput); };
+            Buttons[4].Text = "Add Cell Array Output";
         }
 
         public override void Tick()

@@ -10,7 +10,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
         private DropDownButtonWidget playerSelection;
         PlayerReference selectedOwner;
         OutConnection outconnection;
-        string text;
 
         public PlayerOutPutWidget(NodeEditorNodeScreenWidget screen) : base(screen)
         {
@@ -20,7 +19,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
 
             var inRecangle = new Rectangle(0, 0, 0, 0);
             outconnection = new OutConnection(ConnectionType.Player, this);
-            OutConnections.Add(new Tuple<Rectangle, OutConnection>(inRecangle, outconnection));
+            OutConnections.Add(outconnection);
+            OutConnectionsR.Add(inRecangle);
 
             var editorLayer = screen.Snw.World.WorldActor.Trait<EditorActorLayer>();
 
@@ -55,6 +55,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
 
         public override void Tick()
         {
+            outconnection.Player = selectedOwner;
             playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, FreeWidgetEntries.Width, 25);
             base.Tick();
         }

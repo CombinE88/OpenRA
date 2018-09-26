@@ -13,7 +13,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
         private DropDownButtonWidget playerSelection;
         ActorInfo selectedOwner;
         OutConnection outconnection;
-        string text;
         IReadOnlyDictionary<string, ActorInfo> ruleActors;
         TextFieldWidget textfield;
         ScrollItemWidget actorTemplate;
@@ -33,7 +32,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
 
             var inRecangle = new Rectangle(0, 0, 0, 0);
             outconnection = new OutConnection(ConnectionType.ActorInfo, this);
-            OutConnections.Add(new Tuple<Rectangle, OutConnection>(inRecangle, outconnection));
+            OutConnections.Add(outconnection);
+            OutConnectionsR.Add(inRecangle);
 
             ruleActors = screen.Snw.World.Map.Rules.Actors;
             selectedOwner = ruleActors.First().Value;
@@ -62,27 +62,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
 
                 actors = actors.OrderBy(a => a.TraitInfo<TooltipInfo>().Name);
                 playerSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, actors, setupItem);
+
+                actor = ruleActors.Values.FirstOrDefault(a => a.Name == selectedOwner.Name);
             };
             playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
-            ;
+
             playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
             textfield.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, FreeWidgetEntries.Width, 25);
         }
 
         public override void Tick()
         {
-            actor = ruleActors.Values.FirstOrDefault(a => a.Name == selectedOwner.Name);
-            if (actor != null)
-            {
-                // outconnection.Item.ActorInfo = actor;
-            }
-
-            playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
+            outconnection.ActorInfo = selectedOwner;
+            playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 35, FreeWidgetEntries.Width, 25);
             textfield.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, FreeWidgetEntries.Width, 25);
             base.Tick();
         }
 
-        public override void Draw()
+        public override void DrawExtra()
         {
             if (actor != null && actor.TraitInfoOrDefault<RenderSpritesInfo>() != null && actor.TraitInfoOrDefault<RenderSpritesInfo>().Image != null)
             {
@@ -90,11 +87,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
                 var animation = new Animation(world, actor.TraitInfoOrDefault<RenderSpritesInfo>().Image);
 
                 animation.PlayFetchIndex("idle", () => 0);
-                WidgetUtils.DrawSHPCentered(animation.Image, new float2(FreeWidgetEntries.X, FreeWidgetEntries.Y + 50), palette);
+                WidgetUtils.DrawSHPCentered(animation.Image, new float2(RenderBounds.X + FreeWidgetEntries.X, RenderBounds.Y + FreeWidgetEntries.Y + 50), palette);
             }
-
-
-            base.Draw();
         }
     }
 }

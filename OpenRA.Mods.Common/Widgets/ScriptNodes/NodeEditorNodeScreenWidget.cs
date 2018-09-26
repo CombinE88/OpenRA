@@ -8,6 +8,15 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
+    public enum NodeType
+    {
+        ActorOutPut,
+        PathNode,
+        PlayerOutput,
+        LocationOutput,
+        CelLArrayOutput
+    }
+
     public class NodeEditorNodeScreenWidget : Widget
     {
         public NodeEditorBackgroundWidget Bgw;
@@ -29,7 +38,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Tuple<Rectangle, OutConnection> BrushItem = null;
         SimpleNodeWidget nodeBrush = null;
 
-        List<SimpleNodeWidget> Nodes = new List<SimpleNodeWidget>();
+        public List<SimpleNodeWidget> Nodes = new List<SimpleNodeWidget>();
 
         // SelectioNFrame
         List<SimpleNodeWidget> selectedNodes = new List<SimpleNodeWidget>();
@@ -51,11 +60,38 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             CorrectCenterCoordinates = new int2((RenderBounds.Width / 2) + CenterCoordinates.X, (RenderBounds.Height / 2) + CenterCoordinates.Y);
         }
 
-        public void AddNode()
+        public void AddNode(NodeType nodeType)
         {
-            var newNode = new ActorInfoOutPutWidget(this);
-            AddChild(newNode);
-            Nodes.Add(newNode);
+            if (nodeType == NodeType.ActorOutPut)
+            {
+                var newNode = new ActorInfoOutPutWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.PathNode)
+            {
+                var newNode = new PathNodeWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.PlayerOutput)
+            {
+                var newNode = new PlayerOutPutWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.LocationOutput)
+            {
+                var newNode = new LocationOutputWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.CelLArrayOutput)
+            {
+                var newNode = new CellArrayWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
         }
 
         public void DeleteNode(SimpleNodeWidget widget)
@@ -79,11 +115,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 foreach (var node in Nodes)
                 {
-                    foreach (var connection in node.InConnections)
+                    for (int i = 0; i < node.InConnections.Count; i++)
                     {
-                        if (connection.Item1.Contains(mi.Location) && currentBrush == NodeBrush.Connecting && BrushItem != null)
+                        if (node.InConnectionsR[i].Contains(mi.Location) && currentBrush == NodeBrush.Connecting && BrushItem != null)
                         {
-                            connection.Item2.In = BrushItem;
+                            node.InConnections[i].In = BrushItem.Item2;
                         }
                     }
                 }
@@ -168,6 +204,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             foreach (var node in Nodes)
             {
+                if (currentBrush == NodeBrush.Node && nodeBrush == node)
+                {
+                    node.NewOffset = node.CursorLocation - mi.Location;
+                    node.OffsetPosX -= node.NewOffset.X;
+                    node.OffsetPosY -= node.NewOffset.Y;
+                    node.CursorLocation = mi.Location;
+                    return true;
+                }
+
+                if (currentBrush == NodeBrush.MoveFrame)
+                {
+                    foreach (var subnode in selectedNodes)
+                    {
+                        subnode.NewOffset = subnode.CursorLocation - mi.Location;
+                        subnode.OffsetPosX -= subnode.NewOffset.X;
+                        subnode.OffsetPosY -= subnode.NewOffset.Y;
+                        subnode.CursorLocation = mi.Location;
+                    }
+
+                    return true;
+                }
+
                 if (node.WidgetBackground.Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && currentBrush == NodeBrush.Free)
                 {
                     if (node.DeleteButton.Contains(mi.Location))
@@ -209,28 +267,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         }
                     }
                 }
-
-                if (currentBrush == NodeBrush.Node && nodeBrush == node)
-                {
-                    node.NewOffset = node.CursorLocation - mi.Location;
-                    node.OffsetPosX -= node.NewOffset.X;
-                    node.OffsetPosY -= node.NewOffset.Y;
-                    node.CursorLocation = mi.Location;
-                    return true;
-                }
-
-                if (currentBrush == NodeBrush.MoveFrame)
-                {
-                    foreach (var subnode in selectedNodes)
-                    {
-                        subnode.NewOffset = subnode.CursorLocation - mi.Location;
-                        subnode.OffsetPosX -= subnode.NewOffset.X;
-                        subnode.OffsetPosY -= subnode.NewOffset.Y;
-                        subnode.CursorLocation = mi.Location;
-                    }
-
-                    return true;
-                }
             }
 
             return false;
@@ -240,27 +276,34 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             foreach (var node in Nodes)
             {
-                foreach (var connection in node.OutConnections)
+
+                for (int i = 0; i < node.OutConnections.Count; i++)
                 {
-                    if (connection.Item1.Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && currentBrush == NodeBrush.Free)
+
+                    if (node.OutConnectionsR[i].Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && currentBrush == NodeBrush.Free)
                     {
                         currentBrush = NodeBrush.Connecting;
-                        BrushItem = connection;
+                        BrushItem = new Tuple<Rectangle, OutConnection>(node.OutConnectionsR[i],node.OutConnections[i]); ;
+                        return true;
+                    }
+                }
+
+                for (int i = 0; i < node.InConnections.Count; i++)
+                {
+
+                    if (node.InConnectionsR[i].Contains(mi.Location)
+                        && mi.Button == MouseButton.Right
+                        && mi.Event == MouseInputEvent.Down
+                        && currentBrush == NodeBrush.Free
+                        && node.InConnections[i].In != null)
+                    {
+                        node.InConnections[i].In = null;
                         return true;
                     }
                 }
 
                 foreach (var connection in node.InConnections)
                 {
-                    if (connection.Item1.Contains(mi.Location)
-                        && mi.Button == MouseButton.Right
-                        && mi.Event == MouseInputEvent.Down
-                        && currentBrush == NodeBrush.Free
-                        && connection.Item2.In != null)
-                    {
-                        connection.Item2.In = null;
-                        return true;
-                    }
                 }
             }
 
@@ -295,7 +338,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (currentBrush == NodeBrush.Frame)
             {
                 WidgetUtils.FillRectWithColor(selectionRectangle, Color.White);
-                WidgetUtils.FillRectWithColor(new Rectangle(selectionRectangle.X + 2, selectionRectangle.Y + 2, selectionRectangle.Width - 4, selectionRectangle.Height - 4),
+                WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X + selectionRectangle.X + 2,RenderBounds.Y +  selectionRectangle.Y + 2, selectionRectangle.Width - 4, selectionRectangle.Height - 4),
                     Color.DarkGray);
             }
         }
