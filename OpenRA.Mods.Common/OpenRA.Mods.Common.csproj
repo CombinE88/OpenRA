@@ -612,6 +612,7 @@
     <Compile Include="Widgets\ScriptNodes\PipetPickActorWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ScriptNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ShowWidgetsButton.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\GameInfluenceNodes\CreateActorNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\ActorInfoOutPut.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\CellArray.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\LocationOutput.cs" />
@@ -942,6 +943,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Widgets\ScriptNodes\NodeLogics" />
+    <Folder Include="Widgets\ScriptNodes\SingleNodes\InputNodes" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">

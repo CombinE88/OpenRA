@@ -2,8 +2,10 @@ using System;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Graphics;
+using OpenRA.Mods.Common.Graphics;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Traits.Render;
+using OpenRA.Primitives;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
@@ -46,6 +48,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
 
                     playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
                     playerSelection.TextColor = Color.White;
+
+                    actor = selectedOwner;
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => option.TraitInfo<TooltipInfo>().Name;
@@ -62,11 +66,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
 
                 actors = actors.OrderBy(a => a.TraitInfo<TooltipInfo>().Name);
                 playerSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, actors, setupItem);
-
-                actor = ruleActors.Values.FirstOrDefault(a => a.Name == selectedOwner.Name);
             };
-            playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
 
+            playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
             playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
             textfield.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, FreeWidgetEntries.Width, 25);
         }
@@ -83,13 +85,32 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
         {
             base.Draw();
 
-            if (actor != null && actor.TraitInfoOrDefault<RenderSpritesInfo>() != null && actor.TraitInfoOrDefault<RenderSpritesInfo>().Image != null)
+            if (actor != null &&  actor.TraitInfoOrDefault<RenderSpritesInfo>() != null &&  actor.TraitInfoOrDefault<RenderSpritesInfo>().Image != null)
             {
-                var palette = worldRenderer.Palette("terrain");
-                var animation = new Animation(world, actor.TraitInfoOrDefault<RenderSpritesInfo>().Image);
+                var td = new TypeDictionary()
+                {
+                    new OwnerInit("Neutral"),
+                    new FacingInit(190),
+                    new TurretFacingInit(130)
+                };
+                var init = new ActorPreviewInitializer(actor, worldRenderer, td);
 
-                animation.PlayFetchIndex("idle", () => 0);
-                WidgetUtils.DrawSHPCentered(animation.Image, new float2(RenderBounds.X + FreeWidgetEntries.X, RenderBounds.Y + FreeWidgetEntries.Y + 50), palette);
+                var origin = RenderOrigin + new int2(RenderBounds.Size.Width / 2, RenderBounds.Size.Height / 2);
+
+
+                Game.Renderer.Flush();
+                Game.Renderer.SetViewportParams(-origin - new int2(RenderBounds.X + FreeWidgetEntries.X + 50, RenderBounds.Y + FreeWidgetEntries.Y + 100), 1f);
+
+                actor.TraitInfoOrDefault<RenderSpritesInfo>().RenderPreview(init);
+
+                Game.Renderer.Flush();
+                Game.Renderer.SetViewportParams(worldRenderer.Viewport.TopLeft, worldRenderer.Viewport.Zoom);
+
+                // var palette = worldRenderer.Palette("terrain");
+                // var animation = new Animation(world, actor.TraitInfoOrDefault<RenderSpritesInfo>().Image);
+
+                // animation.PlayFetchIndex("idle", () => 0);
+                // WidgetUtils.DrawSHPCentered(animation.Image, new float2(RenderBounds.X + FreeWidgetEntries.X + 50, RenderBounds.Y + FreeWidgetEntries.Y + 100), palette);
             }
         }
     }

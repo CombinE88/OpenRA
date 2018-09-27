@@ -6,6 +6,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
     public class NodeEditorBackgroundWidget : Widget
     {
+        // Background
+        public readonly string Background = "panel-black";
+
         public ScriptNodeWidget Snw;
         NodeEditorNodeScreenWidget screenWidget;
         List<ButtonWidget> Buttons = new List<ButtonWidget>();
@@ -19,7 +22,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             Bounds = new Rectangle(100, 100, Snw.RenderBounds.Width - 200, Snw.RenderBounds.Height - 200);
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 6; i++)
             {
                 var button = new ButtonWidget(snw.ModData);
                 Buttons.Add(button);
@@ -37,6 +40,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             Buttons[3].Text = "Add Location Output";
             Buttons[4].OnClick = () => { screenWidget.AddNode(NodeType.CelLArrayOutput); };
             Buttons[4].Text = "Add Cell Array Output";
+            Buttons[5].OnClick = () => { screenWidget.AddNode(NodeType.ActorInfluence); };
+            Buttons[5].Text = "Add CreateActor Influence";
         }
 
         public override void Tick()
@@ -56,8 +61,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override void Draw()
         {
-            WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6), Color.Black);
-            WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height), Color.DarkGray);
+            WidgetUtils.DrawPanel(Background, new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
+            // WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6), Color.Black);
+            // WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height), Color.DarkGray);
         }
     }
 }

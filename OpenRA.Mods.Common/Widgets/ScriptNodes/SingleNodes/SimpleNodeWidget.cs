@@ -11,7 +11,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public NodeEditorNodeScreenWidget Screen;
 
         // BAckground
+        public readonly string BackgroundDrag = "button-highlighted";
+        public readonly string BackgroundCross = "button";
+        public readonly string BackgroundEntries = "button-pressed";
+
         public readonly string Background = "dialog";
+
         // Node Coordiantions in the System
         public int GridPosX;
         public int GridPosY;
@@ -125,7 +130,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);
             // Bounds = new Rectangle(0, 0, 0, 0);
 
-            WidgetBackground = new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height);
+            WidgetBackground = new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6);
             DragBar = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 1, RenderBounds.Width - 27, 25);
             DeleteButton = new Rectangle(RenderBounds.X + RenderBounds.Width - 26, RenderBounds.Y + 1, 25, 25);
             WidgetEntries = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 27, RenderBounds.Width - 2, RenderBounds.Height - 28);
@@ -149,30 +154,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             var splitHeight = RenderBounds.Height / (InConnections.Count + 1);
             for (int i = 0; i < InConnections.Count; i++)
             {
-                var rect = new Rectangle(RenderBounds.X - 10, RenderBounds.Y + splitHeight * (i + 1), 20, 20);
-                OutConnections[i].InWidgetPosition = rect;
+                var rect = new Rectangle(RenderBounds.X - 15, RenderBounds.Y + splitHeight * (i + 1), 20, 20);
+                InConnections[i].InWidgetPosition = rect;
             }
 
             splitHeight = RenderBounds.Height / (OutConnections.Count + 1);
             for (int i = 0; i < OutConnections.Count; i++)
             {
-                var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 10, RenderBounds.Y + splitHeight * (i + 1), 20, 20);
+                var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 5, RenderBounds.Y + splitHeight * (i + 1), 20, 20);
                 OutConnections[i].InWidgetPosition = rect;
             }
 
-            for (int i = 0; i < InConnections.Count; i++)
+            foreach (var connection in OutConnections)
             {
-                if (InConnections[i].In != null)
-                {
-                    var widgetConnections = InConnections[i].In.Out.Widget.OutConnections;
-                    foreach (var outCons in widgetConnections)
-                    {
-                        if (InConnections[i].In != null && outCons.Out == InConnections[i].In.Out && outCons.Out == null)
-                            InConnections[i].In = null;
-                        else if (InConnections[i].In != null && outCons.Out == InConnections[i].In.Out)
-                            InConnections[i].In = outCons;
-                    }
-                }
+                if (connection.Out != null && connection.Out.In == connection)
+                    connection.Out.In = connection;
             }
         }
 
@@ -207,6 +203,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public override void MouseExited()
         {
         }
+
         public override void Draw()
         {
             // Debug
@@ -218,9 +215,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             WidgetUtils.DrawPanel(Background, WidgetBackground);
             // WidgetUtils.FillRectWithColor(WidgetBackground, Color.Black);
             // Drag Leiste
-            WidgetUtils.FillRectWithColor(DragBar, Color.DarkGray);
-            WidgetUtils.FillRectWithColor(DeleteButton, Color.DarkRed);
-            WidgetUtils.FillRectWithColor(WidgetEntries, Color.DarkGray);
+            // WidgetUtils.FillRectWithColor(DragBar, Color.DarkGray);
+            // WidgetUtils.FillRectWithColor(DeleteButton, Color.DarkRed);
+            // WidgetUtils.FillRectWithColor(WidgetEntries, Color.DarkGray);
+
+            WidgetUtils.DrawPanel(BackgroundDrag, DragBar);
+            WidgetUtils.DrawPanel(BackgroundCross, DeleteButton);
+            WidgetUtils.DrawPanel(BackgroundEntries, WidgetEntries);
 
             //InconnectioNButtons
             WidgetUtils.FillRectWithColor(AddOutput, Color.DarkGray);
@@ -241,7 +242,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             var text = "X: " + (OffsetPosX + SetOffsetPosX) + " Y: " + (OffsetPosY + SetOffsetPosY);
             Screen.Snw.FontRegular.DrawTextWithShadow(text,
-                new float2(WidgetBackground.X + WidgetBackground.Width - Screen.Snw.FontRegular.Measure(text).X + 2, WidgetBackground.Y + WidgetBackground.Height - 25),
+                new float2(WidgetBackground.X + WidgetBackground.Width - Screen.Snw.FontRegular.Measure(text).X - 10, WidgetBackground.Y + WidgetBackground.Height - 25),
                 Color.White, Color.Black, 1);
 
             Screen.Snw.FontRegular.DrawTextWithShadow(WidgetName,
@@ -250,12 +251,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             for (int i = 0; i < InConnections.Count; i++)
             {
-                WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, InConnections[i].color);
+                WidgetUtils.FillEllipseWithColor(
+                    new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1, InConnections[i].InWidgetPosition.Width + 2,
+                        InConnections[i].InWidgetPosition.Width + 2), Color.Black);
+                WidgetUtils.FillEllipseWithColor(InConnections[i].InWidgetPosition, InConnections[i].color);
+                WidgetUtils.FillEllipseWithColor(
+                    new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2, InConnections[i].InWidgetPosition.Width - 4,
+                        InConnections[i].InWidgetPosition.Width - 4), Color.Black);
             }
 
             for (int i = 0; i < OutConnections.Count; i++)
             {
+                WidgetUtils.FillEllipseWithColor(
+                    new Rectangle(OutConnections[i].InWidgetPosition.X - 1, OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
+                        OutConnections[i].InWidgetPosition.Width + 2), Color.Black);
                 WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].color);
+                WidgetUtils.FillEllipseWithColor(
+                    new Rectangle(OutConnections[i].InWidgetPosition.X + 2, OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
+                        OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
             }
 
             for (int i = 0; i < InConnections.Count; i++)
@@ -263,7 +276,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 if (InConnections[i].In != null)
                 {
                     var found = false;
-                    Point conin = OutConnections[i].InWidgetPosition.Location;
+                    Point conin = InConnections[i].InWidgetPosition.Location;
                     Point conout = conin;
                     foreach (var node in Screen.Nodes)
                     {
@@ -284,8 +297,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     if (found)
                     {
                         Game.Renderer.RgbaColorRenderer.DrawLine(
-                            new int2(conout.X + 5, conout.Y + 5),
-                            new int2(conin.X + 5, conin.Y + 5),
+                            new int2(conout.X + 10, conout.Y + 10),
+                            new int2(conin.X + 10, conin.Y + 10),
                             2, InConnections[i].color);
                     }
                 }

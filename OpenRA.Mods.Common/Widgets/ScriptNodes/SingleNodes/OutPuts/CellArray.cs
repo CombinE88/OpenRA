@@ -13,7 +13,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
 
         public CellArrayWidget(NodeEditorNodeScreenWidget screen) : base(screen)
         {
-            WidgetName = "Output: Cell Path";
+            WidgetName = "Output: Cell Array";
             AddChild(startPath = new ButtonWidget(screen.Snw.ModData));
             startPath.Text = "Select Cells";
             startPath.OnClick = () => { Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Array, this, Editor, screen.Snw.WorldRenderer)); };

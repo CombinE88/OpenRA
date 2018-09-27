@@ -45,7 +45,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
             {
                 var owners = editorLayer.Players.Players.Values.OrderBy(p => p.Name);
                 playerSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, owners, setupItem);
-                };
+            };
 
             playerSelection.Text = selectedOwner.Name;
             playerSelection.TextColor = selectedOwner.Color.RGB;
