@@ -31,10 +31,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             AddChild(textfield = new TextFieldWidget());
             AddChild(actorTemplate = new ScrollItemWidget(screen.Snw.ModData));
 
-            var inRecangle = new Rectangle(0, 0, 0, 0);
             outconnection = new OutConnection(ConnectionType.ActorInfo, this);
             OutConnections.Add(outconnection);
-            outconnection.InWidgetPosition = inRecangle;
 
             ruleActors = screen.Snw.World.Map.Rules.Actors;
             selectedOwner = ruleActors.First().Value;
@@ -86,19 +84,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             if (actor != null &&  actor.TraitInfoOrDefault<RenderSpritesInfo>() != null &&  actor.TraitInfoOrDefault<RenderSpritesInfo>().Image != null)
             {
-                var td = new TypeDictionary()
+                var td = new TypeDictionary
                 {
                     new OwnerInit("Neutral"),
                     new FacingInit(190),
                     new TurretFacingInit(130)
                 };
-                var init = new ActorPreviewInitializer(actor, worldRenderer, td);
 
+                var init = new ActorPreviewInitializer(actor, worldRenderer, td);
                 var origin = RenderOrigin + new int2(RenderBounds.Size.Width / 2, RenderBounds.Size.Height / 2);
 
-
                 Game.Renderer.Flush();
-                Game.Renderer.SetViewportParams(-origin - new int2(RenderBounds.X + FreeWidgetEntries.X + 50, RenderBounds.Y + FreeWidgetEntries.Y + 100), 1f);
+                Game.Renderer.SetViewportParams(-origin - new int2(RenderBounds.X + 50, RenderBounds.Y + 100), 1f);
 
                 actor.TraitInfoOrDefault<RenderSpritesInfo>().RenderPreview(init);
 

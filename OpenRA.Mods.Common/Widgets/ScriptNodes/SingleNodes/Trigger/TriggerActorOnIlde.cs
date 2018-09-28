@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Trigger
 {
     public class ActorTriggerOnIldeWidget : SimpleNodeWidget
     {
@@ -12,6 +12,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
             AddChild(checkBox = new CheckboxWidget(screen.Snw.ModData));
             checkBox.Text = "Repeated";
+            checkBox.IsChecked = () => { return true; };
 
             var inRecangle = new Rectangle(0, 0, 0, 0);
             InConnections.Add(new InConnection(ConnectionType.Actor, this) { InWidgetPosition = inRecangle });

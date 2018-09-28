@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorArrayNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetic;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Trigger;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -18,6 +21,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         LocationOutput,
         CellArrayOutput,
         CellRange,
+        InfoStrings,
 
         // Actor
         CreateActor,
@@ -29,7 +33,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         // Trigger
         ActorKilledTrigger,
         ActorIdleTrigger,
-        MathTimerTrigger
+        MathTimerTrigger,
+
+        // Acto Groups
+        DefineGroup,
+        FindActorsInCircle,
+        FindActorsOnCells,
+
+        // Arithmetic
+        SelectBy,
+        Select
     }
 
     public class NodeEditorNodeScreenWidget : Widget
@@ -116,6 +129,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
+            else if (nodeType == NodeType.InfoStrings)
+            {
+                var newNode = new InfoStringsWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
 
             // Actor
             else if (nodeType == NodeType.CreateActor)
@@ -165,6 +184,40 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             else if (nodeType == NodeType.MathTimerTrigger)
             {
                 var newNode = new MAthTimerTriggerWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            //Groups
+            else if (nodeType == NodeType.DefineGroup)
+            {
+                var newNode = new ActorGroupWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.FindActorsInCircle)
+            {
+                var newNode = new FindActorsInCircle(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.FindActorsOnCells)
+            {
+                var newNode = new FindActorsOnCells(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            // Arithmetics
+            else if (nodeType == NodeType.SelectBy)
+            {
+                var newNode = new SelectByWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.Select)
+            {
+                var newNode = new SelectWidget(this);
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }

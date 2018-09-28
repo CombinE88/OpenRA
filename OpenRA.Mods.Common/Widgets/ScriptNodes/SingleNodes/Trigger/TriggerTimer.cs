@@ -13,6 +13,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
             AddChild(checkBox = new CheckboxWidget(screen.Snw.ModData));
             checkBox.Text = "Repeated";
+            checkBox.IsChecked = () => { return true; };
+
             AddChild(textField = new TextFieldWidget());
             textField.Type = TextFieldType.Integer;
 
@@ -24,7 +26,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
         public override void Tick()
         {
             checkBox.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 0, FreeWidgetEntries.Width, 25);
-            checkBox.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
+            textField.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
             base.Tick();
         }
 
