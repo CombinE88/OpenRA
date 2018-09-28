@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -10,8 +12,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public readonly string Background = "panel-black";
 
         public ScriptNodeWidget Snw;
-        NodeEditorNodeScreenWidget screenWidget;
-        List<ButtonWidget> Buttons = new List<ButtonWidget>();
+
+        readonly NodeEditorNodeScreenWidget screenWidget;
+        readonly DropDownButtonWidget createNodesList;
+        readonly DropDownButtonWidget createActorNodesList;
+        readonly DropDownButtonWidget triggerNodesList;
+
+        NodeType nodeType;
+
+        ButtonWidget addNodeButton;
+
+        // List<ButtonWidget> Buttons = new List<ButtonWidget>();
 
         [ObjectCreator.UseCtor]
         public NodeEditorBackgroundWidget(ScriptNodeWidget snw)
@@ -22,31 +33,149 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             Bounds = new Rectangle(100, 100, Snw.RenderBounds.Width - 200, Snw.RenderBounds.Height - 200);
 
-            for (int i = 0; i < 6; i++)
+            //  Output Nodes
+            List<NodeType> outputNodeTypes = new List<NodeType>
             {
-                var button = new ButtonWidget(snw.ModData);
-                Buttons.Add(button);
-                button.Bounds = new Rectangle(5, 5 + i * 26, 115, 25);
-                AddChild(button);
-            }
+                NodeType.PlayerOutput,
+                NodeType.LocationOutput,
+                NodeType.PathNode,
+                NodeType.ActorOutPut,
+                NodeType.CellArrayOutput,
+                NodeType.CellRange
+            };
 
-            Buttons[0].OnClick = () => { screenWidget.AddNode(NodeType.ActorOutPut); };
-            Buttons[0].Text = "Add Actor Output";
-            Buttons[1].OnClick = () => { screenWidget.AddNode(NodeType.PathNode); };
-            Buttons[1].Text = "Add Path Output";
-            Buttons[2].OnClick = () => { screenWidget.AddNode(NodeType.PlayerOutput); };
-            Buttons[2].Text = "Add Player Output";
-            Buttons[3].OnClick = () => { screenWidget.AddNode(NodeType.LocationOutput); };
-            Buttons[3].Text = "Add Location Output";
-            Buttons[4].OnClick = () => { screenWidget.AddNode(NodeType.CelLArrayOutput); };
-            Buttons[4].Text = "Add Cell Array Output";
-            Buttons[5].OnClick = () => { screenWidget.AddNode(NodeType.ActorInfluence); };
-            Buttons[5].Text = "Add CreateActor Influence";
+            List<string> outputNodeStrings = new List<string>
+            {
+                "Player Output",
+                "Location Output",
+                "Path Output",
+                "Actor Info Output",
+                "Cell Array Output",
+                "Cell and Range"
+            };
+
+            nodeType = outputNodeTypes.First();
+
+            AddChild(createNodesList = new DropDownButtonWidget(snw.ModData));
+            createNodesList.Bounds = new Rectangle(5, 5 + 26, 190, 25);
+
+
+            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemOutput = (option, template) =>
+            {
+                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
+                {
+                    nodeType = option;
+
+                    createNodesList.Text = outputNodeStrings[outputNodeTypes.IndexOf(nodeType)];
+                    createActorNodesList.Text = "- none -";
+                    triggerNodesList.Text = "- none -";
+                });
+
+                item.Get<LabelWidget>("LABEL").GetText = () => outputNodeStrings[outputNodeTypes.IndexOf(option)];
+
+                return item;
+            };
+
+            createNodesList.OnClick = () =>
+            {
+                var nodes = outputNodeTypes;
+                createNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemOutput);
+            };
+
+            //  Actor Nodes
+            List<NodeType> actorNodeTypes = new List<NodeType>
+            {
+                NodeType.CreateActor,
+                NodeType.RemoveActor,
+                NodeType.KillActor,
+                NodeType.MoveActor,
+                NodeType.ActorFollowPath
+            };
+
+            List<string> actorNodeStrings = new List<string>
+            {
+                "Actor: Create",
+                "Actor: Remove",
+                "Actor: Kill",
+                "Actor: Move",
+                "Actor: Follow path"
+            };
+
+            AddChild(createActorNodesList = new DropDownButtonWidget(snw.ModData));
+            createActorNodesList.Bounds = new Rectangle(5, 5 + 26 + 26, 190, 25);
+
+
+            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemActor = (option, template) =>
+            {
+                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
+                {
+                    nodeType = option;
+
+                    createActorNodesList.Text = actorNodeStrings[actorNodeTypes.IndexOf(nodeType)];
+                    createNodesList.Text = "- none -";
+                    triggerNodesList.Text = "- none -";
+                });
+
+                item.Get<LabelWidget>("LABEL").GetText = () => actorNodeStrings[actorNodeTypes.IndexOf(option)];
+
+                return item;
+            };
+
+            createActorNodesList.OnClick = () =>
+            {
+                var nodes = actorNodeTypes;
+                createActorNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemActor);
+            };
+
+            //  Trigger Nodes
+            List<NodeType> triggerNodeTypes = new List<NodeType>
+            {
+                NodeType.ActorKilledTrigger,
+                NodeType.ActorIdleTrigger,
+                NodeType.MathTimerTrigger
+            };
+
+            List<string> triggerNodeStrings = new List<string>
+            {
+                "Trigger: Actor killed",
+                "Trigger: Actor idle",
+                "Trigger: Timer"
+            };
+
+            AddChild(triggerNodesList = new DropDownButtonWidget(snw.ModData));
+            triggerNodesList.Bounds = new Rectangle(5, 5 + 26 + 26 + 26, 190, 25);
+
+            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemTrigger = (option, template) =>
+            {
+                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
+                {
+                    nodeType = option;
+
+                    triggerNodesList.Text = triggerNodeStrings[triggerNodeTypes.IndexOf(nodeType)];
+                    createNodesList.Text = "- none -";
+                    createActorNodesList.Text = "- none -";
+                });
+
+                item.Get<LabelWidget>("LABEL").GetText = () => triggerNodeStrings[triggerNodeTypes.IndexOf(option)];
+
+                return item;
+            };
+
+            triggerNodesList.OnClick = () =>
+            {
+                var nodes = triggerNodeTypes;
+                triggerNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemTrigger);
+            };
+
+            AddChild(addNodeButton = new ButtonWidget(snw.ModData));
+            addNodeButton.Bounds = new Rectangle(5, 400, 190, 25);
+            addNodeButton.Text = "Add Node";
+            addNodeButton.OnClick = () => { screenWidget.AddNode(nodeType); };
         }
 
         public override void Tick()
         {
-            Bounds = new Rectangle(100, 100, Snw.RenderBounds.Width - 200, Snw.RenderBounds.Height - 200);
+            Bounds = new Rectangle(5, 20, Snw.RenderBounds.Width - 20, Snw.RenderBounds.Height - 20);
         }
 
         public override bool HandleMouseInput(MouseInput mi)

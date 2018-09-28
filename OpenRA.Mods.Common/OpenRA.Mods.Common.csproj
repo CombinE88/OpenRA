@@ -612,13 +612,21 @@
     <Compile Include="Widgets\ScriptNodes\PipetPickActorWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ScriptNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ShowWidgetsButton.cs" />
-    <Compile Include="Widgets\ScriptNodes\SingleNodes\GameInfluenceNodes\CreateActorNode.cs" />
-    <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\ActorInfoOutPut.cs" />
-    <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\CellArray.cs" />
-    <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\LocationOutput.cs" />
-    <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\PathNode.cs" />
-    <Compile Include="Widgets\ScriptNodes\SingleNodes\OutPuts\PlayerOutPut.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\CreateActorNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\DisposeActor.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\KillActor.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\MoveActorPath.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\MoveActor.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\ActorInfoOutPut.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\CellArray.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\CellRange.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\LocationOutput.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\PathNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\PlayerOutPut.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\SimpleNodeWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Trigger\ActorTriggerOnIlde.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Trigger\ActorTriggerKilled.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Trigger\MathTimerTrigger.cs" />
     <Compile Include="WorldExtensions.cs" />
     <Compile Include="UtilityCommands\GetMapHashCommand.cs" />
     <Compile Include="UtilityCommands\Glob.cs" />
@@ -943,7 +951,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Widgets\ScriptNodes\NodeLogics" />
-    <Folder Include="Widgets\ScriptNodes\SingleNodes\InputNodes" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">

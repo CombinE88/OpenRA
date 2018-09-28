@@ -3,20 +3,33 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.GameInfluenceNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
     public enum NodeType
     {
+        // Outputs
         ActorOutPut,
         PathNode,
         PlayerOutput,
         LocationOutput,
-        CelLArrayOutput,
-        ActorInfluence
+        CellArrayOutput,
+        CellRange,
+
+        // Actor
+        CreateActor,
+        MoveActor,
+        ActorFollowPath,
+        KillActor,
+        RemoveActor,
+
+        // Trigger
+        ActorKilledTrigger,
+        ActorIdleTrigger,
+        MathTimerTrigger
     }
 
     public class NodeEditorNodeScreenWidget : Widget
@@ -60,12 +73,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override void Tick()
         {
-            Bounds = new Rectangle(Bgw.RenderBounds.X + 125, Bgw.RenderBounds.Y + 5, Bgw.RenderBounds.Width - 130, Bgw.RenderBounds.Height - 10);
+            Bounds = new Rectangle(Bgw.RenderBounds.X + 200, Bgw.RenderBounds.Y + 5, Bgw.RenderBounds.Width - 205, Bgw.RenderBounds.Height - 10);
             CorrectCenterCoordinates = new int2((RenderBounds.Width / 2) + CenterCoordinates.X, (RenderBounds.Height / 2) + CenterCoordinates.Y);
         }
 
         public void AddNode(NodeType nodeType)
         {
+            // Outputs
             if (nodeType == NodeType.ActorOutPut)
             {
                 var newNode = new ActorInfoOutPutWidget(this);
@@ -90,15 +104,67 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-            else if (nodeType == NodeType.CelLArrayOutput)
+            else if (nodeType == NodeType.CellArrayOutput)
             {
                 var newNode = new CellArrayWidget(this);
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-            else if (nodeType == NodeType.ActorInfluence)
+            else if (nodeType == NodeType.CellRange)
+            {
+                var newNode = new CelLRangeWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            // Actor
+            else if (nodeType == NodeType.CreateActor)
             {
                 var newNode = new CreateActorNodeWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.KillActor)
+            {
+                var newNode = new KillActorWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.RemoveActor)
+            {
+                var newNode = new DisposeActorWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.MoveActor)
+            {
+                var newNode = new MoveActorWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorFollowPath)
+            {
+                var newNode = new MovePathActorWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            // Actor
+            else if (nodeType == NodeType.ActorIdleTrigger)
+            {
+                var newNode = new ActorTriggerOnIldeWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorKilledTrigger)
+            {
+                var newNode = new ActorTriggerKilled(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.MathTimerTrigger)
+            {
+                var newNode = new MAthTimerTriggerWidget(this);
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
@@ -127,7 +193,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {
                     foreach (var connection in node.InConnections)
                     {
-                        if (connection.InWidgetPosition.Contains(mi.Location) && currentBrush == NodeBrush.Connecting && BrushItem != null)
+                        if (connection.InWidgetPosition.Contains(mi.Location)
+                            && currentBrush == NodeBrush.Connecting
+                            && BrushItem != null
+                            && (BrushItem.Item2.conTyp == connection.conTyp || connection.conTyp == ConnectionType.Universal))
                         {
                             connection.In = BrushItem.Item2;
                             BrushItem.Item2.Out = connection;
@@ -157,10 +226,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (currentBrush != NodeBrush.Frame)
             {
                 if (HandleNodes(mi))
-                    return false;
+                    return true;
 
                 if (ConnectNodes(mi))
-                    return false;
+                    return true;
             }
 
             if (mi.Button == MouseButton.Right && mi.Event == MouseInputEvent.Down && currentBrush == NodeBrush.Free)
@@ -309,11 +378,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             }
 
             return false;
-        }
-
-        public override void MouseExited()
-        {
-            currentBrush = NodeBrush.Free;
         }
 
         public override void Draw()

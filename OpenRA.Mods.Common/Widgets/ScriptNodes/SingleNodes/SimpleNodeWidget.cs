@@ -52,6 +52,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public List<CPos> SelectedCells = new List<CPos>();
         public List<Actor> SelectedActor = new List<Actor>();
+        public int Range = 0;
 
         // Selection
         public bool Selected;
@@ -158,7 +159,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 InConnections[i].InWidgetPosition = rect;
             }
 
-            splitHeight = RenderBounds.Height / (OutConnections.Count + 1);
+            splitHeight = (RenderBounds.Height + 20) / (OutConnections.Count + 1);
             for (int i = 0; i < OutConnections.Count; i++)
             {
                 var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 5, RenderBounds.Y + splitHeight * (i + 1), 20, 20);
@@ -303,6 +304,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 }
             }
+        }
+
+        public override Widget Clone()
+        {
+            return new SimpleNodeWidget(Screen);
         }
     }
 }

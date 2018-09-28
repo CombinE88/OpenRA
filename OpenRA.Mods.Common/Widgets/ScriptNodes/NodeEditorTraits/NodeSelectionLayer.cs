@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Graphics;
+using OpenRA.Mods.Common.Graphics;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
@@ -23,7 +24,8 @@ namespace OpenRA.Mods.Common.Traits
     {
         Path,
         Array,
-        Single
+        Single,
+        Range
     }
 
     [Desc("Required for the map editor to work. Attach this to the world actor.")]
@@ -50,8 +52,10 @@ namespace OpenRA.Mods.Common.Traits
         readonly Map map;
         readonly Sprite cellSprite;
         PaletteReference palette;
-
+        public CPos FixedCursorPosition;
+        WDist yetCursorPosition;
         public CellPicking Mode;
+
         public List<CPos> CellRegion { get; private set; }
 
         public NodeSelectionLayer(Actor self, NodeSelectionLayerInfo info)
@@ -79,6 +83,11 @@ namespace OpenRA.Mods.Common.Traits
                 CellRegion.Add(add);
             else if (Mode != CellPicking.Array)
                 CellRegion.Add(add);
+        }
+
+        public void SetRange(WDist range)
+        {
+            yetCursorPosition = range;
         }
 
         public void RemoveCell(CPos add)
@@ -147,7 +156,13 @@ namespace OpenRA.Mods.Common.Traits
                 }
             }
 
-            yield break;
+            if (Mode == CellPicking.Range)
+                yield return new RangeCircleRenderable(
+                    self.World.Map.CenterOfCell(FixedCursorPosition),
+                    yetCursorPosition,
+                    0,
+                    Color.White,
+                    Color.Black);
         }
     }
 }

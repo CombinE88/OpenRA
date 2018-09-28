@@ -16,6 +16,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
         SimpleNodeWidget node;
         NodeSelectionLayer nodeSelectionLayer;
         WorldRenderer worldRenderer;
+        int range;
 
         public EditorCellPickerBrush(CellPicking mode, SimpleNodeWidget node, EditorViewportControllerWidget editorWidget, WorldRenderer wr)
         {
@@ -33,6 +34,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
 
             if (node.SelectedCells != null && node.SelectedCells.Any())
                 nodeSelectionLayer.LoadInPath(node.SelectedCells);
+
+            if (node.Range != 0 && mode == CellPicking.Range)
+                nodeSelectionLayer.SetRange(new WDist(range * 1024));
+            else if (mode == CellPicking.Range)
+            {
+                nodeSelectionLayer.SetRange(new WDist(0));
+            }
         }
 
         public void Dispose()
@@ -52,6 +60,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
                 {
                     node.SelectedCells = nodeSelectionLayer.CellRegion;
                     node.Screen.Bgw.Visible = true;
+                    node.Range = range;
                     editorWidget.ClearBrush();
                     return true;
                 }
@@ -80,6 +89,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             if (mi.Button == MouseButton.Left && nodeSelectionLayer.Mode == CellPicking.Array)
             {
                 nodeSelectionLayer.AddCell(worldRenderer.Viewport.ViewToWorld(mi.Location));
+                return true;
+            }
+
+            if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && nodeSelectionLayer.Mode == CellPicking.Range)
+            {
+                nodeSelectionLayer.Clear();
+                nodeSelectionLayer.AddCell(worldRenderer.Viewport.ViewToWorld(mi.Location));
+                nodeSelectionLayer.FixedCursorPosition = worldRenderer.Viewport.ViewToWorld(mi.Location);
+                return true;
+            }
+
+            if (mi.Button == MouseButton.Left && nodeSelectionLayer.Mode == CellPicking.Range)
+            {
+                range = (nodeSelectionLayer.FixedCursorPosition - worldRenderer.Viewport.ViewToWorld(mi.Location)).Length;
+                nodeSelectionLayer.SetRange(new WDist(range * 1024));
                 return true;
             }
 

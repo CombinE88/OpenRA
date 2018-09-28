@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class PlayerOutPutWidget : SimpleNodeWidget
     {

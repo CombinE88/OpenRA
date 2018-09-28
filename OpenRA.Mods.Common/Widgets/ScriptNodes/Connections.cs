@@ -112,6 +112,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.Integer:
                     color = Color.Green;
                     break;
+                case ConnectionType.Universal:
+                    color = Color.White;
+                    break;
             }
 
             ConnecitonName = "Input" + (widget.InConnections.Count + 1);
@@ -127,6 +130,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Player,
         Location,
         CellArray,
-        Integer
+        Integer,
+        Universal
     }
 }

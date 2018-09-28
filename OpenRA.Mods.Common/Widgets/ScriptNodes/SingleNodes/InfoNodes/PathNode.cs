@@ -1,10 +1,9 @@
-using System;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.OutPuts
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class PathNodeWidget : SimpleNodeWidget
     {
