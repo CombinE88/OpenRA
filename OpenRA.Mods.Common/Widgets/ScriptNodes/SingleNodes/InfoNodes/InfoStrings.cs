@@ -10,9 +10,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
         public InfoStringsWidget(NodeEditorNodeScreenWidget screen) : base(screen)
         {
+            WidgetName = "Info: Strings";
             var textF = new TextFieldWidget { Text = "" };
             textFields.Add(textF);
             AddChild(textF);
+            OutConnections.Add(new OutConnection(ConnectionType.Strings, this));
         }
 
         public override void Tick()
@@ -20,7 +22,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             var splitHi = (RenderBounds.Height + 20) / (OutConnections.Count + 1);
             for (int i = 0; i < textFields.Count; i++)
             {
-                textFields[i].Bounds = new Rectangle(FreeWidgetEntries.X, splitHi * (i + 1), FreeWidgetEntries.Width, 25);
+                textFields[i].Bounds = new Rectangle(FreeWidgetEntries.X, splitHi * (i + 2), FreeWidgetEntries.Width, 25);
             }
 
             var emptyFields = textFields.Where(f => f.Text == "").ToArray();
@@ -41,9 +43,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 AddChild(textF);
             }
 
-            if (textFields.Count > OutConnections.Count)
+            if (textFields.Count > OutConnections.Count(c => c.conTyp == ConnectionType.String))
                 OutConnections.Add(new OutConnection(ConnectionType.String, this));
-            if (OutConnections.Any() && textFields.Count < OutConnections.Count)
+            if (OutConnections.Any() && textFields.Count < OutConnections.Count(c => c.conTyp == ConnectionType.String))
                 OutConnections.Remove(OutConnections.Last());
 
             base.Tick();

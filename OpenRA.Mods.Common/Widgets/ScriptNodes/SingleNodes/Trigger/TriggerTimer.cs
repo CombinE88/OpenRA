@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Trigger
 {
     public class MAthTimerTriggerWidget : SimpleNodeWidget
     {

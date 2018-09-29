@@ -620,7 +620,12 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorKill.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorQeueMovePath.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorQueueMove.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorInformations.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetic\ArithmeticForEach.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetic\ArithmeticSelect.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetic\ArithmeticsCompare.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ComplexFunctrions\ComplexReinforcements.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ComplexFunctrions\ComplexReinforcementsWithTransport.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\InfoActorInfo.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\InfoCellArray.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\InfoCellRange.cs" />
@@ -633,6 +638,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Trigger\TriggerActorOnIlde.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Trigger\TriggerActorKilled.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Trigger\TriggerTimer.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Trigger\TriggerWorldLoaded.cs" />
     <Compile Include="WorldExtensions.cs" />
     <Compile Include="UtilityCommands\GetMapHashCommand.cs" />
     <Compile Include="UtilityCommands\Glob.cs" />

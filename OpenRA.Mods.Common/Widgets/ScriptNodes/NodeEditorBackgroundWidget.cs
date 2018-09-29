@@ -19,11 +19,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         DropDownButtonWidget triggerNodesList;
         DropDownButtonWidget groupNodesList;
         DropDownButtonWidget arithmeticNodesList;
+        DropDownButtonWidget functionNodesList;
 
         NodeType nodeType;
 
         ButtonWidget addNodeButton;
-
         // List<ButtonWidget> Buttons = new List<ButtonWidget>();
 
         [ObjectCreator.UseCtor]
@@ -40,12 +40,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             AddTriggerList();
             AddGroupList();
             AddArithmeticList();
+            AddFunctionsList();
 
             createActorNodesList.Text = "- Actor Nodes -";
             triggerNodesList.Text = "- Trigger Nodes -";
             createNodesList.Text = "- Info Nodes -";
             groupNodesList.Text = "- Group Nodes -";
             arithmeticNodesList.Text = "- Arithmetic Nodes -";
+            functionNodesList.Text = "- Function Nodes -";
 
             AddChild(addNodeButton = new ButtonWidget(snw.ModData));
             addNodeButton.Bounds = new Rectangle(5, 400, 190, 25);
@@ -95,6 +97,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     triggerNodesList.Text = "- Trigger Nodes -";
                     groupNodesList.Text = "- Group Nodes -";
                     arithmeticNodesList.Text = "- Arithmetic Nodes -";
+                    functionNodesList.Text = "- Function Nodes -";
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => outputNodeStrings[outputNodeTypes.IndexOf(option)];
@@ -118,7 +121,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.RemoveActor,
                 NodeType.KillActor,
                 NodeType.MoveActor,
-                NodeType.ActorFollowPath
+                NodeType.ActorFollowPath,
+                NodeType.ActorInfo
             };
 
             List<string> actorNodeStrings = new List<string>
@@ -127,7 +131,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Actor: Remove",
                 "Actor: Kill",
                 "Actor: Move",
-                "Actor: Follow path"
+                "Actor: Follow path",
+                "Actor: Information"
             };
 
             AddChild(createActorNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -145,6 +150,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     triggerNodesList.Text = "- Trigger Nodes -";
                     groupNodesList.Text = "- Group Nodes -";
                     arithmeticNodesList.Text = "- Arithmetic Nodes -";
+                    functionNodesList.Text = "- Function Nodes -";
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => actorNodeStrings[actorNodeTypes.IndexOf(option)];
@@ -164,6 +170,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Trigger Nodes
             List<NodeType> triggerNodeTypes = new List<NodeType>
             {
+                NodeType.WorldLoaded,
                 NodeType.ActorKilledTrigger,
                 NodeType.ActorIdleTrigger,
                 NodeType.MathTimerTrigger
@@ -171,6 +178,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             List<string> triggerNodeStrings = new List<string>
             {
+                "Trigger: World Loaded",
                 "Trigger: Actor killed",
                 "Trigger: Actor idle",
                 "Trigger: Timer"
@@ -190,6 +198,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     createActorNodesList.Text = "- Actor Nodes -";
                     groupNodesList.Text = "- Group Nodes -";
                     arithmeticNodesList.Text = "- Arithmetic Nodes -";
+                    functionNodesList.Text = "- Function Nodes -";
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => triggerNodeStrings[triggerNodeTypes.IndexOf(option)];
@@ -235,6 +244,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     triggerNodesList.Text = "- Trigger Nodes -";
                     createNodesList.Text = "- Info Nodes -";
                     arithmeticNodesList.Text = "- Arithmetic Nodes -";
+                    functionNodesList.Text = "- Function Nodes -";
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => groupNodeStrings[groupNodeTypes.IndexOf(option)];
@@ -255,13 +265,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
                 NodeType.SelectBy,
-                NodeType.Select
+                NodeType.Select,
+                NodeType.Compare,
+                NodeType.ForEach
             };
 
             List<string> nodeStrings = new List<string>
             {
                 "Arithmetic: Select by",
-                "Arithmetic: Select"
+                "Arithmetic: Select",
+                "Arithmetic: Compare",
+                "Arithmetic: For Each"
             };
 
             AddChild(arithmeticNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -278,6 +292,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     triggerNodesList.Text = "- Trigger Nodes -";
                     createNodesList.Text = "- Info Nodes -";
                     groupNodesList.Text = "- Group Nodes -";
+                    functionNodesList.Text = "- Function Nodes -";
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => nodeStrings[nodeTypes.IndexOf(option)];
@@ -289,6 +304,50 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodes = nodeTypes;
                 arithmeticNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
+            };
+        }
+
+        void AddFunctionsList()
+        {
+            //  Group Nodes
+            List<NodeType> nodeTypes = new List<NodeType>
+            {
+                NodeType.Reinforcments,
+                NodeType.ReinforcWithTransPort
+            };
+
+            List<string> nodeStrings = new List<string>
+            {
+                "Function: Reinforcements",
+                "Function: Reinforcements (Transport)"
+            };
+
+            AddChild(functionNodesList = new DropDownButtonWidget(Snw.ModData));
+            functionNodesList.Bounds = new Rectangle(5, 5 + 26 + 26 + 26 + 26 + 26 + 26, 190, 25);
+
+            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemGroup = (option, template) =>
+            {
+                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
+                {
+                    nodeType = option;
+
+                    functionNodesList.Text = nodeStrings[nodeTypes.IndexOf(nodeType)];
+                    createActorNodesList.Text = "- Actor Nodes -";
+                    triggerNodesList.Text = "- Trigger Nodes -";
+                    createNodesList.Text = "- Info Nodes -";
+                    groupNodesList.Text = "- Group Nodes -";
+                    arithmeticNodesList.Text = "- Arithmetic Nodes -";
+                });
+
+                item.Get<LabelWidget>("LABEL").GetText = () => nodeStrings[nodeTypes.IndexOf(option)];
+
+                return item;
+            };
+
+            functionNodesList.OnClick = () =>
+            {
+                var nodes = nodeTypes;
+                functionNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
             };
         }
 

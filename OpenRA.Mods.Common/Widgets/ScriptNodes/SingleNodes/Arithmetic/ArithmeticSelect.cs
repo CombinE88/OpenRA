@@ -22,7 +22,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetic
             {
                 "First",
                 "Last",
-                "Random"
+                "Random",
+                "Closest to Location",
+                "Closest to Actor"
             };
 
             AddChild(selectyByList = new DropDownButtonWidget(screen.Snw.ModData));
@@ -34,6 +36,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetic
                 {
                     selectType = option;
                     selectyByList.Text = selectType;
+
+                    var inCons = InConnections.First();
+                    InConnections = new List<InConnection>();
+                    InConnections.Add(inCons);
+
+                    if (selectType == "Closest to Location")
+                    {
+                        InConnections.Add(new InConnection(ConnectionType.Location, this));
+                    }
+                    else if (selectType == "Closest to Actor")
+                    {
+                        InConnections.Add(new InConnection(ConnectionType.Actor, this));
+                    }
                 });
                 item.Get<LabelWidget>("LABEL").GetText = () => option;
 

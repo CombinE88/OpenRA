@@ -6,6 +6,7 @@ using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorArrayNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetic;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ComplexFunctrions;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Trigger;
 using OpenRA.Widgets;
@@ -29,11 +30,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         ActorFollowPath,
         KillActor,
         RemoveActor,
+        ActorInfo,
+        QueueAction,
 
         // Trigger
         ActorKilledTrigger,
         ActorIdleTrigger,
         MathTimerTrigger,
+        WorldLoaded,
 
         // Acto Groups
         DefineGroup,
@@ -42,7 +46,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         // Arithmetic
         SelectBy,
-        Select
+        Select,
+        Compare,
+        ForEach,
+
+        // Complex Functions
+        Reinforcments,
+        ReinforcWithTransPort
     }
 
     public class NodeEditorNodeScreenWidget : Widget
@@ -167,8 +177,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
+            else if (nodeType == NodeType.ActorInfo)
+            {
+                var newNode = new ActorInformationsWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
 
-            // Actor
+            // Trigger
+            else if (nodeType == NodeType.WorldLoaded)
+            {
+                var newNode = new TriggerWorldLoadedWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
             else if (nodeType == NodeType.ActorIdleTrigger)
             {
                 var newNode = new ActorTriggerOnIldeWidget(this);
@@ -221,6 +243,32 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
+            else if (nodeType == NodeType.Compare)
+            {
+                var newNode = new ArithmeticsCompare(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ForEach)
+            {
+                var newNode = new ArithmeticForEachWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            // Function
+            else if (nodeType == NodeType.Reinforcments)
+            {
+                var newNode = new ComplexReinforcementsWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ReinforcWithTransPort)
+            {
+                var newNode = new ComplexReinforcementsWithTransportWidget(this);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
         }
 
         public void DeleteNode(SimpleNodeWidget widget)
@@ -249,7 +297,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         if (connection.InWidgetPosition.Contains(mi.Location)
                             && currentBrush == NodeBrush.Connecting
                             && BrushItem != null
-                            && (BrushItem.Item2.conTyp == connection.conTyp || connection.conTyp == ConnectionType.Universal))
+                            && (BrushItem.Item2.conTyp == connection.conTyp || connection.conTyp == ConnectionType.Universal || BrushItem.Item2.conTyp == ConnectionType.Universal))
                         {
                             connection.In = BrushItem.Item2;
                             BrushItem.Item2.Out = connection;
