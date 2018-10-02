@@ -263,5 +263,6 @@ EditorWorld:
 	EditorActorLayer:
 	EditorResourceLayer:
 	EditorSelectionLayer:
-	LoadWidgetAtGameStart:
 	NodeSelectionLayer:
+	EditorNodeLayer:
+	LoadWidgetAtGameStart:

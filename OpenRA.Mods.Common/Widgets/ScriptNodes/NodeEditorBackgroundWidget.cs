@@ -53,6 +53,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             addNodeButton.Bounds = new Rectangle(5, 400, 190, 25);
             addNodeButton.Text = "Add Node";
             addNodeButton.OnClick = () => { screenWidget.AddNode(nodeType); };
+
+            var closeButton = new ButtonWidget(snw.ModData);
+            AddChild(closeButton);
+            closeButton.Bounds = new Rectangle(5, 600, 190, 25);
+            closeButton.Text = "Close";
+            closeButton.OnClick = () => { Visible = false; };
+
         }
 
         void AddNodesList()
@@ -60,24 +67,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Output Nodes
             List<NodeType> outputNodeTypes = new List<NodeType>
             {
-                NodeType.PlayerOutput,
-                NodeType.LocationOutput,
-                NodeType.PathNode,
-                NodeType.ActorOutPut,
-                NodeType.CellArrayOutput,
-                NodeType.CellRange,
-                NodeType.InfoStrings
+                NodeType.MapInfoNode
             };
 
             List<string> outputNodeStrings = new List<string>
             {
-                "Info: Player",
-                "Info: Location",
-                "Info: Path",
-                "Info: Actor Info",
-                "Info: Cell Array",
-                "Info: Cell + Range",
-                "Info: Strings"
+                "Info: Map Info"
             };
 
             nodeType = outputNodeTypes.First();
@@ -117,12 +112,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Actor Nodes
             List<NodeType> actorNodeTypes = new List<NodeType>
             {
-                NodeType.CreateActor,
-                NodeType.RemoveActor,
-                NodeType.KillActor,
-                NodeType.MoveActor,
-                NodeType.ActorFollowPath,
-                NodeType.ActorInfo
+                NodeType.ActorCreateNode,
+                NodeType.ActorRemoveNode,
+                NodeType.ActorKillNode,
+                NodeType.ActorFollowPathNode,
+                NodeType.ActorGetInfoNode
             };
 
             List<string> actorNodeStrings = new List<string>
@@ -167,13 +161,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddTriggerList()
         {
-            //  Trigger Nodes
+            // Trigger Nodes
             List<NodeType> triggerNodeTypes = new List<NodeType>
             {
-                NodeType.WorldLoaded,
-                NodeType.ActorKilledTrigger,
-                NodeType.ActorIdleTrigger,
-                NodeType.MathTimerTrigger
+                NodeType.TriggerWorldLoadedNode,
+                NodeType.TriggerActorKilledNode,
+                NodeType.TriggerActorOnIdleNode,
+                NodeType.TriggerTimerNode
             };
 
             List<string> triggerNodeStrings = new List<string>
@@ -218,9 +212,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Group Nodes
             List<NodeType> groupNodeTypes = new List<NodeType>
             {
-                NodeType.DefineGroup,
-                NodeType.FindActorsInCircle,
-                NodeType.FindActorsOnCells
+                NodeType.GroupCreateGroupNode,
+                NodeType.GroupFindActorsInCircleNode,
+                NodeType.GroupFindActorsOnCellsNode
             };
 
             List<string> groupNodeStrings = new List<string>
@@ -264,10 +258,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Group Nodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
-                NodeType.SelectBy,
-                NodeType.Select,
-                NodeType.Compare,
-                NodeType.ForEach
+                NodeType.ArithmeticsSelectByNode,
+                NodeType.ArithmeticsSelectNode,
+                NodeType.ArithmeticsCompareNode,
+                NodeType.ArithmeticsForEachNode
             };
 
             List<string> nodeStrings = new List<string>
@@ -312,8 +306,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Group Nodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
-                NodeType.Reinforcments,
-                NodeType.ReinforcWithTransPort
+                NodeType.FunctionReinforcmentsNode,
+                NodeType.FunctionReinforceWithTransPort
             };
 
             List<string> nodeStrings = new List<string>

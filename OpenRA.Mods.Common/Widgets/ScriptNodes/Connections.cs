@@ -7,7 +7,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
     public class InConnection
     {
-        public readonly SimpleNodeWidget Widget;
+        public readonly BasicNodeWidget Widget;
         public readonly string ConnecitonName;
 
         public Rectangle InWidgetPosition;
@@ -17,8 +17,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public Color color;
 
         public bool Boolean = false;
-        public Actor Actor = null;
-        public List<Actor> ActorList = new List<Actor>();
         public ActorInfo ActorInfo = null;
         public PlayerReference Player = null;
         public CPos Location = CPos.Zero;
@@ -27,13 +25,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public string String = "";
         public string[] Strings = { "" };
 
-        public InConnection(ConnectionType conectionType, SimpleNodeWidget widget)
+        public InConnection(ConnectionType conectionType, BasicNodeWidget widget)
         {
             conTyp = conectionType;
             Widget = widget;
 
             switch (conectionType)
             {
+                case ConnectionType.Undefined:
+                    color = Color.Black;
+                    break;
                 case ConnectionType.Actor:
                     color = Color.CornflowerBlue;
                     break;
@@ -42,9 +43,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     break;
                 case ConnectionType.ActorInfo:
                     color = Color.Indigo;
-                    break;
-                case ConnectionType.Undefined:
-                    color = Color.DarkSlateGray;
                     break;
                 case ConnectionType.Boolean:
                     color = Color.DarkOliveGreen;
@@ -55,7 +53,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.Location:
                     color = Color.BlueViolet;
                     break;
+                case ConnectionType.LocationRange:
+                    color = Color.MediumVioletRed;
+                    break;
                 case ConnectionType.CellArray:
+                    color = Color.Violet;
+                    break;
+                case ConnectionType.CellPath:
                     color = Color.Violet;
                     break;
                 case ConnectionType.Integer:
@@ -80,7 +84,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     {
         public readonly string ConnecitonName;
         public readonly ConnectionType conTyp = ConnectionType.Undefined;
-        public readonly SimpleNodeWidget Widget;
+        public readonly BasicNodeWidget Widget;
 
         public Rectangle InWidgetPosition;
 
@@ -88,21 +92,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public Color color;
 
         public bool Boolean = false;
-        public Actor Actor = null;
         public ActorInfo ActorInfo = null;
         public PlayerReference Player = null;
-        public CPos Location = CPos.Zero;
+        public Nullable<CPos> Location = null;
         public List<CPos> CellArray = new List<CPos>();
-        public int Number = 0;
-        public string String = "";
-        public string[] Strings = { "" };
+        public Nullable<int> Number = null;
+        public string String = null;
+        public string[] Strings = { };
 
-        public OutConnection(ConnectionType conectionType, SimpleNodeWidget widget)
+        public OutConnection(ConnectionType conectionType, BasicNodeWidget widget)
         {
             conTyp = conectionType;
             Widget = widget;
             switch (conectionType)
             {
+                case ConnectionType.Undefined:
+                    color = Color.Black;
+                    break;
                 case ConnectionType.Actor:
                     color = Color.CornflowerBlue;
                     break;
@@ -111,9 +117,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     break;
                 case ConnectionType.ActorInfo:
                     color = Color.Indigo;
-                    break;
-                case ConnectionType.Undefined:
-                    color = Color.DarkSlateGray;
                     break;
                 case ConnectionType.Boolean:
                     color = Color.DarkOliveGreen;
@@ -124,7 +127,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.Location:
                     color = Color.BlueViolet;
                     break;
+                case ConnectionType.LocationRange:
+                    color = Color.MediumVioletRed;
+                    break;
                 case ConnectionType.CellArray:
+                    color = Color.Violet;
+                    break;
+                case ConnectionType.CellPath:
                     color = Color.Violet;
                     break;
                 case ConnectionType.Integer:
@@ -153,7 +162,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         ActorInfo,
         Player,
         Location,
+        LocationRange,
         CellArray,
+        CellPath,
         Integer,
         Universal,
         ActorList,

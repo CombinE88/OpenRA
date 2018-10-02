@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OpenRA.Server;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 {
-    public class SimpleNodeWidget : Widget
+    public class BasicNodeWidget : Widget
     {
         public NodeEditorNodeScreenWidget Screen;
 
@@ -26,8 +27,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public int SizeY;
         public int OffsetPosX;
         public int OffsetPosY;
-        public int SetOffsetPosX;
-        public int SetOffsetPosY;
 
         // Node Inhalte
         public Rectangle DragBar;
@@ -50,80 +49,45 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public Rectangle FreeWidgetEntries;
         public AdvancedTextFieldType Textfield;
 
-        public List<CPos> SelectedCells = new List<CPos>();
-        public List<Actor> SelectedActor = new List<Actor>();
-        public int Range = 0;
+        // Node Informations
 
         // Selection
         public bool Selected;
 
         public readonly EditorViewportControllerWidget Editor;
 
-        public string WidgetName = "General Widget";
+        public string NodeName = "General Widget";
+        public string NodeID;
+        public NodeType NodeType;
+        public NodeInfo NodeInfo;
 
-        /*
-        public List<AdvancedTextFieldType> TextList = new List<AdvancedTextFieldType>();
-        */
+        public TextFieldWidget NodeIDTextfield;
 
         [ObjectCreator.UseCtor]
-        public SimpleNodeWidget(NodeEditorNodeScreenWidget screen)
+        public BasicNodeWidget(NodeEditorNodeScreenWidget screen)
         {
             Editor = screen.Snw.Parent.Get<EditorViewportControllerWidget>("MAP_EDITOR");
+            Screen = screen;
 
-            this.Screen = screen;
+            GridPosX = PosX - Screen.CenterCoordinates.X + OffsetPosX;
+            GridPosY = PosY - Screen.CenterCoordinates.Y + OffsetPosY;
 
-            PosX = screen.CorrectCenterCoordinates.X;
-            PosY = screen.CorrectCenterCoordinates.Y;
+            SizeY = Math.Max(InConnections.Count, OutConnections.Count) * 35;
+            Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);
 
-            SetOffsetPosX = screen.CenterCoordinates.X;
-            SetOffsetPosY = screen.CenterCoordinates.Y;
+            WidgetBackground = new Rectangle(Bounds.X - 3, Bounds.Y - 3, Bounds.Width + 6, Bounds.Height + 6);
+            DragBar = new Rectangle(Bounds.X + 1, Bounds.Y + 1, Bounds.Width - 27, 25);
+            DeleteButton = new Rectangle(Bounds.X + Bounds.Width - 26, Bounds.Y + 1, 25, 25);
+            WidgetEntries = new Rectangle(Bounds.X + 1, Bounds.Y + 27, Bounds.Width - 2, Bounds.Height - 28);
+            FreeWidgetEntries = new Rectangle(5, 30, WidgetEntries.Width - 10, WidgetEntries.Height - 28 - 26);
 
-            GridPosX = PosX - screen.CenterCoordinates.X + OffsetPosX;
-            GridPosY = PosY - screen.CenterCoordinates.Y + OffsetPosY;
-
-            Bounds = new Rectangle(GridPosX + OffsetPosX, GridPosY + OffsetPosY, 200 + SizeX, 150 + SizeY);
-            // Bounds = new Rectangle(0, 0, 0, 0);
-
-            /*
-            Textfield = new AdvancedTextFieldType();
-            AddChild(Textfield);
-            */
+            AddChild(NodeIDTextfield = new TextFieldWidget());
+            NodeIDTextfield.OnTextEdited = () => { NodeName = NodeIDTextfield.Text; };
+            NodeIDTextfield.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, WidgetEntries.Width - 10, 20);
         }
-
-        /*
-        public void AddInConnection()
-        {
-            var inRecangle = new Rectangle(RenderBounds.X + GridPosX + RenderBounds.Width - 10, RenderBounds.Y + GridPosY + RenderBounds.Height / 2, 20, 20);
-            var inconnection = new InConnection(ConnectionType.ActorInfo, this);
-            InConnections.Add(new Tuple<Rectangle, InConnection>(inRecangle, inconnection));
-        }
-
-        public void RemoveInConnection()
-        {
-            if (InConnections.LastOrDefault() != null)
-                InConnections.Remove(InConnections.Last());
-        }
-
-        public void RemoveOutConnection()
-        {
-            if (OutConnections.LastOrDefault() != null)
-                OutConnections.Remove(OutConnections.Last());
-        }
-
-        public void AddOutConnection()
-        {
-            var outRecangle = new Rectangle(RenderBounds.X + GridPosX - 10, RenderBounds.Y + GridPosY + RenderBounds.Height / 2, 20, 20);
-            var outConnection = new OutConnection(ConnectionType.ActorInfo, this);
-            OutConnections.Add(new Tuple<Rectangle, OutConnection>(outRecangle, outConnection));
-        }
-        */
 
         public override void Tick()
         {
-            // Visible = false;
-            // if (screen.RenderBounds.Contains(new int2(GridPosX, GridPosY)))
-            //    Visible = true;
-
             GridPosX = PosX - Screen.CenterCoordinates.X + OffsetPosX;
             GridPosY = PosY - Screen.CenterCoordinates.Y + OffsetPosY;
 
@@ -135,22 +99,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             DragBar = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 1, RenderBounds.Width - 27, 25);
             DeleteButton = new Rectangle(RenderBounds.X + RenderBounds.Width - 26, RenderBounds.Y + 1, 25, 25);
             WidgetEntries = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 27, RenderBounds.Width - 2, RenderBounds.Height - 28);
-            FreeWidgetEntries = new Rectangle(5, 27 + 26, WidgetEntries.Width - 10, WidgetEntries.Height - 28 - 26);
-
-            /*
-            var n = 0;
-            foreach (var textfield in TextList)
-            {
-                textfield.Bounds = new Rectangle(5, 27 + 26 + 25 * n, RenderBounds.Width - 10, 25);
-                n += 1;
-            }
-
-            AddInput = new Rectangle(WidgetEntries.X + 5, WidgetEntries.Y + 5, 25, 25);
-            RemoveInput = new Rectangle(WidgetEntries.X + 31, WidgetEntries.Y + 5, 25, 25);
-            AddOutput = new Rectangle(WidgetEntries.X + WidgetEntries.Width - 30, WidgetEntries.Y + 5, 25, 25);
-            RemoveOutput = new Rectangle(WidgetEntries.X + WidgetEntries.Width - 61, WidgetEntries.Y + 5, 25, 25);
-            */
-            // handle Out- and Inputs
+            FreeWidgetEntries = new Rectangle(5, 27, WidgetEntries.Width - 10, WidgetEntries.Height - 28 - 26);
 
             var splitHeight = RenderBounds.Height / (InConnections.Count + 1);
             for (int i = 0; i < InConnections.Count; i++)
@@ -214,11 +163,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X - 1, WidgetBackground.Y - 1, WidgetBackground.Width + 2, WidgetBackground.Height + 2), Color.Blue);
 
             WidgetUtils.DrawPanel(Background, WidgetBackground);
-            // WidgetUtils.FillRectWithColor(WidgetBackground, Color.Black);
-            // Drag Leiste
-            // WidgetUtils.FillRectWithColor(DragBar, Color.DarkGray);
-            // WidgetUtils.FillRectWithColor(DeleteButton, Color.DarkRed);
-            // WidgetUtils.FillRectWithColor(WidgetEntries, Color.DarkGray);
 
             WidgetUtils.DrawPanel(BackgroundDrag, DragBar);
             WidgetUtils.DrawPanel(BackgroundCross, DeleteButton);
@@ -241,13 +185,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             Screen.Snw.FontRegular.DrawTextWithShadow("-", new float2(RemoveInput.X + 2, RemoveInput.Y + 2),
                 Color.White, Color.Black, 2);
 
-            var text = "X: " + (OffsetPosX + SetOffsetPosX) + " Y: " + (OffsetPosY + SetOffsetPosY);
+            var text = "X: " + OffsetPosX + " Y: " + OffsetPosY;
             Screen.Snw.FontRegular.DrawTextWithShadow(text,
                 new float2(WidgetBackground.X + WidgetBackground.Width - Screen.Snw.FontRegular.Measure(text).X - 10, WidgetBackground.Y + WidgetBackground.Height - 25),
                 Color.White, Color.Black, 1);
 
-            Screen.Snw.FontRegular.DrawTextWithShadow(WidgetName,
-                new float2(DragBar.X + 2, DragBar.Y + 2),
+            Screen.Snw.FontRegular.DrawTextWithShadow(NodeName + " " + NodeID,
+                new float2(DragBar.X - 2, DragBar.Y - 1),
+                Color.White, Color.Black, 1);
+            Screen.Snw.FontRegular.DrawTextWithShadow(NodeType.ToString(),
+                new float2(DragBar.X + 2, DragBar.Y + 10),
                 Color.White, Color.Black, 1);
 
             for (int i = 0; i < InConnections.Count; i++)
@@ -308,7 +255,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public override Widget Clone()
         {
-            return new SimpleNodeWidget(Screen);
+            return new BasicNodeWidget(Screen);
         }
     }
 }

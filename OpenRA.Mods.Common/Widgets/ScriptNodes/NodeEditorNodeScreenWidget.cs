@@ -1,62 +1,57 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Dynamic;
 using System.Linq;
+using System.Reflection;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorArrayNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetic;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ComplexFunctrions;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Trigger;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
     public enum NodeType
     {
-        // Outputs
-        ActorOutPut,
-        PathNode,
-        PlayerOutput,
-        LocationOutput,
-        CellArrayOutput,
-        CellRange,
-        InfoStrings,
+        // MapInfo
+        MapInfoNode,
 
         // Actor
-        CreateActor,
-        MoveActor,
-        ActorFollowPath,
-        KillActor,
-        RemoveActor,
-        ActorInfo,
-        QueueAction,
+        ActorCreateNode,
+        ActorFollowPathNode,
+        ActorKillNode,
+        ActorRemoveNode,
+        ActorGetInfoNode,
+        ActorQueueActionNode,
 
         // Trigger
-        ActorKilledTrigger,
-        ActorIdleTrigger,
-        MathTimerTrigger,
-        WorldLoaded,
+        TriggerActorKilledNode,
+        TriggerActorOnIdleNode,
+        TriggerTimerNode,
+        SetTimerNode,
+        RestartTimerNode,
+        TriggerWorldLoadedNode,
 
-        // Acto Groups
-        DefineGroup,
-        FindActorsInCircle,
-        FindActorsOnCells,
+        // Actor Groups
+        GroupCreateGroupNode,
+        GroupFindActorsInCircleNode,
+        GroupFindActorsOnCellsNode,
 
         // Arithmetic
-        SelectBy,
-        Select,
-        Compare,
-        ForEach,
+        ArithmeticsSelectByNode,
+        ArithmeticsSelectNode,
+        ArithmeticsCompareNode,
+        ArithmeticsForEachNode,
 
         // Complex Functions
-        Reinforcments,
-        ReinforcWithTransPort
+        FunctionReinforcmentsNode,
+        FunctionReinforceWithTransPort
     }
 
     public class NodeEditorNodeScreenWidget : Widget
     {
+        // Naming
+
+        public int NodeID;
+
         // Background
         public readonly string Background = "textfield";
 
@@ -77,12 +72,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         NodeBrush currentBrush = NodeBrush.Free;
         Tuple<Rectangle, OutConnection> BrushItem = null;
-        SimpleNodeWidget nodeBrush = null;
+        BasicNodeWidget nodeBrush = null;
 
-        public List<SimpleNodeWidget> Nodes = new List<SimpleNodeWidget>();
+        public List<BasicNodeWidget> Nodes = new List<BasicNodeWidget>();
 
         // SelectioNFrame
-        List<SimpleNodeWidget> selectedNodes = new List<SimpleNodeWidget>();
+        List<BasicNodeWidget> selectedNodes = new List<BasicNodeWidget>();
         int2 selectionStart;
         Rectangle selectionRectangle;
 
@@ -100,181 +95,46 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             CorrectCenterCoordinates = new int2((RenderBounds.Width / 2) + CenterCoordinates.X, (RenderBounds.Height / 2) + CenterCoordinates.Y);
         }
 
-        public void AddNode(NodeType nodeType)
+        public void LoadInNodes(List<NodeInfo> nodes)
         {
-            // Outputs
-            if (nodeType == NodeType.ActorOutPut)
+            foreach (var node in nodes)
             {
-                var newNode = new ActorInfoOutPutWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.PathNode)
-            {
-                var newNode = new PathNodeWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.PlayerOutput)
-            {
-                var newNode = new PlayerOutPutWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.LocationOutput)
-            {
-                var newNode = new LocationOutputWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.CellArrayOutput)
-            {
-                var newNode = new CellArrayWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.CellRange)
-            {
-                var newNode = new CelLRangeWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.InfoStrings)
-            {
-                var newNode = new InfoStringsWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
+                //var nodeInstance = (Widget)Activator.CreateInstance(Type.GetType(node.NodeType));
+
+                //// TODO: Make it work.
+                // AddChild(newWidget);
+                // Nodes.Add(newWidget);
             }
 
-            // Actor
-            else if (nodeType == NodeType.CreateActor)
-            {
-                var newNode = new CreateActorNodeWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.KillActor)
-            {
-                var newNode = new KillActorWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.RemoveActor)
-            {
-                var newNode = new DisposeActorWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.MoveActor)
-            {
-                var newNode = new MoveActorWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorFollowPath)
-            {
-                var newNode = new MovePathActorWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorInfo)
-            {
-                var newNode = new ActorInformationsWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-
-            // Trigger
-            else if (nodeType == NodeType.WorldLoaded)
-            {
-                var newNode = new TriggerWorldLoadedWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorIdleTrigger)
-            {
-                var newNode = new ActorTriggerOnIldeWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorKilledTrigger)
-            {
-                var newNode = new ActorTriggerKilled(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.MathTimerTrigger)
-            {
-                var newNode = new MAthTimerTriggerWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-
-            //Groups
-            else if (nodeType == NodeType.DefineGroup)
-            {
-                var newNode = new ActorGroupWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.FindActorsInCircle)
-            {
-                var newNode = new FindActorsInCircle(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.FindActorsOnCells)
-            {
-                var newNode = new FindActorsOnCells(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-
-            // Arithmetics
-            else if (nodeType == NodeType.SelectBy)
-            {
-                var newNode = new SelectByWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.Select)
-            {
-                var newNode = new SelectWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.Compare)
-            {
-                var newNode = new ArithmeticsCompare(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ForEach)
-            {
-                var newNode = new ArithmeticForEachWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-
-            // Function
-            else if (nodeType == NodeType.Reinforcments)
-            {
-                var newNode = new ComplexReinforcementsWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ReinforcWithTransPort)
-            {
-                var newNode = new ComplexReinforcementsWithTransportWidget(this);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
+            /*NodeName = nodeName;
+            Screen = screen;
+            PosX = posX;
+            PosY = posY;
+            OffsetPosX = offsetPosX;
+            OffsetPosY = offsetPosY;
+            InConnections = inCon;
+            OutConnections = OutCon;*/
         }
 
-        public void DeleteNode(SimpleNodeWidget widget)
+        public void AddNode(NodeType nodeType, string nodeID = null, string nodeName = null)
+        {
+            if (nodeType == NodeType.MapInfoNode)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeID, nodeName);
+                var newNode = new MapInfoNode(this, nodeInfo);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            // Outputs
+            Snw.World.WorldActor.Trait<EditorNodeLayer>().SimpleNodeWidgets = Nodes;
+        }
+
+        public void DeleteNode(BasicNodeWidget widget)
         {
             Nodes.Remove(widget);
             RemoveChild(widget);
+            Snw.World.WorldActor.Trait<EditorNodeLayer>().SimpleNodeWidgets = Nodes;
         }
 
         public override bool HandleMouseInput(MouseInput mi)
@@ -342,7 +202,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         node.Selected = false;
                     }
 
-                    selectedNodes = new List<SimpleNodeWidget>();
+                    selectedNodes = new List<BasicNodeWidget>();
                 }
                 else
                     currentBrush = NodeBrush.Drag;

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRA.Activities;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
@@ -13,29 +15,32 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
         readonly EditorViewportControllerWidget editorWidget;
         public List<CPos> Cells = new List<CPos>();
 
-        SimpleNodeWidget node;
+        OutConnection outCon;
         NodeSelectionLayer nodeSelectionLayer;
         WorldRenderer worldRenderer;
         int range;
+        Action function;
 
-        public EditorCellPickerBrush(CellPicking mode, SimpleNodeWidget node, EditorViewportControllerWidget editorWidget, WorldRenderer wr)
+        public EditorCellPickerBrush(CellPicking mode, OutConnection outConnection, EditorViewportControllerWidget editorWidget, WorldRenderer wr, Action onFinished = null)
         {
+            outCon = outConnection;
             worldRenderer = wr;
-            this.node = node;
             this.editorWidget = editorWidget;
 
             map = wr.World.Map;
 
             nodeSelectionLayer = wr.World.WorldActor.Trait<NodeSelectionLayer>();
 
-            Cells = node.SelectedCells;
+            Cells = outCon.CellArray;
             nodeSelectionLayer.Mode = mode;
-            node.Screen.Bgw.Visible = false;
+            outCon.Widget.Screen.Bgw.Visible = false;
 
-            if (node.SelectedCells != null && node.SelectedCells.Any())
-                nodeSelectionLayer.LoadInPath(node.SelectedCells);
+            function = onFinished;
 
-            if (node.Range != 0 && mode == CellPicking.Range)
+            if (outCon.CellArray != null && outCon.CellArray.Any())
+                nodeSelectionLayer.LoadInPath(outCon.CellArray);
+
+            if (outCon.Number != 0 && mode == CellPicking.Range)
                 nodeSelectionLayer.SetRange(new WDist(range * 1024));
             else if (mode == CellPicking.Range)
             {
@@ -58,9 +63,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             {
                 if (mi.Event == MouseInputEvent.Up)
                 {
-                    node.SelectedCells = nodeSelectionLayer.CellRegion;
-                    node.Screen.Bgw.Visible = true;
-                    node.Range = range;
+                    outCon.CellArray = nodeSelectionLayer.CellRegion;
+                    if ((nodeSelectionLayer.Mode == CellPicking.Single || nodeSelectionLayer.Mode == CellPicking.Range) && nodeSelectionLayer.CellRegion.Any())
+                        outCon.Location = nodeSelectionLayer.CellRegion.First();
+                    outCon.Widget.Screen.Bgw.Visible = true;
+                    outCon.Number = range;
+                    function();
                     editorWidget.ClearBrush();
                     return true;
                 }

@@ -5,7 +5,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public class PipetPickActorWidget : ImageWidget
     {
         public ActorInitializer PipetteActor;
-        PipetPickActorWidget(SimpleNodeWidget widget)
+        PipetPickActorWidget(BasicNodeWidget widget)
         {
 
         }
