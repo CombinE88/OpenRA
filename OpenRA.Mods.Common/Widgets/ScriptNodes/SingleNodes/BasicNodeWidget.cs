@@ -87,13 +87,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             AddChild(NodeIDTextfield = new TextFieldWidget());
             NodeIDTextfield.OnTextEdited = () => { NodeName = NodeIDTextfield.Text; };
             NodeIDTextfield.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, WidgetEntries.Width - 10, 20);
-
         }
 
         public void SetOuts(List<OutConnection> o)
         {
             OutConnections = o;
         }
+
         public void SetIns(List<InConnection> i)
         {
             InConnections = i;
@@ -212,24 +212,50 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             for (int i = 0; i < InConnections.Count; i++)
             {
-                WidgetUtils.FillEllipseWithColor(
-                    new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1, InConnections[i].InWidgetPosition.Width + 2,
-                        InConnections[i].InWidgetPosition.Width + 2), Color.Black);
-                WidgetUtils.FillEllipseWithColor(InConnections[i].InWidgetPosition, InConnections[i].Color);
-                WidgetUtils.FillEllipseWithColor(
-                    new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2, InConnections[i].InWidgetPosition.Width - 4,
-                        InConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                if (InConnections[i].ConTyp == ConnectionType.Exec)
+                {
+                    WidgetUtils.FillRectWithColor(
+                        new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1, InConnections[i].InWidgetPosition.Width + 2,
+                            InConnections[i].InWidgetPosition.Width + 2), Color.Black);
+                    WidgetUtils.FillRectWithColor(InConnections[i].InWidgetPosition, InConnections[i].Color);
+                    WidgetUtils.FillRectWithColor(
+                        new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2, InConnections[i].InWidgetPosition.Width - 4,
+                            InConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                }
+                else
+                {
+                    WidgetUtils.FillEllipseWithColor(
+                        new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1, InConnections[i].InWidgetPosition.Width + 2,
+                            InConnections[i].InWidgetPosition.Width + 2), Color.Black);
+                    WidgetUtils.FillEllipseWithColor(InConnections[i].InWidgetPosition, InConnections[i].Color);
+                    WidgetUtils.FillEllipseWithColor(
+                        new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2, InConnections[i].InWidgetPosition.Width - 4,
+                            InConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                }
             }
 
             for (int i = 0; i < OutConnections.Count; i++)
             {
-                WidgetUtils.FillEllipseWithColor(
-                    new Rectangle(OutConnections[i].InWidgetPosition.X - 1, OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
-                        OutConnections[i].InWidgetPosition.Width + 2), Color.Black);
-                WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].Color);
-                WidgetUtils.FillEllipseWithColor(
-                    new Rectangle(OutConnections[i].InWidgetPosition.X + 2, OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
-                        OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                if (OutConnections[i].ConTyp == ConnectionType.Exec)
+                {
+                    WidgetUtils.FillRectWithColor(
+                        new Rectangle(OutConnections[i].InWidgetPosition.X - 1, OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
+                            OutConnections[i].InWidgetPosition.Width + 2), Color.Black);
+                    WidgetUtils.FillRectWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].Color);
+                    WidgetUtils.FillRectWithColor(
+                        new Rectangle(OutConnections[i].InWidgetPosition.X + 2, OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
+                            OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                }
+                else
+                {
+                    WidgetUtils.FillEllipseWithColor(
+                        new Rectangle(OutConnections[i].InWidgetPosition.X - 1, OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
+                            OutConnections[i].InWidgetPosition.Width + 2), Color.Black);
+                    WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].Color);
+                    WidgetUtils.FillEllipseWithColor(
+                        new Rectangle(OutConnections[i].InWidgetPosition.X + 2, OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
+                            OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                }
             }
 
             for (int i = 0; i < InConnections.Count; i++)

@@ -178,7 +178,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.TriggerWorldLoadedNode,
                 NodeType.TriggerActorKilledNode,
                 NodeType.TriggerActorOnIdleNode,
-                NodeType.TriggerTimerNode
+                NodeType.LogicNodeCreateTimer
             };
 
             List<string> triggerNodeStrings = new List<string>

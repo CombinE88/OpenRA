@@ -63,11 +63,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             {
                 if (mi.Event == MouseInputEvent.Up)
                 {
-                    outCon.CellArray = nodeSelectionLayer.CellRegion;
+                    if (nodeSelectionLayer.Mode != CellPicking.Single && nodeSelectionLayer.Mode != CellPicking.Range)
+                        outCon.CellArray = nodeSelectionLayer.CellRegion;
                     if ((nodeSelectionLayer.Mode == CellPicking.Single || nodeSelectionLayer.Mode == CellPicking.Range) && nodeSelectionLayer.CellRegion.Any())
                         outCon.Location = nodeSelectionLayer.CellRegion.First();
                     outCon.Widget.Screen.Bgw.Visible = true;
-                    outCon.Number = range;
+                    if (nodeSelectionLayer.Mode == CellPicking.Range)
+                        outCon.Number = range;
                     function();
                     editorWidget.ClearBrush();
                     return true;

@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.LogicNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -25,7 +26,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         // Trigger
         TriggerActorKilledNode,
         TriggerActorOnIdleNode,
-        TriggerTimerNode,
+        LogicNodeCreateTimer,
         SetTimerNode,
         RestartTimerNode,
         TriggerWorldLoadedNode,
@@ -102,11 +103,26 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     if (nodeinfo.NodeType == NodeType.MapInfoNode)
                     {
                         var newNode = new MapInfoNode(this, nodeinfo);
-                        newNode.AddOutConnectionReferences();
-                        newNode.AddInConnectionReferences();
                         Nodes.Add(newNode);
                         AddChild(newNode);
                     }
+
+                    if (nodeinfo.NodeType == NodeType.LogicNodeCreateTimer)
+                    {
+                        var newNode = new LogicNodeCreateTimer(this, nodeinfo);
+                        Nodes.Add(newNode);
+                        AddChild(newNode);
+                    }
+                }
+
+                foreach (var node in Nodes)
+                {
+                    node.AddOutConnectionReferences();
+                }
+
+                foreach (var node in Nodes)
+                {
+                    node.AddInConnectionReferences();
                 }
 
                 int count = 0;
@@ -144,12 +160,25 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             OutConnections = OutCon;*/
         }
 
-        public void AddNode(NodeType nodeType, string nodeID = null, string nodeName = null)
+        public void AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
         {
             if (nodeType == NodeType.MapInfoNode)
             {
-                var nodeInfo = new NodeInfo(nodeType, nodeID, nodeName);
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
                 var newNode = new MapInfoNode(this, nodeInfo);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            if (nodeType == NodeType.LogicNodeCreateTimer)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                var newNode = new LogicNodeCreateTimer(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
@@ -181,10 +210,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         if (connection.InWidgetPosition.Contains(mi.Location)
                             && currentBrush == NodeBrush.Connecting
                             && BrushItem != null
-                            && (BrushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal || BrushItem.Item2.ConTyp == ConnectionType.Universal))
+                            && (BrushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal))
                         {
                             connection.In = BrushItem.Item2;
-                            BrushItem.Item2.Out = connection;
                         }
                     }
                 }

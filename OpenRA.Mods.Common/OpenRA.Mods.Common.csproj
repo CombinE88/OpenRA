@@ -614,6 +614,7 @@
     <Compile Include="Widgets\ScriptNodes\ScriptNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ShowWidgetsButton.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\BasicNodeWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\LogicNodes\LogicNodeCreateTimer.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\MapInfoNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\NodeWidget.cs" />
     <Compile Include="WorldExtensions.cs" />
@@ -937,9 +938,6 @@
     <Compile Include="Lint\CheckUnknownTraitFields.cs" />
     <Compile Include="Lint\CheckUnknownWeaponFields.cs" />
     <Compile Include="Widgets\Logic\PlayerProfileLogic.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Widgets\ScriptNodes\NodeLogics" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">

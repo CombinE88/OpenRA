@@ -7,9 +7,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
     public class InConnection
     {
-        public readonly BasicNodeWidget Widget;
-        public readonly ConnectionType ConTyp;
-        public string ConnectionID;
+        public BasicNodeWidget Widget;
+        public ConnectionType ConTyp;
+        public string ConnectionId;
 
         public Rectangle InWidgetPosition;
 
@@ -35,8 +35,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.ActorInfo:
                     Color = Color.Indigo;
                     break;
-                case ConnectionType.Boolean:
-                    Color = Color.DarkOliveGreen;
+                case ConnectionType.Exec:
+                    Color = Color.White;
                     break;
                 case ConnectionType.Player:
                     Color = Color.Brown;
@@ -57,7 +57,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     Color = Color.Green;
                     break;
                 case ConnectionType.Universal:
-                    Color = Color.White;
+                    Color = Color.Khaki;
                     break;
                 case ConnectionType.String:
                     Color = Color.SlateGray;
@@ -71,16 +71,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
     public class OutConnection
     {
-        public readonly ConnectionType ConTyp;
-        public readonly BasicNodeWidget Widget;
-        public string ConnectionID;
+        public ConnectionType ConTyp;
+        public BasicNodeWidget Widget;
+        public string ConnectionId;
 
         public Rectangle InWidgetPosition;
 
         public InConnection Out;
         public Color Color;
 
-        public bool Boolean = false;
         public ActorInfo ActorInfo = null;
         public PlayerReference Player = null;
         public Nullable<CPos> Location = null;
@@ -107,8 +106,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.ActorInfo:
                     Color = Color.Indigo;
                     break;
-                case ConnectionType.Boolean:
-                    Color = Color.DarkOliveGreen;
+                case ConnectionType.Exec:
+                    Color = Color.White;
                     break;
                 case ConnectionType.Player:
                     Color = Color.Brown;
@@ -129,7 +128,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     Color = Color.Green;
                     break;
                 case ConnectionType.Universal:
-                    Color = Color.White;
+                    Color = Color.Khaki;
                     break;
                 case ConnectionType.String:
                     Color = Color.SlateGray;
@@ -145,7 +144,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     {
         Undefined,
         Actor,
-        Boolean,
+        Exec,
         ActorInfo,
         Player,
         Location,

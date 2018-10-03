@@ -17,8 +17,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             NodeInfo = nodeInfo;
 
-            PosX = Screen.RenderBounds.Width / 2;
-            PosY = Screen.RenderBounds.Height / 2;
+            PosX = screen.CorrectCenterCoordinates.X;
+            PosY = screen.CorrectCenterCoordinates.Y;
             OffsetPosX = nodeInfo.OffsetPosX ?? 0;
             OffsetPosY = nodeInfo.OffsetPosY ?? 0;
 
@@ -52,29 +52,64 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             return nodeInfo;
         }
 
-        public virtual void AddOutConnection(OutConnection connection)
+        public void AddOutConnection(OutConnection connection)
         {
-            connection.ConnectionID = "Con" + outConnectionCounter.ToString();
+            connection.ConnectionId = "Con" + outConnectionCounter.ToString();
             outConnectionCounter++;
+
+            SetEmptyOutConnection(connection);
+
             OutConnections.Add(connection);
         }
 
-        public virtual void AddInConnection(InConnection connection)
+        public void AddInConnection(InConnection connection)
         {
-            connection.ConnectionID = "Con" + inConnectionCounter.ToString();
+            connection.ConnectionId = "Con" + inConnectionCounter.ToString();
             inConnectionCounter++;
+
+            SetEmptyInConnection(connection);
+
             InConnections.Add(connection);
+        }
+
+        void SetEmptyOutConnection(OutConnection connection)
+        {
+            if (connection.ConnectionId == null)
+            {
+                connection.ConnectionId = inConnectionCounter.ToString();
+                inConnectionCounter++;
+            }
+
+            if (connection.Widget == null)
+                connection.Widget = this;
+        }
+
+        void SetEmptyInConnection(InConnection connection)
+        {
+            if (connection.ConnectionId == null)
+            {
+                connection.ConnectionId = inConnectionCounter.ToString();
+                inConnectionCounter++;
+            }
+
+            if (connection.Widget == null)
+                connection.Widget = this;
         }
 
         public void AddOutConnectionReferences()
         {
             SetOuts(BuildOutConnections(NodeInfo));
 
+            foreach (var connection in OutConnections)
+            {
+                AddOutConConstructor(connection);
+            }
+
             int count = 0;
             foreach (var node in OutConnections)
             {
                 int c;
-                int.TryParse(node.ConnectionID, out c);
+                int.TryParse(node.ConnectionId, out c);
                 count = Math.Max(c, count);
             }
 
@@ -89,11 +124,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             foreach (var node in InConnections)
             {
                 int c;
-                int.TryParse(node.ConnectionID, out c);
+                int.TryParse(node.ConnectionId, out c);
                 count = Math.Max(c, count);
             }
-
-            inConnectionCounter = count + 1;
         }
 
         List<OutConReference> ReferenceOutConnections()
@@ -110,8 +143,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 outRef.Player = outCon.Player ?? null;
                 outRef.ActorInfo = outCon.ActorInfo ?? null;
                 outRef.CellArray = outCon.CellArray ?? null;
-                outRef.ConnecitonName = outCon.ConnectionID;
-                outRef.conTyp = outCon.ConTyp;
+                outRef.ConnectionId = outCon.ConnectionId;
+                outRef.ConTyp = outCon.ConTyp;
 
                 outConRef.Add(outRef);
             }
@@ -126,11 +159,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             foreach (var inCon in InConnections)
             {
                 var inRef = new InConReference();
-                inRef.ConnecitonName = inCon.ConnectionID;
-                inRef.conTyp = inCon.ConTyp;
-                inRef.WidgetNodeReference = inCon.In.ConnectionID;
-                inRef.WidgetReferenceID = inCon.Widget.NodeID;
-                inRef.conTyp = inCon.ConTyp;
+                inRef.ConnectionId = inCon.ConnectionId;
+                inRef.ConTyp = inCon.ConTyp;
+                if (inCon.In != null)
+                {
+                    inRef.WidgetNodeReference = inCon.In.ConnectionId ?? null;
+                    inRef.WidgetReferenceId = inCon.In.Widget.NodeID;
+                }
 
                 outConRef.Add(inRef);
             }
@@ -144,7 +179,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             foreach (var conRef in nodeInfo.OutConnections)
             {
-                var connection = new OutConnection(conRef.conTyp, this);
+                var connection = new OutConnection(conRef.ConTyp, this);
 
                 connection.String = conRef.String ?? null;
                 connection.Number = conRef.Number ?? null;
@@ -153,11 +188,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 connection.Player = conRef.Player ?? null;
                 connection.ActorInfo = conRef.ActorInfo ?? null;
                 connection.CellArray = conRef.CellArray ?? null;
-                connection.ConnectionID = conRef.ConnecitonName;
+                connection.ConnectionId = conRef.ConnectionId;
 
                 readyOutCons.Add(connection);
-
-                AddOutConConstructor(connection);
             }
 
             return readyOutCons;
@@ -169,10 +202,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             foreach (var conRef in nodeInfo.InConnections)
             {
-                var connection = new InConnection(conRef.conTyp, this);
+                var connection = new InConnection(conRef.ConTyp, this);
 
-                connection.ConnectionID = conRef.ConnecitonName ?? null;
-                connection.In = Screen.Nodes.First(bsw => bsw.NodeID == conRef.WidgetReferenceID).OutConnections.First(oc => oc.ConnectionID == conRef.WidgetNodeReference);
+                connection.ConnectionId = conRef.ConnectionId ?? null;
+                var referenceNode = Screen.Nodes.FirstOrDefault(n => n.NodeID == conRef.WidgetReferenceId);
+                var referenceConnection = referenceNode != null ? referenceNode.OutConnections.FirstOrDefault(c => c.ConnectionId == conRef.WidgetNodeReference) : null;
+                connection.In = referenceConnection ?? null;
+                // connection.In = Screen.Nodes.First(bsw => bsw.NodeID == conRef.WidgetReferenceId).OutConnections.First(oc => oc.ConnectionId == conRef.WidgetNodeReference);
 
                 readyOutCons.Add(connection);
             }

@@ -69,18 +69,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     var inCon = new InConReference();
                     inCons.Add(inCon);
 
+                    inCon.ConnectionId = node.Key.Split('@').Last();
+
                     foreach (var incon in node.Value.ToDictionary())
                     {
                         if (incon.Key == "ConnectionType")
                         {
                             ConnectionType[] values = (ConnectionType[])Enum.GetValues(typeof(ConnectionType));
-                            inCon.conTyp = values.First(e => e.ToString() == incon.Value.Value);
+                            inCon.ConTyp = values.First(e => e.ToString() == incon.Value.Value);
                         }
 
                         if (incon.Key.Contains("Node@"))
                         {
                             inCon.WidgetNodeReference = incon.Value.Value;
-                            inCon.WidgetReferenceID = incon.Key.Split('@').Last();
+                            inCon.WidgetReferenceId = incon.Key.Split('@').Last();
                         }
                     }
                 }
@@ -89,12 +91,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     var outCon = new OutConReference();
                     outCons.Add(outCon);
 
+                    outCon.ConnectionId = node.Key.Split('@').Last();
+
                     foreach (var outcon in node.Value.ToDictionary())
                     {
                         if (outcon.Key == "ConnectionType")
                         {
                             ConnectionType[] values = (ConnectionType[])Enum.GetValues(typeof(ConnectionType));
-                            outCon.conTyp = values.First(e => e.ToString() == outcon.Value.Value);
+                            outCon.ConTyp = values.First(e => e.ToString() == outcon.Value.Value);
                         }
 
                         if (outcon.Key.Contains("String"))
@@ -175,17 +179,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             nodes.Add(new MiniYamlNode("Pos", nodeInfo.OffsetPosX.ToString() + "," + nodeInfo.OffsetPosY.ToString()));
             foreach (var outCon in nodeInfo.OutConnections)
             {
-                nodes.Add(new MiniYamlNode("Out@" + outCon.ConnecitonName, "", OutConnections(outCon)));
+                nodes.Add(new MiniYamlNode("Out@" + outCon.ConnectionId, "", OutConnections(outCon)));
             }
 
             foreach (var inCon in nodeInfo.InConnections)
             {
                 List<MiniYamlNode> miniNode = new List<MiniYamlNode>();
-                miniNode.Add(new MiniYamlNode("ConnectionType", inCon.conTyp.ToString()));
+                miniNode.Add(new MiniYamlNode("ConnectionType", inCon.ConTyp.ToString()));
                 if (inCon.WidgetNodeReference != null)
-                    miniNode.Add(new MiniYamlNode("Node@" + inCon.WidgetReferenceID, inCon.WidgetNodeReference));
+                    miniNode.Add(new MiniYamlNode("Node@" + inCon.WidgetReferenceId, inCon.WidgetNodeReference));
 
-                nodes.Add(new MiniYamlNode("In@" + inCon.ConnecitonName, "", miniNode));
+                nodes.Add(new MiniYamlNode("In@" + inCon.ConnectionId, "", miniNode));
             }
 
             return nodes;
@@ -194,7 +198,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public List<MiniYamlNode> OutConnections(OutConReference outCon)
         {
             var nodes = new List<MiniYamlNode>();
-            nodes.Add(new MiniYamlNode("ConnectionType", outCon.conTyp.ToString()));
+            nodes.Add(new MiniYamlNode("ConnectionType", outCon.ConTyp.ToString()));
 
             if (outCon.String != null)
                 nodes.Add(new MiniYamlNode("String", outCon.String));
@@ -261,11 +265,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
     public class OutConReference
     {
-        public string ConnecitonName;
-        public ConnectionType conTyp;
-        public string WidgetName;
+        public string ConnectionId;
+        public ConnectionType ConTyp;
 
-        public bool Boolean = false;
         public ActorInfo ActorInfo = null;
         public PlayerReference Player = null;
         public Nullable<CPos> Location = null;
@@ -281,10 +283,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
     public class InConReference
     {
-        public string ConnecitonName;
-        public ConnectionType conTyp;
-        public string WidgetName;
-        public string WidgetReferenceID;
+        public string ConnectionId;
+        public ConnectionType ConTyp;
+
+        public string WidgetReferenceId;
         public string WidgetNodeReference;
 
         public InConReference()

@@ -85,7 +85,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         {
             base.AddOutConConstructor(connection);
 
-            if (nodeType == ConnectionType.Integer)
+            if (connection.ConTyp == ConnectionType.Integer)
             {
                 var wid = new TextFieldWidget();
                 wid.OnTextEdited = () =>
@@ -96,15 +96,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
+
+                if (connection.Number != null)
+                    wid.Text = connection.Number.ToString();
             }
-            else if (nodeType == ConnectionType.String)
+            else if (connection.ConTyp == ConnectionType.String)
             {
                 var wid = new TextFieldWidget();
                 wid.OnTextEdited = () => { connection.String = wid.Text; };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
+
+                if (connection.String != null)
+                    wid.Text = connection.String;
             }
-            else if (nodeType == ConnectionType.Location)
+            else if (connection.ConTyp == ConnectionType.Location)
             {
                 var wid = new ButtonWidget(Screen.Snw.ModData);
                 wid.OnClick = () =>
@@ -114,19 +120,25 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
+
+                if (connection.Location != null)
+                    wid.Text = "Cell: " + connection.Location.ToString();
             }
-            else if (nodeType == ConnectionType.CellPath)
+            else if (connection.ConTyp == ConnectionType.CellPath)
             {
                 var wid = new ButtonWidget(Screen.Snw.ModData);
                 wid.OnClick = () =>
                 {
                     Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Path, connection, Editor, Screen.Snw.WorldRenderer,
-                        () => { wid.Text = "Path: " + connection.CellArray.First().ToString(); }));
+                        () => { wid.Text = "Path: " + connection.CellArray.Count().ToString(); }));
                 };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
+
+                if (connection.CellArray.Any())
+                    wid.Text = "Path: " + connection.CellArray.Count().ToString();
             }
-            else if (nodeType == ConnectionType.CellArray)
+            else if (connection.ConTyp == ConnectionType.CellArray)
             {
                 var wid = new ButtonWidget(Screen.Snw.ModData);
                 wid.OnClick = () =>
@@ -136,8 +148,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
+
+                if (connection.CellArray.Any())
+                    wid.Text = "Array: " + connection.CellArray.Count().ToString();
             }
-            else if (nodeType == ConnectionType.LocationRange)
+            else if (connection.ConTyp == ConnectionType.LocationRange)
             {
                 var wid = new ButtonWidget(Screen.Snw.ModData);
                 wid.OnClick = () =>
@@ -147,8 +162,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
+
+                if (connection.Location != null && connection.Number != null)
+                    wid.Text = "Cell: " + connection.Location.ToString() + " | " + connection.Number;
             }
-            else if (nodeType == ConnectionType.Player)
+            else if (connection.ConTyp == ConnectionType.Player)
             {
                 var editorLayer = Screen.Snw.World.WorldActor.Trait<EditorActorLayer>();
                 var selectedOwner = editorLayer.Players.Players.Values.First();
@@ -182,8 +200,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
                 AddChild(playerSelection);
                 parralelWidgetList.Add(playerSelection);
+
+                if (connection.Player != null)
+                {
+                    playerSelection.Text = connection.Player.Name;
+                    playerSelection.TextColor = connection.Player.Color.RGB;
+                }
             }
-            else if (nodeType == ConnectionType.ActorInfo)
+            else if (connection.ConTyp == ConnectionType.ActorInfo)
             {
                 var ruleActors = Screen.Snw.World.Map.Rules.Actors;
                 var selectedOwner = ruleActors.First().Value;
@@ -220,13 +244,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
                 AddChild(playerSelection);
                 parralelWidgetList.Add(playerSelection);
+
+                if (connection.ActorInfo != null)
+                {
+                    selectedOwner = connection.ActorInfo;
+                    playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
+                }
             }
             else
                 parralelWidgetList.Add(null);
 
-            for (int i = 0; i < OutConnections.Count; i++)
+            for (int i = 0; i < parralelWidgetList.Count; i++)
             {
-                var splitHeight = (RenderBounds.Height + 20) / (OutConnections.Count + 1);
+                var splitHeight = (RenderBounds.Height + 20) / (parralelWidgetList.Count + 1);
                 if (parralelWidgetList[i] != null)
                     parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 20, FreeWidgetEntries.Y + splitHeight * (i + 1), 170, 25);
             }
