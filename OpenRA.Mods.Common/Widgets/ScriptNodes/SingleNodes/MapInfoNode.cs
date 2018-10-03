@@ -51,153 +51,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             addButton.OnClick = () =>
             {
                 var connection = new OutConnection(nodeType, this);
-                OutConnections.Add(connection);
-
-                if (nodeType == ConnectionType.Integer)
-                {
-                    var wid = new TextFieldWidget();
-                    wid.OnTextEdited = () =>
-                    {
-                        int num;
-                        int.TryParse(wid.Text, out num);
-                        connection.Number = num;
-                    };
-                    AddChild(wid);
-                    parralelWidgetList.Add(wid);
-                }
-                else if (nodeType == ConnectionType.String)
-                {
-                    var wid = new TextFieldWidget();
-                    wid.OnTextEdited = () => { connection.String = wid.Text; };
-                    AddChild(wid);
-                    parralelWidgetList.Add(wid);
-                }
-                else if (nodeType == ConnectionType.Location)
-                {
-                    var wid = new ButtonWidget(screen.Snw.ModData);
-                    wid.OnClick = () =>
-                    {
-                        Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Single, connection, Editor, screen.Snw.WorldRenderer,
-                            () => { wid.Text = "Cell: " + connection.Location.ToString(); }));
-                    };
-                    AddChild(wid);
-                    parralelWidgetList.Add(wid);
-                }
-                else if (nodeType == ConnectionType.CellPath)
-                {
-                    var wid = new ButtonWidget(screen.Snw.ModData);
-                    wid.OnClick = () =>
-                    {
-                        Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Path, connection, Editor, screen.Snw.WorldRenderer,
-                            () => { wid.Text = "Path: " + connection.CellArray.First().ToString(); }));
-                    };
-                    AddChild(wid);
-                    parralelWidgetList.Add(wid);
-                }
-                else if (nodeType == ConnectionType.CellArray)
-                {
-                    var wid = new ButtonWidget(screen.Snw.ModData);
-                    wid.OnClick = () =>
-                    {
-                        Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Array, connection, Editor, screen.Snw.WorldRenderer,
-                            () => { wid.Text = "Array: " + connection.CellArray.First().ToString(); }));
-                    };
-                    AddChild(wid);
-                    parralelWidgetList.Add(wid);
-                }
-                else if (nodeType == ConnectionType.LocationRange)
-                {
-                    var wid = new ButtonWidget(screen.Snw.ModData);
-                    wid.OnClick = () =>
-                    {
-                        Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Range, connection, Editor, screen.Snw.WorldRenderer,
-                            () => { wid.Text = "Cell: " + connection.Location.ToString() + " | " + connection.Number; }));
-                    };
-                    AddChild(wid);
-                    parralelWidgetList.Add(wid);
-                }
-                else if (nodeType == ConnectionType.Player)
-                {
-                    var editorLayer = screen.Snw.World.WorldActor.Trait<EditorActorLayer>();
-                    var selectedOwner = editorLayer.Players.Players.Values.First();
-                    var playerSelection = new DropDownButtonWidget(screen.Snw.ModData);
-
-                    Func<PlayerReference, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
-                    {
-                        var item = ScrollItemWidget.Setup(template, () => selectedOwner == option, () =>
-                        {
-                            selectedOwner = option;
-
-                            playerSelection.Text = selectedOwner.Name;
-                            playerSelection.TextColor = selectedOwner.Color.RGB;
-                            connection.Player = selectedOwner;
-                        });
-
-                        item.Get<LabelWidget>("LABEL").GetText = () => option.Name;
-                        item.GetColor = () => option.Color.RGB;
-
-                        return item;
-                    };
-
-                    playerSelection.OnClick = () =>
-                    {
-                        var owners = editorLayer.Players.Players.Values.OrderBy(p => p.Name);
-                        playerSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, owners, setupItem);
-                    };
-
-                    playerSelection.Text = selectedOwner.Name;
-                    playerSelection.TextColor = selectedOwner.Color.RGB;
-
-                    AddChild(playerSelection);
-                    parralelWidgetList.Add(playerSelection);
-                }
-                else if (nodeType == ConnectionType.ActorInfo)
-                {
-                    var ruleActors = screen.Snw.World.Map.Rules.Actors;
-                    var selectedOwner = ruleActors.First().Value;
-                    var playerSelection = new DropDownButtonWidget(screen.Snw.ModData);
-
-                    Func<ActorInfo, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
-                    {
-                        var item = ScrollItemWidget.Setup(template, () => selectedOwner == option, () =>
-                        {
-                            selectedOwner = option;
-
-                            playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
-                            playerSelection.TextColor = Color.White;
-
-                            connection.ActorInfo = selectedOwner;
-                        });
-
-                        item.Get<LabelWidget>("LABEL").GetText = () => option.TraitInfo<TooltipInfo>().Name;
-
-
-                        return item;
-                    };
-
-                    playerSelection.OnClick = () =>
-                    {
-                        var actors = ruleActors.Values.Where(a => a.TraitInfoOrDefault<TooltipInfo>() != null);
-                        actors = actors.OrderBy(a => a.TraitInfo<TooltipInfo>().Name);
-                        playerSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, actors, setupItem);
-                    };
-
-                    playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
-                    playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
-                    connection.ActorInfo = selectedOwner;
-
-                    AddChild(playerSelection);
-                    parralelWidgetList.Add(playerSelection);
-                }
-                else
-                    parralelWidgetList.Add(null);
-
-                for (int i = 0; i < OutConnections.Count; i++)
-                {
-                    var splitHeight = (RenderBounds.Height + 20) / (OutConnections.Count + 1);
-                    if (parralelWidgetList[i] != null)
-                        parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 20, FreeWidgetEntries.Y + splitHeight* (i + 1), 170, 25);
-                }
+                AddOutConnection(connection);
+                AddOutConConstructor(connection);
             };
 
             AddChild(createInfoList = new DropDownButtonWidget(screen.Snw.ModData));
@@ -224,6 +79,157 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             };
 
             createInfoList.Text = "Info: Number";
+        }
+
+        public override void AddOutConConstructor(OutConnection connection)
+        {
+            base.AddOutConConstructor(connection);
+
+            if (nodeType == ConnectionType.Integer)
+            {
+                var wid = new TextFieldWidget();
+                wid.OnTextEdited = () =>
+                {
+                    int num;
+                    int.TryParse(wid.Text, out num);
+                    connection.Number = num;
+                };
+                AddChild(wid);
+                parralelWidgetList.Add(wid);
+            }
+            else if (nodeType == ConnectionType.String)
+            {
+                var wid = new TextFieldWidget();
+                wid.OnTextEdited = () => { connection.String = wid.Text; };
+                AddChild(wid);
+                parralelWidgetList.Add(wid);
+            }
+            else if (nodeType == ConnectionType.Location)
+            {
+                var wid = new ButtonWidget(Screen.Snw.ModData);
+                wid.OnClick = () =>
+                {
+                    Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Single, connection, Editor, Screen.Snw.WorldRenderer,
+                        () => { wid.Text = "Cell: " + connection.Location.ToString(); }));
+                };
+                AddChild(wid);
+                parralelWidgetList.Add(wid);
+            }
+            else if (nodeType == ConnectionType.CellPath)
+            {
+                var wid = new ButtonWidget(Screen.Snw.ModData);
+                wid.OnClick = () =>
+                {
+                    Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Path, connection, Editor, Screen.Snw.WorldRenderer,
+                        () => { wid.Text = "Path: " + connection.CellArray.First().ToString(); }));
+                };
+                AddChild(wid);
+                parralelWidgetList.Add(wid);
+            }
+            else if (nodeType == ConnectionType.CellArray)
+            {
+                var wid = new ButtonWidget(Screen.Snw.ModData);
+                wid.OnClick = () =>
+                {
+                    Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Array, connection, Editor, Screen.Snw.WorldRenderer,
+                        () => { wid.Text = "Array: " + connection.CellArray.First().ToString(); }));
+                };
+                AddChild(wid);
+                parralelWidgetList.Add(wid);
+            }
+            else if (nodeType == ConnectionType.LocationRange)
+            {
+                var wid = new ButtonWidget(Screen.Snw.ModData);
+                wid.OnClick = () =>
+                {
+                    Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Range, connection, Editor, Screen.Snw.WorldRenderer,
+                        () => { wid.Text = "Cell: " + connection.Location.ToString() + " | " + connection.Number; }));
+                };
+                AddChild(wid);
+                parralelWidgetList.Add(wid);
+            }
+            else if (nodeType == ConnectionType.Player)
+            {
+                var editorLayer = Screen.Snw.World.WorldActor.Trait<EditorActorLayer>();
+                var selectedOwner = editorLayer.Players.Players.Values.First();
+                var playerSelection = new DropDownButtonWidget(Screen.Snw.ModData);
+
+                Func<PlayerReference, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
+                {
+                    var item = ScrollItemWidget.Setup(template, () => selectedOwner == option, () =>
+                    {
+                        selectedOwner = option;
+
+                        playerSelection.Text = selectedOwner.Name;
+                        playerSelection.TextColor = selectedOwner.Color.RGB;
+                        connection.Player = selectedOwner;
+                    });
+
+                    item.Get<LabelWidget>("LABEL").GetText = () => option.Name;
+                    item.GetColor = () => option.Color.RGB;
+
+                    return item;
+                };
+
+                playerSelection.OnClick = () =>
+                {
+                    var owners = editorLayer.Players.Players.Values.OrderBy(p => p.Name);
+                    playerSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, owners, setupItem);
+                };
+
+                playerSelection.Text = selectedOwner.Name;
+                playerSelection.TextColor = selectedOwner.Color.RGB;
+
+                AddChild(playerSelection);
+                parralelWidgetList.Add(playerSelection);
+            }
+            else if (nodeType == ConnectionType.ActorInfo)
+            {
+                var ruleActors = Screen.Snw.World.Map.Rules.Actors;
+                var selectedOwner = ruleActors.First().Value;
+                var playerSelection = new DropDownButtonWidget(Screen.Snw.ModData);
+
+                Func<ActorInfo, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
+                {
+                    var item = ScrollItemWidget.Setup(template, () => selectedOwner == option, () =>
+                    {
+                        selectedOwner = option;
+
+                        playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
+                        playerSelection.TextColor = Color.White;
+
+                        connection.ActorInfo = selectedOwner;
+                    });
+
+                    item.Get<LabelWidget>("LABEL").GetText = () => option.TraitInfo<TooltipInfo>().Name;
+
+
+                    return item;
+                };
+
+                playerSelection.OnClick = () =>
+                {
+                    var actors = ruleActors.Values.Where(a => a.TraitInfoOrDefault<TooltipInfo>() != null);
+                    actors = actors.OrderBy(a => a.TraitInfo<TooltipInfo>().Name);
+                    playerSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, actors, setupItem);
+                };
+
+                playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
+                playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
+                connection.ActorInfo = selectedOwner;
+
+                AddChild(playerSelection);
+                parralelWidgetList.Add(playerSelection);
+            }
+            else
+                parralelWidgetList.Add(null);
+
+            for (int i = 0; i < OutConnections.Count; i++)
+            {
+                var splitHeight = (RenderBounds.Height + 20) / (OutConnections.Count + 1);
+                if (parralelWidgetList[i] != null)
+                    parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 20, FreeWidgetEntries.Y + splitHeight * (i + 1), 170, 25);
+            }
         }
     }
 }

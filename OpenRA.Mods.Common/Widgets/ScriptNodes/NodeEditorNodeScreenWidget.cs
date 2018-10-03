@@ -74,12 +74,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Tuple<Rectangle, OutConnection> BrushItem = null;
         BasicNodeWidget nodeBrush = null;
 
-        public List<BasicNodeWidget> Nodes = new List<BasicNodeWidget>();
+        public List<NodeWidget> Nodes = new List<NodeWidget>();
 
         // SelectioNFrame
         List<BasicNodeWidget> selectedNodes = new List<BasicNodeWidget>();
         int2 selectionStart;
         Rectangle selectionRectangle;
+        int tick;
 
 
         [ObjectCreator.UseCtor]
@@ -93,6 +94,33 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             Bounds = new Rectangle(Bgw.RenderBounds.X + 200, Bgw.RenderBounds.Y + 5, Bgw.RenderBounds.Width - 205, Bgw.RenderBounds.Height - 10);
             CorrectCenterCoordinates = new int2((RenderBounds.Width / 2) + CenterCoordinates.X, (RenderBounds.Height / 2) + CenterCoordinates.Y);
+
+            if (tick++ < 10)
+            {
+                foreach (var nodeinfo in Snw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfo)
+                {
+                    if (nodeinfo.NodeType == NodeType.MapInfoNode)
+                    {
+                        var newNode = new MapInfoNode(this, nodeinfo);
+                        newNode.AddOutConnectionReferences();
+                        newNode.AddInConnectionReferences();
+                        Nodes.Add(newNode);
+                        AddChild(newNode);
+                    }
+                }
+
+                int count = 0;
+                foreach (var node in Nodes)
+                {
+                    int c;
+                    int.TryParse(node.NodeInfo.NodeID.Replace("ND", ""), out c);
+                    count = Math.Max(c, count);
+                }
+
+                NodeID = count;
+
+                tick = 11;
+            }
         }
 
         public void LoadInNodes(List<NodeInfo> nodes)
@@ -125,16 +153,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-
-            // Outputs
-            Snw.World.WorldActor.Trait<EditorNodeLayer>().SimpleNodeWidgets = Nodes;
         }
 
-        public void DeleteNode(BasicNodeWidget widget)
+        public void DeleteNode(NodeWidget widget)
         {
             Nodes.Remove(widget);
             RemoveChild(widget);
-            Snw.World.WorldActor.Trait<EditorNodeLayer>().SimpleNodeWidgets = Nodes;
         }
 
         public override bool HandleMouseInput(MouseInput mi)
@@ -157,7 +181,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         if (connection.InWidgetPosition.Contains(mi.Location)
                             && currentBrush == NodeBrush.Connecting
                             && BrushItem != null
-                            && (BrushItem.Item2.conTyp == connection.conTyp || connection.conTyp == ConnectionType.Universal || BrushItem.Item2.conTyp == ConnectionType.Universal))
+                            && (BrushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal || BrushItem.Item2.ConTyp == ConnectionType.Universal))
                         {
                             connection.In = BrushItem.Item2;
                             BrushItem.Item2.Out = connection;
@@ -359,7 +383,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (BrushItem != null && currentBrush == NodeBrush.Connecting)
             {
                 Game.Renderer.RgbaColorRenderer.DrawLine(new int2(BrushItem.Item1.X + 10, BrushItem.Item1.Y + 10), oldCursorPosition,
-                    2, BrushItem.Item2.color);
+                    2, BrushItem.Item2.Color);
             }
 
             if (currentBrush == NodeBrush.Frame)

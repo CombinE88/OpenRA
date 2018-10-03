@@ -39,8 +39,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public int2 CursorLocation;
 
         // Node Connections
-        public List<InConnection> InConnections = new List<InConnection>();
-        public List<OutConnection> OutConnections = new List<OutConnection>();
+        public List<InConnection> InConnections { get; private set; }
+        public List<OutConnection> OutConnections { get; private set; }
 
         public Rectangle AddInput;
         public Rectangle AddOutput;
@@ -69,6 +69,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             Editor = screen.Snw.Parent.Get<EditorViewportControllerWidget>("MAP_EDITOR");
             Screen = screen;
 
+            InConnections = new List<InConnection>();
+            OutConnections = new List<OutConnection>();
+
             GridPosX = PosX - Screen.CenterCoordinates.X + OffsetPosX;
             GridPosY = PosY - Screen.CenterCoordinates.Y + OffsetPosY;
 
@@ -84,6 +87,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             AddChild(NodeIDTextfield = new TextFieldWidget());
             NodeIDTextfield.OnTextEdited = () => { NodeName = NodeIDTextfield.Text; };
             NodeIDTextfield.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, WidgetEntries.Width - 10, 20);
+
+        }
+
+        public void SetOuts(List<OutConnection> o)
+        {
+            OutConnections = o;
+        }
+        public void SetIns(List<InConnection> i)
+        {
+            InConnections = i;
         }
 
         public override void Tick()
@@ -202,7 +215,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 WidgetUtils.FillEllipseWithColor(
                     new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1, InConnections[i].InWidgetPosition.Width + 2,
                         InConnections[i].InWidgetPosition.Width + 2), Color.Black);
-                WidgetUtils.FillEllipseWithColor(InConnections[i].InWidgetPosition, InConnections[i].color);
+                WidgetUtils.FillEllipseWithColor(InConnections[i].InWidgetPosition, InConnections[i].Color);
                 WidgetUtils.FillEllipseWithColor(
                     new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2, InConnections[i].InWidgetPosition.Width - 4,
                         InConnections[i].InWidgetPosition.Width - 4), Color.Black);
@@ -213,7 +226,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 WidgetUtils.FillEllipseWithColor(
                     new Rectangle(OutConnections[i].InWidgetPosition.X - 1, OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
                         OutConnections[i].InWidgetPosition.Width + 2), Color.Black);
-                WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].color);
+                WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].Color);
                 WidgetUtils.FillEllipseWithColor(
                     new Rectangle(OutConnections[i].InWidgetPosition.X + 2, OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
                         OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
@@ -247,7 +260,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                         Game.Renderer.RgbaColorRenderer.DrawLine(
                             new int2(conout.X + 10, conout.Y + 10),
                             new int2(conin.X + 10, conin.Y + 10),
-                            2, InConnections[i].color);
+                            2, InConnections[i].Color);
                     }
                 }
             }

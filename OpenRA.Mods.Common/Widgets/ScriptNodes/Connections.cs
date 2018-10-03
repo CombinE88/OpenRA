@@ -8,88 +8,77 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public class InConnection
     {
         public readonly BasicNodeWidget Widget;
-        public readonly string ConnecitonName;
+        public readonly ConnectionType ConTyp;
+        public string ConnectionID;
 
         public Rectangle InWidgetPosition;
 
-        public ConnectionType conTyp = ConnectionType.Undefined;
         public OutConnection In;
-        public Color color;
-
-        public bool Boolean = false;
-        public ActorInfo ActorInfo = null;
-        public PlayerReference Player = null;
-        public CPos Location = CPos.Zero;
-        public List<CPos> CellArray = new List<CPos>();
-        public int Number = 0;
-        public string String = "";
-        public string[] Strings = { "" };
+        public Color Color;
 
         public InConnection(ConnectionType conectionType, BasicNodeWidget widget)
         {
-            conTyp = conectionType;
+            ConTyp = conectionType;
             Widget = widget;
 
             switch (conectionType)
             {
                 case ConnectionType.Undefined:
-                    color = Color.Black;
+                    Color = Color.Black;
                     break;
                 case ConnectionType.Actor:
-                    color = Color.CornflowerBlue;
+                    Color = Color.CornflowerBlue;
                     break;
                 case ConnectionType.ActorList:
-                    color = Color.DarkBlue;
+                    Color = Color.DarkBlue;
                     break;
                 case ConnectionType.ActorInfo:
-                    color = Color.Indigo;
+                    Color = Color.Indigo;
                     break;
                 case ConnectionType.Boolean:
-                    color = Color.DarkOliveGreen;
+                    Color = Color.DarkOliveGreen;
                     break;
                 case ConnectionType.Player:
-                    color = Color.Brown;
+                    Color = Color.Brown;
                     break;
                 case ConnectionType.Location:
-                    color = Color.BlueViolet;
+                    Color = Color.BlueViolet;
                     break;
                 case ConnectionType.LocationRange:
-                    color = Color.MediumVioletRed;
+                    Color = Color.MediumVioletRed;
                     break;
                 case ConnectionType.CellArray:
-                    color = Color.Violet;
+                    Color = Color.Violet;
                     break;
                 case ConnectionType.CellPath:
-                    color = Color.Violet;
+                    Color = Color.Violet;
                     break;
                 case ConnectionType.Integer:
-                    color = Color.Green;
+                    Color = Color.Green;
                     break;
                 case ConnectionType.Universal:
-                    color = Color.White;
+                    Color = Color.White;
                     break;
                 case ConnectionType.String:
-                    color = Color.SlateGray;
+                    Color = Color.SlateGray;
                     break;
                 case ConnectionType.Strings:
-                    color = Color.DarkSlateGray;
+                    Color = Color.DarkSlateGray;
                     break;
             }
-
-            ConnecitonName = "Input" + (widget.InConnections.Count + 1);
         }
     }
 
     public class OutConnection
     {
-        public readonly string ConnecitonName;
-        public readonly ConnectionType conTyp = ConnectionType.Undefined;
+        public readonly ConnectionType ConTyp;
         public readonly BasicNodeWidget Widget;
+        public string ConnectionID;
 
         public Rectangle InWidgetPosition;
 
         public InConnection Out;
-        public Color color;
+        public Color Color;
 
         public bool Boolean = false;
         public ActorInfo ActorInfo = null;
@@ -102,55 +91,53 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public OutConnection(ConnectionType conectionType, BasicNodeWidget widget)
         {
-            conTyp = conectionType;
+            ConTyp = conectionType;
             Widget = widget;
             switch (conectionType)
             {
                 case ConnectionType.Undefined:
-                    color = Color.Black;
+                    Color = Color.Black;
                     break;
                 case ConnectionType.Actor:
-                    color = Color.CornflowerBlue;
+                    Color = Color.CornflowerBlue;
                     break;
                 case ConnectionType.ActorList:
-                    color = Color.DarkBlue;
+                    Color = Color.DarkBlue;
                     break;
                 case ConnectionType.ActorInfo:
-                    color = Color.Indigo;
+                    Color = Color.Indigo;
                     break;
                 case ConnectionType.Boolean:
-                    color = Color.DarkOliveGreen;
+                    Color = Color.DarkOliveGreen;
                     break;
                 case ConnectionType.Player:
-                    color = Color.Brown;
+                    Color = Color.Brown;
                     break;
                 case ConnectionType.Location:
-                    color = Color.BlueViolet;
+                    Color = Color.BlueViolet;
                     break;
                 case ConnectionType.LocationRange:
-                    color = Color.MediumVioletRed;
+                    Color = Color.MediumVioletRed;
                     break;
                 case ConnectionType.CellArray:
-                    color = Color.Violet;
+                    Color = Color.Violet;
                     break;
                 case ConnectionType.CellPath:
-                    color = Color.Violet;
+                    Color = Color.Violet;
                     break;
                 case ConnectionType.Integer:
-                    color = Color.Green;
+                    Color = Color.Green;
                     break;
                 case ConnectionType.Universal:
-                    color = Color.White;
+                    Color = Color.White;
                     break;
                 case ConnectionType.String:
-                    color = Color.SlateGray;
+                    Color = Color.SlateGray;
                     break;
                 case ConnectionType.Strings:
-                    color = Color.DarkSlateGray;
+                    Color = Color.DarkSlateGray;
                     break;
             }
-
-            ConnecitonName = "Output" + (widget.InConnections.Count + 1);
         }
     }
 

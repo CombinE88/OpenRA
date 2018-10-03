@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -58,8 +59,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             AddChild(closeButton);
             closeButton.Bounds = new Rectangle(5, 600, 190, 25);
             closeButton.Text = "Close";
-            closeButton.OnClick = () => { Visible = false; };
+            closeButton.OnClick = () =>
+            {
+                List<NodeInfo> nodeInfos = new List<NodeInfo>();
+                foreach (var node in screenWidget.Nodes)
+                {
+                    nodeInfos.Add(node.BuildNodeInfo());
+                }
 
+                Snw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfo = nodeInfos;
+
+                Visible = false;
+            };
         }
 
         void AddNodesList()

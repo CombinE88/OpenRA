@@ -17,9 +17,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         }
     }
 
-    public class EditorNodeLayer
+    public class EditorNodeLayer : IWorldLoaded
     {
-        public List<BasicNodeWidget> SimpleNodeWidgets = new List<BasicNodeWidget>();
         public List<NodeInfo> NodeInfo = new List<NodeInfo>();
         World world;
 
@@ -37,18 +36,33 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 Add(kv);
         }
 
-        void Add(MiniYamlNode nodes)
+        NodeInfo Add(MiniYamlNode nodes)
         {
+            string[] infos = nodes.Key.Split('@');
+            string nodeName = infos.First();
+            string nodeID = infos.Last();
+
+            NodeType[] nodeTypes = (NodeType[])Enum.GetValues(typeof(NodeType));
+            NodeType nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
+
+            NodeInfo nodeInfo = new NodeInfo(nodeType, nodeID, nodeName);
+
+            var inCons = new List<InConReference>();
+            var outCons = new List<OutConReference>();
+
             var dict = nodes.Value.ToDictionary();
             foreach (var node in dict)
             {
-                var posX = node.Key == "PosX" ? node.Value.Value : "";
-                var posY = node.Key == "PosY" ? node.Value.Value : "";
-                var offsetX = node.Key == "OffsetX" ? node.Value.Value : "";
-                var offsetY = node.Key == "OffsetY" ? node.Value.Value : "";
+                if (node.Key == "Pos")
+                {
+                    int offsetX;
+                    int offsetY;
+                    int.TryParse(node.Value.Value.Split(',').First(), out offsetX);
+                    int.TryParse(node.Value.Value.Split(',').Last(), out offsetY);
+                    nodeInfo.OffsetPosX = offsetX;
+                    nodeInfo.OffsetPosY = offsetY;
+                }
 
-                var inCons = new List<InConReference>();
-                var outCons = new List<OutConReference>();
 
                 if (node.Key.Contains("In@"))
                 {
@@ -57,20 +71,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                     foreach (var incon in node.Value.ToDictionary())
                     {
-                        if (incon.Key == "NodeType")
+                        if (incon.Key == "ConnectionType")
                         {
-                            //// TODO: use correct methode when knowing them adding the connectionType
+                            ConnectionType[] values = (ConnectionType[])Enum.GetValues(typeof(ConnectionType));
+                            inCon.conTyp = values.First(e => e.ToString() == incon.Value.Value);
                         }
 
-                        if (incon.Key.Contains("Node"))
+                        if (incon.Key.Contains("Node@"))
                         {
-                            inCon.WidgetName = incon.Key;
-                        }
-
-                        if (incon.Key.Contains("Out"))
-                        {
-                            inCon.ConnecitonName = incon.Value.Value;
-                            inCon.OutName = incon.Key;
+                            inCon.WidgetNodeReference = incon.Value.Value;
+                            inCon.WidgetReferenceID = incon.Key.Split('@').Last();
                         }
                     }
                 }
@@ -81,9 +91,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                     foreach (var outcon in node.Value.ToDictionary())
                     {
-                        if (outcon.Key == "NodeType")
+                        if (outcon.Key == "ConnectionType")
                         {
-                            //// TODO: use correct methode when knowing them adding the connectionType
+                            ConnectionType[] values = (ConnectionType[])Enum.GetValues(typeof(ConnectionType));
+                            outCon.conTyp = values.First(e => e.ToString() == outcon.Value.Value);
                         }
 
                         if (outcon.Key.Contains("String"))
@@ -139,49 +150,51 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     }
                 }
             }
+
+            nodeInfo.OutConnections = outCons;
+            nodeInfo.InConnections = inCons;
+
+            NodeInfo.Add(nodeInfo);
+            return nodeInfo;
         }
 
         public List<MiniYamlNode> Save()
         {
             var nodes = new List<MiniYamlNode>();
-            foreach (var snw in SimpleNodeWidgets)
+            foreach (var nodeInfo in NodeInfo)
             {
-                nodes.Add(new MiniYamlNode(snw.ToString().Split('.').Last().Replace("Widget", "Node"), snw.NodeName, SaveEntries(snw)));
+                nodes.Add(new MiniYamlNode(nodeInfo.NodeName + "@" + nodeInfo.NodeID, nodeInfo.NodeType.ToString(), SaveEntries(nodeInfo)));
             }
 
             return nodes;
         }
 
-        public List<MiniYamlNode> SaveEntries(BasicNodeWidget snw)
+        public List<MiniYamlNode> SaveEntries(NodeInfo nodeInfo)
         {
             var nodes = new List<MiniYamlNode>();
-            nodes.Add(new MiniYamlNode("PosX", snw.PosX.ToString()));
-            nodes.Add(new MiniYamlNode("PosY", snw.PosY.ToString()));
-            nodes.Add(new MiniYamlNode("OffsetX", snw.OffsetPosX.ToString()));
-            nodes.Add(new MiniYamlNode("OffsetY", snw.OffsetPosY.ToString()));
-
-            foreach (var outCon in snw.OutConnections)
+            nodes.Add(new MiniYamlNode("Pos", nodeInfo.OffsetPosX.ToString() + "," + nodeInfo.OffsetPosY.ToString()));
+            foreach (var outCon in nodeInfo.OutConnections)
             {
-                nodes.Add(new MiniYamlNode("Out@" + outCon.ConnecitonName, outCon.ConnecitonName, OutConnections(outCon)));
+                nodes.Add(new MiniYamlNode("Out@" + outCon.ConnecitonName, "", OutConnections(outCon)));
             }
 
-            foreach (var inCon in snw.InConnections)
+            foreach (var inCon in nodeInfo.InConnections)
             {
                 List<MiniYamlNode> miniNode = new List<MiniYamlNode>();
-                miniNode.Add(new MiniYamlNode("NodeType", inCon.conTyp.ToString()));
-                if (inCon.In != null)
-                    miniNode.Add(new MiniYamlNode(inCon.In.Widget.NodeName, inCon.In.ConnecitonName));
+                miniNode.Add(new MiniYamlNode("ConnectionType", inCon.conTyp.ToString()));
+                if (inCon.WidgetNodeReference != null)
+                    miniNode.Add(new MiniYamlNode("Node@" + inCon.WidgetReferenceID, inCon.WidgetNodeReference));
 
-                nodes.Add(new MiniYamlNode("In@" + inCon.ConnecitonName, inCon.ConnecitonName, miniNode));
+                nodes.Add(new MiniYamlNode("In@" + inCon.ConnecitonName, "", miniNode));
             }
 
             return nodes;
         }
 
-        public List<MiniYamlNode> OutConnections(OutConnection outCon)
+        public List<MiniYamlNode> OutConnections(OutConReference outCon)
         {
             var nodes = new List<MiniYamlNode>();
-            nodes.Add(new MiniYamlNode("NodeType", outCon.conTyp.ToString()));
+            nodes.Add(new MiniYamlNode("ConnectionType", outCon.conTyp.ToString()));
 
             if (outCon.String != null)
                 nodes.Add(new MiniYamlNode("String", outCon.String));
@@ -205,7 +218,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 nodes.Add(new MiniYamlNode("Cells", text));
             }
 
-            if (outCon.Number != 0)
+            if (outCon.Number != null)
                 nodes.Add(new MiniYamlNode("Num", outCon.Number.ToString()));
             if (outCon.Strings.Any())
             {
@@ -230,12 +243,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public NodeType NodeType;
         public string NodeName;
         public string NodeID;
-        public Nullable<int> PosX = null;
-        public Nullable<int> PosY = null;
         public Nullable<int> OffsetPosX = null;
         public Nullable<int> OffsetPosY = null;
-        public List<InConnection> InConnections = null;
-        public List<OutConnection> OutConnections = null;
+        public List<InConReference> InConnections = null;
+        public List<OutConReference> OutConnections = null;
 
         public NodeInfo(
             NodeType nodeType,
@@ -257,9 +268,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public bool Boolean = false;
         public ActorInfo ActorInfo = null;
         public PlayerReference Player = null;
-        public CPos Location = CPos.Zero;
+        public Nullable<CPos> Location = null;
         public List<CPos> CellArray = new List<CPos>();
-        public int Number = 0;
+        public Nullable<int> Number = null;
         public string String = null;
         public string[] Strings = { };
 
@@ -273,8 +284,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public string ConnecitonName;
         public ConnectionType conTyp;
         public string WidgetName;
-
-        public string OutName;
+        public string WidgetReferenceID;
+        public string WidgetNodeReference;
 
         public InConReference()
         {
