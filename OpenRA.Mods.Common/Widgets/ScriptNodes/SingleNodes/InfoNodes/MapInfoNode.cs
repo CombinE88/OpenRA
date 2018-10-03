@@ -6,7 +6,7 @@ using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes;
 using OpenRA.Widgets;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class MapInfoNode : NodeWidget
     {
@@ -14,6 +14,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         DropDownButtonWidget createInfoList;
         ButtonWidget addButton;
         List<Widget> parralelWidgetList = new List<Widget>();
+        List<ButtonWidget> parralelButtons = new List<ButtonWidget>();
 
         public MapInfoNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
@@ -27,7 +28,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 ConnectionType.CellArray,
                 ConnectionType.LocationRange,
                 ConnectionType.Player,
-                ConnectionType.String
+                ConnectionType.String,
+                ConnectionType.Boolean
             };
 
             List<string> typString = new List<string>
@@ -39,7 +41,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 "Info: Footprint",
                 "Info: Location Range",
                 "Info: Player",
-                "Info: string"
+                "Info: string",
+                "Info: Enabled"
             };
 
             nodeType = typeType.First();
@@ -212,6 +215,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 var ruleActors = Screen.Snw.World.Map.Rules.Actors;
                 var selectedOwner = ruleActors.First().Value;
                 var playerSelection = new DropDownButtonWidget(Screen.Snw.ModData);
+                var coninf = connection.ActorInfo ?? null;
 
                 Func<ActorInfo, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
                 {
@@ -240,26 +244,79 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
                 playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
                 playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
-                connection.ActorInfo = selectedOwner;
 
                 AddChild(playerSelection);
                 parralelWidgetList.Add(playerSelection);
 
-                if (connection.ActorInfo != null)
+                if (coninf != null)
                 {
-                    selectedOwner = connection.ActorInfo;
-                    playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
+                    selectedOwner = coninf;
+                    playerSelection.Text = coninf.TraitInfo<TooltipInfo>().Name;
                 }
+                else
+                {
+                    connection.ActorInfo = selectedOwner;
+                }
+            }
+            else if (connection.ConTyp == ConnectionType.Boolean)
+            {
+                LabelWidget wid = new LabelWidget();
+                wid.Text = "True";
+
+                AddChild(wid);
+                parralelWidgetList.Add(wid);
             }
             else
                 parralelWidgetList.Add(null);
+
+            var button = new ButtonWidget(Screen.Snw.ModData);
+            button.Text = "-";
+
+            AddChild(button);
+            parralelButtons.Add(button);
+
+            button.OnClick = () =>
+            {
+                for (int j = 0; j < parralelButtons.Count; j++)
+                {
+                    if (parralelButtons[j] == button)
+                    {
+                        RemoveChild(parralelButtons[j]);
+                        RemoveChild(parralelWidgetList[j]);
+
+                        parralelButtons.RemoveAt(j);
+                        parralelWidgetList.RemoveAt(j);
+                        OutConnections.RemoveAt(j);
+
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < parralelWidgetList.Count; i++)
+                {
+                    var splitHeight = (RenderBounds.Height + 20) / (parralelWidgetList.Count + 1);
+                    if (parralelWidgetList[i] != null)
+                        parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 40, FreeWidgetEntries.Y + splitHeight * (i + 1), 150, 25);
+
+                    parralelButtons[i].Bounds = new Rectangle(FreeWidgetEntries.X + 5, FreeWidgetEntries.Y + splitHeight * (i + 1), 30, 25);
+                }
+            };
 
             for (int i = 0; i < parralelWidgetList.Count; i++)
             {
                 var splitHeight = (RenderBounds.Height + 20) / (parralelWidgetList.Count + 1);
                 if (parralelWidgetList[i] != null)
-                    parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 20, FreeWidgetEntries.Y + splitHeight * (i + 1), 170, 25);
+                    parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 40, FreeWidgetEntries.Y + splitHeight * (i + 1), 150, 25);
+
+                parralelButtons[i].Bounds = new Rectangle(FreeWidgetEntries.X + 5, FreeWidgetEntries.Y + splitHeight * (i + 1), 30, 25);
             }
+        }
+    }
+
+    class MapInfoLogicNode : NodeLogic
+    {
+        public MapInfoLogicNode(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        {
         }
     }
 }

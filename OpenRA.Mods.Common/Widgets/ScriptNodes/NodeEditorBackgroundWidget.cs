@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -123,21 +123,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Actor Nodes
             List<NodeType> actorNodeTypes = new List<NodeType>
             {
-                NodeType.ActorCreateNode,
-                NodeType.ActorRemoveNode,
-                NodeType.ActorKillNode,
-                NodeType.ActorFollowPathNode,
-                NodeType.ActorGetInfoNode
+                NodeType.ActorCreateActor
             };
 
             List<string> actorNodeStrings = new List<string>
             {
-                "Actor: Create",
-                "Actor: Remove",
-                "Actor: Kill",
-                "Actor: Move",
-                "Actor: Follow path",
-                "Actor: Information"
+                "Actor: Create Actor"
             };
 
             AddChild(createActorNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -175,18 +166,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             // Trigger Nodes
             List<NodeType> triggerNodeTypes = new List<NodeType>
             {
-                NodeType.TriggerWorldLoadedNode,
-                NodeType.TriggerActorKilledNode,
-                NodeType.TriggerActorOnIdleNode,
-                NodeType.LogicNodeCreateTimer
+                NodeType.TriggerWorldLoaded,
+                NodeType.TriggerCreateTimer,
+                NodeType.TriggerTick,
+                NodeType.TriggerOnEnteredFootprint,
+                NodeType.TriggerOnEnteredRange
             };
 
             List<string> triggerNodeStrings = new List<string>
             {
                 "Trigger: World Loaded",
-                "Trigger: Actor killed",
-                "Trigger: Actor idle",
-                "Trigger: Timer"
+                "Trigger: Create Timer",
+                "Trigger: On Tick",
+                "Trigger: On Entered Footprint",
+                "Trigger: On Entered Range"
             };
 
             AddChild(triggerNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -223,16 +216,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Group Nodes
             List<NodeType> groupNodeTypes = new List<NodeType>
             {
-                NodeType.GroupCreateGroupNode,
-                NodeType.GroupFindActorsInCircleNode,
-                NodeType.GroupFindActorsOnCellsNode
+                NodeType.GroupPlayerGroup
             };
 
             List<string> groupNodeStrings = new List<string>
             {
-                "Group: Create group",
-                "Group: Find Actors in circle",
-                "Group: Find Actors on cells"
+                "Group: PlayerGroup"
             };
 
             AddChild(groupNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -269,18 +258,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Group Nodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
-                NodeType.ArithmeticsSelectByNode,
-                NodeType.ArithmeticsSelectNode,
-                NodeType.ArithmeticsCompareNode,
-                NodeType.ArithmeticsForEachNode
+                NodeType.Arithmetics,
             };
 
             List<string> nodeStrings = new List<string>
             {
-                "Arithmetic: Select by",
-                "Arithmetic: Select",
-                "Arithmetic: Compare",
-                "Arithmetic: For Each"
+                "Arithmetics: "
             };
 
             AddChild(arithmeticNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -317,14 +300,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Group Nodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
-                NodeType.FunctionReinforcmentsNode,
-                NodeType.FunctionReinforceWithTransPort
+                NodeType.Complex
             };
 
             List<string> nodeStrings = new List<string>
             {
-                "Function: Reinforcements",
-                "Function: Reinforcements (Transport)"
+                "Function: "
             };
 
             AddChild(functionNodesList = new DropDownButtonWidget(Snw.ModData));

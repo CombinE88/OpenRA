@@ -1,51 +1,59 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using OpenRA.Graphics;
-using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
-    public class EditorNodeLayerInfo : ITraitInfo
+    public class IngameNodeScriptSystemInfo : ITraitInfo
     {
         public object Create(ActorInitializer init)
         {
-            return new EditorNodeLayer(init.Self, this);
+            return new IngameNodeScriptSystem(init);
         }
     }
 
-    public class EditorNodeLayer : IWorldLoaded
+    public class IngameNodeScriptSystem : IWorldLoaded, ITick
     {
-        public List<NodeInfo> NodeInfo = new List<NodeInfo>();
+        public List<NodeLogic> NodeLogics = new List<NodeLogic>();
+        List<NodeInfo> nodesInfos = new List<NodeInfo>();
+
         World world;
 
-        public EditorNodeLayer(Actor self, EditorNodeLayerInfo info)
+        public IngameNodeScriptSystem(ActorInitializer init)
         {
-            world = self.World;
+            world = init.Self.World;
         }
 
-        public void WorldLoaded(World world, WorldRenderer wr)
+        public void WorldLoaded(World w, WorldRenderer wr)
         {
-            if (world.Type != WorldType.Editor)
-                return;
-
-            foreach (var kv in world.Map.NodeDefinitions)
+            foreach (var kv in w.Map.NodeDefinitions)
                 Add(kv);
+
+            InitializeNodes();
+
+            foreach (var logic in NodeLogics.Where(l => l.NodeType == NodeType.TriggerWorldLoaded))
+            {
+                logic.Execute(w);
+            }
         }
 
         void Add(MiniYamlNode nodes)
         {
             string[] infos = nodes.Key.Split('@');
             string nodeName = infos.First();
-            string nodeID = infos.Last();
+            string nodeId = infos.Last();
 
             NodeType[] nodeTypes = (NodeType[])Enum.GetValues(typeof(NodeType));
             NodeType nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
 
-            NodeInfo nodeInfo = new NodeInfo(nodeType, nodeID, nodeName);
+            NodeInfo nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
             var inCons = new List<InConReference>();
             var outCons = new List<OutConReference>();
@@ -113,7 +121,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                         if (outcon.Key.Contains("Player"))
                         {
-                            outCon.Player = world.WorldActor.Trait<EditorActorLayer>().Players.Players.First(p => p.Key == outcon.Value.Value).Value;
+                            var player = world.Players.FirstOrDefault(p => p.InternalName == outcon.Value.Value);
+                            outCon.Player = player != null ? player.PlayerReference : null;
                         }
 
                         if (outcon.Key.Contains("ActorInfo"))
@@ -158,139 +167,76 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             nodeInfo.OutConnections = outCons;
             nodeInfo.InConnections = inCons;
 
-            NodeInfo.Add(nodeInfo);
+            nodesInfos.Add(nodeInfo);
         }
 
-        public List<MiniYamlNode> Save()
+        public void InitializeNodes()
         {
-            var nodes = new List<MiniYamlNode>();
-            foreach (var nodeInfo in NodeInfo)
+            foreach (var nodeinfo in nodesInfos)
             {
-                nodes.Add(new MiniYamlNode(nodeInfo.NodeName + "@" + nodeInfo.NodeID, nodeInfo.NodeType.ToString(), SaveEntries(nodeInfo)));
-            }
 
-            return nodes;
-        }
 
-        public List<MiniYamlNode> SaveEntries(NodeInfo nodeInfo)
-        {
-            var nodes = new List<MiniYamlNode>();
-            nodes.Add(new MiniYamlNode("Pos", nodeInfo.OffsetPosX.ToString() + "," + nodeInfo.OffsetPosY.ToString()));
-            foreach (var outCon in nodeInfo.OutConnections)
-            {
-                nodes.Add(new MiniYamlNode("Out@" + outCon.ConnectionId, "", OutConnections(outCon)));
-            }
-
-            foreach (var inCon in nodeInfo.InConnections)
-            {
-                List<MiniYamlNode> miniNode = new List<MiniYamlNode>();
-                miniNode.Add(new MiniYamlNode("ConnectionType", inCon.ConTyp.ToString()));
-                if (inCon.WidgetNodeReference != null)
-                    miniNode.Add(new MiniYamlNode("Node@" + inCon.WidgetReferenceId, inCon.WidgetNodeReference));
-
-                nodes.Add(new MiniYamlNode("In@" + inCon.ConnectionId, "", miniNode));
-            }
-
-            return nodes;
-        }
-
-        public List<MiniYamlNode> OutConnections(OutConReference outCon)
-        {
-            var nodes = new List<MiniYamlNode>();
-            nodes.Add(new MiniYamlNode("ConnectionType", outCon.ConTyp.ToString()));
-
-            if (outCon.String != null)
-                nodes.Add(new MiniYamlNode("String", outCon.String));
-            if (outCon.Player != null)
-                nodes.Add(new MiniYamlNode("Player", outCon.Player.Name));
-            if (outCon.ActorInfo != null)
-                nodes.Add(new MiniYamlNode("ActorInfo", outCon.ActorInfo.Name));
-            if (outCon.Location != null)
-                nodes.Add(new MiniYamlNode("Location", outCon.Location.Value.X + "," + outCon.Location.Value.Y));
-            if (outCon.CellArray.Any())
-            {
-                var text = "";
-                foreach (var cell in outCon.CellArray)
+                //  Info Logics
+                if (nodeinfo.NodeType == NodeType.MapInfoNode)
                 {
-                    if (cell != outCon.CellArray.Last())
-                        text += cell.ToString() + "|";
-                    else
-                        text += cell.ToString();
+                    var newNode = new MapInfoLogicNode(nodeinfo, this);
+                    NodeLogics.Add(newNode);
                 }
 
-                nodes.Add(new MiniYamlNode("Cells", text));
-            }
-
-            if (outCon.Number != null)
-                nodes.Add(new MiniYamlNode("Num", outCon.Number.ToString()));
-            if (outCon.Strings.Any())
-            {
-                var text = "";
-                foreach (var str in outCon.Strings)
+                // Trigger Logics
+                else if (nodeinfo.NodeType == NodeType.TriggerWorldLoaded)
                 {
-                    if (str != outCon.Strings.Last())
-                        text += str + ",";
-                    else
-                        text += str;
+                    var newNode = new TriggerLogicWorldLoaded(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TriggerTick)
+                {
+                    var newNode = new TriggerLogicTick(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredFootprint)
+                {
+                    var newNode = new TriggerLogicEnteredFoodPrint(nodeinfo, this);
+                    NodeLogics.Add(newNode);
                 }
 
-                nodes.Add(new MiniYamlNode("Strings", text));
+                //  Group Logics
+                else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
+                {
+                    var newNode = new GroupPlayerLogic(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+
+                //  Actor Logics
+                else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
+                {
+                    var newNode = new ActorCreateActorLogic(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
             }
 
-            return nodes;
+            foreach (var node in NodeLogics)
+            {
+                node.AddOutConnectionReferences();
+            }
+
+            foreach (var node in NodeLogics)
+            {
+                node.AddInConnectionReferences();
+            }
+
+            foreach (var node in NodeLogics)
+            {
+                node.DoAfterConnections();
+            }
         }
-    }
 
-    public class NodeInfo
-    {
-        public NodeType NodeType;
-        public string NodeName;
-        public string NodeID;
-        public Nullable<int> OffsetPosX = null;
-        public Nullable<int> OffsetPosY = null;
-        public List<InConReference> InConnections = null;
-        public List<OutConReference> OutConnections = null;
-
-        public NodeInfo(
-            NodeType nodeType,
-            string nodeID,
-            string nodeName)
+        public void Tick(Actor self)
         {
-            NodeType = nodeType;
-            NodeName = nodeName;
-            NodeID = nodeID;
-        }
-    }
-
-    public class OutConReference
-    {
-        public string ConnectionId;
-        public ConnectionType ConTyp;
-
-        public ActorInfo ActorInfo = null;
-        public PlayerReference Player = null;
-        public PlayerReference[] Players = null;
-        public Nullable<CPos> Location = null;
-        public List<CPos> CellArray = new List<CPos>();
-        public Nullable<int> Number = null;
-        public string String = null;
-        public string[] Strings = { };
-
-        public OutConReference()
-        {
-        }
-    }
-
-    public class InConReference
-    {
-        public string ConnectionId;
-        public ConnectionType ConTyp;
-
-        public string WidgetReferenceId;
-        public string WidgetNodeReference;
-
-        public InConReference()
-        {
+            foreach (var node in NodeLogics)
+            {
+                node.Tick(self);
+            }
         }
     }
 }

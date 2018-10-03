@@ -17,15 +17,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             NodeInfo = nodeInfo;
 
-            PosX = screen.CorrectCenterCoordinates.X;
-            PosY = screen.CorrectCenterCoordinates.Y;
-            OffsetPosX = nodeInfo.OffsetPosX ?? 0;
-            OffsetPosY = nodeInfo.OffsetPosY ?? 0;
+            OffsetPosX = nodeInfo.OffsetPosX ?? screen.CenterCoordinates.X;
+            OffsetPosY = nodeInfo.OffsetPosY ?? screen.CenterCoordinates.Y;
 
-            GridPosX = PosX - screen.CenterCoordinates.X + OffsetPosX;
-            GridPosY = PosY - screen.CenterCoordinates.Y + OffsetPosY;
-
-            Bounds = new Rectangle(GridPosX + OffsetPosX, GridPosY + OffsetPosY, 200 + SizeX, 150 + SizeY);
+            Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);
 
             if (nodeInfo.NodeID != null)
                 NodeID = nodeInfo.NodeID;
@@ -217,6 +212,103 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         }
 
         public virtual void AddOutConConstructor(OutConnection outConnection)
+        {
+        }
+    }
+
+    public class NodeLogic
+    {
+        public readonly string NodeId;
+        public readonly NodeType NodeType;
+        public readonly string NodeName;
+        public readonly NodeInfo NodeInfo;
+
+        public List<InConnection> InConnections = new List<InConnection>();
+        public List<OutConnection> OutConnections = new List<OutConnection>();
+
+        public IngameNodeScriptSystem Insc;
+
+        public NodeLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc)
+        {
+            Insc = insc;
+            NodeId = nodeinfo.NodeID;
+            NodeType = nodeinfo.NodeType;
+            NodeInfo = nodeinfo;
+            NodeName = nodeinfo.NodeName;
+        }
+
+        public void AddOutConnectionReferences()
+        {
+            SetOuts(BuildOutConnections(NodeInfo));
+        }
+
+        public void AddInConnectionReferences()
+        {
+            SetIns(BuildInConnections(NodeInfo));
+        }
+
+        public void SetOuts(List<OutConnection> o)
+        {
+            OutConnections = o;
+        }
+
+        public void SetIns(List<InConnection> i)
+        {
+            InConnections = i;
+        }
+
+        List<OutConnection> BuildOutConnections(NodeInfo nodeInfo)
+        {
+            List<OutConnection> readyOutCons = new List<OutConnection>();
+
+            foreach (var conRef in nodeInfo.OutConnections)
+            {
+                var connection = new OutConnection(conRef.ConTyp);
+
+                connection.String = conRef.String ?? null;
+                connection.Number = conRef.Number ?? null;
+                connection.Location = conRef.Location ?? null;
+                connection.Strings = conRef.Strings ?? null;
+                connection.Player = conRef.Player ?? null;
+                connection.ActorInfo = conRef.ActorInfo ?? null;
+                connection.CellArray = conRef.CellArray ?? null;
+                connection.ConnectionId = conRef.ConnectionId;
+
+                readyOutCons.Add(connection);
+            }
+
+            return readyOutCons;
+        }
+
+        List<InConnection> BuildInConnections(NodeInfo nodeInfo)
+        {
+            List<InConnection> readyOutCons = new List<InConnection>();
+
+            foreach (var conRef in nodeInfo.InConnections)
+            {
+                var connection = new InConnection(conRef.ConTyp);
+
+                connection.ConnectionId = conRef.ConnectionId ?? null;
+                var referenceNode = Insc.NodeLogics.FirstOrDefault(n => n.NodeId == conRef.WidgetReferenceId);
+                var referenceConnection = referenceNode != null ? referenceNode.OutConnections.FirstOrDefault(c => c.ConnectionId == conRef.WidgetNodeReference) : null;
+                connection.In = referenceConnection ?? null;
+                // connection.In = Screen.Nodes.First(bsw => bsw.NodeID == conRef.WidgetReferenceId).OutConnections.First(oc => oc.ConnectionId == conRef.WidgetNodeReference);
+
+                readyOutCons.Add(connection);
+            }
+
+            return readyOutCons;
+        }
+
+        public virtual void Execute(World world)
+        {
+        }
+
+        public virtual void DoAfterConnections()
+        {
+        }
+
+        public virtual void Tick(Actor self)
         {
         }
     }

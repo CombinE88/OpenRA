@@ -4,7 +4,7 @@ using System.Linq;
 using OpenRA.Activities;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes

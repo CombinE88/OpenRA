@@ -1,4 +1,5 @@
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
