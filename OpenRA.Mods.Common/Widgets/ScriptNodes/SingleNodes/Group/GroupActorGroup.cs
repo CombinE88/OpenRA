@@ -122,6 +122,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
         }
     }
+
     public class GroupActorInfoLogic : NodeLogic
     {
         List<ActorInfo> actors = new List<ActorInfo>();
@@ -133,7 +134,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
         public override void DoAfterConnections()
         {
             var changeActors = new List<ActorInfo>();
-            foreach (var info in InConnections.Where(c =>
+            var incon = InConnections.Where(c =>
             {
                 if (c.ConTyp != ConnectionType.ActorInfo)
                     return false;
@@ -144,13 +145,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 if (c.In.ActorInfo == null)
                     return false;
 
-                if (actors.Contains(c.In.ActorInfo))
-                    return false;
-
                 return true;
-            }))
+            });
+
+            foreach (var info in incon)
             {
-                actors.Add(info.In.ActorInfo);
+                changeActors.Add(info.In.ActorInfo);
             }
 
             actors = changeActors;
@@ -161,7 +161,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
         public override void Tick(Actor self)
         {
             var changeActors = new List<ActorInfo>();
-            foreach (var info in InConnections.Where(c =>
+
+            var incon = InConnections.Where(c =>
             {
                 if (c.ConTyp != ConnectionType.ActorInfo)
                     return false;
@@ -172,13 +173,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 if (c.In.ActorInfo == null)
                     return false;
 
-                if (actors.Contains(c.In.ActorInfo))
-                    return false;
-
                 return true;
-            }))
+            });
+
+            foreach (var info in incon)
             {
-                actors.Add(info.In.ActorInfo);
+                changeActors.Add(info.In.ActorInfo);
             }
 
             actors = changeActors;

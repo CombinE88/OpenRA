@@ -285,7 +285,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode = new TriggerNodeCreateTimer(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.TimerConnection, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
 
                 AddChild(newNode);
@@ -562,14 +564,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorInfos, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.InConTexts.Add("Player");
                 newNode.InConTexts.Add("Transport");
                 newNode.InConTexts.Add("Actors");
                 newNode.InConTexts.Add("Path Entry");
                 newNode.InConTexts.Add("Path Exit");
-                newNode.InConTexts.Add("Spawn interval");
                 newNode.InConTexts.Add("Trigger");
 
                 AddChild(newNode);

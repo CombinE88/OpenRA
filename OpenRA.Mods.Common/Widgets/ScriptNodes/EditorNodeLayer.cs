@@ -228,7 +228,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 nodes.Add(new MiniYamlNode("String", outCon.String));
             if (outCon.Player != null)
                 nodes.Add(new MiniYamlNode("Player", outCon.Player.Name));
-            if (outCon.PlayerGroup.Any())
+
+            if (outCon.PlayerGroup != null && outCon.PlayerGroup.Any())
             {
                 string text = "";
                 foreach (var play in outCon.PlayerGroup)
@@ -244,7 +245,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             if (outCon.ActorInfo != null)
                 nodes.Add(new MiniYamlNode("ActorInfo", outCon.ActorInfo.Name));
-            if (outCon.ActorInfos.Any())
+            if (outCon.ActorInfos != null && outCon.ActorInfos.Any())
             {
                 string text = "";
                 foreach (var play in outCon.ActorInfos)

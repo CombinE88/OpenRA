@@ -9,6 +9,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
         public TriggerNodeCreateTimer(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
             InConTexts.Add("Seconds");
+            InConTexts.Add("Repeatable");
             InConTexts.Add("Trigger");
         }
     }
@@ -33,21 +34,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Tick(Actor self)
         {
-
             if (InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Boolean) != null && InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Boolean).In != null)
                 repeating = true;
             else if (repeating)
                 repeating = false;
 
-            if (!timerStarted || (!repeating && timerDone))
+            if (!timerStarted || timerDone)
                 return;
 
             if (timer < timerMax)
                 timer++;
-            else if (!timerDone && !repeating)
+            else if (!timerDone)
             {
                 timer = 0;
-                timerDone = true;
+                if (!repeating)
+                    timerDone = true;
                 ExecuteTimer(self.World);
             }
         }
@@ -62,7 +63,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         void ExecuteTimer(World world)
         {
-            var exeNodes = Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == OutConnections.First()) != null);
+            var exeNodes = Insc.NodeLogics.Where(n =>
+                n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == OutConnections.First(co => co.ConTyp == ConnectionType.Exec)) != null);
             foreach (var node in exeNodes)
             {
                 node.Execute(world);
