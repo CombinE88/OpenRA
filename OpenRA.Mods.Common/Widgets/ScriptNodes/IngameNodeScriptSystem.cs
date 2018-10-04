@@ -4,6 +4,7 @@ using System.Linq;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
@@ -25,6 +26,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         List<NodeInfo> nodesInfos = new List<NodeInfo>();
 
         World world;
+        bool initialized = false;
 
         public IngameNodeScriptSystem(ActorInitializer init)
         {
@@ -37,6 +39,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 Add(kv);
 
             InitializeNodes();
+
+            initialized = true;
 
             foreach (var logic in NodeLogics.Where(l => l.NodeType == NodeType.TriggerWorldLoaded))
             {
@@ -125,9 +129,34 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                             outCon.Player = player != null ? player.PlayerReference : null;
                         }
 
+                        if (outcon.Key.Contains("Players"))
+                        {
+                            var playNames = outcon.Value.Value.Split(',');
+                            List<PlayerReference> list = new List<PlayerReference>();
+                            foreach (var playname in playNames)
+                            {
+                                list.Add(world.Players.First(p => p.InternalName == playname).PlayerReference);
+                            }
+
+                            outCon.PlayerGroup = list.ToArray();
+                        }
+
                         if (outcon.Key.Contains("ActorInfo"))
                         {
                             outCon.ActorInfo = world.Map.Rules.Actors[outcon.Value.Value];
+                        }
+
+                        if (outcon.Key.Contains("ActorInfos"))
+                        {
+                            var actorNames = outcon.Value.Value.Split(',');
+                            List<ActorInfo> actorList = new List<ActorInfo>();
+                            foreach (var name in actorNames)
+                            {
+                                var actorRef = world.Map.Rules.Actors[name];
+                                actorList.Add(actorRef);
+                            }
+
+                            outCon.ActorInfos = actorList.ToArray();
                         }
 
                         if (outcon.Key.Contains("Location"))
@@ -174,8 +203,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             foreach (var nodeinfo in nodesInfos)
             {
-
-
                 //  Info Logics
                 if (nodeinfo.NodeType == NodeType.MapInfoNode)
                 {
@@ -199,6 +226,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     var newNode = new TriggerLogicEnteredFoodPrint(nodeinfo, this);
                     NodeLogics.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.TriggerCreateTimer)
+                {
+                    var newNode = new TriggerLogicCreateTimer(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
 
                 //  Group Logics
                 else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
@@ -206,11 +238,71 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     var newNode = new GroupPlayerLogic(nodeinfo, this);
                     NodeLogics.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.GroupActorGroup)
+                {
+                    var newNode = new GroupActorLogic(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.GroupActorInfoGroup)
+                {
+                    var newNode = new GroupActorInfoLogic(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
 
                 //  Actor Logics
                 else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
                 {
                     var newNode = new ActorCreateActorLogic(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueMove)
+                {
+                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueAttack)
+                {
+                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueHunt)
+                {
+                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueAttackMoveActivity)
+                {
+                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueSell)
+                {
+                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueFindResources)
+                {
+                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorKill)
+                {
+                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorRemove)
+                {
+                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.Reinforcements)
+                {
+                    var newNode = new FunctionLogicReinforcements(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ReinforcementsWithTransport)
+                {
+                    var newNode = new FunctionLogicReinforcements(nodeinfo, this);
                     NodeLogics.Add(newNode);
                 }
             }
@@ -233,6 +325,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public void Tick(Actor self)
         {
+            if (!initialized)
+                return;
+
             foreach (var node in NodeLogics)
             {
                 node.Tick(self);

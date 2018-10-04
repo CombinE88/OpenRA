@@ -43,8 +43,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Tick(Actor self)
         {
-            if ((triggerOnEnter && !repeat))
+            if (triggerOnEnter && !repeat)
                 return;
+
+            if (InConnections.First(ic => ic.ConTyp == ConnectionType.CellArray).In == null ||
+                !InConnections.First(ic => ic.ConTyp == ConnectionType.CellArray).In.CellArray.Any())
+                throw new YamlException(NodeId + ": Cell Array not connected");
+
+            if (InConnections.Any() && (InConnections.First(ic => ic.ConTyp == ConnectionType.PlayerGroup).In == null
+                                        || InConnections.First(ic => ic.ConTyp == ConnectionType.PlayerGroup).In.PlayerGroup == null
+                                        || !InConnections.First(ic => ic.ConTyp == ConnectionType.PlayerGroup).In.PlayerGroup.Any()))
+                throw new YamlException(NodeId + "player Group not connected");
 
             var actors = self.World.Actors
                 .Where(a => !a.IsDead

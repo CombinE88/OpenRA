@@ -36,8 +36,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public int2 CursorLocation;
 
         // Node Connections
-        public List<InConnection> InConnections { get; private set; }
-        public List<OutConnection> OutConnections { get; private set; }
+        public List<InConnection> InConnections = new List<InConnection>();
+        public List<OutConnection> OutConnections = new List<OutConnection>();
         public List<string> InConTexts = new List<string>();
 
         public Rectangle AddInput;

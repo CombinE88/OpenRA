@@ -123,12 +123,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Actor Nodes
             List<NodeType> actorNodeTypes = new List<NodeType>
             {
-                NodeType.ActorCreateActor
+                NodeType.ActorCreateActor,
+                NodeType.ActorKill,
+                NodeType.ActorRemove,
+                NodeType.ActorQueueMove,
+                NodeType.ActorQueueAttack,
+                NodeType.ActorQueueHunt,
+                NodeType.ActorQueueAttackMoveActivity,
+                NodeType.ActorQueueSell,
+                NodeType.ActorQueueFindResources
             };
 
             List<string> actorNodeStrings = new List<string>
             {
-                "Actor: Create Actor"
+                "Actor: Create Actor",
+                "Actor: Kill",
+                "Actor: Remove",
+                "Activity: Queue Move",
+                "Activity: Queue Attack",
+                "Activity: Queue Hunt",
+                "Activity: Queue AttackMoveActivity",
+                "Activity: Queue Sell",
+                "Activity: QueueFindResources"
             };
 
             AddChild(createActorNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -216,12 +232,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Group Nodes
             List<NodeType> groupNodeTypes = new List<NodeType>
             {
-                NodeType.GroupPlayerGroup
+                NodeType.GroupPlayerGroup,
+                NodeType.GroupActorInfoGroup,
+                NodeType.GroupActorGroup
             };
 
             List<string> groupNodeStrings = new List<string>
             {
-                "Group: PlayerGroup"
+                "Group: Player Group",
+                "Group: Actor Info Group",
+                "Group: Actor Group"
             };
 
             AddChild(groupNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -300,12 +320,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Group Nodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
-                NodeType.Complex
+                NodeType.Reinforcements,
+                NodeType.ReinforcementsWithTransport
             };
 
             List<string> nodeStrings = new List<string>
             {
-                "Function: "
+                "Function: Reinforcements",
+                "Function: Reinforce (Transport)"
             };
 
             AddChild(functionNodesList = new DropDownButtonWidget(Snw.ModData));

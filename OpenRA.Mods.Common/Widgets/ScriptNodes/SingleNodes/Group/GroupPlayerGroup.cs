@@ -33,18 +33,58 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
     public class GroupPlayerLogic : NodeLogic
     {
+        List<PlayerReference> players = new List<PlayerReference>();
+
         public GroupPlayerLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
         {
         }
 
         public override void DoAfterConnections()
         {
-            List<PlayerReference> players = new List<PlayerReference>();
-            foreach (var info in InConnections.Where(c => c.ConTyp == ConnectionType.Player))
+            var changePlayers = new List<PlayerReference>();
+            foreach (var info in InConnections.Where(c =>
             {
-                if (info.In != null && info.In.Player != null)
-                    players.Add(info.In.Player);
+                if (c.ConTyp != ConnectionType.Player)
+                    return false;
+
+                if (c.In == null)
+                    return false;
+
+                if (c.In.Player == null)
+                    return false;
+
+                return true;
+            }))
+            {
+                changePlayers.Add(info.In.Player);
             }
+
+            players = changePlayers;
+
+            OutConnections.First(c => c.ConTyp == ConnectionType.PlayerGroup).PlayerGroup = players.ToArray();
+        }
+
+        public override void Tick(Actor self)
+        {
+            var changePlayers = new List<PlayerReference>();
+            foreach (var info in InConnections.Where(c =>
+            {
+                if (c.ConTyp != ConnectionType.Player)
+                    return false;
+
+                if (c.In == null)
+                    return false;
+
+                if (c.In.Player == null)
+                    return false;
+
+                return true;
+            }))
+            {
+                changePlayers.Add(info.In.Player);
+            }
+
+            players = changePlayers;
 
             OutConnections.First(c => c.ConTyp == ConnectionType.PlayerGroup).PlayerGroup = players.ToArray();
         }

@@ -104,7 +104,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             foreach (var node in OutConnections)
             {
                 int c;
-                int.TryParse(node.ConnectionId, out c);
+                int.TryParse(node.ConnectionId.Replace("Con", ""), out c);
                 count = Math.Max(c, count);
             }
 
@@ -119,7 +119,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             foreach (var node in InConnections)
             {
                 int c;
-                int.TryParse(node.ConnectionId, out c);
+                int.TryParse(node.ConnectionId.Replace("Con", ""), out c);
                 count = Math.Max(c, count);
             }
         }
@@ -273,6 +273,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 connection.ActorInfo = conRef.ActorInfo ?? null;
                 connection.CellArray = conRef.CellArray ?? null;
                 connection.ConnectionId = conRef.ConnectionId;
+                connection.Logic = this;
 
                 readyOutCons.Add(connection);
             }
@@ -292,6 +293,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 var referenceNode = Insc.NodeLogics.FirstOrDefault(n => n.NodeId == conRef.WidgetReferenceId);
                 var referenceConnection = referenceNode != null ? referenceNode.OutConnections.FirstOrDefault(c => c.ConnectionId == conRef.WidgetNodeReference) : null;
                 connection.In = referenceConnection ?? null;
+                if (referenceConnection != null)
+                    connection.In.Logic = referenceConnection.Logic ?? null;
                 // connection.In = Screen.Nodes.First(bsw => bsw.NodeID == conRef.WidgetReferenceId).OutConnections.First(oc => oc.ConnectionId == conRef.WidgetNodeReference);
 
                 readyOutCons.Add(connection);

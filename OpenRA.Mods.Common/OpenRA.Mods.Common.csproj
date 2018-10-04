@@ -615,7 +615,10 @@
     <Compile Include="Widgets\ScriptNodes\ScriptNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ShowWidgetsButton.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeCreateActor.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeQueueAbility.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\BasicNodeWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionNodeReinforcements.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupActorGroup.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupPlayerGroup.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeCreateTimer.cs" />

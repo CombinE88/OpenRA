@@ -9,6 +9,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public class InConnection
     {
         public BasicNodeWidget Widget;
+        public NodeLogic Logic;
         public ConnectionType ConTyp;
         public string ConnectionId;
 
@@ -17,27 +18,37 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public OutConnection In;
         public Color Color;
 
-        public InConnection(ConnectionType conectionType, BasicNodeWidget widget = null)
+        public InConnection(ConnectionType conectionType, BasicNodeWidget widget = null, NodeLogic nodeLogic = null)
         {
             ConTyp = conectionType;
             Widget = widget;
+            Logic = nodeLogic;
 
             switch (conectionType)
             {
+                // Irregular Connections
+                case ConnectionType.Exec:
+                    Color = Color.White;
+                    break;
                 case ConnectionType.Undefined:
                     Color = Color.Black;
                     break;
+                case ConnectionType.Universal:
+                    Color = Color.Khaki;
+                    break;
+
+                // Regular Connections
                 case ConnectionType.Actor:
                     Color = Color.CornflowerBlue;
                     break;
                 case ConnectionType.ActorList:
-                    Color = Color.DarkBlue;
+                    Color = Color.DeepSkyBlue;
                     break;
                 case ConnectionType.ActorInfo:
                     Color = Color.SandyBrown;
                     break;
-                case ConnectionType.Exec:
-                    Color = Color.White;
+                case ConnectionType.ActorInfos:
+                    Color = Color.RosyBrown;
                     break;
                 case ConnectionType.Player:
                     Color = Color.Brown;
@@ -60,9 +71,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.Integer:
                     Color = Color.Green;
                     break;
-                case ConnectionType.Universal:
-                    Color = Color.Khaki;
-                    break;
                 case ConnectionType.String:
                     Color = Color.SlateGray;
                     break;
@@ -71,6 +79,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     break;
                 case ConnectionType.Boolean:
                     Color = Color.IndianRed;
+                    break;
+
+                // Specific Connections
+                case ConnectionType.TimerConnection:
+                    Color = Color.DarkRed;
                     break;
             }
         }
@@ -81,6 +94,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public ConnectionType ConTyp;
         public BasicNodeWidget Widget;
         public string ConnectionId;
+        public NodeLogic Logic;
 
         public Rectangle InWidgetPosition;
 
@@ -90,6 +104,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public Actor Actor = null;
         public Actor[] ActorGroup = null;
         public ActorInfo ActorInfo = null;
+        public ActorInfo[] ActorInfos = null;
         public PlayerReference Player = null;
         public PlayerReference[] PlayerGroup = null;
         public Nullable<CPos> Location = null;
@@ -105,20 +120,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             Widget = widget;
             switch (conectionType)
             {
+                // Irregular Connections
+                case ConnectionType.Exec:
+                    Color = Color.White;
+                    break;
                 case ConnectionType.Undefined:
                     Color = Color.Black;
                     break;
+                case ConnectionType.Universal:
+                    Color = Color.Khaki;
+                    break;
+
+                // Regular Connections
                 case ConnectionType.Actor:
                     Color = Color.CornflowerBlue;
                     break;
                 case ConnectionType.ActorList:
-                    Color = Color.DarkBlue;
+                    Color = Color.DeepSkyBlue;
                     break;
                 case ConnectionType.ActorInfo:
                     Color = Color.SandyBrown;
                     break;
-                case ConnectionType.Exec:
-                    Color = Color.White;
+                case ConnectionType.ActorInfos:
+                    Color = Color.RosyBrown;
                     break;
                 case ConnectionType.Player:
                     Color = Color.Brown;
@@ -141,9 +165,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.Integer:
                     Color = Color.Green;
                     break;
-                case ConnectionType.Universal:
-                    Color = Color.Khaki;
-                    break;
                 case ConnectionType.String:
                     Color = Color.SlateGray;
                     break;
@@ -153,16 +174,26 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.Boolean:
                     Color = Color.IndianRed;
                     break;
+
+                // Specific Connections
+                case ConnectionType.TimerConnection:
+                    Color = Color.DarkRed;
+                    break;
             }
         }
     }
 
     public enum ConnectionType
     {
+        // Irregular Connections
         Undefined,
-        Actor,
         Exec,
+        Universal,
+
+        // Regular Connections
+        Actor,
         ActorInfo,
+        ActorInfos,
         Player,
         PlayerGroup,
         Location,
@@ -170,10 +201,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         CellArray,
         CellPath,
         Integer,
-        Universal,
         ActorList,
         String,
         Strings,
-        Boolean
+        Boolean,
+
+        // Specific Connections
+        TimerConnection
     }
 }

@@ -7,6 +7,7 @@ using System.Reflection;
 using OpenRA.Mods.Common.Scripting;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
@@ -21,6 +22,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         // Actor
         ActorCreateActor,
+        ActorQueueMove,
+        ActorQueueAttack,
+        ActorQueueHunt,
+        ActorQueueAttackMoveActivity,
+        ActorQueueSell,
+        ActorQueueFindResources,
+        ActorKill,
+        ActorRemove,
 
         // Trigger,
         TriggerWorldLoaded,
@@ -31,12 +40,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         // Actor Groups
         GroupPlayerGroup,
+        GroupActorGroup,
+        GroupActorInfoGroup,
 
         // Arithmetic
         Arithmetics,
 
         // Complex Functions
-        Complex
+        Reinforcements,
+        ReinforcementsWithTransport
     }
 
     public class NodeEditorNodeScreenWidget : Widget
@@ -70,10 +82,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public List<NodeWidget> Nodes = new List<NodeWidget>();
 
         // SelectioNFrame
-        List<BasicNodeWidget> selectedNodes = new List<BasicNodeWidget>();
+        List<NodeWidget> selectedNodes = new List<NodeWidget>();
         int2 selectionStart;
         Rectangle selectionRectangle;
         int tick;
+
+        List<NodeWidget> copyNodes = new List<NodeWidget>();
+        int copyCounter = 0;
 
 
         [ObjectCreator.UseCtor]
@@ -90,116 +105,175 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             if (tick++ < 10)
             {
-                foreach (var nodeinfo in Snw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfo)
-                {
-                    if (nodeinfo.NodeType == NodeType.MapInfoNode)
-                    {
-                        var newNode = new MapInfoNode(this, nodeinfo);
-                        Nodes.Add(newNode);
-                        AddChild(newNode);
-                    }
-
-                    else if (nodeinfo.NodeType == NodeType.TriggerCreateTimer)
-                    {
-                        var newNode = new TriggerNodeCreateTimer(this, nodeinfo);
-                        Nodes.Add(newNode);
-                        AddChild(newNode);
-                    }
-
-                    else if (nodeinfo.NodeType == NodeType.TriggerWorldLoaded)
-                    {
-                        var newNode = new TriggerNodeWorldLoaded(this, nodeinfo);
-                        Nodes.Add(newNode);
-                        AddChild(newNode);
-                    }
-
-                    else if (nodeinfo.NodeType == NodeType.TriggerTick)
-                    {
-                        var newNode = new TriggerNodeTick(this, nodeinfo);
-                        Nodes.Add(newNode);
-                        AddChild(newNode);
-                    }
-
-                    else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredFootprint)
-                    {
-                        var newNode = new TriggerNodeOnEnteredFootPrint(this, nodeinfo);
-                        Nodes.Add(newNode);
-                        AddChild(newNode);
-                    }
-
-                    else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredRange)
-                    {
-                        var newNode = new TriggerNodeOnEnteredRange(this, nodeinfo);
-                        Nodes.Add(newNode);
-                        AddChild(newNode);
-                    }
-
-                    else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
-                    {
-                        var newNode = new ActorNodeCreateActor(this, nodeinfo);
-                        Nodes.Add(newNode);
-                        AddChild(newNode);
-                    }
-
-                    else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
-                    {
-                        var newNode = new GroupPlayerGroup(this, nodeinfo);
-                        Nodes.Add(newNode);
-                        AddChild(newNode);
-                    }
-                }
-
-                foreach (var node in Nodes)
-                {
-                    node.AddOutConnectionReferences();
-                }
-
-                foreach (var node in Nodes)
-                {
-                    node.AddInConnectionReferences();
-                }
-
-                int count = 0;
-                foreach (var node in Nodes)
-                {
-                    int c;
-                    int.TryParse(node.NodeInfo.NodeID.Replace("ND", ""), out c);
-                    count = Math.Max(c, count);
-                }
-
-                NodeID = count;
+                LoadInNodes();
 
                 tick = 11;
             }
         }
 
-        public void LoadInNodes(List<NodeInfo> nodes)
+        public void LoadInNodes()
         {
-            foreach (var node in nodes)
+            foreach (var nodeinfo in Snw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfo)
             {
-                //var nodeInstance = (Widget)Activator.CreateInstance(Type.GetType(node.NodeType));
+                if (nodeinfo.NodeType == NodeType.MapInfoNode)
+                {
+                    var newNode = new MapInfoNode(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
 
-                //// TODO: Make it work.
-                // AddChild(newWidget);
-                // Nodes.Add(newWidget);
+                else if (nodeinfo.NodeType == NodeType.TriggerCreateTimer)
+                {
+                    var newNode = new TriggerNodeCreateTimer(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+
+                else if (nodeinfo.NodeType == NodeType.TriggerWorldLoaded)
+                {
+                    var newNode = new TriggerNodeWorldLoaded(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+
+                else if (nodeinfo.NodeType == NodeType.TriggerTick)
+                {
+                    var newNode = new TriggerNodeTick(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+
+                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredFootprint)
+                {
+                    var newNode = new TriggerNodeOnEnteredFootPrint(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+
+                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredRange)
+                {
+                    var newNode = new TriggerNodeOnEnteredRange(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+
+                else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
+                {
+                    var newNode = new ActorNodeCreateActor(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+
+                else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
+                {
+                    var newNode = new GroupPlayerGroup(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+
+                else if (nodeinfo.NodeType == NodeType.ActorQueueMove)
+                {
+                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueAttack)
+                {
+                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueHunt)
+                {
+                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueAttackMoveActivity)
+                {
+                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueSell)
+                {
+                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueFindResources)
+                {
+                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorKill)
+                {
+                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorRemove)
+                {
+                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.Reinforcements)
+                {
+                    var newNode = new FunctionNodeReinforcements(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ReinforcementsWithTransport)
+                {
+                    var newNode = new FunctionNodeReinforcements(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.GroupActorGroup)
+                {
+                    var newNode = new GroupActorGroup(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.GroupActorInfoGroup)
+                {
+                    var newNode = new GroupActorInfoGroup(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
             }
 
-            /*NodeName = nodeName;
-            Screen = screen;
-            PosX = posX;
-            PosY = posY;
-            OffsetPosX = offsetPosX;
-            OffsetPosY = offsetPosY;
-            InConnections = inCon;
-            OutConnections = OutCon;*/
+            foreach (var node in Nodes)
+            {
+                node.AddOutConnectionReferences();
+            }
+
+            foreach (var node in Nodes)
+            {
+                node.AddInConnectionReferences();
+            }
+
+            int count = 0;
+            foreach (var node in Nodes)
+            {
+                int c;
+                int.TryParse(node.NodeInfo.NodeID.Replace("ND", ""), out c);
+                count = Math.Max(c, count);
+            }
+
+            NodeID = count;
         }
 
-        public void AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
+        public NodeWidget AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
         {
+            NodeWidget newNode = null;
+
             if (nodeType == NodeType.MapInfoNode)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-                var newNode = new MapInfoNode(this, nodeInfo);
+                newNode = new MapInfoNode(this, nodeInfo);
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
@@ -208,7 +282,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                var newNode = new TriggerNodeCreateTimer(this, nodeInfo);
+                newNode = new TriggerNodeCreateTimer(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
@@ -222,7 +296,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                var newNode = new TriggerNodeWorldLoaded(this, nodeInfo);
+                newNode = new TriggerNodeWorldLoaded(this, nodeInfo);
 
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
 
@@ -234,7 +308,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                var newNode = new TriggerNodeTick(this, nodeInfo);
+                newNode = new TriggerNodeTick(this, nodeInfo);
 
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
 
@@ -246,7 +320,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                var newNode = new TriggerNodeOnEnteredFootPrint(this, nodeInfo);
+                newNode = new TriggerNodeOnEnteredFootPrint(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.CellArray, newNode));
@@ -261,7 +335,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                var newNode = new TriggerNodeOnEnteredRange(this, nodeInfo);
+                newNode = new TriggerNodeOnEnteredRange(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
@@ -277,7 +351,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                var newNode = new ActorNodeCreateActor(this, nodeInfo);
+                newNode = new ActorNodeCreateActor(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
@@ -295,7 +369,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                var newNode = new GroupPlayerGroup(this, nodeInfo);
+                newNode = new ActorNodeQueueAbility(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.PlayerGroup, newNode));
@@ -303,12 +377,245 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
+            else if (nodeType == NodeType.GroupActorGroup)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new GroupActorGroup(this, nodeInfo);
+
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.GroupActorInfoGroup)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new GroupActorInfoGroup(this, nodeInfo);
+
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfos, newNode));
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            // Actor and Activities
+            else if (nodeType == NodeType.ActorKill)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeQueueAbility(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorRemove)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeQueueAbility(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorQueueMove)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeQueueAbility(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Location");
+                newNode.InConTexts.Add("CloseEnough");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorQueueAttack)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeQueueAbility(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Actor target");
+                newNode.InConTexts.Add("Allow Movement");
+                newNode.InConTexts.Add("Force Attack");
+                newNode.InConTexts.Add("Facing Tolerance");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorQueueHunt)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeQueueAbility(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorQueueAttackMoveActivity)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeQueueAbility(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Location");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorQueueSell)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeQueueAbility(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Show Ticks");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorQueueFindResources)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeQueueAbility(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            // Complex Nodes
+            else if (nodeType == NodeType.Reinforcements)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new FunctionNodeReinforcements(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfos, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Player");
+                newNode.InConTexts.Add("Actors");
+                newNode.InConTexts.Add("Path Spawn - End");
+                newNode.InConTexts.Add("Spawn interval");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ReinforcementsWithTransport)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new FunctionNodeReinforcements(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfos, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Player");
+                newNode.InConTexts.Add("Transport");
+                newNode.InConTexts.Add("Actors");
+                newNode.InConTexts.Add("Path Entry");
+                newNode.InConTexts.Add("Path Exit");
+                newNode.InConTexts.Add("Spawn interval");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
+            return newNode;
         }
 
         public void DeleteNode(NodeWidget widget)
         {
             Nodes.Remove(widget);
             RemoveChild(widget);
+        }
+
+        public override bool HandleKeyPress(KeyInput e)
+        {
+            if (e.Event == KeyInputEvent.Down && e.Key == Keycode.C && e.Modifiers == Modifiers.Ctrl && selectedNodes.Any())
+            {
+                copyNodes = new List<NodeWidget>();
+                foreach (var node in selectedNodes)
+                {
+                    copyNodes.Add(node);
+                }
+
+                copyCounter = 1;
+                return true;
+            }
+
+            if (e.Event == KeyInputEvent.Down && e.Key == Keycode.V && e.Modifiers == Modifiers.Ctrl)
+            {
+                foreach (var nodeinfo in copyNodes)
+                {
+                    var node = AddNode(nodeinfo.NodeType);
+                    if (node != null)
+                    {
+                        node.OffsetPosX = nodeinfo.OffsetPosX + 20 * copyCounter;
+                        node.OffsetPosY = nodeinfo.OffsetPosY + 20 * copyCounter;
+                    }
+                }
+
+                copyCounter++;
+                return true;
+            }
+
+            return false;
         }
 
         public override bool HandleMouseInput(MouseInput mi)
@@ -375,7 +682,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         node.Selected = false;
                     }
 
-                    selectedNodes = new List<BasicNodeWidget>();
+                    selectedNodes = new List<NodeWidget>();
                 }
                 else
                     currentBrush = NodeBrush.Drag;
