@@ -23,7 +23,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             Game.Renderer.Fonts.TryGetValue("Small", out FontSmall);
 
             Children.Add(new ShowWidgetsButtonWidget(this));
-            Children.Add(NodeWidget = new NodeEditorBackgroundWidget(this) { Visible = false });
+            Children.Add(NodeWidget = new NodeEditorBackgroundWidget(this, worldRenderer, world) { Visible = false });
         }
 
         public override void Tick()

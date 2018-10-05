@@ -8,6 +8,7 @@ using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -303,6 +304,36 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 else if (nodeinfo.NodeType == NodeType.ReinforcementsWithTransport)
                 {
                     var newNode = new FunctionLogicReinforcements(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorInfoNode)
+                {
+                    var newNode = new MapInfoLogicNode(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UIPlayNotification)
+                {
+                    var newNode = new UiLogicUiSettings(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UIPlaySound)
+                {
+                    var newNode = new UiLogicUiSettings(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UIRadarPing)
+                {
+                    var newNode = new UiLogicUiSettings(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UITextMessage)
+                {
+                    var newNode = new UiLogicUiSettings(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UIAddMissionText)
+                {
+                    var newNode = new UiLogicUiSettings(nodeinfo, this);
                     NodeLogics.Add(newNode);
                 }
             }

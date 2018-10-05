@@ -22,7 +22,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             List<ConnectionType> typeType = new List<ConnectionType>
             {
                 ConnectionType.Integer,
-                ConnectionType.ActorInfo,
                 ConnectionType.Location,
                 ConnectionType.CellPath,
                 ConnectionType.CellArray,
@@ -35,7 +34,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             List<string> typString = new List<string>
             {
                 "Info: Number",
-                "Info: Actor Info",
                 "Info: Cell",
                 "Info: Path",
                 "Info: Footprint",
@@ -210,54 +208,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     playerSelection.TextColor = connection.Player.Color.RGB;
                 }
             }
-            else if (connection.ConTyp == ConnectionType.ActorInfo)
-            {
-                var ruleActors = Screen.Snw.World.Map.Rules.Actors;
-                var selectedOwner = ruleActors.First().Value;
-                var playerSelection = new DropDownButtonWidget(Screen.Snw.ModData);
-                var coninf = connection.ActorInfo ?? null;
-
-                Func<ActorInfo, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
-                {
-                    var item = ScrollItemWidget.Setup(template, () => selectedOwner == option, () =>
-                    {
-                        selectedOwner = option;
-
-                        playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
-                        playerSelection.TextColor = Color.White;
-
-                        connection.ActorInfo = selectedOwner;
-                    });
-
-                    item.Get<LabelWidget>("LABEL").GetText = () => option.TraitInfo<TooltipInfo>().Name;
-
-
-                    return item;
-                };
-
-                playerSelection.OnClick = () =>
-                {
-                    var actors = ruleActors.Values.Where(a => a.TraitInfoOrDefault<TooltipInfo>() != null);
-                    actors = actors.OrderBy(a => a.TraitInfo<TooltipInfo>().Name);
-                    playerSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, actors, setupItem);
-                };
-
-                playerSelection.Text = selectedOwner.TraitInfo<TooltipInfo>().Name;
-                playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
-
-                AddChild(playerSelection);
-                parralelWidgetList.Add(playerSelection);
-
-                if (coninf != null)
-                {
-                    selectedOwner = coninf;
-                    playerSelection.Text = coninf.TraitInfo<TooltipInfo>().Name;
-                }
-                else
-                {
-                    connection.ActorInfo = selectedOwner;
-                }
-            }
             else if (connection.ConTyp == ConnectionType.Boolean)
             {
                 LabelWidget wid = new LabelWidget();
@@ -291,24 +241,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                         break;
                     }
                 }
-
-                for (int i = 0; i < parralelWidgetList.Count; i++)
-                {
-                    var splitHeight = (RenderBounds.Height + 20) / (parralelWidgetList.Count + 1);
-                    if (parralelWidgetList[i] != null)
-                        parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 40, FreeWidgetEntries.Y + splitHeight * (i + 1), 150, 25);
-
-                    parralelButtons[i].Bounds = new Rectangle(FreeWidgetEntries.X + 5, FreeWidgetEntries.Y + splitHeight * (i + 1), 30, 25);
-                }
             };
+        }
+
+        public override void Tick()
+        {
+            base.Tick();
 
             for (int i = 0; i < parralelWidgetList.Count; i++)
             {
-                var splitHeight = (RenderBounds.Height + 20) / (parralelWidgetList.Count + 1);
+                var splitHeight = (RenderBounds.Height) / (parralelWidgetList.Count + 1);
                 if (parralelWidgetList[i] != null)
                     parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 40, FreeWidgetEntries.Y + splitHeight * (i + 1), 150, 25);
 
                 parralelButtons[i].Bounds = new Rectangle(FreeWidgetEntries.X + 5, FreeWidgetEntries.Y + splitHeight * (i + 1), 30, 25);
+
+                if (parralelWidgetList[i] != null && parralelWidgetList[i].HasKeyboardFocus && parralelWidgetList[i] is TextFieldWidget)
+                {
+                    TextFieldWidget textField = parralelWidgetList[i] as TextFieldWidget;
+
+                    if (textField.Text.Length * 9 > 150)
+                        parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 40, FreeWidgetEntries.Y + splitHeight * (i + 1), textField.Text.Length * 9, 25);
+                }
             }
         }
     }

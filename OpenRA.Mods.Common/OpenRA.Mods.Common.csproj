@@ -620,6 +620,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionNodeReinforcements.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupActorGroup.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupPlayerGroup.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorInfoNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeCreateTimer.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\NodeWidget.cs" />
@@ -627,6 +628,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeOnEnteredRange.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeTick.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeWorldLoaded.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\UiNodeUiSettings.cs" />
     <Compile Include="WorldExtensions.cs" />
     <Compile Include="UtilityCommands\GetMapHashCommand.cs" />
     <Compile Include="UtilityCommands\Glob.cs" />

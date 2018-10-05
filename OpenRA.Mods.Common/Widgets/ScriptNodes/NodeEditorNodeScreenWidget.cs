@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using OpenRA.Graphics;
 using OpenRA.Mods.Common.Scripting;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
@@ -11,6 +12,7 @@ using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -19,6 +21,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     {
         // MapInfo
         MapInfoNode,
+        ActorInfoNode,
 
         // Actor
         ActorCreateActor,
@@ -48,7 +51,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         // Complex Functions
         Reinforcements,
-        ReinforcementsWithTransport
+        ReinforcementsWithTransport,
+
+        // UI Nodes
+        UIPlayNotification,
+        UIPlaySound,
+        UIRadarPing,
+        UITextMessage,
+        UIAddMissionText
     }
 
     public class NodeEditorNodeScreenWidget : Widget
@@ -56,6 +66,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         // Naming
 
         public int NodeID;
+        public WorldRenderer WorldRenderer;
+        public World World;
 
         // Background
         public readonly string Background = "textfield";
@@ -92,10 +104,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
 
         [ObjectCreator.UseCtor]
-        public NodeEditorNodeScreenWidget(ScriptNodeWidget snw, NodeEditorBackgroundWidget bgw)
+        public NodeEditorNodeScreenWidget(ScriptNodeWidget snw, NodeEditorBackgroundWidget bgw, WorldRenderer worldRenderer, World world)
         {
             Snw = snw;
             this.Bgw = bgw;
+            WorldRenderer = worldRenderer;
+            World = world;
         }
 
         public override void Tick()
@@ -103,11 +117,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             Bounds = new Rectangle(Bgw.RenderBounds.X + 200, Bgw.RenderBounds.Y + 5, Bgw.RenderBounds.Width - 205, Bgw.RenderBounds.Height - 10);
             CorrectCenterCoordinates = new int2(RenderBounds.X + (RenderBounds.Width / 2), RenderBounds.Y + (RenderBounds.Height / 2));
 
-            if (tick++ < 10)
+            if (tick++ < 1)
             {
                 LoadInNodes();
 
-                tick = 11;
+                tick = 2;
             }
         }
 
@@ -243,6 +257,42 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.ActorInfoNode)
+                {
+                    var newNode = new MapInfoActorInfoNode(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UIPlayNotification)
+                {
+                    var newNode = new UiNodeUiSettings(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UIPlaySound)
+                {
+                    var newNode = new UiNodeUiSettings(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UIRadarPing)
+                {
+                    var newNode = new UiNodeUiSettings(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UITextMessage)
+                {
+                    var newNode = new UiNodeUiSettings(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UIAddMissionText)
+                {
+                    var newNode = new UiNodeUiSettings(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
             }
 
             foreach (var node in Nodes)
@@ -274,6 +324,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
                 newNode = new MapInfoNode(this, nodeInfo);
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorInfoNode)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+                newNode = new MapInfoActorInfoNode(this, nodeInfo);
+
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfo, newNode));
+
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
@@ -576,6 +636,81 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 Nodes.Add(newNode);
             }
 
+            // Ui Nodes
+            else if (nodeType == NodeType.UIPlayNotification)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new UiNodeUiSettings(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Player group");
+                newNode.InConTexts.Add("string Notification");
+                newNode.InConTexts.Add("string Type (Speech default)");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.UIPlaySound)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new UiNodeUiSettings(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Cell Location");
+                newNode.InConTexts.Add("Sound string + ending");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.UIRadarPing)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new UiNodeUiSettings(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Cell Location");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.UITextMessage)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new UiNodeUiSettings(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("string ui");
+                newNode.InConTexts.Add("string message");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.UIAddMissionText)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new UiNodeUiSettings(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("string missiontext");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+
             return newNode;
         }
 
@@ -620,6 +755,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override bool HandleMouseInput(MouseInput mi)
         {
+            if (RenderBounds.Contains(mi.Location) && mi.Event == MouseInputEvent.Down)
+                TakeKeyboardFocus();
+
             if (!RenderBounds.Contains(mi.Location) && currentBrush == NodeBrush.Free)
             {
                 currentBrush = NodeBrush.Free;
