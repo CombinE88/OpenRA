@@ -1,4 +1,5 @@
 using System.Drawing;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes

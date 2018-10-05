@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using OpenRA.Graphics;
@@ -146,6 +147,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                             outCon.ActorInfos = actorList.ToArray();
                         }
 
+                        if (outcon.Key.Contains("Actor"))
+                        {
+                            outCon.ActorPreview = world.WorldActor.Trait<EditorActorLayer>().Previews.FirstOrDefault(prev => prev.ID == outcon.Value.Value);
+                        }
+
+                        if (outcon.Key.Contains("Actors"))
+                        {
+                            var actorIds = outcon.Value.Value.Split(',');
+                            List<EditorActorPreview> actorList = new List<EditorActorPreview>();
+                            var prevlist = world.WorldActor.Trait<EditorActorLayer>().Previews;
+
+                            foreach (var name in actorIds)
+                            {
+                                var actorRef = prevlist.FirstOrDefault(a => a.ID == name);
+                                if (actorRef != null)
+                                    actorList.Add(actorRef);
+                            }
+
+                            outCon.ActorPreviews = actorList.ToArray();
+                        }
+
                         if (outcon.Key.Contains("Location"))
                         {
                             string[] pos = outcon.Value.Value.Split(',');
@@ -234,7 +256,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 string text = "";
                 foreach (var play in outCon.PlayerGroup)
                 {
-                    if (play != outCon.PlayerGroup.Last())
+                    if (play == outCon.PlayerGroup.Last())
                         text += play.Name;
                     else
                         text += play.Name + ",";
@@ -250,13 +272,32 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 string text = "";
                 foreach (var play in outCon.ActorInfos)
                 {
-                    if (play != outCon.ActorInfos.Last())
+                    if (play == outCon.ActorInfos.Last())
                         text += play.Name;
                     else
                         text += play.Name + ",";
                 }
 
                 nodes.Add(new MiniYamlNode("ActorInfos", text));
+            }
+
+            if (outCon.ActorPreview != null)
+            {
+                nodes.Add(new MiniYamlNode("Actor", outCon.ActorPreview.ID));
+            }
+
+            if (outCon.ActorPreviews != null && outCon.ActorPreviews.Any())
+            {
+                string text = "";
+                foreach (var play in outCon.ActorPreviews)
+                {
+                    if (play == outCon.ActorPreviews.Last())
+                        text += play.ID;
+                    else
+                        text += play.ID + ",";
+                }
+
+                nodes.Add(new MiniYamlNode("Actors", text));
             }
 
             if (outCon.Location != null)
@@ -323,6 +364,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public ActorInfo ActorInfo = null;
         public ActorInfo[] ActorInfos = null;
+        public EditorActorPreview ActorPreview = null;
+        public EditorActorPreview[] ActorPreviews = null;
+        public string ActorId = null;
+        public string[] ActorIds = null;
         public PlayerReference Player = null;
         public PlayerReference[] PlayerGroup = null;
         public Nullable<CPos> Location = null;

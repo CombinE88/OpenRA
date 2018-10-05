@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 
@@ -105,6 +106,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public Actor[] ActorGroup = null;
         public ActorInfo ActorInfo = null;
         public ActorInfo[] ActorInfos = null;
+        public EditorActorPreview ActorPrev = null;
+        public EditorActorPreview[] ActorPrevs = null;
         public PlayerReference Player = null;
         public PlayerReference[] PlayerGroup = null;
         public Nullable<CPos> Location = null;

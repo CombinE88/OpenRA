@@ -605,14 +605,12 @@
     <Compile Include="Widgets\Logic\MusicHotkeyLogic.cs" />
     <Compile Include="Widgets\ScriptNodes\AdvancedTextFieldWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\Connections.cs" />
-    <Compile Include="Widgets\ScriptNodes\EditorNodeBrushes\EditorCellPickerBrush.cs" />
+    <Compile Include="Widgets\ScriptNodes\EditorNodeBrushes\EditorNodeBrush.cs" />
     <Compile Include="Widgets\ScriptNodes\IngameNodeScriptSystem.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorBackgroundWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorNodeScreenWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorTraits\NodeSelectionLayer.cs" />
-    <Compile Include="Widgets\ScriptNodes\PipetPickActorWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\EditorNodeLayer.cs" />
-    <Compile Include="Widgets\ScriptNodes\ScriptNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ShowWidgetsButton.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeCreateActor.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeQueueAbility.cs" />
@@ -621,7 +619,9 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupActorGroup.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupPlayerGroup.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorInfoNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorsonMap.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ScriptNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeCreateTimer.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\NodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeOnEnteredFootPrint.cs" />

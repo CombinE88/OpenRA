@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OpenRA.Mods.Common.Traits;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
@@ -139,6 +140,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 outRef.Player = outCon.Player ?? null;
                 outRef.ActorInfo = outCon.ActorInfo ?? null;
                 outRef.CellArray = outCon.CellArray ?? null;
+                outRef.ActorPreview = outCon.ActorPrev ?? null;
+                outRef.ActorPreviews = outCon.ActorPrevs ?? null;
                 outRef.ConnectionId = outCon.ConnectionId;
                 outRef.ConTyp = outCon.ConTyp;
 
@@ -184,6 +187,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 connection.Player = conRef.Player ?? null;
                 connection.ActorInfo = conRef.ActorInfo ?? null;
                 connection.CellArray = conRef.CellArray ?? null;
+                connection.ActorPrevs = conRef.ActorPreviews ?? null;
                 connection.ConnectionId = conRef.ConnectionId;
 
                 readyOutCons.Add(connection);
@@ -273,6 +277,34 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 connection.Player = conRef.Player ?? null;
                 connection.ActorInfo = conRef.ActorInfo ?? null;
                 connection.CellArray = conRef.CellArray ?? null;
+                if (conRef.ActorId != null)
+                {
+                    var actor = Insc.World.WorldActor.Trait<SpawnMapActors>().Actors.FirstOrDefault(a => a.Key == conRef.ActorId).Value;
+                    if (actor != null)
+                        connection.Actor = actor;
+                }
+
+                Dictionary<string, Actor> actorList = Insc.World.WorldActor.Trait<SpawnMapActors>().Actors;
+                List<Actor> act = new List<Actor>();
+
+                if (conRef.ActorIds != null && conRef.ActorIds.Any())
+                {
+                    foreach (var prev in conRef.ActorIds)
+                    {
+                        Actor ret;
+
+                        if (!actorList.TryGetValue(prev, out ret))
+                            continue;
+
+                        if (ret.Disposed)
+                            continue;
+
+                        act.Add(ret);
+                    }
+
+                    connection.ActorGroup = act.ToArray();
+                }
+
                 connection.ConnectionId = conRef.ConnectionId;
                 connection.Logic = this;
 

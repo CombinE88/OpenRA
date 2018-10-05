@@ -20,7 +20,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
         public override void Execute(World world)
         {
-            if (NodeType == NodeType.UIPlayNotification)
+            if (NodeType == NodeType.UiPlayNotification)
             {
                 if (InConnections.First(ic => ic.ConTyp == ConnectionType.PlayerGroup).In == null
                     || InConnections.First(ic => ic.ConTyp == ConnectionType.PlayerGroup).In.PlayerGroup == null
@@ -44,7 +44,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                         world.Players.First(p => p.InternalName == player.Name), speech, InConnections.First(ic => ic.ConTyp == ConnectionType.String).In.String, null);
                 }
             }
-            else if (NodeType == NodeType.UIPlaySound)
+            else if (NodeType == NodeType.UiPlaySound)
             {
                 if (InConnections.First(ic => ic.ConTyp == ConnectionType.String).In == null
                     || InConnections.First(ic => ic.ConTyp == ConnectionType.String).In.String == null)
@@ -58,7 +58,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
                 Game.Sound.Play(SoundType.World, sound, world.Map.CenterOfCell(InConnections.First(ic => ic.ConTyp == ConnectionType.Location).In.Location.Value));
             }
-            else if (NodeType == NodeType.UIRadarPing)
+            else if (NodeType == NodeType.UiRadarPing)
             {
                 if (InConnections.First(ic => ic.ConTyp == ConnectionType.Location).In == null
                     || InConnections.First(ic => ic.ConTyp == ConnectionType.Location).In.Location == null)
@@ -73,7 +73,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     4,
                     0.12f);
             }
-            else if (NodeType == NodeType.UITextMessage)
+            else if (NodeType == NodeType.UiTextMessage)
             {
                 if (InConnections.First(ic => ic.ConTyp == ConnectionType.String).In == null
                     || InConnections.First(ic => ic.ConTyp == ConnectionType.String).In.String == null)
@@ -85,7 +85,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
                 Game.AddChatLine(Color.Blue,InConnections.First(ic => ic.ConTyp == ConnectionType.String).In.String,InConnections.Last(ic => ic.ConTyp == ConnectionType.String).In.String);
             }
-            else if (NodeType == NodeType.UIAddMissionText)
+            else if (NodeType == NodeType.UiAddMissionText)
             {
 
                 if (InConnections.First(ic => ic.ConTyp == ConnectionType.String).In == null

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Graphics;
@@ -14,14 +13,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class MapInfoActorInfoNode : NodeWidget
     {
+        readonly TextFieldWidget textField;
+
         DropDownButtonWidget playerSelection;
         ActorInfo selectedActorInfo;
 
-        PaletteReference palette;
-        Animation animation;
         ActorPreviewWidget preview;
-        TextFieldWidget textField;
-        List<ActorInfo> choosenActors;
 
         public MapInfoActorInfoNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
@@ -52,7 +49,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 })
                 .OrderBy(a => a.TraitInfo<TooltipInfo>().Name);
 
-            choosenActors = ruleActors.ToList();
+            var choosenActors = ruleActors.ToList();
 
             selectedActorInfo = ruleActors.First();
 

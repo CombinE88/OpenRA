@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Graphics;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Widgets;
 
@@ -84,13 +85,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             List<NodeType> outputNodeTypes = new List<NodeType>
             {
                 NodeType.MapInfoNode,
-                NodeType.ActorInfoNode
+                NodeType.MapInfoActorInfoNode,
+                NodeType.MapInfoActorReference
             };
 
             List<string> outputNodeStrings = new List<string>
             {
                 "Info: Map Info",
-                "Info: Actor Info"
+                "Info: Actor Info",
+                "Info: Actor"
             };
 
             nodeType = outputNodeTypes.First();
@@ -376,11 +379,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             //  Group Nodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
-                NodeType.UIPlayNotification,
-                NodeType.UIPlaySound,
-                NodeType.UIRadarPing,
-                NodeType.UITextMessage,
-                NodeType.UIAddMissionText
+                NodeType.UiPlayNotification,
+                NodeType.UiPlaySound,
+                NodeType.UiRadarPing,
+                NodeType.UiTextMessage,
+                NodeType.UiAddMissionText
             };
 
             List<string> nodeStrings = new List<string>

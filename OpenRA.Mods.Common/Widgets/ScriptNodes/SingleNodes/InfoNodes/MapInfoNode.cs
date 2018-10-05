@@ -116,7 +116,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 var wid = new ButtonWidget(Screen.Snw.ModData);
                 wid.OnClick = () =>
                 {
-                    Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Single, connection, Editor, Screen.Snw.WorldRenderer,
+                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Single, connection, Editor, Screen.Snw.WorldRenderer,
                         () => { wid.Text = "Cell: " + connection.Location.ToString(); }));
                 };
                 AddChild(wid);
@@ -130,7 +130,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 var wid = new ButtonWidget(Screen.Snw.ModData);
                 wid.OnClick = () =>
                 {
-                    Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Path, connection, Editor, Screen.Snw.WorldRenderer,
+                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Path, connection, Editor, Screen.Snw.WorldRenderer,
                         () => { wid.Text = "Path: " + connection.CellArray.Count().ToString(); }));
                 };
                 AddChild(wid);
@@ -144,7 +144,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 var wid = new ButtonWidget(Screen.Snw.ModData);
                 wid.OnClick = () =>
                 {
-                    Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Array, connection, Editor, Screen.Snw.WorldRenderer,
+                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Array, connection, Editor, Screen.Snw.WorldRenderer,
                         () => { wid.Text = "Array: " + connection.CellArray.First().ToString(); }));
                 };
                 AddChild(wid);
@@ -158,7 +158,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 var wid = new ButtonWidget(Screen.Snw.ModData);
                 wid.OnClick = () =>
                 {
-                    Editor.SetBrush(new EditorCellPickerBrush(CellPicking.Range, connection, Editor, Screen.Snw.WorldRenderer,
+                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Range, connection, Editor, Screen.Snw.WorldRenderer,
                         () => { wid.Text = "Cell: " + connection.Location.ToString() + " | " + connection.Number; }));
                 };
                 AddChild(wid);

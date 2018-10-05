@@ -25,7 +25,8 @@ namespace OpenRA.Mods.Common.Traits
         Path,
         Array,
         Single,
-        Range
+        Range,
+        Actor
     }
 
     [Desc("Required for the map editor to work. Attach this to the world actor.")]
@@ -55,6 +56,8 @@ namespace OpenRA.Mods.Common.Traits
         public CPos FixedCursorPosition;
         WDist yetCursorPosition;
         public CellPicking Mode;
+
+        public List<EditorActorPreview> Actors = new List<EditorActorPreview>();
 
         public List<CPos> CellRegion { get; private set; }
 
@@ -155,6 +158,17 @@ namespace OpenRA.Mods.Common.Traits
                     }
                 }
             }
+
+            if (Mode == CellPicking.Actor)
+                foreach (var preview in Actors)
+                {
+                    if (preview != null)
+                    wcr.DrawRect(
+                        new float3(preview.Bounds.Left,preview.Bounds.Top,1),
+                        new float3(preview.Bounds.Right,preview.Bounds.Bottom,1),
+                        1,
+                        Color.White);
+                }
 
             if (Mode == CellPicking.Range)
                 yield return new RangeCircleRenderable(

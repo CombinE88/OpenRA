@@ -21,7 +21,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     {
         // MapInfo
         MapInfoNode,
-        ActorInfoNode,
+        MapInfoActorInfoNode,
+        MapInfoActorReference,
 
         // Actor
         ActorCreateActor,
@@ -54,11 +55,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         ReinforcementsWithTransport,
 
         // UI Nodes
-        UIPlayNotification,
-        UIPlaySound,
-        UIRadarPing,
-        UITextMessage,
-        UIAddMissionText
+        UiPlayNotification,
+        UiPlaySound,
+        UiRadarPing,
+        UiTextMessage,
+        UiAddMissionText
     }
 
     public class NodeEditorNodeScreenWidget : Widget
@@ -257,39 +258,51 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.ActorInfoNode)
+                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
                 {
                     var newNode = new MapInfoActorInfoNode(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.UIPlayNotification)
+                else if (nodeinfo.NodeType == NodeType.UiPlayNotification)
                 {
                     var newNode = new UiNodeUiSettings(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.UIPlaySound)
+                else if (nodeinfo.NodeType == NodeType.UiPlaySound)
                 {
                     var newNode = new UiNodeUiSettings(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.UIRadarPing)
+                else if (nodeinfo.NodeType == NodeType.UiRadarPing)
                 {
                     var newNode = new UiNodeUiSettings(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.UITextMessage)
+                else if (nodeinfo.NodeType == NodeType.UiTextMessage)
                 {
                     var newNode = new UiNodeUiSettings(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.UIAddMissionText)
+                else if (nodeinfo.NodeType == NodeType.UiAddMissionText)
                 {
                     var newNode = new UiNodeUiSettings(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
+                {
+                    var newNode = new MapInfoActorsonMap(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.MapInfoActorReference)
+                {
+                    var newNode = new MapInfoActorsonMap(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
@@ -327,12 +340,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-            else if (nodeType == NodeType.ActorInfoNode)
+            else if (nodeType == NodeType.MapInfoActorInfoNode)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
                 newNode = new MapInfoActorInfoNode(this, nodeInfo);
 
                 newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfo, newNode));
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.MapInfoActorReference)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+                newNode = new MapInfoActorsonMap(this, nodeInfo);
+
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
 
                 AddChild(newNode);
                 Nodes.Add(newNode);
@@ -637,7 +661,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             }
 
             // Ui Nodes
-            else if (nodeType == NodeType.UIPlayNotification)
+            else if (nodeType == NodeType.UiPlayNotification)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
@@ -654,7 +678,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-            else if (nodeType == NodeType.UIPlaySound)
+            else if (nodeType == NodeType.UiPlaySound)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
@@ -669,7 +693,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-            else if (nodeType == NodeType.UIRadarPing)
+            else if (nodeType == NodeType.UiRadarPing)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
@@ -682,7 +706,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-            else if (nodeType == NodeType.UITextMessage)
+            else if (nodeType == NodeType.UiTextMessage)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
@@ -697,7 +721,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-            else if (nodeType == NodeType.UIAddMissionText)
+            else if (nodeType == NodeType.UiAddMissionText)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 

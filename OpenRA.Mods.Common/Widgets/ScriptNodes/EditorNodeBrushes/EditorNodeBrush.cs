@@ -9,19 +9,21 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
 {
-    public class EditorCellPickerBrush : IEditorBrush
+    public class EditorNodeBrushBrush : IEditorBrush
     {
         readonly Map map;
         readonly EditorViewportControllerWidget editorWidget;
-        public List<CPos> Cells = new List<CPos>();
+        readonly EditorActorLayer editorLayer;
+        public List<EditorActorPreview> Actor = new List<EditorActorPreview>();
 
         OutConnection outCon;
         NodeSelectionLayer nodeSelectionLayer;
         WorldRenderer worldRenderer;
         int range;
         Action function;
+        int2 worldPixel;
 
-        public EditorCellPickerBrush(CellPicking mode, OutConnection outConnection, EditorViewportControllerWidget editorWidget, WorldRenderer wr, Action onFinished = null)
+        public EditorNodeBrushBrush(CellPicking mode, OutConnection outConnection, EditorViewportControllerWidget editorWidget, WorldRenderer wr, Action onFinished = null)
         {
             outCon = outConnection;
             worldRenderer = wr;
@@ -30,9 +32,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             map = wr.World.Map;
 
             nodeSelectionLayer = wr.World.WorldActor.Trait<NodeSelectionLayer>();
+            editorLayer = wr.World.WorldActor.Trait<EditorActorLayer>();
 
-            Cells = outCon.CellArray;
             nodeSelectionLayer.Mode = mode;
+
             outCon.Widget.Screen.Bgw.Visible = false;
 
             function = onFinished;
@@ -46,6 +49,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             {
                 nodeSelectionLayer.SetRange(new WDist(0));
             }
+
+            if (outCon.ActorPrevs != null && outCon.ActorPrevs.Any())
+            {
+                nodeSelectionLayer.Actors = outCon.ActorPrevs.ToList();
+            }
         }
 
         public void Dispose()
@@ -53,11 +61,35 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             nodeSelectionLayer.Clear();
         }
 
+        long CalculateActorSelectionPriority(EditorActorPreview actor)
+        {
+            var centerPixel = new int2(actor.Bounds.X, actor.Bounds.Y);
+            var pixelDistance = (centerPixel - worldPixel).Length;
+
+            // If 2+ actors have the same pixel position, then the highest appears on top.
+            var worldZPosition = actor.CenterPosition.Z;
+
+            // Sort by pixel distance then in world z position.
+            return ((long)pixelDistance << 32) + worldZPosition;
+        }
 
         public bool HandleMouseInput(MouseInput mi)
         {
+            worldPixel = worldRenderer.Viewport.ViewToWorldPx(mi.Location);
+            var underCursor = editorLayer.PreviewsAt(worldPixel).MinByOrDefault(CalculateActorSelectionPriority);
+
             if (mi.Button != MouseButton.Left && mi.Button != MouseButton.Right)
                 return false;
+
+            if (nodeSelectionLayer.Mode == CellPicking.Actor && mi.Event == MouseInputEvent.Down && mi.Button == MouseButton.Left && underCursor != null)
+            {
+                if (nodeSelectionLayer.Actors.Contains(underCursor) && mi.Modifiers == Modifiers.Ctrl)
+                    nodeSelectionLayer.Actors.Remove(underCursor);
+                else if (!nodeSelectionLayer.Actors.Contains(underCursor))
+                    nodeSelectionLayer.Actors.Add(underCursor);
+
+                return true;
+            }
 
             if (mi.Button == MouseButton.Right)
             {
@@ -70,6 +102,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
                     outCon.Widget.Screen.Bgw.Visible = true;
                     if (nodeSelectionLayer.Mode == CellPicking.Range)
                         outCon.Number = range;
+                    if (nodeSelectionLayer.Actors.Any() && nodeSelectionLayer.Mode == CellPicking.Actor)
+                    {
+                        outCon.ActorPrevs = nodeSelectionLayer.Actors.ToArray();
+                    }
+                    else
+                    {
+                        outCon.ActorPrevs = null;
+                    }
+
+                    nodeSelectionLayer.Actors = new List<EditorActorPreview>();
                     function();
                     editorWidget.ClearBrush();
                     return true;
