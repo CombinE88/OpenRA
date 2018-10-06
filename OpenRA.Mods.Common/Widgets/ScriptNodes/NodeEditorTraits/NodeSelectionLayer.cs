@@ -163,20 +163,11 @@ namespace OpenRA.Mods.Common.Traits
                 foreach (var preview in Actors)
                 {
                     if (preview != null)
-                    wcr.DrawRect(
-                        new float3(preview.Bounds.Left,preview.Bounds.Top,1),
-                        new float3(preview.Bounds.Right,preview.Bounds.Bottom,1),
-                        1,
-                        Color.White);
+                        wcr.DrawRect(new float3(preview.Bounds.Left, preview.Bounds.Top, 1), new float3(preview.Bounds.Right, preview.Bounds.Bottom, 1), 1, Color.White);
                 }
 
             if (Mode == CellPicking.Range)
-                yield return new RangeCircleRenderable(
-                    self.World.Map.CenterOfCell(FixedCursorPosition),
-                    yetCursorPosition,
-                    0,
-                    Color.White,
-                    Color.Black);
+                yield return new RangeCircleRenderable(self.World.Map.CenterOfCell(FixedCursorPosition), yetCursorPosition, 0, Color.White, Color.Black);
         }
     }
 }

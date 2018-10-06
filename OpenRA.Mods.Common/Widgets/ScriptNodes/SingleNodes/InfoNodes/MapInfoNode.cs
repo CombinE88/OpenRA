@@ -18,7 +18,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
         public MapInfoNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            //  Output Nodes
             List<ConnectionType> typeType = new List<ConnectionType>
             {
                 ConnectionType.Integer,
@@ -250,7 +249,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             for (int i = 0; i < parralelWidgetList.Count; i++)
             {
-                var splitHeight = (RenderBounds.Height) / (parralelWidgetList.Count + 1);
+                var splitHeight = RenderBounds.Height / (parralelWidgetList.Count + 1);
                 if (parralelWidgetList[i] != null)
                     parralelWidgetList[i].Bounds = new Rectangle(FreeWidgetEntries.X + 40, FreeWidgetEntries.Y + splitHeight * (i + 1), 150, 25);
 

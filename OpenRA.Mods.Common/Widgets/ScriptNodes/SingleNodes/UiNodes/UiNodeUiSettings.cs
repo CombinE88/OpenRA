@@ -83,11 +83,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     || InConnections.Last(ic => ic.ConTyp == ConnectionType.String).In.String == null)
                     throw new YamlException(NodeId + "Ui message string not connected");
 
-                Game.AddChatLine(Color.Blue,InConnections.First(ic => ic.ConTyp == ConnectionType.String).In.String,InConnections.Last(ic => ic.ConTyp == ConnectionType.String).In.String);
+                Game.AddChatLine(Color.CornflowerBlue,
+                    InConnections.First(ic => ic.ConTyp == ConnectionType.String).In.String,
+                    InConnections.Last(ic => ic.ConTyp == ConnectionType.String).In.String);
             }
             else if (NodeType == NodeType.UiAddMissionText)
             {
-
                 if (InConnections.First(ic => ic.ConTyp == ConnectionType.String).In == null
                     || InConnections.First(ic => ic.ConTyp == ConnectionType.String).In.String == null)
                     throw new YamlException(NodeId + "Ui String not connected");

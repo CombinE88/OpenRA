@@ -57,17 +57,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     return;
 
                 actor.QueueActivity(new Attack(actor,
-                    Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Location).In.Actor)
-                    , InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null
-                    , InConnections.Last(c => c.ConTyp == ConnectionType.Boolean).In != null
-                    , InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null ? InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In.Number ?? 0 : 0));
+                    Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Location).In.Actor),
+                    InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null,
+                    InConnections.Last(c => c.ConTyp == ConnectionType.Boolean).In != null,
+                    InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null ? InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In.Number ?? 0 : 0));
             }
-
             else if (NodeInfo.NodeType == NodeType.ActorQueueHunt)
             {
                 actor.QueueActivity(new Hunt(actor));
             }
-
             else if (NodeInfo.NodeType == NodeType.ActorQueueAttackMoveActivity)
             {
                 if (InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Location).In == null)
@@ -79,7 +77,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 actor.QueueActivity(new AttackMoveActivity(actor,
                     new Move(actor, InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Location).In.Location.Value, WDist.FromCells(2))));
             }
-
             else if (NodeInfo.NodeType == NodeType.ActorQueueSell)
             {
                 if (actor.Trait<Sellable>() == null)
@@ -87,7 +84,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
                 actor.Trait<Sellable>().Sell(actor);
             }
-
             else if (NodeInfo.NodeType == NodeType.ActorQueueFindResources)
             {
                 if (actor.Trait<Harvester>() == null)
@@ -95,12 +91,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
                 actor.QueueActivity(new FindResources(actor));
             }
-
             else if (NodeInfo.NodeType == NodeType.ActorKill)
             {
                 actor.Kill(actor);
             }
-
             else if (NodeInfo.NodeType == NodeType.ActorRemove)
             {
                 actor.Dispose();

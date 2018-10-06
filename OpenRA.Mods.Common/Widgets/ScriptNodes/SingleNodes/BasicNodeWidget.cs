@@ -16,6 +16,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public readonly string BackgroundEntries = "button-pressed";
 
         public readonly string Background = "dialog";
+        public readonly EditorViewportControllerWidget Editor;
 
         // Node Coordiantions in the System
         public int GridPosX;
@@ -36,8 +37,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public int2 CursorLocation;
 
         // Node Connections
-        public List<InConnection> InConnections = new List<InConnection>();
-        public List<OutConnection> OutConnections = new List<OutConnection>();
+        public List<InConnection> InConnections;
+        public List<OutConnection> OutConnections;
         public List<string> InConTexts = new List<string>();
 
         public Rectangle AddInput;
@@ -52,7 +53,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         // Selection
         public bool Selected;
 
-        public readonly EditorViewportControllerWidget Editor;
 
         public string NodeName = "General Widget";
         public string NodeID;
@@ -104,7 +104,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             SizeY = Math.Max(InConnections.Count, OutConnections.Count) * 35;
             Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);
-            // Bounds = new Rectangle(0, 0, 0, 0);
 
             WidgetBackground = new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6);
             DragBar = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 1, RenderBounds.Width - 27, 25);

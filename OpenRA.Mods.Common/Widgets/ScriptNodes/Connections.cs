@@ -84,7 +84,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                 // Specific Connections
                 case ConnectionType.TimerConnection:
-                    Color = Color.DarkRed;
+                    Color = Color.LawnGreen;
                     break;
             }
         }
@@ -110,9 +110,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public EditorActorPreview[] ActorPrevs = null;
         public PlayerReference Player = null;
         public PlayerReference[] PlayerGroup = null;
-        public Nullable<CPos> Location = null;
+        public CPos? Location = null;
         public List<CPos> CellArray = new List<CPos>();
-        public Nullable<int> Number = null;
+        public int? Number = null;
         public string String = null;
         public string[] Strings = { };
         public bool Boolean = true;
@@ -180,7 +180,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                 // Specific Connections
                 case ConnectionType.TimerConnection:
-                    Color = Color.DarkRed;
+                    Color = Color.LawnGreen;
                     break;
             }
         }

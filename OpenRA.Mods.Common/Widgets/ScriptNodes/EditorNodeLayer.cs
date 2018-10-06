@@ -64,7 +64,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     nodeInfo.OffsetPosY = offsetY;
                 }
 
-
                 if (node.Key.Contains("In@"))
                 {
                     var inCon = new InConReference();
@@ -341,8 +340,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public NodeType NodeType;
         public string NodeName;
         public string NodeID;
-        public Nullable<int> OffsetPosX = null;
-        public Nullable<int> OffsetPosY = null;
+        public int? OffsetPosX = null;
+        public int? OffsetPosY = null;
         public List<InConReference> InConnections = null;
         public List<OutConReference> OutConnections = null;
 
@@ -370,9 +369,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public string[] ActorIds = null;
         public PlayerReference Player = null;
         public PlayerReference[] PlayerGroup = null;
-        public Nullable<CPos> Location = null;
+        public CPos? Location = null;
         public List<CPos> CellArray = new List<CPos>();
-        public Nullable<int> Number = null;
+        public int? Number = null;
         public string String = null;
         public string[] Strings = { };
 

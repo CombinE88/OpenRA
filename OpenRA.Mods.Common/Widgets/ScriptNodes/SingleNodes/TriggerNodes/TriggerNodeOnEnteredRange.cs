@@ -44,7 +44,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
             if (triggerOnEnter && !repeat)
                 return;
 
-            if (InConnections.First(ic => ic.ConTyp == ConnectionType.LocationRange).In == null || InConnections.First(ic => ic.ConTyp == ConnectionType.LocationRange).In.Location == null || InConnections.First(ic => ic.ConTyp == ConnectionType.LocationRange).In.Number == null)
+            if (InConnections.First(ic => ic.ConTyp == ConnectionType.LocationRange).In == null
+                || InConnections.First(ic => ic.ConTyp == ConnectionType.LocationRange).In.Location == null
+                || InConnections.First(ic => ic.ConTyp == ConnectionType.LocationRange).In.Number == null)
                 throw new YamlException(NodeId + "Location and Range not connected");
 
             if (InConnections.First(ic => ic.ConTyp == ConnectionType.PlayerGroup).In == null ||
@@ -65,8 +67,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
             if (actors.Any() && !triggerOnEnter)
             {
-                triggerOnEnter = true;
-                var exeNodes = Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == OutConnections.First()) != null);
+                var exeNodes = Insc.NodeLogics.Where(n =>
+                    n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && OutConnections
+                                                            .Where(t => t.ConTyp == ConnectionType.Exec).Contains(c.In)) != null);
                 foreach (var node in exeNodes)
                 {
                     node.Execute(self.World);

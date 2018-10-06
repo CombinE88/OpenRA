@@ -5,6 +5,7 @@ using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
@@ -72,7 +73,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     nodeInfo.OffsetPosX = offsetX;
                     nodeInfo.OffsetPosY = offsetY;
                 }
-
 
                 if (node.Key.Contains("In@"))
                 {
@@ -211,14 +211,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             foreach (var nodeinfo in nodesInfos)
             {
-                //  Info Logics
                 if (nodeinfo.NodeType == NodeType.MapInfoNode)
                 {
                     var newNode = new MapInfoLogicNode(nodeinfo, this);
                     NodeLogics.Add(newNode);
                 }
-
-                // Trigger Logics
                 else if (nodeinfo.NodeType == NodeType.TriggerWorldLoaded)
                 {
                     var newNode = new TriggerLogicWorldLoaded(nodeinfo, this);
@@ -239,8 +236,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     var newNode = new TriggerLogicCreateTimer(nodeinfo, this);
                     NodeLogics.Add(newNode);
                 }
-
-                //  Group Logics
                 else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
                 {
                     var newNode = new GroupPlayerLogic(nodeinfo, this);
@@ -256,8 +251,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     var newNode = new GroupActorInfoLogic(nodeinfo, this);
                     NodeLogics.Add(newNode);
                 }
-
-                //  Actor Logics
                 else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
                 {
                     var newNode = new ActorCreateActorLogic(nodeinfo, this);
@@ -353,6 +346,41 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     var newNode = new NodeLogic(nodeinfo, this);
                     NodeLogics.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.TriggerOnIdle)
+                {
+                    var newNode = new TriggerOnIdle(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TriggerOnKilled)
+                {
+                    var newNode = new TriggerOnKilled(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TriggerOnAllKilled)
+                {
+                    var newNode = new TriggerOnAllKilled(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TimerReset)
+                {
+                    var newNode = new TimerLogics(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TimerStart)
+                {
+                    var newNode = new TimerLogics(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TimerStop)
+                {
+                    var newNode = new TimerLogics(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ArithmeticsOr)
+                {
+                    var newNode = new ArithmeticBasicLogic(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
             }
 
             foreach (var node in NodeLogics)
@@ -371,7 +399,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             }
         }
 
-        public void Tick(Actor self)
+        void ITick.Tick(Actor self)
         {
             if (!initialized)
                 return;

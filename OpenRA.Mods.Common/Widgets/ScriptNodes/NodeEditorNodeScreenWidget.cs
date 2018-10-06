@@ -38,17 +38,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         // Trigger,
         TriggerWorldLoaded,
         TriggerCreateTimer,
+        TimerStart,
+        TimerReset,
+        TimerStop,
         TriggerTick,
         TriggerOnEnteredFootprint,
         TriggerOnEnteredRange,
+        TriggerOnIdle,
+        TriggerOnKilled,
 
         // Actor Groups
         GroupPlayerGroup,
         GroupActorGroup,
         GroupActorInfoGroup,
+        TriggerOnAllKilled,
 
         // Arithmetic
-        Arithmetics,
+        ArithmeticsAnd,
+        ArithmeticsOr,
 
         // Complex Functions
         Reinforcements,
@@ -89,7 +96,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         int2 textsize;
 
         NodeBrush currentBrush = NodeBrush.Free;
-        Tuple<Rectangle, OutConnection> BrushItem = null;
+        Tuple<Rectangle, OutConnection> brushItem = null;
         BasicNodeWidget nodeBrush = null;
 
         public List<NodeWidget> Nodes = new List<NodeWidget>();
@@ -102,7 +109,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         List<NodeWidget> copyNodes = new List<NodeWidget>();
         int copyCounter = 0;
-
 
         [ObjectCreator.UseCtor]
         public NodeEditorNodeScreenWidget(ScriptNodeWidget snw, NodeEditorBackgroundWidget bgw, WorldRenderer worldRenderer, World world)
@@ -136,56 +142,48 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-
                 else if (nodeinfo.NodeType == NodeType.TriggerCreateTimer)
                 {
                     var newNode = new TriggerNodeCreateTimer(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-
                 else if (nodeinfo.NodeType == NodeType.TriggerWorldLoaded)
                 {
                     var newNode = new TriggerNodeWorldLoaded(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-
                 else if (nodeinfo.NodeType == NodeType.TriggerTick)
                 {
                     var newNode = new TriggerNodeTick(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-
                 else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredFootprint)
                 {
                     var newNode = new TriggerNodeOnEnteredFootPrint(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-
                 else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredRange)
                 {
                     var newNode = new TriggerNodeOnEnteredRange(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-
                 else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
                 {
                     var newNode = new ActorNodeCreateActor(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-
                 else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
                 {
                     var newNode = new GroupPlayerGroup(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
-
                 else if (nodeinfo.NodeType == NodeType.ActorQueueMove)
                 {
                     var newNode = new ActorNodeQueueAbility(this, nodeinfo);
@@ -306,6 +304,48 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.TriggerOnIdle)
+                {
+                    var newNode = new NodeWidget(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TriggerOnKilled)
+                {
+                    var newNode = new NodeWidget(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TriggerOnAllKilled)
+                {
+                    var newNode = new NodeWidget(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TimerReset)
+                {
+                    var newNode = new NodeWidget(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TimerStart)
+                {
+                    var newNode = new NodeWidget(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.TimerStop)
+                {
+                    var newNode = new NodeWidget(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ArithmeticsOr)
+                {
+                    var newNode = new NodeWidget(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
             }
 
             foreach (var node in Nodes)
@@ -361,7 +401,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-
             else if (nodeType == NodeType.TriggerCreateTimer)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -377,7 +416,48 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
+            else if (nodeType == NodeType.TimerReset)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
+                newNode = new NodeWidget(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.TimerConnection, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Timer to reset");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.TimerStart)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.TimerConnection, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Timer to start");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.TimerStop)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.TimerConnection, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Timer to stop");
+                newNode.InConTexts.Add("Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
             else if (nodeType == NodeType.TriggerWorldLoaded)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -389,7 +469,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-
             else if (nodeType == NodeType.TriggerTick)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -401,7 +480,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-
             else if (nodeType == NodeType.TriggerOnEnteredFootprint)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -416,7 +494,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-
             else if (nodeType == NodeType.TriggerOnEnteredFootprint)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -432,7 +509,56 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
+            else if (nodeType == NodeType.TriggerOnIdle)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
+                newNode = new NodeWidget(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Repeatable");
+                newNode.InConTexts.Add("SetUp Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.TriggerOnKilled)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("SetUp Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.TriggerOnAllKilled)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Actor Group");
+                newNode.InConTexts.Add("Repeatable");
+                newNode.InConTexts.Add("SetUp Trigger");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
             else if (nodeType == NodeType.ActorCreateActor)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -450,7 +576,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-
             else if (nodeType == NodeType.GroupPlayerGroup)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -485,8 +610,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-
-            // Actor and Activities
             else if (nodeType == NodeType.ActorKill)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -615,8 +738,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-
-            // Complex Nodes
             else if (nodeType == NodeType.Reinforcements)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -659,8 +780,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
-
-            // Ui Nodes
             else if (nodeType == NodeType.UiPlayNotification)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -734,6 +853,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
+            else if (nodeType == NodeType.ArithmeticsOr)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new UiNodeUiSettings(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+                newNode.InConTexts.Add("Trigger A");
+                newNode.InConTexts.Add("Trigger B");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
 
             return newNode;
         }
@@ -785,7 +919,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (!RenderBounds.Contains(mi.Location) && currentBrush == NodeBrush.Free)
             {
                 currentBrush = NodeBrush.Free;
-                BrushItem = null;
+                brushItem = null;
                 nodeBrush = null;
                 oldCursorPosition = mi.Location;
                 return false;
@@ -799,10 +933,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     {
                         if (connection.InWidgetPosition.Contains(mi.Location)
                             && currentBrush == NodeBrush.Connecting
-                            && BrushItem != null
-                            && (BrushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal))
+                            && brushItem != null
+                            && (brushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal))
                         {
-                            connection.In = BrushItem.Item2;
+                            connection.In = brushItem.Item2;
                         }
                     }
                 }
@@ -820,7 +954,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 }
 
                 currentBrush = NodeBrush.Free;
-                BrushItem = null;
+                brushItem = null;
                 nodeBrush = null;
                 oldCursorPosition = mi.Location;
                 return false;
@@ -945,7 +1079,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         currentBrush == NodeBrush.Free)
                     {
                         currentBrush = NodeBrush.Connecting;
-                        BrushItem = new Tuple<Rectangle, OutConnection>(node.OutConnections[i].InWidgetPosition, node.OutConnections[i]);
+                        brushItem = new Tuple<Rectangle, OutConnection>(node.OutConnections[i].InWidgetPosition, node.OutConnections[i]);
 
                         return true;
                     }
@@ -982,10 +1116,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             Snw.FontRegular.DrawTextWithShadow(currentBrush.ToString(), new float2(RenderBounds.X + 2, RenderBounds.Y + 50),
                 Color.White, Color.Black, 1);
 
-            if (BrushItem != null && currentBrush == NodeBrush.Connecting)
+            if (brushItem != null && currentBrush == NodeBrush.Connecting)
             {
-                Game.Renderer.RgbaColorRenderer.DrawLine(new int2(BrushItem.Item1.X + 10, BrushItem.Item1.Y + 10), oldCursorPosition,
-                    2, BrushItem.Item2.Color);
+                Game.Renderer.RgbaColorRenderer.DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), oldCursorPosition,
+                    2, brushItem.Item2.Color);
             }
 
             if (currentBrush == NodeBrush.Frame)

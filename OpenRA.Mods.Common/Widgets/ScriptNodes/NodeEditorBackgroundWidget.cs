@@ -81,7 +81,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddNodesList()
         {
-            //  Output Nodes
             List<NodeType> outputNodeTypes = new List<NodeType>
             {
                 NodeType.MapInfoNode,
@@ -100,7 +99,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             AddChild(createNodesList = new DropDownButtonWidget(Snw.ModData));
             createNodesList.Bounds = new Rectangle(5, 5 + 26, 190, 25);
-
 
             Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemOutput = (option, template) =>
             {
@@ -131,7 +129,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddActorList()
         {
-            //  Actor Nodes
             List<NodeType> actorNodeTypes = new List<NodeType>
             {
                 NodeType.ActorCreateActor,
@@ -160,7 +157,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             AddChild(createActorNodesList = new DropDownButtonWidget(Snw.ModData));
             createActorNodesList.Bounds = new Rectangle(5, 5 + 26 + 26, 190, 25);
-
 
             Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemActor = (option, template) =>
             {
@@ -191,14 +187,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddTriggerList()
         {
-            // Trigger Nodes
             List<NodeType> triggerNodeTypes = new List<NodeType>
             {
                 NodeType.TriggerWorldLoaded,
                 NodeType.TriggerCreateTimer,
                 NodeType.TriggerTick,
                 NodeType.TriggerOnEnteredFootprint,
-                NodeType.TriggerOnEnteredRange
+                NodeType.TriggerOnEnteredRange,
+                NodeType.TriggerOnIdle,
+                NodeType.TriggerOnKilled,
+                NodeType.TimerStop,
+                NodeType.TimerStart,
+                NodeType.TimerReset
             };
 
             List<string> triggerNodeStrings = new List<string>
@@ -207,7 +207,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Trigger: Create Timer",
                 "Trigger: On Tick",
                 "Trigger: On Entered Footprint",
-                "Trigger: On Entered Range"
+                "Trigger: On Entered Range",
+                "Trigger: On Actor Idle",
+                "Trigger: On Actor Killed",
+                "Timer: Stop Timer",
+                "Timer: Start Timer",
+                "Timer: Reset Timer"
             };
 
             AddChild(triggerNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -242,7 +247,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddGroupList()
         {
-            //  Group Nodes
             List<NodeType> groupNodeTypes = new List<NodeType>
             {
                 NodeType.GroupPlayerGroup,
@@ -289,15 +293,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddArithmeticList()
         {
-            //  Group Nodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
-                NodeType.Arithmetics,
+                NodeType.ArithmeticsAnd,
+                NodeType.ArithmeticsOr
             };
 
             List<string> nodeStrings = new List<string>
             {
-                "Arithmetics: "
+                "Arithmetics: And Trigger",
+                "Arithmetics: Or Trigger"
             };
 
             AddChild(arithmeticNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -332,7 +337,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddFunctionsList()
         {
-            //  Group Nodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
                 NodeType.Reinforcements,
@@ -443,8 +447,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public override void Draw()
         {
             WidgetUtils.DrawPanel(Background, new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
-            // WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6), Color.Black);
-            // WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height), Color.DarkGray);
         }
     }
 }

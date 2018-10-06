@@ -18,7 +18,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Execute(World world)
         {
-            var exeNodes = Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == OutConnections.First()) != null);
+            var exeNodes = Insc.NodeLogics.Where(n =>
+                n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && OutConnections
+                                                        .Where(t => t.ConTyp == ConnectionType.Exec).Contains(c.In)) != null);
             foreach (var node in exeNodes)
             {
                 node.Execute(world);
