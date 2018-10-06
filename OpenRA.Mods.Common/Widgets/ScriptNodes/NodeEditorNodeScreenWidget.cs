@@ -609,7 +609,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                newNode = new ActorNodeQueueAbility(this, nodeInfo);
+                newNode = new GroupPlayerGroup(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.PlayerGroup, newNode));
@@ -646,8 +646,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode = new ActorNodeQueueAbility(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Actor Group Default Empty");
                 newNode.InConTexts.Add("Trigger");
 
                 AddChild(newNode);
@@ -660,8 +662,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode = new ActorNodeQueueAbility(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Actor Group Default Empty");
                 newNode.InConTexts.Add("Trigger");
 
                 AddChild(newNode);
@@ -674,10 +678,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode = new ActorNodeQueueAbility(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Actor Group Default Empty");
                 newNode.InConTexts.Add("Location");
                 newNode.InConTexts.Add("CloseEnough");
                 newNode.InConTexts.Add("Trigger");
@@ -693,12 +699,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.InConTexts.Add("Actor");
                 newNode.InConTexts.Add("Actor target");
+                newNode.InConTexts.Add("Actor Group Default Empty");
                 newNode.InConTexts.Add("Allow Movement");
                 newNode.InConTexts.Add("Force Attack");
                 newNode.InConTexts.Add("Facing Tolerance");
@@ -714,8 +722,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode = new ActorNodeQueueAbility(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Actor Group Default Empty");
                 newNode.InConTexts.Add("Trigger");
 
                 AddChild(newNode);
@@ -728,9 +738,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode = new ActorNodeQueueAbility(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Actor Group Default Empty");
                 newNode.InConTexts.Add("Location");
                 newNode.InConTexts.Add("Trigger");
 
@@ -744,9 +756,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode = new ActorNodeQueueAbility(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Actor Group Default Empty");
                 newNode.InConTexts.Add("Show Ticks");
                 newNode.InConTexts.Add("Trigger");
 
@@ -760,8 +774,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode = new ActorNodeQueueAbility(this, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.InConTexts.Add("Actor");
+                newNode.InConTexts.Add("Actor Group Default Empty");
                 newNode.InConTexts.Add("Trigger");
 
                 AddChild(newNode);
