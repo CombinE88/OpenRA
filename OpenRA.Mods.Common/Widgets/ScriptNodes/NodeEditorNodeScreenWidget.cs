@@ -26,6 +26,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         // Actor
         ActorCreateActor,
+        ActorGetInformations,
         ActorQueueMove,
         ActorQueueAttack,
         ActorQueueHunt,
@@ -60,6 +61,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         // Complex Functions
         Reinforcements,
         ReinforcementsWithTransport,
+        CreateEffect,
 
         // UI Nodes
         UiPlayNotification,
@@ -175,6 +177,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
                 {
                     var newNode = new ActorNodeCreateActor(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorGetInformations)
+                {
+                    var newNode = new NodeWidget(this, nodeinfo);
                     Nodes.Add(newNode);
                     AddChild(newNode);
                 }
@@ -341,6 +349,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     AddChild(newNode);
                 }
                 else if (nodeinfo.NodeType == NodeType.ArithmeticsOr)
+                {
+                    var newNode = new NodeWidget(this, nodeinfo);
+                    Nodes.Add(newNode);
+                    AddChild(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CreateEffect)
                 {
                     var newNode = new NodeWidget(this, nodeinfo);
                     Nodes.Add(newNode);
@@ -572,6 +586,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
+            else if (nodeType == NodeType.ActorGetInformations)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeCreateActor(this, nodeInfo);
+
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfo, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Location, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Player, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.InConTexts.Add("Actor");
 
                 AddChild(newNode);
                 Nodes.Add(newNode);
@@ -868,6 +897,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 AddChild(newNode);
                 Nodes.Add(newNode);
             }
+            else if (nodeType == NodeType.CreateEffect)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new UiNodeUiSettings(this, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.InConTexts.Add("Location");
+                newNode.InConTexts.Add("string Animation");
+                newNode.InConTexts.Add("string Sequence");
+
+                AddChild(newNode);
+                Nodes.Add(newNode);
+            }
 
             return newNode;
         }
@@ -894,14 +939,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             if (e.Event == KeyInputEvent.Down && e.Key == Keycode.V && e.Modifiers == Modifiers.Ctrl)
             {
+                var newCopyNodes = new List<NodeWidget>();
+
                 foreach (var nodeinfo in copyNodes)
                 {
                     var node = AddNode(nodeinfo.NodeType);
+                    newCopyNodes.Add(node);
+
                     if (node != null)
                     {
                         node.OffsetPosX = nodeinfo.OffsetPosX + 20 * copyCounter;
                         node.OffsetPosY = nodeinfo.OffsetPosY + 20 * copyCounter;
                     }
+                }
+
+                foreach (var node in selectedNodes)
+                {
+                    node.Selected = false;
+                }
+
+                selectedNodes = newCopyNodes;
+
+                foreach (var node in selectedNodes)
+                {
+                    node.Selected = true;
                 }
 
                 copyCounter++;

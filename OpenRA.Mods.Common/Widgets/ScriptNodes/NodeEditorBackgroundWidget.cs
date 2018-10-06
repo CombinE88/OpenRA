@@ -132,6 +132,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             List<NodeType> actorNodeTypes = new List<NodeType>
             {
                 NodeType.ActorCreateActor,
+                NodeType.ActorGetInformations,
                 NodeType.ActorKill,
                 NodeType.ActorRemove,
                 NodeType.ActorQueueMove,
@@ -145,6 +146,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             List<string> actorNodeStrings = new List<string>
             {
                 "Actor: Create Actor",
+                "Actor: Informations of Actor",
                 "Actor: Kill",
                 "Actor: Remove",
                 "Activity: Queue Move",
@@ -340,13 +342,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
                 NodeType.Reinforcements,
-                NodeType.ReinforcementsWithTransport
+                NodeType.ReinforcementsWithTransport,
+                NodeType.CreateEffect
             };
 
             List<string> nodeStrings = new List<string>
             {
                 "Function: Reinforcements",
-                "Function: Reinforce (Transport)"
+                "Function: Reinforce (Transport)",
+                "Function: Create Effect"
             };
 
             AddChild(functionNodesList = new DropDownButtonWidget(Snw.ModData));

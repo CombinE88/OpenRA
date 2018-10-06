@@ -381,6 +381,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     var newNode = new ArithmeticBasicLogic(nodeinfo, this);
                     NodeLogics.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.CreateEffect)
+                {
+                    var newNode = new FunctionCreateEffectLogic(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorGetInformations)
+                {
+                    var newNode = new GetActorInformationsLogic(nodeinfo, this);
+                    NodeLogics.Add(newNode);
+                }
             }
 
             foreach (var node in NodeLogics)

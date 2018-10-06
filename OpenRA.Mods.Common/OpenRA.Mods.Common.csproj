@@ -614,8 +614,10 @@
     <Compile Include="Widgets\ScriptNodes\ShowWidgetsButton.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeCreateActor.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeQueueAbility.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\GetActorInformationsNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\ArithmeticBasicNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\BasicNodeWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionCreateEffectNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionNodeReinforcements.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupActorGroup.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupPlayerGroup.cs" />
