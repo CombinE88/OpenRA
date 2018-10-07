@@ -116,7 +116,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public NodeEditorNodeScreenWidget(ScriptNodeWidget snw, NodeEditorBackgroundWidget bgw, WorldRenderer worldRenderer, World world)
         {
             Snw = snw;
-            this.Bgw = bgw;
+            Bgw = bgw;
             WorldRenderer = worldRenderer;
             World = world;
 

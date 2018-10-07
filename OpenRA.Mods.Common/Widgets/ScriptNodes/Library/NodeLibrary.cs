@@ -494,6 +494,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ReinforcementsWithTransport)
             {
@@ -507,6 +509,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.UiPlayNotification)
             {

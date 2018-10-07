@@ -165,6 +165,61 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public override void Draw()
         {
+            for (int i = 0; i < InConnections.Count; i++)
+            {
+                if (InConnections[i].In != null)
+                {
+                    var found = false;
+                    Point conin = InConnections[i].InWidgetPosition.Location;
+                    Point conout = conin;
+                    foreach (var node in Screen.Nodes)
+                    {
+                        for (int j = 0; j < node.OutConnections.Count; j++)
+                        {
+                            if (node.OutConnections[j] == InConnections[i].In)
+                            {
+                                conout = node.OutConnections[j].InWidgetPosition.Location;
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (found)
+                            break;
+                    }
+
+                    if (found)
+                    {
+                        Game.Renderer.RgbaColorRenderer.DrawLine(
+                            new int2(conout.X + 10, conout.Y + 10),
+                            new int2(conin.X + 10, conin.Y + 10),
+                            2, InConnections[i].Color);
+                    }
+                }
+            }
+
+            if (!Screen.Bounds.Contains(WidgetBackground.X, WidgetBackground.Y)
+                && !Screen.Bounds.Contains(WidgetBackground.X + WidgetBackground.Width, WidgetBackground.Y)
+                && !Screen.Bounds.Contains(WidgetBackground.X, WidgetBackground.Y + WidgetBackground.Height)
+                && !Screen.Bounds.Contains(WidgetBackground.X + WidgetBackground.Width, WidgetBackground.Y + WidgetBackground.Height))
+            {
+                foreach (var child in Children)
+                {
+                    if (child.Visible)
+                        child.Visible = false;
+                }
+
+                return;
+            }
+            else
+            {
+                foreach (var child in Children)
+                {
+                    if (!child.Visible)
+                        child.Visible = true;
+                }
+            }
+
             // Debug
             WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height), Color.Brown);
             // Outer
@@ -257,44 +312,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                             OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
                 }
 
-                if(Screen.CurrentBrush == NodeBrush.Connecting)
+                if (Screen.CurrentBrush == NodeBrush.Connecting)
                     Screen.Snw.FontSmall.DrawTextWithShadow(OutConnections[i].ConTyp.ToString(),
                         new int2(OutConnections[i].InWidgetPosition.X + 22, OutConnections[i].InWidgetPosition.Y + 4),
                         Color.White, Color.Black, 1);
             }
 
-            for (int i = 0; i < InConnections.Count; i++)
-            {
-                if (InConnections[i].In != null)
-                {
-                    var found = false;
-                    Point conin = InConnections[i].InWidgetPosition.Location;
-                    Point conout = conin;
-                    foreach (var node in Screen.Nodes)
-                    {
-                        for (int j = 0; j < node.OutConnections.Count; j++)
-                        {
-                            if (node.OutConnections[j] == InConnections[i].In)
-                            {
-                                conout = node.OutConnections[j].InWidgetPosition.Location;
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        if (found)
-                            break;
-                    }
-
-                    if (found)
-                    {
-                        Game.Renderer.RgbaColorRenderer.DrawLine(
-                            new int2(conout.X + 10, conout.Y + 10),
-                            new int2(conin.X + 10, conin.Y + 10),
-                            2, InConnections[i].Color);
-                    }
-                }
-            }
+            /* WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X, WidgetBackground.Y, 2, 2), Color.Blue);
+            WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X + WidgetBackground.Width, WidgetBackground.Y, 2, 2), Color.Blue);
+            WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X, WidgetBackground.Y + WidgetBackground.Height, 2, 2), Color.Blue);
+            WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X + WidgetBackground.Width, WidgetBackground.Y + WidgetBackground.Height, 2, 2), Color.Blue);
+            */
         }
 
         public override Widget Clone()

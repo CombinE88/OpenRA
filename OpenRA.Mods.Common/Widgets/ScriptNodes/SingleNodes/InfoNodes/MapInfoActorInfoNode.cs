@@ -65,7 +65,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     selectedActorInfo = option;
 
 
-                    playerSelection.Text = selectedActorInfo.TraitInfo<TooltipInfo>().Name;
+                    playerSelection.Text = selectedActorInfo.TraitInfo<TooltipInfo>().Name + "(" + selectedActorInfo.Name + ")";
                     playerSelection.TextColor = Color.White;
 
                     OutConnections.First().ActorInfo = selectedActorInfo;
@@ -88,12 +88,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             textField.OnTextEdited = () =>
             {
                 if (textField.Text != "")
-                    choosenActors = ruleActors.Where(a => a.TraitInfo<TooltipInfo>().Name.ToLowerInvariant().Contains(textField.Text)).ToList();
+                    choosenActors = ruleActors.Where(a =>
+                        a.TraitInfo<TooltipInfo>().Name.ToLowerInvariant().Contains(textField.Text.ToLowerInvariant()) ||
+                        a.Name.ToLowerInvariant().Contains(textField.Text.ToLowerInvariant())).ToList();
                 else
                     choosenActors = ruleActors.ToList();
             };
 
-            playerSelection.Text = selectedActorInfo.TraitInfo<TooltipInfo>().Name;
+            playerSelection.Text = selectedActorInfo.TraitInfo<TooltipInfo>().Name + "(" + selectedActorInfo.Name + ")";
             playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 51, FreeWidgetEntries.Width, 25);
             textField.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
 
@@ -113,7 +115,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             if (connection.ActorInfo != null)
             {
-                playerSelection.Text = connection.ActorInfo.TraitInfo<TooltipInfo>().Name;
+                playerSelection.Text = connection.ActorInfo.TraitInfo<TooltipInfo>().Name + "(" + selectedActorInfo.Name + ")";
                 selectedActorInfo = connection.ActorInfo;
 
                 var td = new TypeDictionary();

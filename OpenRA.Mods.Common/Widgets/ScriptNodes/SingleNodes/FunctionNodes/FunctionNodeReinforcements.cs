@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using Eluant;
 using OpenRA.Activities;
+using OpenRA.Effects;
 using OpenRA.Mods.Common.Activities;
 using OpenRA.Mods.Common.Scripting;
 using OpenRA.Mods.Common.Traits;
@@ -24,6 +26,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
         DomainIndex domainIndex;
         Dictionary<uint, MovementClassDomainIndex> domainIndexes;
         TileSet tileSet;
+        List<Actor> reinforce = new List<Actor>();
 
         public FunctionLogicReinforcements(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
         {
@@ -62,14 +65,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     actors.Add(act.Name);
                 }
 
-                var inNumber = InConnections.First(c => c.ConTyp == ConnectionType.Integer).In.Number;
+                var inNumber = InConnections.First(c => c.ConTyp == ConnectionType.Integer).In;
 
                 Reinforce(
                     world,
                     world.Players.First(p => p.InternalName == InConnections.First(c => c.ConTyp == ConnectionType.Player).In.Player.Name),
                     actors.ToArray(),
                     InConnections.First(c => c.ConTyp == ConnectionType.CellPath).In.CellArray.ToArray(),
-                    inNumber != null ? inNumber.Value : 25);
+                    inNumber != null ? inNumber.Number.Value : 25);
+
             }
 
             if (NodeType == NodeType.ReinforcementsWithTransport)
@@ -133,16 +137,42 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             actor.QueueActivity(move.MoveTo(dest, 2));
         }
 
-        public void Reinforce(World world, Player owner, string[] actorTypes, CPos[] entryPath, int interval = 25)
+        public Actor[] Reinforce(World world, Player owner, string[] actorTypes, CPos[] entryPath, int interval = 25)
         {
             var actors = new List<Actor>();
+            var leng = 0;
             for (var i = 0; i < actorTypes.Length; i++)
             {
+                leng += interval;
                 var actor = CreateActor(world, owner, actorTypes[i], false, entryPath[0], entryPath.Length > 1 ? entryPath[1] : (CPos?)null);
+                reinforce.Add(actor);
                 actors.Add(actor);
 
                 var actionDelay = i * interval;
+                Action actorAction = () =>
+                {
+                    world.Add(actor);
+                    for (var j = 1; j < entryPath.Length; j++)
+                        Move(actor, entryPath[j]);
+                };
+
+                world.AddFrameEndTask(w => w.Add(new DelayedAction(actionDelay, actorAction)));
             }
+
+            Action worldendAction = () =>
+            {
+                OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
+                var exeNodes = Insc.NodeLogics.Where(n =>
+                    n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && OutConnections
+                                                            .Where(t => t.ConTyp == ConnectionType.Exec).Contains(c.In)) != null);
+
+                foreach (var node in exeNodes)
+                {
+                    node.Execute(world);
+                }
+            };
+            world.AddFrameEndTask(w => w.Add(new DelayedAction(leng, worldendAction)));
+            return actors.ToArray();
         }
 
         public void ReinforceWithTransport(World world, Player owner, string actorType, string[] cargoTypes, CPos[] entryPath, CPos[] exitPath = null, int dropRange = 3)
@@ -151,6 +181,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             var cargo = transport.TraitOrDefault<Cargo>();
 
             var passengers = new List<Actor>();
+            reinforce = new List<Actor>();
             if (cargo != null && cargoTypes != null)
             {
                 foreach (var cargoType in cargoTypes)
@@ -158,6 +189,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     var passenger = CreateActor(world, owner, cargoType, false, entryPath[0]);
                     passengers.Add(passenger);
                     cargo.Load(transport, passenger);
+                    reinforce.Add(passenger);
                 }
             }
 
@@ -215,6 +247,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 transport.QueueActivity(new WaitFor(() => cargo.IsEmpty(transport)));
             }
 
+            transport.QueueActivity(new CallFunc(() =>
+            {
+                OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = reinforce.ToArray();
+                var exeNodes = Insc.NodeLogics.Where(n =>
+                    n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && OutConnections
+                                                            .Where(t => t.ConTyp == ConnectionType.Exec).Contains(c.In)) != null);
+                ;
+                foreach (var node in exeNodes)
+                {
+                    node.Execute(world);
+                }
+            }));
             transport.QueueActivity(new Wait(aircraft != null ? 50 : 25));
 
             if (exitPath != null)
