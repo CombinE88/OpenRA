@@ -186,6 +186,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override bool HandleKeyPress(KeyInput e)
         {
+            if (!Visible)
+                return false;
+
             if (e.Event == KeyInputEvent.Down && e.Key == Keycode.C && e.Modifiers == Modifiers.Ctrl && selectedNodes.Any())
             {
                 copyNodes = new List<NodeWidget>();
@@ -253,7 +256,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {
                     foreach (var connection in node.InConnections)
                     {
-                        if (connection.InWidgetPosition.Contains(mi.Location)
+                        if (new Rectangle(connection.InWidgetPosition.X - 20,
+                                connection.InWidgetPosition.Y - 20,
+                                connection.InWidgetPosition.Width + 40,
+                                connection.InWidgetPosition.Height + 40).Contains(mi.Location)
                             && CurrentBrush == NodeBrush.Connecting
                             && brushItem != null
                             && (brushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal))
@@ -440,7 +446,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             if (brushItem != null && CurrentBrush == NodeBrush.Connecting)
             {
-                Game.Renderer.RgbaColorRenderer.DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), oldCursorPosition,
+                var conTarget = oldCursorPosition;
+                foreach (var nodes in Nodes)
+                foreach (var connection in nodes.InConnections)
+                {
+                    if (new Rectangle(connection.InWidgetPosition.X - 10,
+                            connection.InWidgetPosition.Y - 10,
+                            connection.InWidgetPosition.Width + 20,
+                            connection.InWidgetPosition.Height + 20).Contains(oldCursorPosition)
+                        && (connection.ConTyp == brushItem.Item2.ConTyp
+                            || connection.ConTyp == ConnectionType.Undefined
+                            || connection.ConTyp == ConnectionType.Universal
+                            || brushItem.Item2.ConTyp == ConnectionType.Undefined
+                            || brushItem.Item2.ConTyp == ConnectionType.Universal))
+                    {
+                        conTarget = new int2(connection.InWidgetPosition.X + 10, connection.InWidgetPosition.Y + 10);
+                        break;
+                    }
+
+                    if (conTarget != oldCursorPosition)
+                        break;
+                }
+
+                Game.Renderer.RgbaColorRenderer.DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), conTarget,
                     2, brushItem.Item2.Color);
             }
 

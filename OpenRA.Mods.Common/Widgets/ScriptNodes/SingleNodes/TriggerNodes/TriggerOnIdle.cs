@@ -5,7 +5,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerOnIdle : NodeLogic
     {
-        bool started;
         List<Actor> idleActors = new List<Actor>();
 
         public TriggerOnIdle(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)

@@ -9,6 +9,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public ScriptNodeWidget Snw;
         string text;
         int2 textsize;
+        ButtonWidget butt;
 
         public ShowWidgetsButtonWidget(ScriptNodeWidget snw)
         {
@@ -17,34 +18,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             text = "Open Node Editor";
             textsize = Snw.FontRegular.Measure(text);
 
-            Bounds = new Rectangle(5, 40, textsize.X + 5, 25);
-        }
-
-        public override void Tick()
-        {
-            Bounds = new Rectangle(5, 40, textsize.X + 5, 25);
-        }
-
-        public override bool HandleMouseInput(MouseInput mi)
-        {
-            if (!EventBounds.Contains(mi.Location))
-            {
-                return false;
-            }
-
-            if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down)
-                Snw.NodeWidget.Visible = !Snw.NodeWidget.Visible;
-
-            return true;
-        }
-
-        public override void Draw()
-        {
-            WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height), Color.Black);
-            WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 1, RenderBounds.Width - 2, RenderBounds.Height - 2), Color.Silver);
-
-            Snw.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 1),
-                Color.White, Color.Black, 1);
+            butt = new ButtonWidget(snw.ModData);
+            butt.Bounds = new Rectangle(Game.Settings.Graphics.WindowedSize.X / 2, 0, textsize.X + 5, 25);
+            butt.Text = text;
+            butt.OnClick = () => { Snw.NodeWidget.Visible = !Snw.NodeWidget.Visible; };
+            AddChild(butt);
         }
     }
 }
