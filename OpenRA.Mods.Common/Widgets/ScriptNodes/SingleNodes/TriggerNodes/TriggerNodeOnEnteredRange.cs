@@ -20,15 +20,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
         {
         }
 
-        public override void Execute(World world)
-        {
-            var exeNodes = Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == OutConnections.First()) != null);
-            foreach (var node in exeNodes)
-            {
-                node.Execute(world);
-            }
-        }
-
         public override void DoAfterConnections()
         {
             var boolean = InConnections.FirstOrDefault(ic => ic.ConTyp == ConnectionType.Repeatable);
@@ -70,8 +61,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 {
                     node.Execute(self.World);
                 }
+
+                triggerOnEnter = true;
             }
-            else if (!actors.Any())
+            else if (!actors.Any() && repeat)
             {
                 triggerOnEnter = false;
             }
