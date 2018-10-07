@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Mods.Common.Activities;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Primitives;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
@@ -15,8 +15,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
     public class ActorLogicQueueAbility : NodeLogic
     {
+        List<Actor> idleHunter = new List<Actor>();
+
         public ActorLogicQueueAbility(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
         {
+        }
+
+        public override void Tick(Actor self)
+        {
+            var idles = idleHunter.ToArray();
+
+            foreach (var idler in idles)
+            {
+                if (idler.IsDead || !idler.IsInWorld)
+                {
+                    idleHunter.Remove(idler);
+                    continue;
+                }
+                else if (idler.IsIdle)
+                {
+                    idler.QueueActivity(new Hunt(idler));
+                }
+            }
         }
 
         public override void Execute(World world)
@@ -62,9 +82,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 if (actor != null && !actor.IsDead && actor.IsInWorld)
                     actor.QueueActivity(new Attack(actor,
                         Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Actor).In.Actor),
-                        InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null,
-                        InConnections.Last(c => c.ConTyp == ConnectionType.Boolean).In != null,
-                        InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null ? InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In.Number ?? 0 : 0));
+                        InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null,
+                        InConnections.Last(c => c.ConTyp == ConnectionType.Repeatable).In != null,
+                        InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null
+                            ? InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In.Number ?? 0
+                            : 0));
 
                 if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
                     && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
@@ -74,17 +96,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                         if (!actors.IsDead && actors.IsInWorld)
                             actors.QueueActivity(new Attack(actors,
                                 Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Actor).In.Actor),
-                                InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null,
-                                InConnections.Last(c => c.ConTyp == ConnectionType.Boolean).In != null,
-                                InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null
-                                    ? InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In.Number ?? 0
+                                InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null,
+                                InConnections.Last(c => c.ConTyp == ConnectionType.Repeatable).In != null,
+                                InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null
+                                    ? InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In.Number ?? 0
                                     : 0));
                     }
             }
             else if (NodeInfo.NodeType == NodeType.ActorQueueHunt)
             {
+                bool idleHunting = InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null;
+
                 if (actor != null && !actor.IsDead && actor.IsInWorld)
+                {
                     actor.QueueActivity(new Hunt(actor));
+
+                    if (idleHunting)
+                        idleHunter.Add(actor);
+                }
 
                 if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
                     && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
@@ -93,6 +122,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     {
                         if (!actors.IsDead && actors.IsInWorld)
                             actors.QueueActivity(new Hunt(actors));
+
+                        if (idleHunting)
+                            idleHunter.Add(actors);
                     }
             }
             else if (NodeInfo.NodeType == NodeType.ActorQueueAttackMoveActivity)

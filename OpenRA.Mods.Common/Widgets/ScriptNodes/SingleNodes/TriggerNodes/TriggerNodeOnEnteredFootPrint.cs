@@ -34,7 +34,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void DoAfterConnections()
         {
-            var boolean = InConnections.FirstOrDefault(ic => ic.ConTyp == ConnectionType.Boolean);
+            var boolean = InConnections.FirstOrDefault(ic => ic.ConTyp == ConnectionType.Repeatable);
             repeat = boolean.In != null;
         }
 

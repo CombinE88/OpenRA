@@ -47,8 +47,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Tick(Actor self)
         {
-            if (InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Boolean) != null
-                && InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Boolean).In != null)
+            if (InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Repeatable) != null
+                && InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Repeatable).In != null)
                 repeating = true;
             else if (repeating)
                 repeating = false;

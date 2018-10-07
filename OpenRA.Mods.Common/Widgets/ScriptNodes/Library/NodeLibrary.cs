@@ -242,7 +242,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode = new TriggerNodeCreateTimer(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.TimerConnection, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
@@ -298,7 +298,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.CellArray, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.TriggerOnEnteredFootprint)
@@ -310,7 +310,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.TriggerOnIdle)
@@ -320,7 +320,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode = new NodeWidget(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
@@ -342,7 +342,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode = new NodeWidget(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
@@ -394,7 +394,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode = new GroupActorInfoGroup(nensw, nodeInfo);
 
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfos, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfoArray, newNode));
             }
             else if (nodeType == NodeType.ActorKill)
             {
@@ -437,8 +437,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
             }
@@ -450,6 +448,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorQueueAttackMoveActivity)
@@ -471,7 +470,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorQueueFindResources)
@@ -491,7 +490,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode = new FunctionNodeReinforcements(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfos, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfoArray, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
@@ -504,7 +503,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfos, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfoArray, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));

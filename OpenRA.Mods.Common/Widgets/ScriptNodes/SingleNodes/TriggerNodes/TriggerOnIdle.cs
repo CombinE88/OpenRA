@@ -42,7 +42,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                         OutConnections.First(c => c.ConTyp == ConnectionType.Actor).Actor = actor;
                         ExecuteOnidle(self.World);
 
-                        if (InConnections.First(ic => ic.ConTyp == ConnectionType.Boolean).In != null)
+                        if (InConnections.First(ic => ic.ConTyp == ConnectionType.Repeatable).In != null)
                             idleActors.Remove(actor);
                     }
                 }

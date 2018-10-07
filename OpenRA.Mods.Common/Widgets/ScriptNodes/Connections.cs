@@ -48,7 +48,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.ActorInfo:
                     Color = Color.SandyBrown;
                     break;
-                case ConnectionType.ActorInfos:
+                case ConnectionType.ActorInfoArray:
                     Color = Color.RosyBrown;
                     break;
                 case ConnectionType.Player:
@@ -75,10 +75,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.String:
                     Color = Color.SlateGray;
                     break;
-                case ConnectionType.Strings:
+                case ConnectionType.StringArray:
                     Color = Color.DarkSlateGray;
                     break;
-                case ConnectionType.Boolean:
+                case ConnectionType.Repeatable:
                     Color = Color.IndianRed;
                     break;
 
@@ -144,7 +144,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.ActorInfo:
                     Color = Color.SandyBrown;
                     break;
-                case ConnectionType.ActorInfos:
+                case ConnectionType.ActorInfoArray:
                     Color = Color.RosyBrown;
                     break;
                 case ConnectionType.Player:
@@ -171,10 +171,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.String:
                     Color = Color.SlateGray;
                     break;
-                case ConnectionType.Strings:
+                case ConnectionType.StringArray:
                     Color = Color.DarkSlateGray;
                     break;
-                case ConnectionType.Boolean:
+                case ConnectionType.Repeatable:
                     Color = Color.IndianRed;
                     break;
 
@@ -196,7 +196,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         // Regular Connections
         Actor,
         ActorInfo,
-        ActorInfos,
+        ActorInfoArray,
         Player,
         PlayerGroup,
         Location,
@@ -206,8 +206,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Integer,
         ActorList,
         String,
-        Strings,
-        Boolean,
+        StringArray,
+        Repeatable,
 
         // Specific Connections
         TimerConnection

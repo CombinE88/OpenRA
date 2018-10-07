@@ -153,7 +153,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             actors = changeActors;
 
-            OutConnections.First(c => c.ConTyp == ConnectionType.ActorInfos).ActorInfos = actors.ToArray();
+            OutConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).ActorInfos = actors.ToArray();
         }
 
         public override void Tick(Actor self)
@@ -181,7 +181,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             actors = changeActors;
 
-            OutConnections.First(c => c.ConTyp == ConnectionType.ActorInfos).ActorInfos = actors.ToArray();
+            OutConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).ActorInfos = actors.ToArray();
         }
     }
 }

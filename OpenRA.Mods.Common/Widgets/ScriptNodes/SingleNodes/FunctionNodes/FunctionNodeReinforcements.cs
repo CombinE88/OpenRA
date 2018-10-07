@@ -43,9 +43,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             if (InConnections.First(c => c.ConTyp == ConnectionType.Player).In == null || InConnections.First(c => c.ConTyp == ConnectionType.Player).In.Player == null)
                 throw new YamlException(NodeId + "Reinforcement Player not connected");
 
-            if (InConnections.First(c => c.ConTyp == ConnectionType.ActorInfos).In == null ||
-                InConnections.First(c => c.ConTyp == ConnectionType.ActorInfos).In.ActorInfos == null ||
-                !InConnections.First(c => c.ConTyp == ConnectionType.ActorInfos).In.ActorInfos.Any())
+            if (InConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).In == null ||
+                InConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).In.ActorInfos == null ||
+                !InConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).In.ActorInfos.Any())
                 throw new YamlException(NodeId + "Reinforcement ActorGroup not connected or empty");
 
 
@@ -57,7 +57,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             if (NodeType == NodeType.Reinforcements)
             {
                 List<string> actors = new List<string>();
-                foreach (var act in InConnections.First(c => c.ConTyp == ConnectionType.ActorInfos).In.ActorInfos)
+                foreach (var act in InConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).In.ActorInfos)
                 {
                     actors.Add(act.Name);
                 }
@@ -84,7 +84,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     throw new YamlException(NodeId + "Reinforcement Player not connected");
 
                 List<string> actors = new List<string>();
-                foreach (var act in InConnections.First(c => c.ConTyp == ConnectionType.ActorInfos).In.ActorInfos)
+                foreach (var act in InConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).In.ActorInfos)
                 {
                     actors.Add(act.Name);
                 }
