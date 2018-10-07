@@ -51,9 +51,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                             && InConnections.First(ic => ic.ConTyp == ConnectionType.CellArray).In.CellArray.Contains(a.Location))
                 .ToArray();
 
-            if (triggerOnEnter && !repeat)
-                return;
-
             if (actors.Any() && !triggerOnEnter)
             {
                 var exeNodes = Insc.NodeLogics.Where(n =>

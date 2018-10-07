@@ -49,10 +49,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                             && InConnections.First(ic => ic.ConTyp == ConnectionType.PlayerGroup).In.PlayerGroup.Contains(a.Owner.PlayerReference))
                 .ToArray();
 
-            if (triggerOnEnter && !repeat)
-                return;
-
-            if (actors.Any() && !triggerOnEnter)
+            if (!triggerOnEnter && actors.Any())
             {
                 var exeNodes = Insc.NodeLogics.Where(n =>
                     n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && OutConnections
