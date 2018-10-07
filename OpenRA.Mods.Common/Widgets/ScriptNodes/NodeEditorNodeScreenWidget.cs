@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Scripting;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
@@ -73,14 +74,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
     public class NodeEditorNodeScreenWidget : Widget
     {
-        // Naming
+        public readonly string Background = "textfield";
 
         public int NodeID;
         public WorldRenderer WorldRenderer;
         public World World;
-
-        // Background
-        public readonly string Background = "textfield";
 
         public NodeEditorBackgroundWidget Bgw;
 
@@ -90,6 +88,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public int2 CenterCoordinates = new int2(0, 0);
         public int2 CorrectCenterCoordinates = new int2(0, 0);
 
+        public List<NodeWidget> Nodes = new List<NodeWidget>();
+
         // Position of Mouse Cursor
         int2 oldCursorPosition;
 
@@ -97,11 +97,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         string text;
         int2 textsize;
 
-        NodeBrush currentBrush = NodeBrush.Free;
+        public NodeBrush CurrentBrush { get; private set; }
         Tuple<Rectangle, OutConnection> brushItem = null;
         BasicNodeWidget nodeBrush = null;
-
-        public List<NodeWidget> Nodes = new List<NodeWidget>();
 
         // SelectioNFrame
         List<NodeWidget> selectedNodes = new List<NodeWidget>();
@@ -112,6 +110,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         List<NodeWidget> copyNodes = new List<NodeWidget>();
         int copyCounter = 0;
 
+        NodeLibrary nodeLibrary;
+
         [ObjectCreator.UseCtor]
         public NodeEditorNodeScreenWidget(ScriptNodeWidget snw, NodeEditorBackgroundWidget bgw, WorldRenderer worldRenderer, World world)
         {
@@ -119,6 +119,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             this.Bgw = bgw;
             WorldRenderer = worldRenderer;
             World = world;
+
+            nodeLibrary = new NodeLibrary();
+
+            CurrentBrush = NodeBrush.Free;
         }
 
         public override void Tick()
@@ -134,232 +138,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             }
         }
 
-        public void LoadInNodes()
+        void LoadInNodes()
         {
-            foreach (var nodeinfo in Snw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfo)
+            Nodes = nodeLibrary.LoadInNodes(this);
+
+            foreach (var node in Nodes)
             {
-                if (nodeinfo.NodeType == NodeType.MapInfoNode)
-                {
-                    var newNode = new MapInfoNode(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerCreateTimer)
-                {
-                    var newNode = new TriggerNodeCreateTimer(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerWorldLoaded)
-                {
-                    var newNode = new TriggerNodeWorldLoaded(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerTick)
-                {
-                    var newNode = new TriggerNodeTick(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredFootprint)
-                {
-                    var newNode = new TriggerNodeOnEnteredFootPrint(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredRange)
-                {
-                    var newNode = new TriggerNodeOnEnteredRange(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
-                {
-                    var newNode = new ActorNodeCreateActor(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorGetInformations)
-                {
-                    var newNode = new NodeWidget(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
-                {
-                    var newNode = new GroupPlayerGroup(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueMove)
-                {
-                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueAttack)
-                {
-                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueHunt)
-                {
-                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueAttackMoveActivity)
-                {
-                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueSell)
-                {
-                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueFindResources)
-                {
-                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorKill)
-                {
-                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorRemove)
-                {
-                    var newNode = new ActorNodeQueueAbility(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.Reinforcements)
-                {
-                    var newNode = new FunctionNodeReinforcements(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ReinforcementsWithTransport)
-                {
-                    var newNode = new FunctionNodeReinforcements(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupActorGroup)
-                {
-                    var newNode = new GroupActorGroup(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupActorInfoGroup)
-                {
-                    var newNode = new GroupActorInfoGroup(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
-                {
-                    var newNode = new MapInfoActorInfoNode(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiPlayNotification)
-                {
-                    var newNode = new UiNodeUiSettings(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiPlaySound)
-                {
-                    var newNode = new UiNodeUiSettings(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiRadarPing)
-                {
-                    var newNode = new UiNodeUiSettings(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiTextMessage)
-                {
-                    var newNode = new UiNodeUiSettings(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiAddMissionText)
-                {
-                    var newNode = new UiNodeUiSettings(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
-                {
-                    var newNode = new MapInfoActorsonMap(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorReference)
-                {
-                    var newNode = new MapInfoActorsonMap(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnIdle)
-                {
-                    var newNode = new NodeWidget(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnKilled)
-                {
-                    var newNode = new NodeWidget(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnAllKilled)
-                {
-                    var newNode = new NodeWidget(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerReset)
-                {
-                    var newNode = new NodeWidget(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerStart)
-                {
-                    var newNode = new NodeWidget(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerStop)
-                {
-                    var newNode = new NodeWidget(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ArithmeticsOr)
-                {
-                    var newNode = new NodeWidget(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CreateEffect)
-                {
-                    var newNode = new NodeWidget(this, nodeinfo);
-                    Nodes.Add(newNode);
-                    AddChild(newNode);
-                }
+                AddChild(node);
             }
 
             foreach (var node in Nodes)
@@ -385,552 +170,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public NodeWidget AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
         {
-            NodeWidget newNode = null;
+            var node = nodeLibrary.AddNode(nodeType, this, nodeId, nodeName);
 
-            if (nodeType == NodeType.MapInfoNode)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-                newNode = new MapInfoNode(this, nodeInfo);
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.MapInfoActorInfoNode)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-                newNode = new MapInfoActorInfoNode(this, nodeInfo);
+            AddChild(node);
+            Nodes.Add(node);
 
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfo, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.MapInfoActorReference)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-                newNode = new MapInfoActorsonMap(this, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TriggerCreateTimer)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TriggerNodeCreateTimer(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.TimerConnection, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TimerReset)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.TimerConnection, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Timer to reset");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TimerStart)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.TimerConnection, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Timer to start");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TimerStop)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.TimerConnection, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Timer to stop");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TriggerWorldLoaded)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TriggerNodeWorldLoaded(this, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TriggerTick)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TriggerNodeTick(this, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TriggerOnEnteredFootprint)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TriggerNodeOnEnteredFootPrint(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.CellArray, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TriggerOnEnteredFootprint)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TriggerNodeOnEnteredRange(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TriggerOnIdle)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("Repeatable");
-                newNode.InConTexts.Add("SetUp Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TriggerOnKilled)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("SetUp Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.TriggerOnAllKilled)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor Group");
-                newNode.InConTexts.Add("Repeatable");
-                newNode.InConTexts.Add("SetUp Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorCreateActor)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeCreateActor(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorGetInformations)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeCreateActor(this, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfo, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Location, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.InConTexts.Add("Actor");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.GroupPlayerGroup)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new GroupPlayerGroup(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.PlayerGroup, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.GroupActorGroup)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new GroupActorGroup(this, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.GroupActorInfoGroup)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new GroupActorInfoGroup(this, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfos, newNode));
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorKill)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("Actor Group Default Empty");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorRemove)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("Actor Group Default Empty");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorQueueMove)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("Actor Group Default Empty");
-                newNode.InConTexts.Add("Location");
-                newNode.InConTexts.Add("CloseEnough");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorQueueAttack)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("Actor target");
-                newNode.InConTexts.Add("Actor Group Default Empty");
-                newNode.InConTexts.Add("Allow Movement");
-                newNode.InConTexts.Add("Force Attack");
-                newNode.InConTexts.Add("Facing Tolerance");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorQueueHunt)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("Actor Group Default Empty");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorQueueAttackMoveActivity)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("Actor Group Default Empty");
-                newNode.InConTexts.Add("Location");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorQueueSell)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Boolean, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("Actor Group Default Empty");
-                newNode.InConTexts.Add("Show Ticks");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ActorQueueFindResources)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Actor");
-                newNode.InConTexts.Add("Actor Group Default Empty");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.Reinforcements)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new FunctionNodeReinforcements(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfos, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Player");
-                newNode.InConTexts.Add("Actors");
-                newNode.InConTexts.Add("Path Spawn - End");
-                newNode.InConTexts.Add("Spawn interval");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ReinforcementsWithTransport)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new FunctionNodeReinforcements(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfos, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Player");
-                newNode.InConTexts.Add("Transport");
-                newNode.InConTexts.Add("Actors");
-                newNode.InConTexts.Add("Path Entry");
-                newNode.InConTexts.Add("Path Exit");
-                newNode.InConTexts.Add("Trigger");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.UiPlayNotification)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Player group");
-                newNode.InConTexts.Add("string Notification");
-                newNode.InConTexts.Add("string Type (Speech default)");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.UiPlaySound)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Cell Location");
-                newNode.InConTexts.Add("Sound string + ending");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.UiRadarPing)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Cell Location");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.UiTextMessage)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("string ui");
-                newNode.InConTexts.Add("string message");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.UiAddMissionText)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("string missiontext");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.ArithmeticsOr)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-                newNode.InConTexts.Add("Trigger A");
-                newNode.InConTexts.Add("Trigger B");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-            else if (nodeType == NodeType.CreateEffect)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(this, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.InConTexts.Add("Location");
-                newNode.InConTexts.Add("string Animation");
-                newNode.InConTexts.Add("string Sequence");
-
-                AddChild(newNode);
-                Nodes.Add(newNode);
-            }
-
-            return newNode;
+            return node;
         }
 
         public void DeleteNode(NodeWidget widget)
@@ -993,9 +238,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (RenderBounds.Contains(mi.Location) && mi.Event == MouseInputEvent.Down)
                 TakeKeyboardFocus();
 
-            if (!RenderBounds.Contains(mi.Location) && currentBrush == NodeBrush.Free)
+            if (!RenderBounds.Contains(mi.Location) && CurrentBrush == NodeBrush.Free)
             {
-                currentBrush = NodeBrush.Free;
+                CurrentBrush = NodeBrush.Free;
                 brushItem = null;
                 nodeBrush = null;
                 oldCursorPosition = mi.Location;
@@ -1009,7 +254,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     foreach (var connection in node.InConnections)
                     {
                         if (connection.InWidgetPosition.Contains(mi.Location)
-                            && currentBrush == NodeBrush.Connecting
+                            && CurrentBrush == NodeBrush.Connecting
                             && brushItem != null
                             && (brushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal))
                         {
@@ -1018,7 +263,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     }
                 }
 
-                if (currentBrush == NodeBrush.Frame)
+                if (CurrentBrush == NodeBrush.Frame)
                 {
                     foreach (var node in Nodes)
                     {
@@ -1030,14 +275,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     }
                 }
 
-                currentBrush = NodeBrush.Free;
+                CurrentBrush = NodeBrush.Free;
                 brushItem = null;
                 nodeBrush = null;
                 oldCursorPosition = mi.Location;
                 return false;
             }
 
-            if (currentBrush != NodeBrush.Frame)
+            if (CurrentBrush != NodeBrush.Frame)
             {
                 if (HandleNodes(mi))
                     return true;
@@ -1046,7 +291,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     return true;
             }
 
-            if (mi.Button == MouseButton.Right && mi.Event == MouseInputEvent.Down && currentBrush == NodeBrush.Free)
+            if (mi.Button == MouseButton.Right && mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
             {
                 if (selectedNodes.Any())
                 {
@@ -1058,15 +303,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     selectedNodes = new List<NodeWidget>();
                 }
                 else
-                    currentBrush = NodeBrush.Drag;
+                    CurrentBrush = NodeBrush.Drag;
             }
-            else if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && currentBrush == NodeBrush.Free)
+            else if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
             {
-                currentBrush = NodeBrush.Frame;
+                CurrentBrush = NodeBrush.Frame;
                 selectionStart = mi.Location;
             }
 
-            if (currentBrush == NodeBrush.Drag)
+            if (CurrentBrush == NodeBrush.Drag)
             {
                 if (mi.Location != oldCursorPosition)
                 {
@@ -1075,7 +320,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 }
             }
 
-            if (currentBrush == NodeBrush.Frame)
+            if (CurrentBrush == NodeBrush.Frame)
             {
                 var sizeX = Math.Max(selectionStart.X, mi.Location.X) - Math.Min(selectionStart.X, mi.Location.X);
                 var sizeY = Math.Max(selectionStart.Y, mi.Location.Y) - Math.Min(selectionStart.Y, mi.Location.Y);
@@ -1092,7 +337,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             foreach (var node in Nodes)
             {
-                if (currentBrush == NodeBrush.Node && nodeBrush == node)
+                if (CurrentBrush == NodeBrush.Node && nodeBrush == node)
                 {
                     node.NewOffset = node.CursorLocation - mi.Location;
                     node.OffsetPosX -= node.NewOffset.X;
@@ -1101,7 +346,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     return false;
                 }
 
-                if (currentBrush == NodeBrush.MoveFrame)
+                if (CurrentBrush == NodeBrush.MoveFrame)
                 {
                     foreach (var subnode in selectedNodes)
                     {
@@ -1114,7 +359,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     return false;
                 }
 
-                if (node.WidgetBackground.Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && currentBrush == NodeBrush.Free)
+                if (node.WidgetBackground.Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
                 {
                     if (node.DeleteButton.Contains(mi.Location))
                     {
@@ -1122,12 +367,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         return true;
                     }
 
-                    if (node.DragBar.Contains(mi.Location) && currentBrush == NodeBrush.Free)
+                    if (node.DragBar.Contains(mi.Location) && CurrentBrush == NodeBrush.Free)
                     {
                         if (!selectedNodes.Any())
                         {
                             node.CursorLocation = mi.Location;
-                            currentBrush = NodeBrush.Node;
+                            CurrentBrush = NodeBrush.Node;
                             nodeBrush = node;
                         }
                         else
@@ -1137,7 +382,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                                 subnode.CursorLocation = mi.Location;
                             }
 
-                            currentBrush = NodeBrush.MoveFrame;
+                            CurrentBrush = NodeBrush.MoveFrame;
                         }
                     }
                 }
@@ -1153,9 +398,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 for (int i = 0; i < node.OutConnections.Count; i++)
                 {
                     if (node.OutConnections[i].InWidgetPosition.Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down &&
-                        currentBrush == NodeBrush.Free)
+                        CurrentBrush == NodeBrush.Free)
                     {
-                        currentBrush = NodeBrush.Connecting;
+                        CurrentBrush = NodeBrush.Connecting;
                         brushItem = new Tuple<Rectangle, OutConnection>(node.OutConnections[i].InWidgetPosition, node.OutConnections[i]);
 
                         return true;
@@ -1167,7 +412,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     if (connection.InWidgetPosition.Contains(mi.Location)
                         && mi.Button == MouseButton.Right
                         && mi.Event == MouseInputEvent.Down
-                        && currentBrush == NodeBrush.Free
+                        && CurrentBrush == NodeBrush.Free
                         && connection.In != null)
                     {
                         connection.In.Out = null;
@@ -1190,23 +435,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             Snw.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
                 Color.White, Color.Black, 1);
 
-            Snw.FontRegular.DrawTextWithShadow(currentBrush.ToString(), new float2(RenderBounds.X + 2, RenderBounds.Y + 50),
+            Snw.FontRegular.DrawTextWithShadow(CurrentBrush.ToString(), new float2(RenderBounds.X + 2, RenderBounds.Y + 50),
                 Color.White, Color.Black, 1);
 
-            if (brushItem != null && currentBrush == NodeBrush.Connecting)
+            if (brushItem != null && CurrentBrush == NodeBrush.Connecting)
             {
                 Game.Renderer.RgbaColorRenderer.DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), oldCursorPosition,
                     2, brushItem.Item2.Color);
             }
 
-            if (currentBrush == NodeBrush.Frame)
+            if (CurrentBrush == NodeBrush.Frame)
             {
                 WidgetUtils.FillRectWithColor(selectionRectangle, Color.FromArgb(100, 255, 255, 255));
             }
         }
     }
 
-    enum NodeBrush
+    public enum NodeBrush
     {
         Free,
         Connecting,

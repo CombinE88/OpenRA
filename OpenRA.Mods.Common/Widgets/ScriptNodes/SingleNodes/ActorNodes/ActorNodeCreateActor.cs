@@ -9,11 +9,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
     {
         public ActorNodeCreateActor(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            InConTexts.Add("Actor Info");
-            InConTexts.Add("Player");
-            InConTexts.Add("Cell Location");
-            InConTexts.Add("Integer Facing");
-            InConTexts.Add("Trigger");
         }
     }
 

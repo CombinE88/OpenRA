@@ -8,10 +8,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
     {
         public TriggerNodeOnEnteredRange(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            InConTexts.Add("Player Group");
-            InConTexts.Add("Cell Location");
-            InConTexts.Add("Integer Cell-Range");
-            InConTexts.Add("Repeatable");
         }
     }
 

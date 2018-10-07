@@ -39,7 +39,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         // Node Connections
         public List<InConnection> InConnections;
         public List<OutConnection> OutConnections;
-        public List<string> InConTexts = new List<string>();
 
         public Rectangle AddInput;
         public Rectangle AddOutput;
@@ -230,10 +229,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                             InConnections[i].InWidgetPosition.Width - 4), Color.Black);
                 }
 
-                if (InConTexts.Count >= (i + 1))
-                    Screen.Snw.FontSmall.DrawTextWithShadow(InConTexts[i],
-                        new int2(InConnections[i].InWidgetPosition.X + 22, InConnections[i].InWidgetPosition.Y + 4),
-                        Color.White, Color.Black, 1);
+                Screen.Snw.FontSmall.DrawTextWithShadow(InConnections[i].ConTyp.ToString(),
+                    new int2(InConnections[i].InWidgetPosition.X + 22, InConnections[i].InWidgetPosition.Y + 4),
+                    Color.White, Color.Black, 1);
             }
 
             for (int i = 0; i < OutConnections.Count; i++)
@@ -258,6 +256,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                         new Rectangle(OutConnections[i].InWidgetPosition.X + 2, OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
                             OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
                 }
+
+                if(Screen.CurrentBrush == NodeBrush.Connecting)
+                    Screen.Snw.FontSmall.DrawTextWithShadow(OutConnections[i].ConTyp.ToString(),
+                        new int2(OutConnections[i].InWidgetPosition.X + 22, OutConnections[i].InWidgetPosition.Y + 4),
+                        Color.White, Color.Black, 1);
             }
 
             for (int i = 0; i < InConnections.Count; i++)

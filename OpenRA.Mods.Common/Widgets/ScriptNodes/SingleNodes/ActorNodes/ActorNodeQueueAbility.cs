@@ -44,8 +44,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     actor.QueueActivity(new Move(actor,
                         InConnections.First(c => c.ConTyp == ConnectionType.Location).In.Location.Value, WDist.FromCells(i)));
 
-                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null &&
-                    InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
+                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
                     foreach (var actors in InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup)
                     {
                         if (!actors.IsDead && actors.IsInWorld)
@@ -58,18 +59,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 if (InConnections.LastOrDefault(c => c.ConTyp == ConnectionType.Actor).In == null)
                     throw new YamlException(NodeId + "Queue Activity Attack Target Actor not connected");
 
-                if (InConnections.LastOrDefault(c => c.ConTyp == ConnectionType.Actor).In.Actor.IsDead)
-                    return;
-
-                if (actor != null)
+                if (actor != null && !actor.IsDead && actor.IsInWorld)
                     actor.QueueActivity(new Attack(actor,
                         Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Actor).In.Actor),
                         InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null,
                         InConnections.Last(c => c.ConTyp == ConnectionType.Boolean).In != null,
                         InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In != null ? InConnections.First(c => c.ConTyp == ConnectionType.Boolean).In.Number ?? 0 : 0));
 
-                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null &&
-                    InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
+                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
                     foreach (var actors in InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup)
                     {
                         if (!actors.IsDead && actors.IsInWorld)
@@ -84,11 +83,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
             }
             else if (NodeInfo.NodeType == NodeType.ActorQueueHunt)
             {
-                if (actor != null)
+                if (actor != null && !actor.IsDead && actor.IsInWorld)
                     actor.QueueActivity(new Hunt(actor));
 
-                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null &&
-                    InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
+                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
                     foreach (var actors in InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup)
                     {
                         if (!actors.IsDead && actors.IsInWorld)
@@ -103,12 +103,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 if (InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Location).In.Location == null)
                     return;
 
-                if (actor != null)
+                if (actor != null && !actor.IsDead && actor.IsInWorld)
                     actor.QueueActivity(new AttackMoveActivity(actor,
                         new Move(actor, InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Location).In.Location.Value, WDist.FromCells(2))));
 
-                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null &&
-                    InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
+                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
                     foreach (var actors in InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup)
                     {
                         if (!actors.IsDead && actors.IsInWorld)
@@ -121,8 +122,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 if (actor != null && actor.Trait<Sellable>() != null)
                     actor.Trait<Sellable>().Sell(actor);
 
-                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null &&
-                    InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
+                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
                     foreach (var actors in InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup)
                     {
                         if (actors.IsDead || !actors.IsInWorld)
@@ -136,14 +138,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
             }
             else if (NodeInfo.NodeType == NodeType.ActorQueueFindResources)
             {
-                if (actor.Trait<Harvester>() == null)
-                    return;
-
-                if (actor != null)
+                if (actor != null && !actor.IsDead && actor.IsInWorld && actor.Trait<Harvester>() != null)
                     actor.QueueActivity(new FindResources(actor));
 
-                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null &&
-                    InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
+                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
                     foreach (var actors in InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup)
                     {
                         if (!actors.IsDead && actors.IsInWorld)
@@ -152,11 +152,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
             }
             else if (NodeInfo.NodeType == NodeType.ActorKill)
             {
-                if (actor != null)
+                if (actor != null && !actor.IsDead && actor.IsInWorld)
                     actor.Kill(actor);
 
-                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null &&
-                    InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
+                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
                     foreach (var actors in InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup)
                     {
                         if (!actors.IsDead && actors.IsInWorld)
@@ -165,11 +166,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
             }
             else if (NodeInfo.NodeType == NodeType.ActorRemove)
             {
-                if (actor != null)
+                if (actor != null && !actor.IsDead && actor.IsInWorld)
                     actor.Dispose();
 
-                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null &&
-                    InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
+                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
                     foreach (var actors in InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup)
                     {
                         if (!actors.IsDead && actors.IsInWorld)

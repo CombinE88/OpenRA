@@ -8,9 +8,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
     {
         public TriggerNodeCreateTimer(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            InConTexts.Add("Seconds");
-            InConTexts.Add("Repeatable");
-            InConTexts.Add("Trigger");
         }
     }
 

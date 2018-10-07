@@ -11,9 +11,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
     {
         public TriggerNodeOnEnteredFootPrint(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            InConTexts.Add("Player Group");
-            InConTexts.Add("Footprint Cells");
-            InConTexts.Add("Repeatable");
         }
     }
 

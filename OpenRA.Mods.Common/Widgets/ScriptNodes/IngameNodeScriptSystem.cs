@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics;
@@ -31,10 +32,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public World World;
         bool initialized = false;
         int ti;
+        NodeLibrary library;
 
         public IngameNodeScriptSystem(ActorInitializer init)
         {
             World = init.Self.World;
+            library = new NodeLibrary();
         }
 
         public void WorldLoaded(World w, WorldRenderer wr)
@@ -42,7 +45,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             foreach (var kv in w.Map.NodeDefinitions)
                 Add(kv);
 
-            InitializeNodes();
+            NodeLogics = library.InitializeNodes(this, nodesInfos);
+
+            foreach (var node in NodeLogics)
+            {
+                node.AddOutConnectionReferences();
+            }
+
+            foreach (var node in NodeLogics)
+            {
+                node.AddInConnectionReferences();
+            }
+
+            foreach (var node in NodeLogics)
+            {
+                node.DoAfterConnections();
+            }
 
             initialized = true;
         }
@@ -205,208 +223,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             nodeInfo.InConnections = inCons;
 
             nodesInfos.Add(nodeInfo);
-        }
-
-        public void InitializeNodes()
-        {
-            foreach (var nodeinfo in nodesInfos)
-            {
-                if (nodeinfo.NodeType == NodeType.MapInfoNode)
-                {
-                    var newNode = new MapInfoLogicNode(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerWorldLoaded)
-                {
-                    var newNode = new TriggerLogicWorldLoaded(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerTick)
-                {
-                    var newNode = new TriggerLogicTick(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredFootprint)
-                {
-                    var newNode = new TriggerLogicEnteredFoodPrint(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerCreateTimer)
-                {
-                    var newNode = new TriggerLogicCreateTimer(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
-                {
-                    var newNode = new GroupPlayerLogic(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupActorGroup)
-                {
-                    var newNode = new GroupActorLogic(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupActorInfoGroup)
-                {
-                    var newNode = new GroupActorInfoLogic(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
-                {
-                    var newNode = new ActorCreateActorLogic(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueMove)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueAttack)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueHunt)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueAttackMoveActivity)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueSell)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueFindResources)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorKill)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorRemove)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.Reinforcements)
-                {
-                    var newNode = new FunctionLogicReinforcements(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ReinforcementsWithTransport)
-                {
-                    var newNode = new FunctionLogicReinforcements(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
-                {
-                    var newNode = new MapInfoLogicNode(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiPlayNotification)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiPlaySound)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiRadarPing)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiTextMessage)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiAddMissionText)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
-                {
-                    var newNode = new NodeLogic(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorReference)
-                {
-                    var newNode = new NodeLogic(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnIdle)
-                {
-                    var newNode = new TriggerOnIdle(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnKilled)
-                {
-                    var newNode = new TriggerOnKilled(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnAllKilled)
-                {
-                    var newNode = new TriggerOnAllKilled(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerReset)
-                {
-                    var newNode = new TimerLogics(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerStart)
-                {
-                    var newNode = new TimerLogics(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerStop)
-                {
-                    var newNode = new TimerLogics(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ArithmeticsOr)
-                {
-                    var newNode = new ArithmeticBasicLogic(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CreateEffect)
-                {
-                    var newNode = new FunctionCreateEffectLogic(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorGetInformations)
-                {
-                    var newNode = new GetActorInformationsLogic(nodeinfo, this);
-                    NodeLogics.Add(newNode);
-                }
-            }
-
-            foreach (var node in NodeLogics)
-            {
-                node.AddOutConnectionReferences();
-            }
-
-            foreach (var node in NodeLogics)
-            {
-                node.AddInConnectionReferences();
-            }
-
-            foreach (var node in NodeLogics)
-            {
-                node.DoAfterConnections();
-            }
         }
 
         void ITick.Tick(Actor self)

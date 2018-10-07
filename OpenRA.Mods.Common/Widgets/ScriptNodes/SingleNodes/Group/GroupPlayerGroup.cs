@@ -8,7 +8,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
     {
         public GroupPlayerGroup(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            InConTexts.Add("Player");
         }
 
         public override void Tick()

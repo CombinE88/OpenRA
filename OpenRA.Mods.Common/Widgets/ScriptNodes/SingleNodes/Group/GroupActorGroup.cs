@@ -8,7 +8,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
     {
         public GroupActorGroup(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            InConTexts.Add("Actor");
         }
 
         public override void Tick()
@@ -35,7 +34,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
     {
         public GroupActorInfoGroup(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            InConTexts.Add("ActorInfo");
         }
 
         public override void Tick()
