@@ -17,10 +17,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         {
         }
 
-        public List<NodeWidget> LoadInNodes(NodeEditorNodeScreenWidget nensw)
+        public List<NodeWidget> LoadInNodes(NodeEditorNodeScreenWidget nensw, List<NodeInfo> nodeInfos)
         {
             List<NodeWidget> nodes = new List<NodeWidget>();
-            foreach (var nodeinfo in nensw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfo)
+            foreach (var nodeinfo in nodeInfos)
             {
                 if (nodeinfo.NodeType == NodeType.MapInfoNode)
                 {
@@ -301,7 +301,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
-            else if (nodeType == NodeType.TriggerOnEnteredFootprint)
+            else if (nodeType == NodeType.TriggerOnEnteredRange)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 

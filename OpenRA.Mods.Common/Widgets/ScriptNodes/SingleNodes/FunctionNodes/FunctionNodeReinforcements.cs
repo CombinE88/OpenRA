@@ -161,14 +161,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
             Action worldendAction = () =>
             {
-                OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
-                var exeNodes = Insc.NodeLogics.Where(n =>
-                    n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && OutConnections
-                                                            .Where(t => t.ConTyp == ConnectionType.Exec).Contains(c.In)) != null);
-
-                foreach (var node in exeNodes)
+                var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
+                if (oCon != null)
                 {
-                    node.Execute(world);
+                    foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                    {
+                        var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                        if (inCon != null)
+                            inCon.Execute = true;
+                    }
                 }
             };
             world.AddFrameEndTask(w => w.Add(new DelayedAction(leng, worldendAction)));
@@ -249,14 +250,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
             transport.QueueActivity(new CallFunc(() =>
             {
-                OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = reinforce.ToArray();
-                var exeNodes = Insc.NodeLogics.Where(n =>
-                    n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && OutConnections
-                                                            .Where(t => t.ConTyp == ConnectionType.Exec).Contains(c.In)) != null);
-                ;
-                foreach (var node in exeNodes)
+                var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
+                if (oCon != null)
                 {
-                    node.Execute(world);
+                    foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                    {
+                        var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                        if (inCon != null)
+                            inCon.Execute = true;
+                    }
                 }
             }));
             transport.QueueActivity(new Wait(aircraft != null ? 50 : 25));

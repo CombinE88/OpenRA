@@ -138,9 +138,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             }
         }
 
+        public NodeWidget AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
+        {
+            var node = nodeLibrary.AddNode(nodeType, this, nodeId, nodeName);
+
+            if (node != null)
+            {
+                AddChild(node);
+                Nodes.Add(node);
+
+                return node;
+            }
+
+            return null;
+        }
+
+        string NewId()
+        {
+            NodeID++;
+            return "ND" + (NodeID < 10 ? "0" + NodeID : NodeID.ToString());
+        }
+
         void LoadInNodes()
         {
-            Nodes = nodeLibrary.LoadInNodes(this);
+            Nodes = nodeLibrary.LoadInNodes(this, World.WorldActor.Trait<EditorNodeLayer>().NodeInfo);
 
             foreach (var node in Nodes)
             {
@@ -168,16 +189,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             NodeID = count;
         }
 
-        public NodeWidget AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
-        {
-            var node = nodeLibrary.AddNode(nodeType, this, nodeId, nodeName);
-
-            AddChild(node);
-            Nodes.Add(node);
-
-            return node;
-        }
-
         public void DeleteNode(NodeWidget widget)
         {
             Nodes.Remove(widget);
@@ -203,19 +214,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             if (e.Event == KeyInputEvent.Down && e.Key == Keycode.V && e.Modifiers == Modifiers.Ctrl)
             {
-                var newCopyNodes = new List<NodeWidget>();
-
-                foreach (var nodeinfo in copyNodes)
-                {
-                    var node = AddNode(nodeinfo.NodeType);
-                    newCopyNodes.Add(node);
-
-                    if (node != null)
-                    {
-                        node.OffsetPosX = nodeinfo.OffsetPosX + 20 * copyCounter;
-                        node.OffsetPosY = nodeinfo.OffsetPosY + 20 * copyCounter;
-                    }
-                }
+                var newCopyNodes = Paste();
 
                 foreach (var node in selectedNodes)
                 {
@@ -233,14 +232,78 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 return true;
             }
 
+            if (selectedNodes.Any() && e.Event == KeyInputEvent.Down && e.Key == Keycode.DELETE)
+            {
+                foreach (var node in selectedNodes)
+                {
+                    DeleteNode(node);
+                }
+
+                selectedNodes = new List<NodeWidget>();
+            }
+
             return false;
+        }
+
+        List<NodeWidget> Paste()
+        {
+            List<NodeInfo> infos = new List<NodeInfo>();
+            List<NodeWidget> newNodes;
+
+            foreach (var node in copyNodes)
+            {
+                var newNodeInfo = node.BuildNodeInfo();
+                infos.Add(newNodeInfo);
+            }
+
+            foreach (var info in infos)
+            {
+                var oldId = info.NodeID;
+                var newId = NewId();
+
+                info.NodeID = newId;
+                info.NodeName = null;
+
+                foreach (var subInfo in infos)
+                {
+                    foreach (var connection in subInfo.InConnectionsReference)
+                    {
+                        if (connection.WidgetReferenceId == oldId)
+                            connection.WidgetReferenceId = newId;
+                    }
+                }
+            }
+
+            newNodes = nodeLibrary.LoadInNodes(this, infos);
+
+            foreach (var node in newNodes)
+            {
+                Nodes.Add(node);
+                AddChild(node);
+                if (node != null)
+                {
+                    node.OffsetPosX -= 20 * copyCounter;
+                    node.OffsetPosY -= 20 * copyCounter;
+                }
+            }
+
+            foreach (var node in newNodes)
+            {
+                node.AddOutConnectionReferences();
+            }
+
+            foreach (var node in newNodes)
+            {
+                node.AddInConnectionReferences();
+            }
+
+            return newNodes;
         }
 
         public override bool HandleMouseInput(MouseInput mi)
         {
             if (RenderBounds.Contains(mi.Location) && mi.Event == MouseInputEvent.Down)
                 TakeKeyboardFocus();
-
             if (!RenderBounds.Contains(mi.Location) && CurrentBrush == NodeBrush.Free)
             {
                 CurrentBrush = NodeBrush.Free;
@@ -292,7 +355,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 if (HandleNodes(mi))
                     return true;
-
                 if (ConnectNodes(mi))
                     return true;
             }
@@ -330,12 +392,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var sizeX = Math.Max(selectionStart.X, mi.Location.X) - Math.Min(selectionStart.X, mi.Location.X);
                 var sizeY = Math.Max(selectionStart.Y, mi.Location.Y) - Math.Min(selectionStart.Y, mi.Location.Y);
-
                 selectionRectangle = new Rectangle(Math.Min(selectionStart.X, mi.Location.X), Math.Min(selectionStart.Y, mi.Location.Y), sizeX, sizeY);
             }
 
             oldCursorPosition = mi.Location;
-
             return true;
         }
 
@@ -408,7 +468,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     {
                         CurrentBrush = NodeBrush.Connecting;
                         brushItem = new Tuple<Rectangle, OutConnection>(node.OutConnections[i].InWidgetPosition, node.OutConnections[i]);
-
                         return true;
                     }
                 }
@@ -435,15 +494,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             text = "X: " + CenterCoordinates.X + " Y: " + CenterCoordinates.Y;
             textsize = Snw.FontRegular.Measure(text);
-
             WidgetUtils.DrawPanel(Background, new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
-
             Snw.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
                 Color.White, Color.Black, 1);
-
             Snw.FontRegular.DrawTextWithShadow(CurrentBrush.ToString(), new float2(RenderBounds.X + 2, RenderBounds.Y + 50),
                 Color.White, Color.Black, 1);
-
             if (brushItem != null && CurrentBrush == NodeBrush.Connecting)
             {
                 var conTarget = oldCursorPosition;

@@ -7,9 +7,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class MapInfoActorsonMap : NodeWidget
     {
+        ButtonWidget button;
+
         public MapInfoActorsonMap(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            var button = new ButtonWidget(screen.Snw.ModData);
+            button = new ButtonWidget(screen.Snw.ModData);
             AddChild(button);
             button.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 34, FreeWidgetEntries.Width, 25);
             button.Text = "Add Actor";
@@ -20,9 +22,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     OutConnections.First(c => c.ConTyp == ConnectionType.ActorList),
                     Editor,
                     Screen.Snw.WorldRenderer,
-                    () => { button.Text = OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorPrevs != null ? "Group: " + OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorPrevs.Count() : "None";}));
+                    () =>
+                    {
+                        button.Text = OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorPrevs != null
+                            ? "Group: " + OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorPrevs.Count()
+                            : "None";
+                    }));
             };
         }
+
+        public override void AddOutConConstructor(OutConnection connection)
+        {
+            base.AddOutConConstructor(connection);
+
+            if (connection.ActorInfos != null && connection.ActorInfos.Any())
+                button.Text = "Group: " + connection.ActorPrevs.Length;
+        }
+
 
         public override void Tick()
         {
@@ -33,7 +49,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             if (first != null && second != null)
             {
-                second.ActorPrev =  first.ActorPrevs != null && first.ActorPrevs.Any() ? first.ActorPrevs.First() : null;
+                second.ActorPrev = first.ActorPrevs != null && first.ActorPrevs.Any() ? first.ActorPrevs.First() : null;
             }
         }
     }

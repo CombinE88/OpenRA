@@ -144,13 +144,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 wid.OnClick = () =>
                 {
                     Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Array, connection, Editor, Screen.Snw.WorldRenderer,
-                        () => { wid.Text = "Array: " + connection.CellArray.First().ToString(); }));
+                        () => { wid.Text = "Array: " + connection.CellArray.Count + " Cells"; }));
                 };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
 
                 if (connection.CellArray.Any())
-                    wid.Text = "Array: " + connection.CellArray.Count().ToString();
+                    wid.Text = "Array: " + connection.CellArray.Count + " Cells";
             }
             else if (connection.ConTyp == ConnectionType.LocationRange)
             {
@@ -205,6 +205,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 {
                     playerSelection.Text = connection.Player.Name;
                     playerSelection.TextColor = connection.Player.Color.RGB;
+                    selectedOwner = Screen.World.WorldActor.Trait<EditorActorLayer>().Players.Players.Values.First(p => p.Name == connection.Player.Name);
                 }
             }
             else if (connection.ConTyp == ConnectionType.Repeatable)

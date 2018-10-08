@@ -11,6 +11,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -26,7 +27,8 @@ namespace OpenRA.Mods.Common.Traits
         Array,
         Single,
         Range,
-        Actor
+        Actor,
+        none
     }
 
     [Desc("Required for the map editor to work. Attach this to the world actor.")]
@@ -59,7 +61,7 @@ namespace OpenRA.Mods.Common.Traits
 
         public List<EditorActorPreview> Actors = new List<EditorActorPreview>();
 
-        public List<CPos> CellRegion { get; private set; }
+        public List<CPos> CellRegion;
 
         public NodeSelectionLayer(Actor self, NodeSelectionLayerInfo info)
         {
@@ -166,8 +168,25 @@ namespace OpenRA.Mods.Common.Traits
                         wcr.DrawRect(new float3(preview.Bounds.Left, preview.Bounds.Top, 1), new float3(preview.Bounds.Right, preview.Bounds.Bottom, 1), 1, Color.White);
                 }
 
-            if (Mode == CellPicking.Range)
-                yield return new RangeCircleRenderable(self.World.Map.CenterOfCell(FixedCursorPosition), yetCursorPosition, 0, Color.White, Color.Black);
+            if (Mode == CellPicking.Range && yetCursorPosition.Length > 0 && CellRegion != null && CellRegion.Any())
+            {
+                List<float3> floats = new List<float3>();
+                for (int i = 0; i < 32; i++)
+                {
+                    floats.Add(new float3(
+                        (float)Math.Cos(Math.PI / 180 * 360 / 32 * i) *
+                        yetCursorPosition.Length / self.World.Map.Grid.TileSize.Width +
+                        CellRegion.First().X * self.World.Map.Grid.TileSize.Width +
+                        self.World.Map.Grid.TileSize.Width / 2,
+                        (float)Math.Sin(Math.PI / 180 * 360 / 32 * i) *
+                        yetCursorPosition.Length / self.World.Map.Grid.TileSize.Height +
+                        CellRegion.First().Y * self.World.Map.Grid.TileSize.Height +
+                        self.World.Map.Grid.TileSize.Height / 2,
+                        1f));
+                }
+
+                wcr.DrawPolygon(floats.ToArray(), 2f, Color.White);
+            }
         }
     }
 }

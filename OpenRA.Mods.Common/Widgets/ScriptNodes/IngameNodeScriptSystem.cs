@@ -219,8 +219,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 }
             }
 
-            nodeInfo.OutConnections = outCons;
-            nodeInfo.InConnections = inCons;
+            nodeInfo.OutConnectionsReference = outCons;
+            nodeInfo.InConnectionsReference = inCons;
 
             nodesInfos.Add(nodeInfo);
         }
@@ -233,6 +233,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             foreach (var node in NodeLogics)
             {
                 node.Tick(self);
+                node.ExecuteTick(self);
             }
 
             if (ti > 1 && ti < 3)

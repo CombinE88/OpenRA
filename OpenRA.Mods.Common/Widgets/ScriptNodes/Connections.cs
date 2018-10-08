@@ -13,6 +13,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public NodeLogic Logic;
         public ConnectionType ConTyp;
         public string ConnectionId;
+        public bool Execute = false;
 
         public Rectangle InWidgetPosition;
 

@@ -50,12 +50,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         void ExecuteOnidle(World world)
         {
-            var exeNodes = Insc.NodeLogics.Where(n =>
-                n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && OutConnections
-                                                        .Where(t => t.ConTyp == ConnectionType.Exec).Contains(c.In)) != null);
-            foreach (var node in exeNodes)
+            var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
+            if (oCon != null)
             {
-                node.Execute(world);
+                foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                {
+                    var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                    if (inCon != null)
+                        inCon.Execute = true;
+                }
             }
         }
     }

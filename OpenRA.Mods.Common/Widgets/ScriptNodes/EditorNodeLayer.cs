@@ -201,8 +201,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 }
             }
 
-            nodeInfo.OutConnections = outCons;
-            nodeInfo.InConnections = inCons;
+            nodeInfo.OutConnectionsReference = outCons;
+            nodeInfo.InConnectionsReference = inCons;
 
             NodeInfo.Add(nodeInfo);
         }
@@ -222,12 +222,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             var nodes = new List<MiniYamlNode>();
             nodes.Add(new MiniYamlNode("Pos", nodeInfo.OffsetPosX.ToString() + "," + nodeInfo.OffsetPosY.ToString()));
-            foreach (var outCon in nodeInfo.OutConnections)
+            foreach (var outCon in nodeInfo.OutConnectionsReference)
             {
                 nodes.Add(new MiniYamlNode("Out@" + outCon.ConnectionId, "", OutConnections(outCon)));
             }
 
-            foreach (var inCon in nodeInfo.InConnections)
+            foreach (var inCon in nodeInfo.InConnectionsReference)
             {
                 List<MiniYamlNode> miniNode = new List<MiniYamlNode>();
                 miniNode.Add(new MiniYamlNode("ConnectionType", inCon.ConTyp.ToString()));
@@ -342,8 +342,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public string NodeID;
         public int? OffsetPosX = null;
         public int? OffsetPosY = null;
-        public List<InConReference> InConnections = null;
-        public List<OutConReference> OutConnections = null;
+        public List<InConReference> InConnectionsReference = null;
+        public List<OutConReference> OutConnectionsReference = null;
 
         public NodeInfo(
             NodeType nodeType,
