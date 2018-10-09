@@ -8,6 +8,7 @@ using OpenRA.Effects;
 using OpenRA.Mods.Common.Activities;
 using OpenRA.Mods.Common.Scripting;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Primitives;
 using OpenRA.Scripting;
 using OpenRA.Traits;
@@ -66,8 +67,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 }
 
                 var inNumber = InConnections.First(c => c.ConTyp == ConnectionType.Integer).In;
+                var outcon = OutConnections.First(c => c.ConTyp == ConnectionType.ActorList);
 
-                Reinforce(
+                outcon.ActorGroup = Reinforce(
                     world,
                     world.Players.First(p => p.InternalName == InConnections.First(c => c.ConTyp == ConnectionType.Player).In.Player.Name),
                     actors.ToArray(),
@@ -253,6 +255,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
                 if (oCon != null)
                 {
+                    OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = passengers.ToArray();
                     foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
                     {
                         var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);

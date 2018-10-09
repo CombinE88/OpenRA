@@ -35,7 +35,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
         {
             base.AddOutConConstructor(connection);
 
-            if (connection.ActorInfos != null && connection.ActorInfos.Any())
+            if (connection.ActorPrevs != null && connection.ActorPrevs.Any())
                 button.Text = "Group: " + connection.ActorPrevs.Length;
         }
 

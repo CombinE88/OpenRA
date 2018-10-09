@@ -107,6 +107,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.ActorChangeOwner)
+                {
+                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
                 else if (nodeinfo.NodeType == NodeType.Reinforcements)
                 {
                     var newNode = new FunctionNodeReinforcements(nensw, nodeinfo);
@@ -202,7 +207,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.ArithmeticsAnd)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
                 else if (nodeinfo.NodeType == NodeType.CreateEffect)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CompareActors)
+                {
+                    var newNode = new ArithmecCompareNode(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.DoMultiple)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CountNode)
                 {
                     var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);
@@ -416,6 +441,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
             }
+            else if (nodeType == NodeType.ActorChangeOwner)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+            }
             else if (nodeType == NodeType.ActorQueueMove)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -423,6 +459,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
@@ -569,6 +606,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+            }
+            else if (nodeType == NodeType.ArithmeticsAnd)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new UiNodeUiSettings(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.CreateEffect)
@@ -582,6 +631,36 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
             }
+            else if (nodeType == NodeType.CompareActors)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ArithmecCompareNode(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));;
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Universal, newNode));
+            }
+            else if (nodeType == NodeType.DoMultiple)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));;
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+            }
+            else if (nodeType == NodeType.CountNode)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));;
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Integer, newNode));
+            }
+
 
             return newNode;
         }
@@ -676,6 +755,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.ActorChangeOwner)
+                {
+                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
                 else if (nodeinfo.NodeType == NodeType.Reinforcements)
                 {
                     var newNode = new FunctionLogicReinforcements(nodeinfo, inss);
@@ -761,6 +845,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new ArithmeticBasicLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.ArithmeticsAnd)
+                {
+                    var newNode = new ArithmeticBasicLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
                 else if (nodeinfo.NodeType == NodeType.CreateEffect)
                 {
                     var newNode = new FunctionCreateEffectLogic(nodeinfo, inss);
@@ -771,9 +860,82 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new GetActorInformationsLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.CompareActors)
+                {
+                    var newNode = new ArithmecCompareLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.DoMultiple)
+                {
+                    var newNode = new DoRepeatingNodeLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CountNode)
+                {
+                    var newNode = new GetCountNodeLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;
         }
+    }
+
+    public enum NodeType
+    {
+        // MapInfo
+        MapInfoNode,
+        MapInfoActorInfoNode,
+        MapInfoActorReference,
+
+        // Actor
+        ActorCreateActor,
+        ActorGetInformations,
+        ActorQueueMove,
+        ActorQueueAttack,
+        ActorQueueHunt,
+        ActorQueueAttackMoveActivity,
+        ActorQueueSell,
+        ActorQueueFindResources,
+        ActorKill,
+        ActorRemove,
+        ActorChangeOwner,
+
+        // Trigger,
+        TriggerWorldLoaded,
+        TriggerCreateTimer,
+        TimerStart,
+        TimerReset,
+        TimerStop,
+        TriggerTick,
+        TriggerOnEnteredFootprint,
+        TriggerOnEnteredRange,
+        TriggerOnIdle,
+        TriggerOnKilled,
+
+        // Actor Groups
+        GroupPlayerGroup,
+        GroupActorGroup,
+        GroupActorInfoGroup,
+        TriggerOnAllKilled,
+
+        // Arithmetic
+        ArithmeticsAnd,
+        ArithmeticsOr,
+        CompareActors,
+        DoMultiple,
+        CountNode,
+
+        // Complex Functions
+        Reinforcements,
+        ReinforcementsWithTransport,
+        CreateEffect,
+
+        // UI Nodes
+        UiPlayNotification,
+        UiPlaySound,
+        UiRadarPing,
+        UiTextMessage,
+        UiAddMissionText
     }
 }

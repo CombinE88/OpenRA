@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Mods.Common.Activities;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
@@ -208,6 +209,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     {
                         if (!actors.IsDead && actors.IsInWorld)
                             actors.Dispose();
+                    }
+            }
+            else if (NodeInfo.NodeType == NodeType.ActorChangeOwner)
+            {
+                var newPlayer = InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Player);
+                if (newPlayer.In == null)
+                    throw new YamlException(NodeId + "ChangeOwner Player not connected");
+
+                if (actor != null && !actor.IsDead && actor.IsInWorld)
+                    actor.ChangeOwner(world.Players.First(p => p.InternalName == newPlayer.In.Player.Name));
+
+                if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
+                    && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup.Any())
+                    foreach (var actors in InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup)
+                    {
+                        actors.ChangeOwner(world.Players.First(p => p.InternalName == newPlayer.In.Player.Name));
                     }
             }
         }

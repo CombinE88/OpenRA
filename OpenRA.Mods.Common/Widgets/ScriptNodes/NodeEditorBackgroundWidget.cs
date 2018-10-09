@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Graphics;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Widgets;
@@ -136,6 +137,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.ActorKill,
                 NodeType.ActorRemove,
                 NodeType.ActorQueueMove,
+                NodeType.ActorChangeOwner,
                 NodeType.ActorQueueAttack,
                 NodeType.ActorQueueHunt,
                 NodeType.ActorQueueAttackMoveActivity,
@@ -149,6 +151,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Actor: Informations of Actor",
                 "Actor: Kill",
                 "Actor: Remove",
+                "Actor: Change Owner",
                 "Activity: Queue Move",
                 "Activity: Queue Attack",
                 "Activity: Queue Hunt",
@@ -298,13 +301,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
                 NodeType.ArithmeticsAnd,
-                NodeType.ArithmeticsOr
+                NodeType.ArithmeticsOr,
+                NodeType.CompareActors,
+                NodeType.DoMultiple
             };
 
             List<string> nodeStrings = new List<string>
             {
                 "Arithmetics: And Trigger",
-                "Arithmetics: Or Trigger"
+                "Arithmetics: Or Trigger",
+                "Compare: Actors",
+                "Repeating: Action"
             };
 
             AddChild(arithmeticNodesList = new DropDownButtonWidget(Snw.ModData));

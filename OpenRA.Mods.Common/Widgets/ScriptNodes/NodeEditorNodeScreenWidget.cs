@@ -18,60 +18,6 @@ using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
-    public enum NodeType
-    {
-        // MapInfo
-        MapInfoNode,
-        MapInfoActorInfoNode,
-        MapInfoActorReference,
-
-        // Actor
-        ActorCreateActor,
-        ActorGetInformations,
-        ActorQueueMove,
-        ActorQueueAttack,
-        ActorQueueHunt,
-        ActorQueueAttackMoveActivity,
-        ActorQueueSell,
-        ActorQueueFindResources,
-        ActorKill,
-        ActorRemove,
-
-        // Trigger,
-        TriggerWorldLoaded,
-        TriggerCreateTimer,
-        TimerStart,
-        TimerReset,
-        TimerStop,
-        TriggerTick,
-        TriggerOnEnteredFootprint,
-        TriggerOnEnteredRange,
-        TriggerOnIdle,
-        TriggerOnKilled,
-
-        // Actor Groups
-        GroupPlayerGroup,
-        GroupActorGroup,
-        GroupActorInfoGroup,
-        TriggerOnAllKilled,
-
-        // Arithmetic
-        ArithmeticsAnd,
-        ArithmeticsOr,
-
-        // Complex Functions
-        Reinforcements,
-        ReinforcementsWithTransport,
-        CreateEffect,
-
-        // UI Nodes
-        UiPlayNotification,
-        UiPlaySound,
-        UiRadarPing,
-        UiTextMessage,
-        UiAddMissionText
-    }
-
     public class NodeEditorNodeScreenWidget : Widget
     {
         public readonly string Background = "textfield";
@@ -111,6 +57,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         int copyCounter = 0;
 
         NodeLibrary nodeLibrary;
+        int timer;
 
         [ObjectCreator.UseCtor]
         public NodeEditorNodeScreenWidget(ScriptNodeWidget snw, NodeEditorBackgroundWidget bgw, WorldRenderer worldRenderer, World world)
@@ -325,7 +272,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                                 connection.InWidgetPosition.Height + 40).Contains(mi.Location)
                             && CurrentBrush == NodeBrush.Connecting
                             && brushItem != null
-                            && (brushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal))
+                            && (brushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal || brushItem.Item2.ConTyp == ConnectionType.Universal))
                         {
                             connection.In = brushItem.Item2;
                         }
@@ -359,9 +306,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     return true;
             }
 
-            if (mi.Button == MouseButton.Right && mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
+            if (mi.Button == MouseButton.Right)
             {
-                if (selectedNodes.Any())
+                timer++;
+                if (selectedNodes.Any() && mi.Event == MouseInputEvent.Down)
+                {
+                    timer = 0;
+                }
+
+                if (selectedNodes.Any() && mi.Event == MouseInputEvent.Up && timer < 3)
                 {
                     foreach (var node in selectedNodes)
                     {
@@ -370,9 +323,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                     selectedNodes = new List<NodeWidget>();
                 }
-                else
-                    CurrentBrush = NodeBrush.Drag;
             }
+
+            if (mi.Button == MouseButton.Right && mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
+            {
+                CurrentBrush = NodeBrush.Drag;
+            }
+
             else if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
             {
                 CurrentBrush = NodeBrush.Frame;

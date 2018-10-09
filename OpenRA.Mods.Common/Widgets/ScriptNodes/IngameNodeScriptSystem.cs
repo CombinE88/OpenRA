@@ -92,6 +92,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     nodeInfo.OffsetPosY = offsetY;
                 }
 
+                if (node.Key == "Methode")
+                {
+                    CompareMethode[] methodes = (CompareMethode[])Enum.GetValues(typeof(CompareMethode));
+                    nodeInfo.Methode = methodes.First(e => e.ToString() == node.Value.Value);
+                }
+
+                if (node.Key == "Item")
+                {
+                    CompareItem[] item = (CompareItem[])Enum.GetValues(typeof(CompareItem));
+                    nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
+                }
+
                 if (node.Key.Contains("In@"))
                 {
                     var inCon = new InConReference();

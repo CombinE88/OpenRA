@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
@@ -11,6 +12,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
     {
         int inConnectionCounter = 1;
         int outConnectionCounter = 1;
+        public CompareMethode Methode;
+        public CompareItem Item;
 
         public NodeWidget(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen)
         {
@@ -45,6 +48,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             nodeInfo.OutConnectionsReference = ReferenceOutConnections();
             nodeInfo.OffsetPosX = OffsetPosX;
             nodeInfo.OffsetPosY = OffsetPosY;
+            nodeInfo.Methode = Methode;
+            nodeInfo.Item = Item;
 
             return nodeInfo;
         }
@@ -228,6 +233,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public readonly string NodeName;
         public readonly NodeInfo NodeInfo;
 
+        public readonly CompareMethode? Methode;
+        public readonly CompareItem? Item;
+
         public List<InConnection> InConnections = new List<InConnection>();
         public List<OutConnection> OutConnections = new List<OutConnection>();
 
@@ -240,6 +248,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             NodeType = nodeinfo.NodeType;
             NodeInfo = nodeinfo;
             NodeName = nodeinfo.NodeName;
+            Methode = nodeinfo.Methode;
+            Item = nodeinfo.Item;
         }
 
         public void AddOutConnectionReferences()

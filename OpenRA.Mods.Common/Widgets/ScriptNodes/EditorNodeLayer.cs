@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Traits;
 
@@ -62,6 +63,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     int.TryParse(node.Value.Value.Split(',').Last(), out offsetY);
                     nodeInfo.OffsetPosX = offsetX;
                     nodeInfo.OffsetPosY = offsetY;
+                }
+
+                if (node.Key == "Methode")
+                {
+                    CompareMethode[] methodes = (CompareMethode[])Enum.GetValues(typeof(CompareMethode));
+                    nodeInfo.Methode = methodes.First(e => e.ToString() == node.Value.Value);
+                }
+
+                if (node.Key == "Item")
+                {
+                    CompareItem[] item = (CompareItem[])Enum.GetValues(typeof(CompareItem));
+                    nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
                 }
 
                 if (node.Key.Contains("In@"))
@@ -222,6 +235,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             var nodes = new List<MiniYamlNode>();
             nodes.Add(new MiniYamlNode("Pos", nodeInfo.OffsetPosX.ToString() + "," + nodeInfo.OffsetPosY.ToString()));
+
+            if (nodeInfo.Methode != null)
+                nodes.Add(new MiniYamlNode("Methode", nodeInfo.Methode.ToString()));
+
+            if (nodeInfo.Item != null)
+                nodes.Add(new MiniYamlNode("Item", nodeInfo.Item.ToString()));
+
             foreach (var outCon in nodeInfo.OutConnectionsReference)
             {
                 nodes.Add(new MiniYamlNode("Out@" + outCon.ConnectionId, "", OutConnections(outCon)));
@@ -345,6 +365,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public List<InConReference> InConnectionsReference = null;
         public List<OutConReference> OutConnectionsReference = null;
 
+        public CompareMethode? Methode = null;
+        public CompareItem? Item = null;
+
         public NodeInfo(
             NodeType nodeType,
             string nodeID,
@@ -391,5 +414,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public InConReference()
         {
         }
+    }
+
+    public enum CompareItem
+    {
+        Health,
+        Damage,
+        Speed,
+        LocationX,
+        LocationY
+    }
+
+    public enum CompareMethode
+    {
+        Max,
+        Min
     }
 }
