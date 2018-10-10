@@ -302,6 +302,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 NodeType.ArithmeticsAnd,
                 NodeType.ArithmeticsOr,
+                NodeType.ArithmeticsMath,
+                NodeType.CountNode,
                 NodeType.CompareActors,
                 NodeType.DoMultiple
             };
@@ -310,6 +312,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 "Arithmetics: And Trigger",
                 "Arithmetics: Or Trigger",
+                "Arithmetics: Math",
+                "Arithmetics: Get Count",
                 "Compare: Actors",
                 "Repeating: Action"
             };

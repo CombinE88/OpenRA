@@ -67,9 +67,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 }
 
                 var inNumber = InConnections.First(c => c.ConTyp == ConnectionType.Integer).In;
-                var outcon = OutConnections.First(c => c.ConTyp == ConnectionType.ActorList);
 
-                outcon.ActorGroup = Reinforce(
+                    Reinforce(
                     world,
                     world.Players.First(p => p.InternalName == InConnections.First(c => c.ConTyp == ConnectionType.Player).In.Player.Name),
                     actors.ToArray(),
@@ -163,6 +162,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
             Action worldendAction = () =>
             {
+                OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
+
                 var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
                 if (oCon != null)
                 {

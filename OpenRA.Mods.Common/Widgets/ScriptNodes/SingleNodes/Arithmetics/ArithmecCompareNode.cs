@@ -8,6 +8,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class ArithmecCompareNode : NodeWidget
     {
+        CompareMethode selectedMethode;
+        DropDownButtonWidget methodeSelection;
+        CompareItem selectedItem;
+        DropDownButtonWidget itemSelection;
+
         public ArithmecCompareNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
             Methode = CompareMethode.Max;
@@ -19,8 +24,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 CompareMethode.Min
             };
 
-            var selectedMethode = Methode;
-            var methodeSelection = new DropDownButtonWidget(Screen.Snw.ModData);
+            selectedMethode = Methode;
+            methodeSelection = new DropDownButtonWidget(Screen.Snw.ModData);
 
             Func<CompareMethode, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
@@ -52,8 +57,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 CompareItem.LocationY
             };
 
-            var selectedItem = Item;
-            var itemSelection = new DropDownButtonWidget(Screen.Snw.ModData);
+            selectedItem = Item;
+            itemSelection = new DropDownButtonWidget(Screen.Snw.ModData);
 
             Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
@@ -79,6 +84,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
             methodeSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
             itemSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 100, FreeWidgetEntries.Width, 25);
+        }
+
+        public override void AddOutConConstructor(OutConnection connection)
+        {
+            base.AddOutConConstructor(connection);
+
+            if (NodeInfo.Methode != null)
+            {
+                selectedMethode = NodeInfo.Methode.Value;
+                methodeSelection.Text = NodeInfo.Methode.Value.ToString();
+            }
+
+            if (NodeInfo.Item != null)
+            {
+                selectedItem = NodeInfo.Item.Value;
+                itemSelection.Text = NodeInfo.Item.Value.ToString();
+            }
         }
     }
 

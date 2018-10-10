@@ -428,6 +428,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public enum CompareMethode
     {
         Max,
-        Min
+        Min,
+        Devide,
+        Multiply,
+        Add,
+        Substract,
+        All,
+        PleyerPlaying,
+        AliveActors
     }
 }

@@ -229,7 +229,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 }
                 else if (nodeinfo.NodeType == NodeType.CountNode)
                 {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    var newNode = new GetCountNode(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ArithmeticsMath)
+                {
+                    var newNode = new ArithmeticMathNode(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
             }
@@ -655,9 +660,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                newNode = new NodeWidget(nensw, nodeInfo);
+                newNode = new GetCountNode(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));;
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Integer, newNode));
+            }
+            else if (nodeType == NodeType.ArithmeticsMath)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new ArithmeticMathNode(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));;
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));;
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Integer, newNode));
             }
 
@@ -875,6 +890,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new GetCountNodeLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.ArithmeticsMath)
+                {
+                    var newNode = new ArithmeticMathNodeLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;
@@ -925,6 +945,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         CompareActors,
         DoMultiple,
         CountNode,
+        ArithmeticsMath,
 
         // Complex Functions
         Reinforcements,

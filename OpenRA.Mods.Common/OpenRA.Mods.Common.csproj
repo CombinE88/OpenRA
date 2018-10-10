@@ -618,6 +618,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\GetActorInformationsNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\ArithmecCompareNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\ArithmeticBasicNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\ArithmeticMathNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\DoRepeatingNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\GetCountNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\BasicNodeWidget.cs" />
