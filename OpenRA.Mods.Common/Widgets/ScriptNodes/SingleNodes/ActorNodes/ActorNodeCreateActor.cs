@@ -46,22 +46,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
             Action actorAction = () =>
             {
                 world.Add(newActor);
+
+                OutConnections.First(c => c.ConTyp == ConnectionType.Actor).Actor = newActor;
+
+                var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
+                if (oCon != null)
+                {
+                    foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                    {
+                        var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                        if (inCon != null)
+                            inCon.Execute = true;
+                    }
+                }
             };
 
             world.AddFrameEndTask(w => w.Add(new DelayedAction(0,actorAction)));
-
-            OutConnections.First(c => c.ConTyp == ConnectionType.Actor).Actor = newActor;
-
-            var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
-            if (oCon != null)
-            {
-                foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
-                {
-                    var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
-                    if (inCon != null)
-                        inCon.Execute = true;
-                }
-            }
         }
     }
 }
