@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRA.Effects;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Primitives;
 
@@ -39,7 +41,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
             if (InConnections.First(c => c.ConTyp == ConnectionType.Integer).In != null)
                 typeDict.Add(new FacingInit(InConnections.First(c => c.ConTyp == ConnectionType.Integer).In.Number.Value));
 
-            var newActor = world.CreateActor(InConnections.First(c => c.ConTyp == ConnectionType.ActorInfo).In.ActorInfo.Name, typeDict);
+            var newActor = world.CreateActor(false, InConnections.First(c => c.ConTyp == ConnectionType.ActorInfo).In.ActorInfo.Name, typeDict);
+
+            Action actorAction = () =>
+            {
+                world.Add(newActor);
+            };
+
+            world.AddFrameEndTask(w => w.Add(new DelayedAction(0,actorAction)));
 
             OutConnections.First(c => c.ConTyp == ConnectionType.Actor).Actor = newActor;
 
