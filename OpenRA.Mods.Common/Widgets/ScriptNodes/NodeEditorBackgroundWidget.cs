@@ -402,7 +402,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.UiPlaySound,
                 NodeType.UiRadarPing,
                 NodeType.UiTextMessage,
-                NodeType.UiAddMissionText
+                NodeType.UiAddMissionText,
+                NodeType.UiNewObjective,
+                NodeType.UiCompleteObjective,
+                NodeType.UIFailObjective
             };
 
             List<string> nodeStrings = new List<string>
@@ -412,6 +415,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Ui: Radar Ping",
                 "Ui: Chat Text message",
                 "Ui: Show Mission Text",
+                "Ui: Add Objective",
+                "Ui: Complete Objective",
+                "Ui: Fail Objective"
             };
 
             AddChild(uiNodesList = new DropDownButtonWidget(Snw.ModData));

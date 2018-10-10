@@ -87,6 +87,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.TimerConnection:
                     Color = Color.LawnGreen;
                     break;
+                case ConnectionType.Objective:
+                    Color = Color.LawnGreen;
+                    break;
             }
         }
     }
@@ -183,6 +186,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.TimerConnection:
                     Color = Color.LawnGreen;
                     break;
+                case ConnectionType.Objective:
+                    Color = Color.LawnGreen;
+                    break;
             }
         }
     }
@@ -211,6 +217,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Repeatable,
 
         // Specific Connections
-        TimerConnection
+        TimerConnection,
+        Objective
     }
 }

@@ -129,6 +129,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 int.TryParse(node.ConnectionId.Replace("Con", ""), out c);
                 count = Math.Max(c, count);
             }
+
+            inConnectionCounter = count + 1;
         }
 
         List<OutConReference> ReferenceOutConnections()

@@ -237,6 +237,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new ArithmeticMathNode(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.UiCompleteObjective)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UiCompleteObjective)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UiNewObjective)
+                {
+                    var newNode = new UiObjectivesNode(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
             }
             return nodes;
         }
@@ -643,7 +658,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode = new ArithmecCompareNode(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));;
+                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Universal, newNode));
             }
             else if (nodeType == NodeType.DoMultiple)
@@ -653,7 +668,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode = new NodeWidget(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));;
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.CountNode)
@@ -662,7 +677,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode = new GetCountNode(nensw, nodeInfo);
 
-                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));;
+                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Integer, newNode));
             }
             else if (nodeType == NodeType.ArithmeticsMath)
@@ -671,9 +686,39 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode = new ArithmeticMathNode(nensw, nodeInfo);
 
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));;
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));;
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Integer, newNode));
+            }
+            else if (nodeType == NodeType.UiNewObjective)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new UiObjectivesNode(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Objective, newNode));
+            }
+            else if (nodeType == NodeType.UiCompleteObjective)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Objective, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+            }
+            else if (nodeType == NodeType.UIFailObjective)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Objective, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
             }
 
 
@@ -895,6 +940,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new ArithmeticMathNodeLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.UiNewObjective)
+                {
+                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UIFailObjective)
+                {
+                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.UiCompleteObjective)
+                {
+                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;
@@ -957,6 +1017,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         UiPlaySound,
         UiRadarPing,
         UiTextMessage,
-        UiAddMissionText
+        UiAddMissionText,
+        UiNewObjective,
+        UiCompleteObjective,
+        UIFailObjective
     }
 }

@@ -422,7 +422,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Damage,
         Speed,
         LocationX,
-        LocationY
+        LocationY,
+        Primary,
+        Secondary
     }
 
     public enum CompareMethode

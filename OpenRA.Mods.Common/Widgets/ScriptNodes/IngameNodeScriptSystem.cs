@@ -248,12 +248,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 node.ExecuteTick(self);
             }
 
-            if (ti > 1 && ti < 3)
+            if (ti == 3)
                 foreach (var logic in NodeLogics.Where(l => l.NodeType == NodeType.TriggerWorldLoaded))
                 {
                     logic.Execute(self.World);
                 }
-            else if (ti < 3)
+            if (ti < 4)
             {
                 ti++;
             }
