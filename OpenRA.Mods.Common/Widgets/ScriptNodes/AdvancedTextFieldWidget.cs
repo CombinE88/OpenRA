@@ -26,7 +26,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public string Text
         {
-            get { return text; }
+            get
+            {
+                return text;
+            }
 
             set
             {
@@ -47,7 +50,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public TextFieldType Type
         {
-            get { return type; }
+            get
+            {
+                return type;
+            }
 
             set
             {

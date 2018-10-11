@@ -424,7 +424,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         LocationX,
         LocationY,
         Primary,
-        Secondary
+        Secondary,
+        Owner,
+        Building,
+        Unit,
+        Aircraft,
+        ActorTypes
     }
 
     public enum CompareMethode
@@ -437,6 +442,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Substract,
         All,
         PleyerPlaying,
-        AliveActors
+        AliveActors,
+        Contains,
+        ContainsNot
     }
 }

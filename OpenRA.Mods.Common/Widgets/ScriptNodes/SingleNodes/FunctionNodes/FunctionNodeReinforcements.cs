@@ -52,7 +52,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 !InConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).In.ActorInfos.Any())
                 throw new YamlException(NodeId + "Reinforcement ActorGroup not connected or empty");
 
-
             if (InConnections.First(c => c.ConTyp == ConnectionType.CellPath).In == null ||
                 InConnections.First(c => c.ConTyp == ConnectionType.CellPath).In.CellArray == null ||
                 !InConnections.First(c => c.ConTyp == ConnectionType.CellPath).In.CellArray.Any())
@@ -74,7 +73,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     actors.ToArray(),
                     InConnections.First(c => c.ConTyp == ConnectionType.CellPath).In.CellArray.ToArray(),
                     inNumber != null ? inNumber.Number.Value : 25);
-
             }
 
             if (NodeType == NodeType.ReinforcementsWithTransport)
@@ -199,7 +197,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
             for (var i = 1; i < entryPath.Length; i++)
                 Move(transport, entryPath[i]);
-
 
             var aircraft = transport.TraitOrDefault<Aircraft>();
             if (aircraft != null)

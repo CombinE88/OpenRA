@@ -88,7 +88,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
             }
         }
 
-
         void ExecuteOnDeath(World world)
         {
             var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
@@ -102,6 +101,5 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 }
             }
         }
-
     }
 }

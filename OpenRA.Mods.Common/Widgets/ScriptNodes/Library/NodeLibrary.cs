@@ -252,11 +252,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new UiObjectivesNode(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.FindActorsOnFootprint)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.FinActorsInCircle)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.FilterActorGroup)
+                {
+                    var newNode = new FilterActorListByNode(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
             }
+
             return nodes;
         }
 
-        public NodeWidget AddNode(NodeType nodeType,NodeEditorNodeScreenWidget nensw, string nodeId = null, string nodeName = null)
+        public NodeWidget AddNode(NodeType nodeType, NodeEditorNodeScreenWidget nensw, string nodeId = null, string nodeName = null)
         {
             NodeWidget newNode = null;
 
@@ -720,7 +736,40 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Objective, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
             }
+            else if (nodeType == NodeType.FindActorsOnFootprint)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.CellArray, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+            }
+            else if (nodeType == NodeType.FinActorsInCircle)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.LocationRange, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+            }
+            else if (nodeType == NodeType.FilterActorGroup)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new FilterActorListByNode(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfoArray, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+            }
 
             return newNode;
         }
@@ -955,6 +1004,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new UiLogicUiSettings(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.FindActorsOnFootprint)
+                {
+                    var newNode = new GroupFindActorsLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.ActorQueueFindResources)
+                {
+                    var newNode = new GroupFindActorsLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.FilterActorGroup)
+                {
+                    var newNode = new FilterActorListByLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;
@@ -998,6 +1062,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         GroupActorGroup,
         GroupActorInfoGroup,
         TriggerOnAllKilled,
+        FinActorsInCircle,
+        FindActorsOnFootprint,
+        FilterActorGroup,
 
         // Arithmetic
         ArithmeticsAnd,

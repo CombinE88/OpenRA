@@ -210,7 +210,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         LocationRange,
         CellArray,
         CellPath,
-         Integer,
+        Integer,
         ActorList,
         String,
         StringArray,

@@ -30,8 +30,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         ButtonWidget addNodeButton;
 
-        // List<ButtonWidget> Buttons = new List<ButtonWidget>();
-
         [ObjectCreator.UseCtor]
         public NodeEditorBackgroundWidget(ScriptNodeWidget snw, WorldRenderer worldRenderer, World world)
         {
@@ -256,14 +254,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 NodeType.GroupPlayerGroup,
                 NodeType.GroupActorInfoGroup,
-                NodeType.GroupActorGroup
+                NodeType.GroupActorGroup,
+                NodeType.FinActorsInCircle,
+                NodeType.FindActorsOnFootprint,
+                NodeType.FilterActorGroup
             };
 
             List<string> groupNodeStrings = new List<string>
             {
                 "Group: Player Group",
                 "Group: Actor Info Group",
-                "Group: Actor Group"
+                "Group: Actor Group",
+                "Group: Find Actors in Circle",
+                "Group: Find Actors on Footprint",
+                "Group: Filter Actors in Group"
             };
 
             AddChild(groupNodesList = new DropDownButtonWidget(Snw.ModData));
@@ -395,7 +399,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddUiList()
         {
-            //  Group Nodes
             List<NodeType> nodeTypes = new List<NodeType>
             {
                 NodeType.UiPlayNotification,

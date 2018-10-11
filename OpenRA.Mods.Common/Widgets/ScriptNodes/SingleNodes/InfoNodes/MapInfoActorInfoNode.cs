@@ -28,17 +28,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             var ruleActors = Screen.Snw.World.Map.Rules.Actors.Values
                 .Where(a =>
                 {
-                    // Partial templates are not allowed
                     if (a.Name.Contains('^'))
                         return false;
 
-                    // Actor must have a preview associated with it
                     if (!a.HasTraitInfo<IRenderActorPreviewInfo>())
                         return false;
 
                     var editorData = a.TraitInfoOrDefault<EditorTilesetFilterInfo>();
 
-                    // Actor must be included in at least one category
                     if (editorData == null || editorData.Categories == null)
                         return false;
 
@@ -63,7 +60,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 var item = ScrollItemWidget.Setup(template, () => selectedActorInfo == option, () =>
                 {
                     selectedActorInfo = option;
-
 
                     playerSelection.Text = selectedActorInfo.TraitInfo<TooltipInfo>().Name + "(" + selectedActorInfo.Name + ")";
                     playerSelection.TextColor = Color.White;
@@ -98,7 +94,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             playerSelection.Text = selectedActorInfo.TraitInfo<TooltipInfo>().Name + "(" + selectedActorInfo.Name + ")";
             playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 51, FreeWidgetEntries.Width, 25);
             textField.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
-
 
             var td = new TypeDictionary();
             td.Add(new OwnerInit("Neutral"));

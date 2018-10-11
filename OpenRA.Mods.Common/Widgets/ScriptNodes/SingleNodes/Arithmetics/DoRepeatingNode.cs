@@ -39,6 +39,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                         inCon.Execute = true;
                 }
             }
+
             repeatwaiter = 5;
             repeat--;
         }

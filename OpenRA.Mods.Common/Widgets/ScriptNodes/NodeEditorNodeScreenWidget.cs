@@ -329,7 +329,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 CurrentBrush = NodeBrush.Drag;
             }
-
             else if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
             {
                 CurrentBrush = NodeBrush.Frame;

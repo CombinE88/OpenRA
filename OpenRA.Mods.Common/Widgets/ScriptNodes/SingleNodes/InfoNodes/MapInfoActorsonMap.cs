@@ -39,7 +39,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 button.Text = "Group: " + connection.ActorPrevs.Length;
         }
 
-
         public override void Tick()
         {
             base.Tick();

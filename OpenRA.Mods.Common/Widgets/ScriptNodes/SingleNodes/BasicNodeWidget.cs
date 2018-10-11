@@ -9,8 +9,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 {
     public class BasicNodeWidget : Widget
     {
-        public NodeEditorNodeScreenWidget Screen;
-
         // BAckground
         public readonly string BackgroundDrag = "button-highlighted";
         public readonly string BackgroundCross = "button";
@@ -18,6 +16,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public readonly string Background = "dialog";
         public readonly EditorViewportControllerWidget Editor;
+
+        public NodeEditorNodeScreenWidget Screen;
 
         // Node Coordiantions in the System
         public int GridPosX;
@@ -52,7 +52,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         // Selection
         public bool Selected;
-
 
         public string NodeName = "General Widget";
         public string NodeID;
@@ -221,9 +220,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 }
             }
 
-            // Debug
+            //// Debug
+
             WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height), Color.Brown);
-            // Outer
+            //// Outer
+
             if (Selected)
                 WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X - 1, WidgetBackground.Y - 1, WidgetBackground.Width + 2, WidgetBackground.Height + 2), Color.Blue);
 
@@ -233,7 +234,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             WidgetUtils.DrawPanel(BackgroundCross, DeleteButton);
             WidgetUtils.DrawPanel(BackgroundEntries, WidgetEntries);
 
-            //InconnectioNButtons
+            //// InconnectioNButtons
+
             WidgetUtils.FillRectWithColor(AddOutput, Color.DarkGray);
             Screen.Snw.FontRegular.DrawTextWithShadow("+", new float2(AddOutput.X + 2, AddOutput.Y + 2),
                 Color.White, Color.Black, 2);

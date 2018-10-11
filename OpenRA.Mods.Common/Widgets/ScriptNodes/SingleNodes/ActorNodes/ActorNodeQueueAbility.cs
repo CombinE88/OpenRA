@@ -85,9 +85,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                         Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Actor).In.Actor),
                         InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null,
                         InConnections.Last(c => c.ConTyp == ConnectionType.Repeatable).In != null,
-                        InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null
-                            ? InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In.Number ?? 0
-                            : 0));
+                        InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null ? InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In.Number ?? 0 : 0));
 
                 if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
                     && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
@@ -99,9 +97,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                                 Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Actor).In.Actor),
                                 InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null,
                                 InConnections.Last(c => c.ConTyp == ConnectionType.Repeatable).In != null,
-                                InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null
-                                    ? InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In.Number ?? 0
-                                    : 0));
+                                InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null ? InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In.Number ?? 0 : 0));
                     }
             }
             else if (NodeInfo.NodeType == NodeType.ActorQueueHunt)

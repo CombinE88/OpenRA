@@ -624,7 +624,9 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\BasicNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionCreateEffectNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionNodeReinforcements.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\FilterActorListByNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupActorGroup.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupFindActors.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupPlayerGroup.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorInfoNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorsonMap.cs" />

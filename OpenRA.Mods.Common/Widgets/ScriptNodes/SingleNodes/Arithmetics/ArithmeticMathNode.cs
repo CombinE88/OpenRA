@@ -62,7 +62,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
         }
     }
 
-
     public class ArithmeticMathNodeLogic : NodeLogic
     {
         public ArithmeticMathNodeLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
@@ -79,7 +78,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
             var incon1 = InConnections.First(c => c.ConTyp == ConnectionType.Integer).In;
             var incon2 = InConnections.Last(c => c.ConTyp == ConnectionType.Integer).In;
             var outcon = OutConnections.First(c => c.ConTyp == ConnectionType.Integer);
-
 
             if (incon1 == null || incon2 == null)
                 return;

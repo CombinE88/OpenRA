@@ -215,7 +215,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 var referenceNode = Screen.Nodes.FirstOrDefault(n => n.NodeID == conRef.WidgetReferenceId);
                 var referenceConnection = referenceNode != null ? referenceNode.OutConnections.FirstOrDefault(c => c.ConnectionId == conRef.WidgetNodeReference) : null;
                 connection.In = referenceConnection ?? null;
-                // connection.In = Screen.Nodes.First(bsw => bsw.NodeID == conRef.WidgetReferenceId).OutConnections.First(oc => oc.ConnectionId == conRef.WidgetNodeReference);
 
                 readyOutCons.Add(connection);
             }
@@ -340,7 +339,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 connection.In = referenceConnection ?? null;
                 if (referenceConnection != null)
                     connection.In.Logic = referenceConnection.Logic ?? null;
-                // connection.In = Screen.Nodes.First(bsw => bsw.NodeID == conRef.WidgetReferenceId).OutConnections.First(oc => oc.ConnectionId == conRef.WidgetNodeReference);
 
                 readyOutCons.Add(connection);
             }

@@ -61,7 +61,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 }
             };
 
-            world.AddFrameEndTask(w => w.Add(new DelayedAction(0,actorAction)));
+            world.AddFrameEndTask(w => w.Add(new DelayedAction(0, actorAction)));
         }
     }
 }

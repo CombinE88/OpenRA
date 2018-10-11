@@ -85,7 +85,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                             integ++;
                         else if (Methode == CompareMethode.All)
                             integ++;
-
                 }
 
                 outcon.Number = integ;

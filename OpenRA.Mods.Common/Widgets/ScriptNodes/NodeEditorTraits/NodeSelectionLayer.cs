@@ -174,14 +174,8 @@ namespace OpenRA.Mods.Common.Traits
                 for (int i = 0; i < 32; i++)
                 {
                     floats.Add(new float3(
-                        (float)Math.Cos(Math.PI / 180 * 360 / 32 * i) *
-                        yetCursorPosition.Length / self.World.Map.Grid.TileSize.Width +
-                        CellRegion.First().X * self.World.Map.Grid.TileSize.Width +
-                        self.World.Map.Grid.TileSize.Width / 2,
-                        (float)Math.Sin(Math.PI / 180 * 360 / 32 * i) *
-                        yetCursorPosition.Length / self.World.Map.Grid.TileSize.Height +
-                        CellRegion.First().Y * self.World.Map.Grid.TileSize.Height +
-                        self.World.Map.Grid.TileSize.Height / 2,
+                        (float)Math.Cos(Math.PI / 180 * 360 / 32 * i) * yetCursorPosition.Length / self.World.Map.Grid.TileSize.Width + CellRegion.First().X * self.World.Map.Grid.TileSize.Width + self.World.Map.Grid.TileSize.Width / 2,
+                        (float)Math.Sin(Math.PI / 180 * 360 / 32 * i) * yetCursorPosition.Length / self.World.Map.Grid.TileSize.Height + CellRegion.First().Y * self.World.Map.Grid.TileSize.Height + self.World.Map.Grid.TileSize.Height / 2,
                         1f));
                 }
 

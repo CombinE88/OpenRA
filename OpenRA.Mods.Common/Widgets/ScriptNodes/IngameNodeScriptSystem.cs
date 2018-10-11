@@ -253,6 +253,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {
                     logic.Execute(self.World);
                 }
+
             if (ti < 4)
             {
                 ti++;
