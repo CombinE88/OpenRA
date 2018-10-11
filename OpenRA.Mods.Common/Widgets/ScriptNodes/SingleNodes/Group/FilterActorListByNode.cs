@@ -24,7 +24,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 CompareMethode.ContainsNot
             };
 
-            selectedMethode = Methode;
+            selectedMethode = Methode.Value;
             methodeSelection = new DropDownButtonWidget(Screen.Snw.ModData);
 
             Func<CompareMethode, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
@@ -57,7 +57,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 CompareItem.ActorTypes
             };
 
-            selectedItem = Item;
+            selectedItem = Item.Value;
             itemSelection = new DropDownButtonWidget(Screen.Snw.ModData);
 
             Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>

@@ -21,7 +21,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 CompareMethode.AliveActors
             };
 
-            selectedMethode = Methode;
+            selectedMethode = Methode.Value;
             methodeSelection = new DropDownButtonWidget(Screen.Snw.ModData);
 
             Func<CompareMethode, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>

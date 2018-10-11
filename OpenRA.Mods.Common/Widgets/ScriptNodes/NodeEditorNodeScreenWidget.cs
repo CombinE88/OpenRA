@@ -249,8 +249,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override bool HandleMouseInput(MouseInput mi)
         {
-            if (RenderBounds.Contains(mi.Location) && mi.Event == MouseInputEvent.Down)
+            if (EventBounds.Contains(mi.Location) && mi.Event == MouseInputEvent.Down)
                 TakeKeyboardFocus();
+
             if (!RenderBounds.Contains(mi.Location) && CurrentBrush == NodeBrush.Free)
             {
                 CurrentBrush = NodeBrush.Free;

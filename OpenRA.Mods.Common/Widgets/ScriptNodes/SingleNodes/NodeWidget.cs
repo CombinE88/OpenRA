@@ -12,8 +12,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
     {
         int inConnectionCounter = 1;
         int outConnectionCounter = 1;
-        public CompareMethode Methode;
-        public CompareItem Item;
+        public CompareMethode? Methode = null;
+        public CompareItem? Item = null;
 
         public NodeWidget(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen)
         {

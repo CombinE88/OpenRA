@@ -34,7 +34,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                 CompareItem.Secondary
             };
 
-            selectedMethode = Item;
+            selectedMethode = Item.Value;
             methodeSelection = new DropDownButtonWidget(Screen.Snw.ModData);
 
             Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>

@@ -205,7 +205,6 @@ Container@EDITOR_ROOT:
 		Container@WORLD_ROOT:
 		Container@MENU_ROOT:
 		TooltipContainer@TOOLTIP_CONTAINER:
-		ScriptNode:
 
 Container@EDITOR_WORLD_ROOT:
 	Logic: LoadIngamePerfLogic, MapEditorLogic
@@ -239,6 +238,7 @@ Container@EDITOR_WORLD_ROOT:
 			BookmarkSaveKeyPrefix: MapBookmarkSave
 			BookmarkRestoreKeyPrefix: MapBookmarkRestore
 			BookmarkKeyCount: 4
+		ScriptNode:
 		Background@RADAR_BG:
 			X: WINDOW_RIGHT - 255
 			Y: 5
