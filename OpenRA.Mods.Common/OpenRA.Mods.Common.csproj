@@ -38,7 +38,7 @@
   <ItemGroup>
     <Reference Include="FuzzyLogicLibrary">
       <HintPath>..\thirdparty\download\FuzzyLogicLibrary.dll</HintPath>
-      <Private>False</Private>
+      <Private>False</Privat
     </Reference>
     <Reference Include="rix0rrr.BeaconLib">
       <HintPath>..\thirdparty\download\rix0rrr.BeaconLib.dll</HintPath>
@@ -60,10 +60,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FastColoredTextBox-master\FastColoredTextBox\FastColoredTextBox.csproj">
-      <Project>{6dd14a85-ccfc-4774-bd26-0f5772512319}</Project>
-      <Name>FastColoredTextBox</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OpenRA.Game\OpenRA.Game.csproj">
       <Project>{0dfb103f-2962-400f-8c6d-e2c28ccba633}</Project>
       <Name>OpenRA.Game</Name>
