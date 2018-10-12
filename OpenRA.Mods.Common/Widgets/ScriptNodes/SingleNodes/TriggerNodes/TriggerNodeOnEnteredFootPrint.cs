@@ -14,12 +14,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
         }
     }
 
-    public class TriggerLogicEnteredFoodPrint : NodeLogic
+    public class TriggerLogicEnteredFootPrint : NodeLogic
     {
         bool triggerOnEnter;
         bool repeat;
 
-        public TriggerLogicEnteredFoodPrint(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public TriggerLogicEnteredFootPrint(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
         {
         }
 

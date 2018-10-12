@@ -429,7 +429,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Building,
         Unit,
         Aircraft,
-        ActorTypes
+        ActorTypes,
+        IsIdle
     }
 
     public enum CompareMethode

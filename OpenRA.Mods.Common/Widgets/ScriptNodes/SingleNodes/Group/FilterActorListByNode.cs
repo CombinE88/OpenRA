@@ -54,7 +54,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 CompareItem.Building,
                 CompareItem.Aircraft,
                 CompareItem.Unit,
-                CompareItem.ActorTypes
+                CompareItem.ActorTypes,
+                CompareItem.IsIdle
+
             };
 
             selectedItem = Item.Value;
@@ -160,6 +162,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => strngs.ActorInfos.Contains(c.Info)).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => !strngs.ActorInfos.Contains(c.Info)).ToArray();
+            }
+            else if (Item == CompareItem.IsIdle)
+            {
+                if (Methode == CompareMethode.Contains)
+                    actOut.ActorGroup = actIn.ActorGroup.Where(c => c.IsIdle).ToArray();
+                else
+                    actOut.ActorGroup = actIn.ActorGroup.Where(c => !c.IsIdle).ToArray();
             }
 
             if (actOut.ActorGroup.Any())

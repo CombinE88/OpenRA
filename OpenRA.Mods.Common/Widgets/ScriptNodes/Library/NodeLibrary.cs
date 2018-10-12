@@ -796,7 +796,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 }
                 else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredFootprint)
                 {
-                    var newNode = new TriggerLogicEnteredFoodPrint(nodeinfo, inss);
+                    var newNode = new TriggerLogicEnteredFootPrint(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
                 else if (nodeinfo.NodeType == NodeType.TriggerCreateTimer)
