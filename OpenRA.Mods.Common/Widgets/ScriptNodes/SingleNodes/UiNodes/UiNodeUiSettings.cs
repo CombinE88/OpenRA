@@ -125,7 +125,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     || InConnections.First(ic => ic.ConTyp == ConnectionType.Location).In.Location == null)
                     throw new YamlException(NodeId + "Ui Location not connected");
 
-                var radarPing = new RadarPing(() => true,
+                new RadarPing(() => true,
                     world.Map.CenterOfCell(InConnections.First(ic => ic.ConTyp == ConnectionType.Location).In.Location.Value),
                     Color.White,
                     25,

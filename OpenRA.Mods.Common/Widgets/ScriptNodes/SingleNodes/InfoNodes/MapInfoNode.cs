@@ -116,13 +116,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 wid.OnClick = () =>
                 {
                     Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Single, connection, Editor, Screen.Snw.WorldRenderer,
-                        () => { wid.Text = "Cell: " + connection.Location.ToString(); }));
+                        () => { wid.Text = "Cell: " + connection.Location; }));
                 };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
 
                 if (connection.Location != null)
-                    wid.Text = "Cell: " + connection.Location.ToString();
+                    wid.Text = "Cell: " + connection.Location;
             }
             else if (connection.ConTyp == ConnectionType.CellPath)
             {
@@ -130,13 +130,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 wid.OnClick = () =>
                 {
                     Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Path, connection, Editor, Screen.Snw.WorldRenderer,
-                        () => { wid.Text = "Path: " + connection.CellArray.Count().ToString(); }));
+                        () => { wid.Text = "Path: " + connection.CellArray.Count; }));
                 };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
 
                 if (connection.CellArray.Any())
-                    wid.Text = "Path: " + connection.CellArray.Count().ToString();
+                    wid.Text = "Path: " + connection.CellArray.Count;
             }
             else if (connection.ConTyp == ConnectionType.CellArray)
             {
@@ -158,13 +158,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 wid.OnClick = () =>
                 {
                     Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Range, connection, Editor, Screen.Snw.WorldRenderer,
-                        () => { wid.Text = "Cell: " + connection.Location.ToString() + " | " + connection.Number; }));
+                        () => { wid.Text = "Cell: " + connection.Location + " | " + connection.Number; }));
                 };
                 AddChild(wid);
                 parralelWidgetList.Add(wid);
 
                 if (connection.Location != null && connection.Number != null)
-                    wid.Text = "Cell: " + connection.Location.ToString() + " | " + connection.Number;
+                    wid.Text = "Cell: " + connection.Location + " | " + connection.Number;
             }
             else if (connection.ConTyp == ConnectionType.Player)
             {

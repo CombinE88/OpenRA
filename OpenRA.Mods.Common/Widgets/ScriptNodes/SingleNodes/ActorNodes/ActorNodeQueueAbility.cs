@@ -125,15 +125,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
             }
             else if (NodeInfo.NodeType == NodeType.ActorQueueAttackMoveActivity)
             {
-                if (InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Location).In == null)
+                var conn = InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Location);
+                if (conn.In == null)
                     throw new YamlException(NodeId + "Queue Activity AttackMove Location not connected");
 
-                if (InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Location).In.Location == null)
+                if (conn.In.Location == null)
                     return;
 
                 if (actor != null && !actor.IsDead && actor.IsInWorld)
                     actor.QueueActivity(new AttackMoveActivity(actor,
-                        new Move(actor, InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Location).In.Location.Value, WDist.FromCells(2))));
+                        new Move(actor, conn.In.Location.Value, WDist.FromCells(2))));
 
                 if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
                     && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
@@ -142,7 +143,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     {
                         if (!actors.IsDead && actors.IsInWorld)
                             actors.QueueActivity(new AttackMoveActivity(actors,
-                                new Move(actors, InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Location).In.Location.Value, WDist.FromCells(2))));
+                                new Move(actors, conn.In.Location.Value, WDist.FromCells(2))));
                     }
             }
             else if (NodeInfo.NodeType == NodeType.ActorQueueSell)

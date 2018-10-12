@@ -234,7 +234,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public List<MiniYamlNode> SaveEntries(NodeInfo nodeInfo)
         {
             var nodes = new List<MiniYamlNode>();
-            nodes.Add(new MiniYamlNode("Pos", nodeInfo.OffsetPosX.ToString() + "," + nodeInfo.OffsetPosY.ToString()));
+            nodes.Add(new MiniYamlNode("Pos", nodeInfo.OffsetPosX + "," + nodeInfo.OffsetPosY));
 
             if (nodeInfo.Methode != null)
                 nodes.Add(new MiniYamlNode("Methode", nodeInfo.Methode.ToString()));

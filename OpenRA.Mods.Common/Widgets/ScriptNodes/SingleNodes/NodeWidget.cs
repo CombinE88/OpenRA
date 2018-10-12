@@ -56,7 +56,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public void AddOutConnection(OutConnection connection)
         {
-            connection.ConnectionId = "Con" + outConnectionCounter.ToString();
+            connection.ConnectionId = "Con" + outConnectionCounter;
             outConnectionCounter++;
 
             SetEmptyOutConnection(connection);
@@ -66,7 +66,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public void AddInConnection(InConnection connection)
         {
-            connection.ConnectionId = "Con" + inConnectionCounter.ToString();
+            connection.ConnectionId = "Con" + inConnectionCounter;
             inConnectionCounter++;
 
             SetEmptyInConnection(connection);
