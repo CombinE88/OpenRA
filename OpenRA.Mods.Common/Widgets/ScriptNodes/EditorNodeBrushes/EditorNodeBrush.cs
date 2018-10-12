@@ -11,7 +11,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
 {
     public class EditorNodeBrushBrush : IEditorBrush
     {
-        readonly Map map;
         readonly EditorViewportControllerWidget editorWidget;
         readonly EditorActorLayer editorLayer;
         public List<EditorActorPreview> Actor = new List<EditorActorPreview>();
@@ -28,8 +27,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             outCon = outConnection;
             worldRenderer = wr;
             this.editorWidget = editorWidget;
-
-            map = wr.World.Map;
 
             nodeSelectionLayer = wr.World.WorldActor.Trait<NodeSelectionLayer>();
             editorLayer = wr.World.WorldActor.Trait<EditorActorLayer>();

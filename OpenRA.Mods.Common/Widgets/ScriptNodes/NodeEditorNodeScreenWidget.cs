@@ -41,7 +41,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         // Coordinates of the Center
         string text;
-        int2 textsize;
 
         public NodeBrush CurrentBrush { get; private set; }
         Tuple<Rectangle, OutConnection> brushItem = null;
@@ -450,7 +449,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public override void Draw()
         {
             text = "X: " + CenterCoordinates.X + " Y: " + CenterCoordinates.Y;
-            textsize = Snw.FontRegular.Measure(text);
             WidgetUtils.DrawPanel(Background, new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
             Snw.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
                 Color.White, Color.Black, 1);
