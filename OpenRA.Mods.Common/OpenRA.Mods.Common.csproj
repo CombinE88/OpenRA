@@ -38,7 +38,7 @@
   <ItemGroup>
     <Reference Include="FuzzyLogicLibrary">
       <HintPath>..\thirdparty\download\FuzzyLogicLibrary.dll</HintPath>
-      <Private>False</Privat
+      <Private>False</Private>
     </Reference>
     <Reference Include="rix0rrr.BeaconLib">
       <HintPath>..\thirdparty\download\rix0rrr.BeaconLib.dll</HintPath>
