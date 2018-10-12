@@ -80,12 +80,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 if (InConnections.LastOrDefault(c => c.ConTyp == ConnectionType.Actor).In == null)
                     throw new YamlException(NodeId + "Queue Activity Attack Target Actor not connected");
 
+                var first = InConnections.First(c => c.ConTyp == ConnectionType.Repeatable);
+                var last = InConnections.Last(c => c.ConTyp == ConnectionType.Repeatable);
+
                 if (actor != null && !actor.IsDead && actor.IsInWorld)
                     actor.QueueActivity(new Attack(actor,
                         Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Actor).In.Actor),
-                        InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null,
-                        InConnections.Last(c => c.ConTyp == ConnectionType.Repeatable).In != null,
-                        InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null ? InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In.Number ?? 0 : 0));
+                        first.In != null, last.In != null, first.In != null ? first.In.Number ?? 0 : 0));
 
                 if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
                     && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
@@ -95,9 +96,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                         if (!actors.IsDead && actors.IsInWorld)
                             actors.QueueActivity(new Attack(actors,
                                 Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Actor).In.Actor),
-                                InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null,
-                                InConnections.Last(c => c.ConTyp == ConnectionType.Repeatable).In != null,
-                                InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In != null ? InConnections.First(c => c.ConTyp == ConnectionType.Repeatable).In.Number ?? 0 : 0));
+                                first.In != null, last.In != null, first.In != null ? first.In.Number ?? 0 : 0));
                     }
             }
             else if (NodeInfo.NodeType == NodeType.ActorQueueHunt)

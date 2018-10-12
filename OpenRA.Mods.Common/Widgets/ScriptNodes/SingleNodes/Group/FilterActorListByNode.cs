@@ -56,7 +56,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 CompareItem.Unit,
                 CompareItem.ActorTypes,
                 CompareItem.IsIdle
-
             };
 
             selectedItem = Item.Value;
