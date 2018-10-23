@@ -32,7 +32,7 @@ namespace OpenRA.Mods.Common.Traits
 	public class EditorActorLayer : IWorldLoaded, ITickRender, IRender, IRadarSignature, ICreatePlayers
 	{
 		readonly EditorActorLayerInfo info;
-		readonly List<EditorActorPreview> previews = new List<EditorActorPreview>();
+		public readonly List<EditorActorPreview> Previews = new List<EditorActorPreview>();
 		readonly Dictionary<CPos, List<EditorActorPreview>> cellMap = new Dictionary<CPos, List<EditorActorPreview>>();
 
 		SpatiallyPartitioned<EditorActorPreview> screenMap;
@@ -75,7 +75,7 @@ namespace OpenRA.Mods.Common.Traits
 				Add(kv.Key, new ActorReference(kv.Value.Value, kv.Value.ToDictionary()), true);
 
 			// Update neighbours in one pass
-			foreach (var p in previews)
+			foreach (var p in Previews)
 				UpdateNeighbours(p.Footprint);
 		}
 
@@ -84,7 +84,7 @@ namespace OpenRA.Mods.Common.Traits
 			if (wr.World.Type != WorldType.Editor)
 				return;
 
-			foreach (var p in previews)
+			foreach (var p in Previews)
 				p.Tick();
 		}
 
@@ -111,7 +111,7 @@ namespace OpenRA.Mods.Common.Traits
 			var owner = Players.Players[reference.InitDict.Get<OwnerInit>().PlayerName];
 
 			var preview = new EditorActorPreview(worldRenderer, id, reference, owner);
-			previews.Add(preview);
+			Previews.Add(preview);
 
 			if (!preview.Bounds.IsEmpty)
 				screenMap.Add(preview, preview.Bounds);
@@ -141,7 +141,7 @@ namespace OpenRA.Mods.Common.Traits
 
 		public void Remove(EditorActorPreview preview, bool undo = false)
 		{
-			previews.Remove(preview);
+			Previews.Remove(preview);
 			screenMap.Remove(preview);
 
 			foreach (var kv in preview.Footprint)
@@ -178,7 +178,7 @@ namespace OpenRA.Mods.Common.Traits
 
 		void SyncMultiplayerCount()
 		{
-			var newCount = previews.Count(p => p.Info.Name == "mpspawn");
+			var newCount = Previews.Count(p => p.Info.Name == "mpspawn");
 			var mp = Players.Players.Where(p => p.Key.StartsWith("Multi")).ToList();
 			foreach (var kv in mp)
 			{
@@ -265,10 +265,10 @@ namespace OpenRA.Mods.Common.Traits
 
 		string NextActorName()
 		{
-			var id = previews.Count();
+			var id = Previews.Count();
 			var possibleName = "Actor" + id.ToString();
 
-			while (previews.Any(p => p.ID == possibleName))
+			while (Previews.Any(p => p.ID == possibleName))
 			{
 				id++;
 				possibleName = "Actor" + id.ToString();
@@ -280,7 +280,7 @@ namespace OpenRA.Mods.Common.Traits
 		public List<MiniYamlNode> Save()
 		{
 			var nodes = new List<MiniYamlNode>();
-			foreach (var a in previews)
+			foreach (var a in Previews)
 				nodes.Add(new MiniYamlNode(a.ID, a.Save()));
 
 			return nodes;

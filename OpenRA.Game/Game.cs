@@ -258,6 +258,10 @@ namespace OpenRA
 
 		static void Initialize(Arguments args)
 		{
+			var supportDirArg = args.GetValue("Engine.SupportDir", null);
+			if (supportDirArg != null)
+				Platform.OverrideSupportDir(supportDirArg);
+
 			Console.WriteLine("Platform is {0}", Platform.CurrentPlatform);
 
 			// Load the engine version as early as possible so it can be written to exception logs
@@ -290,7 +294,6 @@ namespace OpenRA
 			Log.AddChannel("sound", "sound.log");
 			Log.AddChannel("graphics", "graphics.log");
 			Log.AddChannel("geoip", "geoip.log");
-			Log.AddChannel("irc", "irc.log");
 			Log.AddChannel("nat", "nat.log");
 
 			var platforms = new[] { Settings.Game.Platform, "Default", null };

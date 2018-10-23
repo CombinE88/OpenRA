@@ -14,6 +14,7 @@ using System.Linq;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Scripting;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes;
 using OpenRA.Traits;
 using OpenRA.Widgets;
 
@@ -97,7 +98,7 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 					var iop = world.WorldActor.TraitsImplementing<IObjectivesPanel>().FirstOrDefault();
 					var exitDelay = iop != null ? iop.ExitDelay : 0;
 
-					if (world.IsReplay || world.LobbyInfo.NonBotClients.Count() == 1)
+					if (world.LobbyInfo.NonBotClients.Count() == 1)
 					{
 						restartAction = () =>
 						{
@@ -167,13 +168,15 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			{
 				hideMenu = true;
 				var editorActorLayer = world.WorldActor.Trait<EditorActorLayer>();
+				var editorNodeLayer = world.WorldActor.Trait<EditorNodeLayer>();
 				Ui.OpenWindow("SAVE_MAP_PANEL", new WidgetArgs()
 				{
 					{ "onSave", (Action<string>)(_ => hideMenu = false) },
 					{ "onExit", () => hideMenu = false },
 					{ "map", world.Map },
 					{ "playerDefinitions", editorActorLayer.Players.ToMiniYaml() },
-					{ "actorDefinitions", editorActorLayer.Save() }
+					{ "actorDefinitions", editorActorLayer.Save() },
+					{ "nodeDefinitions", editorNodeLayer.Save() }
 				});
 			};
 

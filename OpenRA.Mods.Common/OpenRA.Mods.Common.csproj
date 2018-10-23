@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -23,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
@@ -34,7 +33,6 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
@@ -309,9 +307,9 @@
     <Compile Include="Traits\Buildings\RallyPoint.cs" />
     <Compile Include="Traits\Buildings\Refinery.cs" />
     <Compile Include="Traits\Buildings\RepairableBuilding.cs" />
-    <Compile Include="Traits\Buildings\RepairsUnits.cs" />
     <Compile Include="Traits\Buildings\RequiresBuildableArea.cs" />
     <Compile Include="Traits\Buildings\Reservable.cs" />
+    <Compile Include="Traits\RepairsUnits.cs" />
     <Compile Include="Traits\Burns.cs" />
     <Compile Include="Traits\ChangesTerrain.cs" />
     <Compile Include="Traits\CommandBarBlacklist.cs" />
@@ -606,6 +604,44 @@
     <Compile Include="UtilityCommands\PngSheetImportMetadataCommand.cs" />
     <Compile Include="Widgets\Logic\MusicHotkeyLogic.cs" />
     <Compile Include="Widgets\Logic\SculptDesignerLogic.cs" />
+    <Compile Include="Widgets\ScriptNodes\AdvancedTextFieldWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\Connections.cs" />
+    <Compile Include="Widgets\ScriptNodes\EditorNodeBrushes\EditorNodeBrush.cs" />
+    <Compile Include="Widgets\ScriptNodes\IngameNodeScriptSystem.cs" />
+    <Compile Include="Widgets\ScriptNodes\Library\NodeLibrary.cs" />
+    <Compile Include="Widgets\ScriptNodes\NodeEditorBackgroundWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\NodeEditorNodeScreenWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\NodeEditorTraits\NodeSelectionLayer.cs" />
+    <Compile Include="Widgets\ScriptNodes\EditorNodeLayer.cs" />
+    <Compile Include="Widgets\ScriptNodes\ShowWidgetsButton.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeCreateActor.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeQueueAbility.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\GetActorInformationsNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\ArithmecCompareNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\ArithmeticBasicNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\ArithmeticMathNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\DoRepeatingNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Arithmetics\GetCountNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\BasicNodeWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionCreateEffectNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionNodeReinforcements.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\FilterActorListByNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupActorGroup.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupFindActors.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupPlayerGroup.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorInfoNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorsonMap.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\ScriptNodeWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeCreateTimer.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\NodeWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeOnEnteredFootPrint.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeOnEnteredRange.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeTick.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeWorldLoaded.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerOnIdle.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerOnKilled.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\UiNodeUiSettings.cs" />
     <Compile Include="WorldExtensions.cs" />
     <Compile Include="UtilityCommands\GetMapHashCommand.cs" />
     <Compile Include="UtilityCommands\Glob.cs" />
@@ -902,24 +938,24 @@
     <Compile Include="UpdateRules\Rules\20171014\ScaleSupportPowerSecondsToTicks.cs" />
     <Compile Include="UpdateRules\Rules\20171014\WarnAboutInfiltrateForTypes.cs" />
     <Compile Include="UpdateRules\Rules\20171014\RenameBurstDelay.cs" />
-    <Compile Include="UpdateRules\Rules\RemoveTerrainTypeIsWaterFlag.cs" />
-    <Compile Include="UpdateRules\Rules\RemoveWeaponScanRadius.cs" />
-    <Compile Include="UpdateRules\Rules\DefineSoundDefaults.cs" />
-    <Compile Include="UpdateRules\Rules\DefineSquadExcludeHarvester.cs" />
-    <Compile Include="UpdateRules\Rules\SplitAimAnimations.cs" />
-    <Compile Include="UpdateRules\Rules\RenameWormSpawner.cs" />
-    <Compile Include="UpdateRules\Rules\RemoveWithReloadingSpriteTurret.cs" />
-    <Compile Include="UpdateRules\Rules\RemovePaletteFromCurrentTileset.cs" />
-    <Compile Include="UpdateRules\Rules\DefineLocomotors.cs" />
-    <Compile Include="UpdateRules\Rules\DefineGroundCorpseDefault.cs" />
-    <Compile Include="UpdateRules\Rules\DefineOwnerLostAction.cs" />
-    <Compile Include="UpdateRules\Rules\RenameEmitInfantryOnSell.cs" />
-    <Compile Include="UpdateRules\Rules\SplitRepairDecoration.cs" />
-    <Compile Include="UpdateRules\Rules\MoveHackyAISupportPowerDecisions.cs" />
-    <Compile Include="UpdateRules\Rules\ChangeIntensityToDuration.cs" />
-    <Compile Include="UpdateRules\Rules\AddShakeToBridge.cs" />
-    <Compile Include="UpdateRules\Rules\IgnoreAbstractActors.cs" />
-    <Compile Include="UpdateRules\Rules\RemoveCanUndeployFromGrantConditionOnDeploy.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\RemoveTerrainTypeIsWaterFlag.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\RemoveWeaponScanRadius.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\DefineSoundDefaults.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\DefineSquadExcludeHarvester.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\SplitAimAnimations.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\RenameWormSpawner.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\RemoveWithReloadingSpriteTurret.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\RemovePaletteFromCurrentTileset.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\DefineLocomotors.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\DefineGroundCorpseDefault.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\DefineOwnerLostAction.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\RenameEmitInfantryOnSell.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\SplitRepairDecoration.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\MoveHackyAISupportPowerDecisions.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\ChangeIntensityToDuration.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\AddShakeToBridge.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\IgnoreAbstractActors.cs" />
+    <Compile Include="UpdateRules\Rules\20180307\RemoveCanUndeployFromGrantConditionOnDeploy.cs" />
     <Compile Include="Traits\Player\PlayerResources.cs" />
     <Compile Include="UtilityCommands\DumpSequenceSheetsCommand.cs" />
     <Compile Include="Traits\Render\WithBuildingRepairDecoration.cs" />
@@ -930,22 +966,14 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
-    <MakeDir Directories="$(SolutionDir)mods/common/"/>
-    <Copy
-      SourceFiles="$(TargetPath)"
-      DestinationFolder="$(SolutionDir)mods/common/"/>
+    <MakeDir Directories="$(SolutionDir)mods/common/" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)mods/common/" />
     <!--
       csc generates .pdb symbol files (not `.dll.pdb`).
       mcs generates .dll.mdb symbol files.
     -->
-    <Copy
-      SourceFiles="$(TargetDir)$(TargetName).pdb"
-      DestinationFolder="$(SolutionDir)mods/common/"
-      Condition="Exists('$(TargetDir)$(TargetName).pdb')"/>
-    <Copy
-      SourceFiles="$(TargetPath).mdb"
-      DestinationFolder="$(SolutionDir)mods/common/"
-      Condition="Exists('$(TargetPath).mdb')"/>
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(SolutionDir)mods/common/" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+    <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(SolutionDir)mods/common/" Condition="Exists('$(TargetPath).mdb')" />
     <!-- Uncomment these lines when debugging or adding to this target
     <Message Text="DEBUG OS:                     $(OS)"/>
     <Message Text="DEBUG SolutionDir:            $(SolutionDir)"/>
