@@ -55,7 +55,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
     public class TriggerOnAllKilled : NodeLogic
     {
-        List<List<Actor>> actors = new List<List<Actor>>();
+        List<Actor> actors = new List<Actor>();
 
         public TriggerOnAllKilled(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
         {
@@ -63,26 +63,26 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Execute(World world)
         {
-            var inCon = InConnections.First(ic => ic.ConTyp == ConnectionType.ActorList);
+            var inCon = InConnections.First(ic => ic.ConTyp == ConnectionType.Actor);
 
             if (inCon.In == null)
                 throw new YamlException(NodeId + ": Actor not connected");
 
-            if (inCon.In.ActorGroup.Any(a => !a.IsDead) && inCon.In.Actor.IsInWorld)
-                actors.Add(inCon.In.ActorGroup.ToList());
+            if (inCon.In.Actor != null && !inCon.In.Actor.IsDead && inCon.In.Actor.IsInWorld)
+                actors.Add(inCon.In.Actor);
         }
 
         public override void Tick(Actor self)
         {
             if (actors.Any())
             {
-                var group = actors.ToList();
-                foreach (var list in group)
+                var list2 = actors.ToArray();
+                foreach (var actor in list2)
                 {
-                    if (list.Count(a => !a.IsDead && a.IsInWorld) < 1)
+                    if (actor.IsDead || !actor.IsInWorld)
                     {
                         ExecuteOnDeath(self.World);
-                        actors.Remove(list);
+                        actors.Remove(actor);
                     }
                 }
             }
