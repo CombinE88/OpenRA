@@ -39,12 +39,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     if (editorData == null || editorData.Categories == null)
                         return false;
 
-                    if (a.TraitInfoOrDefault<TooltipInfo>() == null)
+                    if (!a.TraitInfos<TooltipInfo>().Any())
                         return false;
 
                     return true;
                 })
-                .OrderBy(a => a.TraitInfo<TooltipInfo>().Name);
+                .OrderBy(a => a.TraitInfos<TooltipInfo>().First().Name);
 
             var choosenActors = ruleActors.ToList();
 
@@ -61,7 +61,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 {
                     selectedActorInfo = option;
 
-                    playerSelection.Text = selectedActorInfo.TraitInfo<TooltipInfo>().Name + "(" + selectedActorInfo.Name + ")";
+                    playerSelection.Text = selectedActorInfo.TraitInfos<TooltipInfo>().First().Name + "(" + selectedActorInfo.Name + ")";
                     playerSelection.TextColor = Color.White;
 
                     OutConnections.First().ActorInfo = selectedActorInfo;
@@ -75,7 +75,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     preview.SetPreview(selectedActorInfo, td2);
                 });
 
-                item.Get<LabelWidget>("LABEL").GetText = () => option.TraitInfo<TooltipInfo>().Name;
+                item.Get<LabelWidget>("LABEL").GetText = () => option.TraitInfos<TooltipInfo>().First().Name;
                 return item;
             };
 
@@ -85,13 +85,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             {
                 if (textField.Text != "")
                     choosenActors = ruleActors.Where(a =>
-                        a.TraitInfo<TooltipInfo>().Name.ToLowerInvariant().Contains(textField.Text.ToLowerInvariant()) ||
+                        a.TraitInfos<TooltipInfo>().First().Name.ToLowerInvariant().Contains(textField.Text.ToLowerInvariant()) ||
                         a.Name.ToLowerInvariant().Contains(textField.Text.ToLowerInvariant())).ToList();
                 else
                     choosenActors = ruleActors.ToList();
             };
 
-            playerSelection.Text = selectedActorInfo.TraitInfo<TooltipInfo>().Name + "(" + selectedActorInfo.Name + ")";
+            playerSelection.Text = selectedActorInfo.TraitInfos<TooltipInfo>().First().Name + "(" + selectedActorInfo.Name + ")";
             playerSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 51, FreeWidgetEntries.Width, 25);
             textField.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
 
@@ -110,7 +110,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             if (connection.ActorInfo != null)
             {
-                playerSelection.Text = connection.ActorInfo.TraitInfo<TooltipInfo>().Name + "(" + selectedActorInfo.Name + ")";
+                playerSelection.Text = connection.ActorInfo.TraitInfos<TooltipInfo>().First().Name + "(" + selectedActorInfo.Name + ")";
                 selectedActorInfo = connection.ActorInfo;
 
                 var td = new TypeDictionary();
