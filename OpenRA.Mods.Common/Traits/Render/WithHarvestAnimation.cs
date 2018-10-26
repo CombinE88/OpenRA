@@ -38,6 +38,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 
 		// TODO: Remove this once WithSpriteBody has its own replacement
 		public bool IsModifying;
+		public bool ChangeNot;
 
 		public WithHarvestAnimation(ActorInitializer init, WithHarvestAnimationInfo info)
 		{
@@ -60,6 +61,9 @@ namespace OpenRA.Mods.Common.Traits.Render
 
 		void ITick.Tick(Actor self)
 		{
+			if (ChangeNot)
+				return;
+
 			var isMoving = movement.IsMoving && !self.IsDead;
 
 			if (isMoving)
