@@ -1,19 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Dynamic;
 using System.Linq;
-using System.Reflection;
 using OpenRA.Graphics;
-using OpenRA.Mods.Common.Scripting;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -143,6 +134,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override bool HandleKeyPress(KeyInput e)
         {
+            if (!HasKeyboardFocus)
+                return false;
+
             if (!Visible)
                 return false;
 
@@ -248,7 +242,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override bool HandleMouseInput(MouseInput mi)
         {
-            if (EventBounds.Contains(mi.Location) && mi.Event == MouseInputEvent.Down)
+            if (RenderBounds.Contains(mi.Location) && mi.Event == MouseInputEvent.Down)
                 TakeKeyboardFocus();
 
             if (!RenderBounds.Contains(mi.Location) && CurrentBrush == NodeBrush.Free)

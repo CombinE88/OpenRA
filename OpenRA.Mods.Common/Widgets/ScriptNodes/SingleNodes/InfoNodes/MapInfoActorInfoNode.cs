@@ -42,6 +42,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     if (!a.TraitInfos<TooltipInfo>().Any())
                         return false;
 
+                    var tooltip = a.TraitInfos<TooltipInfo>().First();
+
+                    if (string.IsNullOrEmpty(tooltip.Name))
+                        return false;
+
                     return true;
                 })
                 .OrderBy(a => a.TraitInfos<TooltipInfo>().First().Name);
