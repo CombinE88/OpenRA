@@ -26,9 +26,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             Children.Add(NodeWidget = new NodeEditorBackgroundWidget(this, worldRenderer, world) { Visible = false });
         }
 
+        public override bool HandleTextInputOuter(string text)
+        {
+            return false;
+        }
+
         public override void Tick()
         {
-            Bounds = new Rectangle(0, 0, Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height);
+            if(NodeWidget.Visible)
+                Bounds = new Rectangle(0, 0, Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height);
+            else
+            {
+                Bounds = new Rectangle(0, 0, 0,0);
+            }
         }
     }
 }
