@@ -199,6 +199,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.TriggerOnEnteredRange,
                 NodeType.TriggerOnIdle,
                 NodeType.TriggerOnKilled,
+                NodeType.TriggerOnAllKilled,
                 NodeType.TimerStop,
                 NodeType.TimerStart,
                 NodeType.TimerReset
@@ -213,6 +214,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Trigger: On Entered Range",
                 "Trigger: On Actor Idle",
                 "Trigger: On Actor Killed",
+                "Trigger: On All Actors Killed",
                 "Timer: Stop Timer",
                 "Timer: Start Timer",
                 "Timer: Reset Timer"

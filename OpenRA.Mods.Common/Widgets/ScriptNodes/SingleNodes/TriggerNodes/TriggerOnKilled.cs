@@ -63,28 +63,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Execute(World world)
         {
-            var inCon = InConnections.First(ic => ic.ConTyp == ConnectionType.Actor);
+            var inCon = InConnections.First(ic => ic.ConTyp == ConnectionType.ActorList);
 
             if (inCon.In == null)
-                throw new YamlException(NodeId + ": Actor not connected");
+                throw new YamlException(NodeId + ": Actorlist not connected");
 
-            if (inCon.In.Actor != null && !inCon.In.Actor.IsDead && inCon.In.Actor.IsInWorld)
-                actors.Add(inCon.In.Actor);
+            if (inCon.In.ActorGroup != null && inCon.In.ActorGroup.Any())
+                foreach (var actor in inCon.In.ActorGroup)
+                {
+                    actors.Add(actor);
+                }
         }
 
         public override void Tick(Actor self)
         {
             if (actors.Any())
             {
-                var list2 = actors.ToArray();
-                foreach (var actor in list2)
-                {
-                    if (actor.IsDead || !actor.IsInWorld)
-                    {
-                        ExecuteOnDeath(self.World);
-                        actors.Remove(actor);
-                    }
-                }
+                if(actors.Any(a => !a.IsDead && a.IsInWorld))
+                    return;
+
+                actors = new List<Actor>();
+                ExecuteOnDeath(self.World);
             }
         }
 
