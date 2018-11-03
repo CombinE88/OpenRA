@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
@@ -267,6 +269,66 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new FilterActorListByNode(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.CheckCondition)
+                {
+                    var newNode = new CheckConditionNode(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CompareActor)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CompareNumber)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CompareActorInfo)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsAlive)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsDead)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsPlaying)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsBot)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsHumanPlayer)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsNoncombatant)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.HasWon)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.HasLost)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
                 else if (nodeinfo.NodeType == NodeType.UIFailObjective)
                 {
                     var newNode = new NodeWidget(nensw, nodeinfo);
@@ -471,6 +533,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorRemove)
             {
@@ -481,6 +544,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorChangeOwner)
             {
@@ -492,6 +556,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorQueueMove)
             {
@@ -505,6 +570,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorQueueAttack)
             {
@@ -517,6 +583,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorQueueHunt)
             {
@@ -528,6 +595,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorQueueAttackMoveActivity)
             {
@@ -539,6 +607,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorQueueSell)
             {
@@ -550,6 +619,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ActorQueueFindResources)
             {
@@ -560,6 +630,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.Reinforcements)
             {
@@ -600,6 +671,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.UiPlaySound)
             {
@@ -610,6 +682,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.UiRadarPing)
             {
@@ -619,6 +692,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.UiTextMessage)
             {
@@ -629,6 +703,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.UiAddMissionText)
             {
@@ -638,6 +713,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.ArithmeticsOr)
             {
@@ -671,6 +747,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.CompareActors)
             {
@@ -731,6 +808,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Objective, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.UIFailObjective)
             {
@@ -740,6 +818,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Objective, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
             else if (nodeType == NodeType.FindActorsOnFootprint)
             {
@@ -774,6 +853,119 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+            }
+            else if (nodeType == NodeType.CheckCondition)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new CheckConditionNode(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Condition, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+            }
+            else if (nodeType == NodeType.CompareActor)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.CompareActorInfo)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.IsAlive)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.IsDead)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.CompareNumber)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.IsPlaying)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.IsBot)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.IsHumanPlayer)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.IsNoncombatant)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.HasWon)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.HasLost)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
             }
 
             return newNode;
@@ -1024,6 +1216,66 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new FilterActorListByLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.CheckCondition)
+                {
+                    var newNode = new CheckConditionLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CompareActor)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CompareNumber)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.CompareActorInfo)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsAlive)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsDead)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsPlaying)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsBot)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsHumanPlayer)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.IsNoncombatant)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.HasWon)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.HasLost)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;
@@ -1092,6 +1344,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         UiAddMissionText,
         UiNewObjective,
         UiCompleteObjective,
-        UIFailObjective
+        UIFailObjective,
+
+        // Conditions
+        CheckCondition,
+        CompareActor,
+        CompareNumber,
+        CompareActorInfo,
+        IsAlive,
+        IsDead,
+        IsPlaying,
+        HasWon,
+        HasLost,
+        IsBot,
+        IsHumanPlayer,
+        IsNoncombatant
     }
 }

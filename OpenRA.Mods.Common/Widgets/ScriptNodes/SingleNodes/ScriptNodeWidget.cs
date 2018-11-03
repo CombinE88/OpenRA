@@ -33,11 +33,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public override void Tick()
         {
-            if(NodeWidget.Visible)
-            Bounds = new Rectangle(0, 0, Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height);
+            if (NodeWidget.Visible)
+                Bounds = new Rectangle(0, 0, Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height);
             else
             {
-                Bounds = new Rectangle(0, 0, 0,0);
+                Bounds = new Rectangle(0, 0, 0, 0);
             }
         }
     }
