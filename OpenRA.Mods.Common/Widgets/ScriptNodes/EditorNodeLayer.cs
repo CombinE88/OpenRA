@@ -445,6 +445,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         PleyerPlaying,
         AliveActors,
         Contains,
-        ContainsNot
+        ContainsNot,
+        True,
+        False
     }
 }

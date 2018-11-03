@@ -350,6 +350,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         {
         }
 
+        public virtual bool CheckCondition(World world)
+        {
+            return true;
+        }
+
         public virtual void DoAfterConnections()
         {
         }

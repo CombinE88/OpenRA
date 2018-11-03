@@ -79,7 +79,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
         {
             if (actors.Any())
             {
-                if(actors.Any(a => !a.IsDead))
+                if (actors.Any(a => !a.IsDead))
                     return;
 
                 actors = new List<Actor>();
