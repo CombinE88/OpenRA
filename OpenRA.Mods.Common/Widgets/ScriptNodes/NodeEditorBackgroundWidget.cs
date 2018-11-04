@@ -419,7 +419,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.UiAddMissionText,
                 NodeType.UiNewObjective,
                 NodeType.UiCompleteObjective,
-                NodeType.UIFailObjective
+                NodeType.UiFailObjective,
+                NodeType.SetCameraPosition,
+                NodeType.GlobalLightning
             };
 
             List<string> nodeStrings = new List<string>
@@ -431,7 +433,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Ui: Show Mission Text",
                 "Ui: Add Objective",
                 "Ui: Complete Objective",
-                "Ui: Fail Objective"
+                "Ui: Fail Objective",
+                "Camera: Set Position",
+                "Global Lightning: Change RGBA"
             };
 
             AddChild(uiNodesList = new DropDownButtonWidget(Snw.ModData));

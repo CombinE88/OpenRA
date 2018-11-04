@@ -329,6 +329,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.GlobalLightning)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.SetCameraPosition)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
             }
 
             return nodes;
@@ -806,7 +816,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
-            else if (nodeType == NodeType.UIFailObjective)
+            else if (nodeType == NodeType.UiFailObjective)
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
@@ -962,6 +972,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
+            else if (nodeType == NodeType.GlobalLightning)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+            }
+            else if (nodeType == NodeType.SetCameraPosition)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
             }
 
             return newNode;
@@ -1187,7 +1219,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new UiLogicUiSettings(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.UIFailObjective)
+                else if (nodeinfo.NodeType == NodeType.UiFailObjective)
                 {
                     var newNode = new UiLogicUiSettings(nodeinfo, inss);
                     nodeList.Add(newNode);
@@ -1272,6 +1304,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new ProvideCondition(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.GlobalLightning)
+                {
+                    var newNode = new ProvideCondition(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.SetCameraPosition)
+                {
+                    var newNode = new SetCameraPositionNode(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;
@@ -1340,7 +1382,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         UiAddMissionText,
         UiNewObjective,
         UiCompleteObjective,
-        UIFailObjective,
+        UiFailObjective,
+        GlobalLightning,
+        SetCameraPosition,
 
         // Conditions
         CheckCondition,
@@ -1354,6 +1398,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         HasLost,
         IsBot,
         IsHumanPlayer,
-        IsNoncombatant
+        IsNoncombatant,
     }
 }

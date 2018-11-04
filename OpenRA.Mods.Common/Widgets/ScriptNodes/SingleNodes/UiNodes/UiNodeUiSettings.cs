@@ -223,7 +223,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     }
                 }
             }
-            else if (NodeType == NodeType.UIFailObjective)
+            else if (NodeType == NodeType.UiFailObjective)
             {
                 var obj = InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Objective);
 
