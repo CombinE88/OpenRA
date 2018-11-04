@@ -38,7 +38,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             set = true;
         }
 
-        public void TickRender(WorldRenderer wr, Actor self)
+        void ITickRender.TickRender(WorldRenderer wr, Actor self)
         {
             if (set)
             {

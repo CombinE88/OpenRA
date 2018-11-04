@@ -329,7 +329,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.UIFailObjective)
+                else if (nodeinfo.NodeType == NodeType.UiFailObjective)
                 {
                     var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);

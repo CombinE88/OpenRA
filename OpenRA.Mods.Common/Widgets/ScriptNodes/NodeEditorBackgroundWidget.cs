@@ -420,7 +420,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.UiNewObjective,
                 NodeType.UiCompleteObjective,
                 NodeType.UiFailObjective,
-                NodeType.SetCameraPosition,
                 NodeType.GlobalLightning
             };
 
@@ -434,7 +433,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Ui: Add Objective",
                 "Ui: Complete Objective",
                 "Ui: Fail Objective",
-                "Camera: Set Position",
                 "Global Lightning: Change RGBA"
             };
 
