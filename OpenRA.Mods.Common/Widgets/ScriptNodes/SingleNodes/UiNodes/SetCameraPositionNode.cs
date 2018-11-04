@@ -9,7 +9,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
     public class SetCameraPositionNode : NodeLogic, ITickRender
     {
         bool set;
-        Player ply;
         CPos loc;
 
         public SetCameraPositionNode(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
@@ -31,8 +30,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
             if (inCon.In.Location == null)
                 return;
-
-            ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
 
             loc = inCon.In.Location.Value;
             set = true;
