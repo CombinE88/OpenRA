@@ -6,7 +6,7 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
-    public class SetCameraPositionNode : NodeLogic, ITickRender
+    public class SetCameraPositionNode : NodeLogic, IFinalizedRenderable
     {
         bool set;
         CPos loc;
@@ -40,7 +40,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             set = true;
         }
 
-        void ITickRender.TickRender(WorldRenderer wr, Actor self)
+        public void Render(WorldRenderer wr)
         {
             if (!set)
                 return;
@@ -48,5 +48,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             wr.Viewport.Center(wr.World.Map.CenterOfCell(loc));
             set = false;
         }
+
+        public void RenderDebugGeometry(WorldRenderer wr) { }
+
+        public Rectangle ScreenBounds(WorldRenderer wr) { return Rectangle.Empty; }
     }
 }
