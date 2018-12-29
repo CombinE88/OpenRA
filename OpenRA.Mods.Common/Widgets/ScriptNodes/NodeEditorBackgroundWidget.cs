@@ -368,14 +368,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 NodeType.Reinforcements,
                 NodeType.ReinforcementsWithTransport,
-                NodeType.CreateEffect
+                NodeType.CreateEffect,
+                NodeType.TimedExecution
             };
 
             List<string> nodeStrings = new List<string>
             {
                 "Function: Reinforcements",
                 "Function: Reinforce (Transport)",
-                "Function: Create Effect"
+                "Function: Create Effect",
+                "Function: Timed Execution"
             };
 
             AddChild(functionNodesList = new DropDownButtonWidget(Snw.ModData));
