@@ -344,6 +344,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.TimedExecution)
+                {
+                    var newNode = new NodeWidget(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
             }
 
             return nodes;
@@ -999,6 +1004,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
             }
+            else if (nodeType == NodeType.TimedExecution)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new NodeWidget(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
+            }
 
             return newNode;
         }
@@ -1318,6 +1333,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new SetCameraPositionNode(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.TimedExecution)
+                {
+                    var newNode = new TimedExecutionLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;
@@ -1377,6 +1397,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         Reinforcements,
         ReinforcementsWithTransport,
         CreateEffect,
+        TimedExecution,
 
         // UI Nodes
         UiPlayNotification,

@@ -626,6 +626,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ConditionNodes\CheckConditionLogic.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionCreateEffectNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\FunctionNodeReinforcements.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\FunctionNodes\TimedExecutionNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\FilterActorListByNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupActorGroup.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Group\GroupFindActors.cs" />
