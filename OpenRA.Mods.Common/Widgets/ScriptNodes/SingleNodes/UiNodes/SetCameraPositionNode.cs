@@ -6,19 +6,20 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
-    public class SetCameraPositionNode : NodeLogic, IWorldLoaded
+    public class SetCameraPositionNode : NodeLogic
     {
         CPos loc;
         Player ply;
-        WorldRenderer wr;
+        IngameNodeScriptSystem insc;
 
         public SetCameraPositionNode(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
         {
+            this.insc = insc;
         }
 
         public override void Execute(World world)
         {
-            if (wr == null)
+            if (insc.WorldRenderer == null)
                 return;
 
             var inPly = InConnections.First(c => c.ConTyp == ConnectionType.Player);
@@ -29,7 +30,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             if (inCon.In == null)
                 throw new YamlException(NodeId + "Location not connected");
 
-            if (inPly.In.Player == null)
+            if (inPly.In.Player == null || world.LocalPlayer == null)
                 return;
 
             if (inCon.In.Location == null)
@@ -38,15 +39,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
             loc = inCon.In.Location.Value;
 
-            if (world.LocalPlayer == null || world.LocalPlayer != ply || loc == null)
+            if (loc == null || insc.WorldRenderer == null || world.LocalPlayer != ply)
                 return;
 
-            wr.Viewport.Center(world.Map.CenterOfCell(loc));
-        }
-
-        public void WorldLoaded(World w, WorldRenderer wr)
-        {
-            this.wr = wr;
+            insc.WorldRenderer.Viewport.Center(world.Map.CenterOfCell(loc));
         }
     }
 }
