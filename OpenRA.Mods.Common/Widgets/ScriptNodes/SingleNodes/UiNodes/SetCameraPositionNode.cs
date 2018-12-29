@@ -34,17 +34,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
             ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
 
+            if (world.LocalPlayer != ply)
+                return;
+
             loc = inCon.In.Location.Value;
             set = true;
         }
 
         public void TickRender(WorldRenderer wr, Actor self)
         {
-            if (set)
-            {
-                wr.Viewport.Center(wr.World.Map.CenterOfCell(loc));
-            }
+            if (!set)
+                return;
 
+            wr.Viewport.Center(wr.World.Map.CenterOfCell(loc));
             set = false;
         }
     }
