@@ -26,10 +26,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 }
             };
 
-            var conInInt = InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Integer)?.In;
+            var conInInt = InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Integer);
             var delay = 0;
-            if (conInInt == null || conInInt.Number == null)
-                delay = conInInt.Number.Value;
+            if (conInInt == null || conInInt.In.Number == null)
+                delay = conInInt.In.Number.Value;
 
             world.AddFrameEndTask(w => w.Add(new DelayedAction(delay, delayedAction)));
         }

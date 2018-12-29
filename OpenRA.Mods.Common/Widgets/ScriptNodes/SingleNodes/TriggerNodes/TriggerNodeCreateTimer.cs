@@ -70,11 +70,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void DoAfterConnections()
         {
-            var conInInt = InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Integer)?.In;
-            if (conInInt == null || conInInt.Number == null)
+            var conInInt = InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Integer);
+            if (conInInt == null || conInInt.In.Number == null)
                 throw new YamlException(NodeId + "Timer time not connected");
 
-            timerMax = conInInt.Number.Value * 25;
+            timerMax = conInInt.In.Number.Value * 25;
         }
 
         void ExecuteTimer(World world)

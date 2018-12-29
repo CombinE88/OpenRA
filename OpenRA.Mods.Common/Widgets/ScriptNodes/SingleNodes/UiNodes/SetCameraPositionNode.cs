@@ -32,7 +32,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             if (inCon.In.Location == null)
                 return;
 
-            ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
+            var ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
 
             if (world.LocalPlayer != ply)
                 return;
