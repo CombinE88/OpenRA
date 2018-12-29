@@ -27,6 +27,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public class IngameNodeScriptSystem : IWorldLoaded, ITick
     {
         public List<NodeLogic> NodeLogics = new List<NodeLogic>();
+        public WorldRenderer WorldRenderer;
         List<NodeInfo> nodesInfos = new List<NodeInfo>();
 
         public World World;
@@ -42,6 +43,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public void WorldLoaded(World w, WorldRenderer wr)
         {
+            WorldRenderer = wr;
+
             foreach (var kv in w.Map.NodeDefinitions)
                 Add(kv);
 
