@@ -6,11 +6,11 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
-    public class SetCameraPositionNode : NodeLogic, IFinalizedRenderable
+    public class SetCameraPositionNode : NodeLogic, IWorldLoaded
     {
-        bool set;
-        Player ply;
         CPos loc;
+        Player ply;
+        WorldRenderer wr;
 
         public SetCameraPositionNode(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
         {
@@ -18,6 +18,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
         public override void Execute(World world)
         {
+            if (wr == null)
+                return;
+
             var inPly = InConnections.First(c => c.ConTyp == ConnectionType.Player);
             var inCon = InConnections.First(c => c.ConTyp == ConnectionType.Location);
 
@@ -32,26 +35,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             if (inCon.In.Location == null)
                 return;
 
-            var ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
-
-            if (world.LocalPlayer != ply)
-                return;
-
+            ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
             loc = inCon.In.Location.Value;
-            set = true;
-        }
 
-        public void Render(WorldRenderer wr)
-        {
-            if (!set)
+            if (world.LocalPlayer == null || world.LocalPlayer != ply || loc == null)
                 return;
 
-            wr.Viewport.Center(wr.World.Map.CenterOfCell(loc));
-            set = false;
+            wr.Viewport.Center(world.Map.CenterOfCell(loc));
         }
 
-        public void RenderDebugGeometry(WorldRenderer wr) { }
-
-        public Rectangle ScreenBounds(WorldRenderer wr) { return Rectangle.Empty; }
+        public void WorldLoaded(World w, WorldRenderer wr)
+        {
+            this.wr = wr;
+        }
     }
 }
