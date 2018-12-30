@@ -349,6 +349,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.TextChoice)
+                {
+                    var newNode = new TextBoxSelectNode(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
             }
 
             return nodes;
@@ -1014,6 +1019,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
+            else if (nodeType == NodeType.TextChoice)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new TextBoxSelectNode(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+            }
 
             return newNode;
         }
@@ -1338,6 +1352,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new TimedExecutionLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.TextChoice)
+                {
+                    var newNode = new TextBoxSelectLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;
@@ -1410,6 +1429,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         UiFailObjective,
         GlobalLightning,
         SetCameraPosition,
+        TextChoice,
 
         // Conditions
         CheckCondition,
