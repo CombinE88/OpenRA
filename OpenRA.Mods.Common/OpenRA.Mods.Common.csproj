@@ -644,6 +644,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeWorldLoaded.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerOnIdle.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerOnKilled.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\CameraRideNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\GlobalLightningNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\TextBoxSelectNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\SetCameraPositionNode.cs" />

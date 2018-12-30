@@ -424,6 +424,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.UiFailObjective,
                 NodeType.TextChoice,
                 NodeType.SetCameraPosition,
+                NodeType.CameraRide,
                 NodeType.GlobalLightning
             };
 
@@ -439,6 +440,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Ui: Fail Objective",
                 "Ui: Text Choice",
                 "Player: Set Camera Location",
+                "Player: Camera Ride",
                 "Global Lightning: Change RGBA"
             };
 
