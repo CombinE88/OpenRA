@@ -608,6 +608,7 @@
     <Compile Include="Widgets\ScriptNodes\Connections.cs" />
     <Compile Include="Widgets\ScriptNodes\EditorNodeBrushes\EditorNodeBrush.cs" />
     <Compile Include="Widgets\ScriptNodes\IngameNodeScriptSystem.cs" />
+    <Compile Include="Widgets\ScriptNodes\IngameWidgets\TextChoiceLogic.cs" />
     <Compile Include="Widgets\ScriptNodes\Library\NodeLibrary.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorBackgroundWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorNodeScreenWidget.cs" />

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes;
+using OpenRA.Traits;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
@@ -77,8 +78,49 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
     class TextBoxSelectLogic : NodeLogic
     {
+        public List<Tuple<InConnection, string>> Options = new List<Tuple<InConnection, string>>();
+        public bool Listen = false;
+        public string Text;
+
+        List<InConnection> inCons = new List<InConnection>();
+
         public TextBoxSelectLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
         {
+        }
+
+        public override void Execute(World world)
+        {
+            inCons = InConnections.Where(i => i.ConTyp == ConnectionType.String).ToList();
+            inCons.Remove(inCons.First());
+
+            Text = InConnections.First(i => i.ConTyp == ConnectionType.String).In.String;
+
+            foreach (var inCon in inCons)
+            {
+                Options.Add(new Tuple<InConnection, string>(inCon, inCon.In.String));
+            }
+
+            world.SetPauseState(true);
+            Listen = true;
+        }
+
+        public void ExecuteBranch(InConnection choice)
+        {
+            if (choice == null)
+                return;
+
+            var oCon = OutConnections[inCons.IndexOf(choice)];
+            if (oCon != null)
+            {
+                foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                {
+                    var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                    if (inCon != null)
+                        inCon.Execute = true;
+                }
+            }
+
+            Listen = false;
         }
     }
 }
