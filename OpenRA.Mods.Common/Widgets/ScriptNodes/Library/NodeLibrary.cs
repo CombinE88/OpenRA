@@ -349,9 +349,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new TextBoxSelectNode(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.TextChoice)
+                else if (nodeinfo.NodeType == NodeType.CameraRide)
                 {
-                    var newNode = new TextBoxSelectNode(nensw, nodeinfo);
+                    var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
             }
@@ -1033,11 +1033,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
             {
                 var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                newNode = new TextBoxSelectNode(nensw, nodeInfo);
+                newNode = new NodeWidget(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
