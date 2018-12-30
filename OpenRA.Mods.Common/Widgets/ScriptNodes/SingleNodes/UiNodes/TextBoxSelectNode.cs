@@ -16,12 +16,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
         {
             ButtonWidget addButton;
             AddChild(addButton = new ButtonWidget(screen.Snw.ModData));
-            addButton.Bounds = new Rectangle(FreeWidgetEntries.X + WidgetEntries.Width - 10, FreeWidgetEntries.Y + 21, WidgetEntries.Width - 20, 20);
-            addButton.Text = "+";
+            addButton.Bounds = new Rectangle(FreeWidgetEntries.X + 10, FreeWidgetEntries.Y + 21, WidgetEntries.Width - 20, 20);
+            addButton.Text = "Add Choice";
             addButton.OnClick = () =>
             {
-                var outcon = new OutConnection(ConnectionType.String, this);
-                var incon = new InConnection(ConnectionType.Exec, this);
+                var outcon = new OutConnection(ConnectionType.Exec, this);
+                var incon = new InConnection(ConnectionType.String, this);
                 AddOutConnection(outcon);
                 AddOutConConstructor(outcon);
                 AddInConnection(incon);
@@ -33,7 +33,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             base.AddOutConConstructor(connection);
 
             var button = new ButtonWidget(Screen.Snw.ModData);
-            button.Text = "-";
+            button.Text = "Remove";
 
             AddChild(button);
             parralelButtons.Add(button);
@@ -54,6 +54,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     }
                 }
             };
+        }
+
+        public override void Tick()
+        {
+            base.Tick();
+
+            for (int i = 0; i < parralelButtons.Count; i++)
+            {
+                var splitHeight = RenderBounds.Height / (parralelButtons.Count + 3);
+                parralelButtons[i].Bounds = new Rectangle(FreeWidgetEntries.X + 20, FreeWidgetEntries.Y + splitHeight * (i + 3), WidgetEntries.Width - 40, 20);
+            }
+
+            var nsplitHeight = (RenderBounds.Height + 20) / (OutConnections.Count + 3);
+            for (int i = 0; i < OutConnections.Count; i++)
+            {
+                var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 5, RenderBounds.Y + nsplitHeight * (i + 3), 20, 20);
+                OutConnections[i].InWidgetPosition = rect;
+            }
         }
     }
 
