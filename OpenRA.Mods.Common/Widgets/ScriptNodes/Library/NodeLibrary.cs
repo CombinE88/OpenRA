@@ -329,11 +329,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.UiFailObjective)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
                 else if (nodeinfo.NodeType == NodeType.GlobalLightning)
                 {
                     var newNode = new NodeWidget(nensw, nodeinfo);
@@ -480,6 +475,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode = new NodeWidget(nensw, nodeInfo);
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
+                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
