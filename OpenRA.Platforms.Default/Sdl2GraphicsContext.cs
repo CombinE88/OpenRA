@@ -57,12 +57,6 @@ namespace OpenRA.Platforms.Default
 			return new Texture();
 		}
 
-		public ITexture CreateTexture(Bitmap bitmap)
-		{
-			VerifyThreadAffinity();
-			return new Texture(bitmap);
-		}
-
 		public IFrameBuffer CreateFrameBuffer(Size s)
 		{
 			VerifyThreadAffinity();
@@ -133,6 +127,16 @@ namespace OpenRA.Platforms.Default
 			OpenGL.glFinish();
 
 			OpenGL.glPopClientAttrib();
+
+			// Reset alpha channel to fully opaque
+			unsafe
+			{
+				var colors = (int*)data.Scan0;
+				var stride = data.Stride / 4;
+				for (var y = 0; y < rect.Height; y++)
+				for (var x = 0; x < rect.Width; x++)
+					colors[y * stride + x] |= 0xFF << 24;
+			}
 
 			bitmap.UnlockBits(data);
 

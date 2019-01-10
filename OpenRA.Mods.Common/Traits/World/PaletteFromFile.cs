@@ -10,14 +10,14 @@
 #endregion
 
 using System.Collections.Generic;
-using System.IO;
+using OpenRA.FileSystem;
 using OpenRA.Graphics;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
 	[Desc("Load VGA palette (.pal) registers.")]
-	class PaletteFromFileInfo : ITraitInfo
+	class PaletteFromFileInfo : ITraitInfo, IProvidesCursorPaletteInfo
 	{
 		[FieldLoader.Require, PaletteDefinition]
 		[Desc("internal palette name")]
@@ -35,7 +35,17 @@ namespace OpenRA.Mods.Common.Traits
 
 		public readonly bool AllowModifiers = true;
 
+		[Desc("Whether this palette is available for cursors.")]
+		public readonly bool CursorPalette = false;
+
 		public object Create(ActorInitializer init) { return new PaletteFromFile(init.World, this); }
+
+		string IProvidesCursorPaletteInfo.Palette { get { return CursorPalette ? Name : null; } }
+
+		ImmutablePalette IProvidesCursorPaletteInfo.ReadPalette(IReadOnlyFileSystem fileSystem)
+		{
+			return new ImmutablePalette(fileSystem.Open(Filename), ShadowIndex);
+		}
 	}
 
 	class PaletteFromFileLoader : IPaletteLoader
@@ -59,7 +69,7 @@ namespace OpenRA.Mods.Common.Traits
 		public void LoadPalettes(WorldRenderer wr)
 		{
 			if (info.Tileset == null || info.Tileset.ToLowerInvariant() == world.Map.Tileset.ToLowerInvariant())
-				wr.AddPalette(info.Name, new PaletteFromFileLoader().ReadPalette(world.Map.Open(info.Filename), info.ShadowIndex), info.AllowModifiers);
+				wr.AddPalette(info.Name, ((IProvidesCursorPaletteInfo)info).ReadPalette(world.Map), info.AllowModifiers);
 		}
 
 		public IEnumerable<string> PaletteNames

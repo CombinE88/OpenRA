@@ -10,26 +10,25 @@
 #endregion
 
 using System.Collections.Generic;
-using System.IO;
 using OpenRA.FileFormats;
+using OpenRA.FileSystem;
 using OpenRA.Graphics;
-using OpenRA.Mods.Common.FileFormats;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits
 {
 	[Desc("Load a PNG and use its embedded palette.")]
-	class PaletteFromPngInfo : ITraitInfo
+	class PaletteFromPngInfo : ITraitInfo, IProvidesCursorPaletteInfo
 	{
 		[FieldLoader.Require, PaletteDefinition]
-		[Desc("internal palette name")]
+		[Desc("Internal palette name")]
 		public readonly string Name = null;
 
 		[Desc("If defined, load the palette only for this tileset.")]
 		public readonly string Tileset = null;
 
 		[FieldLoader.Require]
-		[Desc("filename to load")]
+		[Desc("Filename to load")]
 		public readonly string Filename = null;
 
 		[Desc("Map listed indices to shadow. Ignores previous color.")]
@@ -37,14 +36,16 @@ namespace OpenRA.Mods.Common.Traits
 
 		public readonly bool AllowModifiers = true;
 
-		public object Create(ActorInitializer init) { return new PaletteFromPng(init.World, this); }
-	}
+		[Desc("Whether this palette is available for cursors.")]
+		public readonly bool CursorPalette = false;
 
-	class PaletteFromPngLoader : IPaletteLoader
-	{
-		public ImmutablePalette ReadPalette(Stream stream, int[] remap)
+		public object Create(ActorInitializer init) { return new PaletteFromPng(init.World, this); }
+
+		string IProvidesCursorPaletteInfo.Palette { get { return CursorPalette ? Name : null; } }
+
+		ImmutablePalette IProvidesCursorPaletteInfo.ReadPalette(IReadOnlyFileSystem fileSystem)
 		{
-			var png = new Png(stream);
+			var png = new Png(fileSystem.Open(Filename));
 			var colors = new uint[Palette.Size];
 
 			for (var i = 0; i < png.Palette.Length; i++)
@@ -69,7 +70,7 @@ namespace OpenRA.Mods.Common.Traits
 			if (info.Tileset != null && info.Tileset.ToLowerInvariant() != world.Map.Tileset.ToLowerInvariant())
 				return;
 
-			wr.AddPalette(info.Name, new PaletteFromPngLoader().ReadPalette(world.Map.Open(info.Filename), new int[0]), info.AllowModifiers);
+			wr.AddPalette(info.Name, ((IProvidesCursorPaletteInfo)info).ReadPalette(world.Map), info.AllowModifiers);
 		}
 
 		public IEnumerable<string> PaletteNames

@@ -12,10 +12,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using OpenRA.FileFormats;
 using OpenRA.Mods.Common.SpriteLoaders;
 
@@ -36,27 +34,16 @@ namespace OpenRA.Mods.Common.UtilityCommands
 			var inputFiles = GlobArgs(args).OrderBy(a => a).ToList();
 			var dest = inputFiles[0].Split('-').First() + ".shp";
 
-			var frames = inputFiles.Select(a =>
-			{
-				var png = new Png(File.OpenRead(a));
-				var bitmap = new Bitmap(png.Width, png.Height, png.PixelFormat);
+			var frames = inputFiles.Select(a => new Png(File.OpenRead(a))).ToList();
+			if (frames.Any(f => f.Palette == null))
+				throw new InvalidOperationException("All frames must be paletted");
 
-				for (var i = 0; i < png.Palette.Length; i++)
-					bitmap.Palette.Entries[i] = png.Palette[i];
-
-				for (var y = 0; y < png.Height; y++)
-				for (var x = 0; x < png.Width; x++)
-					bitmap.SetPixel(x, y, png.Palette[png.Data[x + y * png.Width]]);
-
-				return bitmap;
-			}).ToArray();
-
-			var size = frames.First().Size;
-			if (frames.Any(f => f.Size != size))
+			var size = new Size(frames[0].Width, frames[0].Height);
+			if (frames.Any(f => f.Width != size.Width || f.Height != size.Height))
 				throw new InvalidOperationException("All frames must be the same size");
 
 			using (var destStream = File.Create(dest))
-				ShpTDSprite.Write(destStream, size, frames.Select(f => ToBytes(f)));
+				ShpTDSprite.Write(destStream, size, frames.Select(f => f.Data));
 
 			Console.WriteLine(dest + " saved.");
 		}
@@ -66,21 +53,6 @@ namespace OpenRA.Mods.Common.UtilityCommands
 			for (var i = startIndex; i < args.Length; i++)
 				foreach (var path in Glob.Expand(args[i]))
 					yield return path;
-		}
-
-		static byte[] ToBytes(Bitmap bitmap)
-		{
-			var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly,
-				PixelFormat.Format8bppIndexed);
-
-			var bytes = new byte[bitmap.Width * bitmap.Height];
-			for (var i = 0; i < bitmap.Height; i++)
-				Marshal.Copy(new IntPtr(data.Scan0.ToInt64() + i * data.Stride),
-					bytes, i * bitmap.Width, bitmap.Width);
-
-			bitmap.UnlockBits(data);
-
-			return bytes;
 		}
 	}
 }

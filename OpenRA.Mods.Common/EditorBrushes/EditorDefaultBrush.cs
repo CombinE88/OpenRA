@@ -33,6 +33,7 @@ namespace OpenRA.Mods.Common.Widgets
 		readonly EditorViewportControllerWidget editorWidget;
 		readonly EditorActorLayer editorLayer;
 		readonly Dictionary<int, ResourceType> resources;
+		public EditorActorPreview SelectedActor;
 		int2 worldPixel;
 
 		public EditorDefaultBrush(EditorViewportControllerWidget editorWidget, WorldRenderer wr)
@@ -60,9 +61,10 @@ namespace OpenRA.Mods.Common.Widgets
 
 		public bool HandleMouseInput(MouseInput mi)
 		{
-			// Exclusively uses mouse wheel and right mouse buttons, but nothing else
+			// Exclusively uses mouse wheel and both mouse buttons, but nothing else
 			// Mouse move events are important for tooltips, so we always allow these through
-			if ((mi.Button != MouseButton.Right && mi.Event != MouseInputEvent.Move && mi.Event != MouseInputEvent.Scroll) ||
+			if ((mi.Button != MouseButton.Left && mi.Button != MouseButton.Right
+				&& mi.Event != MouseInputEvent.Move && mi.Event != MouseInputEvent.Scroll) ||
 				mi.Event == MouseInputEvent.Down)
 				return false;
 
@@ -83,6 +85,12 @@ namespace OpenRA.Mods.Common.Widgets
 			// Finished with mouse move events, so let them bubble up the widget tree
 			if (mi.Event == MouseInputEvent.Move)
 				return false;
+
+			if (mi.Button == MouseButton.Left)
+			{
+				editorWidget.SetTooltip(null);
+				SelectedActor = underCursor;
+			}
 
 			if (mi.Button == MouseButton.Right)
 			{
@@ -118,24 +126,6 @@ namespace OpenRA.Mods.Common.Widgets
 				{
 					var editorUndoRedoLayer = worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>();
 					editorUndoRedoLayer.History.Add(undoStuff.ToArray());
-				}
-			}
-			else if (mi.Event == MouseInputEvent.Scroll)
-			{
-				if (underCursor != null)
-				{
-					// Test case / demonstration of how to edit an existing actor
-					var facing = underCursor.Init<FacingInit>();
-					if (facing != null)
-						underCursor.ReplaceInit(new FacingInit((facing.Value(world) + mi.ScrollDelta) % 256));
-					else if (underCursor.Info.HasTraitInfo<UsesInit<FacingInit>>())
-						underCursor.ReplaceInit(new FacingInit(mi.ScrollDelta));
-
-					var turret = underCursor.Init<TurretFacingInit>();
-					if (turret != null)
-						underCursor.ReplaceInit(new TurretFacingInit((turret.Value(world) + mi.ScrollDelta) % 256));
-					else if (underCursor.Info.HasTraitInfo<UsesInit<TurretFacingInit>>())
-						underCursor.ReplaceInit(new TurretFacingInit(mi.ScrollDelta));
 				}
 			}
 

@@ -10,32 +10,30 @@
 #endregion
 
 using System.IO;
+using System.Linq;
 using OpenRA.FileFormats;
-using OpenRA.Mods.Common.FileFormats;
 
 namespace OpenRA.Mods.Common.UtilityCommands
 {
 	public class PngSheetExportMetadataCommand : IUtilityCommand
 	{
-		string IUtilityCommand.Name { get { return "--PngSheetExport"; } }
+		string IUtilityCommand.Name { get { return "--png-sheet-export"; } }
 
 		bool IUtilityCommand.ValidateArguments(string[] args)
 		{
-			return args.Length == 3;
+			return args.Length == 2;
 		}
 
-		[Desc("PNGFILE YAMLFILE", "Export png metadata to yaml")]
+		[Desc("PNGFILE", "Export png metadata to yaml")]
 		void IUtilityCommand.Run(Utility utility, string[] args)
 		{
-			var s = File.OpenRead(args[1]);
-			var png = new Png(s);
-			s.Close();
-			var yaml = "";
-
-			foreach (var entry in png.Meta)
-				yaml += entry.Key + ": " + entry.Value + "\n";
-
-			File.WriteAllText(args[2], yaml);
+			using (var s = File.OpenRead(args[1]))
+			{
+				var png = new Png(s);
+				png.EmbeddedData.Select(m => new MiniYamlNode(m.Key, m.Value))
+					.ToList()
+					.WriteToFile(Path.ChangeExtension(args[1], "yaml"));
+			}
 		}
 	}
 }

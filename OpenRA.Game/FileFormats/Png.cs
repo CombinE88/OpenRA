@@ -12,12 +12,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace OpenRA.FileFormats
 {
@@ -25,10 +24,9 @@ namespace OpenRA.FileFormats
 	{
 		public int Width { get; set; }
 		public int Height { get; set; }
-		public PixelFormat PixelFormat { get; set; }
 		public Color[] Palette { get; set; }
 		public byte[] Data { get; set; }
-		public Dictionary<string, string> Meta = new Dictionary<string, string>();
+		public Dictionary<string, string> EmbeddedData = new Dictionary<string, string>();
 
 		public Png(Stream s)
 		{
@@ -37,127 +35,125 @@ namespace OpenRA.FileFormats
 
 			s.Position += 8;
 			var headerParsed = false;
+			var isPaletted = false;
+			var data = new List<byte>();
 
-			using (var br = new BinaryReader(s))
+			for (;;)
 			{
-				var data = new List<byte>();
+				var length = IPAddress.NetworkToHostOrder(s.ReadInt32());
+				var type = Encoding.UTF8.GetString(s.ReadBytes(4));
+				var content = s.ReadBytes(length);
+				/*var crc = */s.ReadInt32();
 
-				for (;;)
+				if (!headerParsed && type != "IHDR")
+					throw new InvalidDataException("Invalid PNG file - header does not appear first.");
+
+				using (var ms = new MemoryStream(content))
 				{
-					var length = IPAddress.NetworkToHostOrder(br.ReadInt32());
-					var type = Encoding.UTF8.GetString(br.ReadBytes(4));
-					var content = br.ReadBytes(length);
-					/*var crc = */br.ReadInt32();
-
-					if (!headerParsed && type != "IHDR")
-						throw new InvalidDataException("Invalid PNG file - header does not appear first.");
-
-					using (var ms = new MemoryStream(content))
-					using (var cr = new BinaryReader(ms))
-						switch (type)
+					switch (type)
+					{
+						case "IHDR":
 						{
-							case "IHDR":
-								{
-									if (headerParsed)
-										throw new InvalidDataException("Invalid PNG file - duplicate header.");
+							if (headerParsed)
+								throw new InvalidDataException("Invalid PNG file - duplicate header.");
+							Width = IPAddress.NetworkToHostOrder(ms.ReadInt32());
+							Height = IPAddress.NetworkToHostOrder(ms.ReadInt32());
 
-									Width = IPAddress.NetworkToHostOrder(cr.ReadInt32());
-									Height = IPAddress.NetworkToHostOrder(cr.ReadInt32());
-									Data = new byte[Width * Height];
+							var bitDepth = ms.ReadUInt8();
+							var colorType = (PngColorType)ms.ReadByte();
+							isPaletted = IsPaletted(bitDepth, colorType);
 
-									var bitDepth = cr.ReadByte();
-									var colorType = (PngColorType)cr.ReadByte();
-									PixelFormat = MakePixelFormat(bitDepth, colorType);
+							var dataLength = Width * Height;
+							if (!isPaletted)
+								dataLength *= 4;
 
-									var compression = cr.ReadByte();
-									/*var filter = */cr.ReadByte();
-									var interlace = cr.ReadByte();
+							Data = new byte[dataLength];
 
-									if (compression != 0) throw new InvalidDataException("Compression method not supported");
-									if (interlace != 0) throw new InvalidDataException("Interlacing not supported");
+							var compression = ms.ReadByte();
+							/*var filter = */ms.ReadByte();
+							var interlace = ms.ReadByte();
 
-									headerParsed = true;
-								}
+							if (compression != 0)
+								throw new InvalidDataException("Compression method not supported");
 
-								break;
+							if (interlace != 0)
+								throw new InvalidDataException("Interlacing not supported");
 
-							case "PLTE":
-								{
-									Palette = new Color[256];
-									for (var i = 0; i < length / 3; i++)
-									{
-										var r = cr.ReadByte(); var g = cr.ReadByte(); var b = cr.ReadByte();
-										Palette[i] = Color.FromArgb(r, g, b);
-									}
-								}
+							headerParsed = true;
 
-								break;
-
-							case "tRNS":
-								{
-									if (Palette == null)
-										throw new InvalidDataException("Non-Palette indexed PNG are not supported.");
-
-									for (var i = 0; i < length; i++)
-										Palette[i] = Color.FromArgb(cr.ReadByte(), Palette[i]);
-								}
-
-								break;
-
-							case "IDAT":
-								{
-									data.AddRange(content);
-								}
-
-								break;
-
-							case "tEXt":
-								{
-									var key = new List<byte>();
-									byte b;
-
-									while ((b = cr.ReadByte()) != 0x00)
-										key.Add(b);
-
-									Meta.Add(Encoding.ASCII.GetString(key.ToArray()), Encoding.ASCII.GetString(cr.ReadBytes(length - key.Count - 1)));
-								}
-
-								break;
-
-							case "IEND":
-								{
-									using (var ns = new MemoryStream(data.ToArray()))
-									{
-										// 'zlib' flags bytes; confuses the DeflateStream.
-										/*var flags = (byte)*/ns.ReadByte();
-										/*var moreFlags = (byte)*/ns.ReadByte();
-
-										using (var ds = new DeflateStream(ns, CompressionMode.Decompress))
-										using (var dr = new BinaryReader(ds))
-										{
-											var prevLine = new byte[Width];  // all zero
-											for (var y = 0; y < Height; y++)
-											{
-												var filter = (PngFilter)dr.ReadByte();
-												var line = dr.ReadBytes(Width);
-
-												for (var i = 0; i < Width; i++)
-													line[i] = i > 0
-														? UnapplyFilter(filter, line[i], line[i - 1], prevLine[i], prevLine[i - 1])
-														: UnapplyFilter(filter, line[i], 0, prevLine[i], 0);
-
-												Array.Copy(line, 0, Data, y * Width, line.Length);
-												prevLine = line;
-											}
-										}
-									}
-
-									if (Palette == null)
-										throw new InvalidDataException("Non-Palette indexed PNG are not supported.");
-								}
-
-								return;
+							break;
 						}
+
+						case "PLTE":
+						{
+							Palette = new Color[256];
+							for (var i = 0; i < length / 3; i++)
+							{
+								var r = ms.ReadByte(); var g = ms.ReadByte(); var b = ms.ReadByte();
+								Palette[i] = Color.FromArgb(r, g, b);
+							}
+
+							break;
+						}
+
+						case "tRNS":
+						{
+							if (Palette == null)
+								throw new InvalidDataException("Non-Palette indexed PNG are not supported.");
+
+							for (var i = 0; i < length; i++)
+								Palette[i] = Color.FromArgb(ms.ReadByte(), Palette[i]);
+
+							break;
+						}
+
+						case "IDAT":
+						{
+							data.AddRange(content);
+
+							break;
+						}
+
+						case "tEXt":
+						{
+							var key = ms.ReadASCIIZ();
+							EmbeddedData.Add(key, ms.ReadASCII(length - key.Length - 1));
+
+							break;
+						}
+
+						case "IEND":
+						{
+							using (var ns = new MemoryStream(data.ToArray()))
+							{
+								using (var ds = new InflaterInputStream(ns))
+								{
+									var pxStride = isPaletted ? 1 : 4;
+									var stride = Width * pxStride;
+
+									var prevLine = new byte[stride];
+									for (var y = 0; y < Height; y++)
+									{
+										var filter = (PngFilter)ds.ReadByte();
+										var line = ds.ReadBytes(stride);
+
+										for (var i = 0; i < stride; i++)
+											line[i] = i < pxStride
+												? UnapplyFilter(filter, line[i], 0, prevLine[i], 0)
+												: UnapplyFilter(filter, line[i], line[i - pxStride], prevLine[i], prevLine[i - pxStride]);
+
+										Array.Copy(line, 0, Data, y * stride, line.Length);
+										prevLine = line;
+									}
+								}
+							}
+
+							if (isPaletted && Palette == null)
+								throw new InvalidDataException("Non-Palette indexed PNG are not supported.");
+
+							return;
+						}
+					}
 				}
 			}
 		}
@@ -200,10 +196,13 @@ namespace OpenRA.FileFormats
 		enum PngColorType { Indexed = 1, Color = 2, Alpha = 4 }
 		enum PngFilter { None, Sub, Up, Average, Paeth }
 
-		static PixelFormat MakePixelFormat(byte bitDepth, PngColorType colorType)
+		static bool IsPaletted(byte bitDepth, PngColorType colorType)
 		{
 			if (bitDepth == 8 && colorType == (PngColorType.Indexed | PngColorType.Color))
-				return PixelFormat.Format8bppIndexed;
+				return true;
+
+			if (bitDepth == 8 && colorType == (PngColorType.Color | PngColorType.Alpha))
+				return false;
 
 			throw new InvalidDataException("Unknown pixel format");
 		}

@@ -37,7 +37,7 @@ namespace OpenRA.Mods.Common.Traits
 	public class Sellable : ConditionalTrait<SellableInfo>, IResolveOrder, IProvideTooltipInfo
 	{
 		readonly Actor self;
-		readonly Lazy<Health> health;
+		readonly Lazy<IHealth> health;
 		readonly SellableInfo info;
 
 		public Sellable(Actor self, SellableInfo info)
@@ -45,7 +45,7 @@ namespace OpenRA.Mods.Common.Traits
 		{
 			this.self = self;
 			this.info = info;
-			health = Exts.Lazy(() => self.TraitOrDefault<Health>());
+			health = Exts.Lazy(() => self.TraitOrDefault<IHealth>());
 		}
 
 		public void ResolveOrder(Actor self, Order order)
@@ -57,10 +57,6 @@ namespace OpenRA.Mods.Common.Traits
 		public void Sell(Actor self)
 		{
 			if (IsTraitDisabled)
-				return;
-
-			var building = self.TraitOrDefault<Building>();
-			if (building != null && !building.Lock())
 				return;
 
 			self.CancelActivity();
