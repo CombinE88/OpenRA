@@ -55,10 +55,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
         public override void Tick(Actor self)
         {
+            if (insc.WorldRenderer == null || self.World.LocalPlayer != ply)
+                return;
+
             if (!active)
                 return;
+
             if (maxLength > currentLength)
                 currentLength++;
+
             else if (active)
             {
                 var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
