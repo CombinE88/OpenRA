@@ -178,17 +178,11 @@ namespace OpenRA.Mods.Common.Widgets
 					Addactor = true,
 					ActorReference = preview.Export()
 				};
-			if (copyFilters.HasFlag(MapCopyFilters.Actors))
-			{
-				var removeActors = dest.SelectMany(editorLayer.PreviewsAt).Distinct().ToList();
-				foreach (var preview in removeActors)
-					editorLayer.Remove(preview);
-			}
 
 				worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>().ReplaceBuffer(preview, editorAction);
 				undoTiles.Add(editorAction);
 
-				editorLayer.Remove(preview, true);
+				editorLayer.Remove(preview);
 			}
 
 			foreach (var kv in previews)
