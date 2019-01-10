@@ -34,7 +34,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     if (!a.HasTraitInfo<IRenderActorPreviewInfo>())
                         return false;
 
-                    var editorData = a.TraitInfoOrDefault<EditorTilesetFilterInfo>();
+                    var editorData = a.TraitInfoOrDefault<MapEditorDataInfo>();
 
                     if (editorData == null || editorData.Categories == null)
                         return false;

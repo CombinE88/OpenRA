@@ -86,7 +86,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 if (actor != null && !actor.IsDead && actor.IsInWorld)
                     actor.QueueActivity(new Attack(actor,
                         Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Actor).In.Actor),
-                        first.In != null, last.In != null, first.In != null ? first.In.Number ?? 0 : 0));
+                        first.In != null, last.In != null));
 
                 if (InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In != null
                     && InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In.ActorGroup != null
@@ -96,7 +96,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                         if (!actors.IsDead && actors.IsInWorld)
                             actors.QueueActivity(new Attack(actors,
                                 Target.FromActor(InConnections.Last(c => c.ConTyp == ConnectionType.Actor).In.Actor),
-                                first.In != null, last.In != null, first.In != null ? first.In.Number ?? 0 : 0));
+                                first.In != null, last.In != null));
                     }
             }
             else if (NodeInfo.NodeType == NodeType.ActorQueueHunt)

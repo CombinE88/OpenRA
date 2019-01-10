@@ -14,6 +14,7 @@ using System.Linq;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Scripting;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.Logic
