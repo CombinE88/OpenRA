@@ -587,7 +587,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                 newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));

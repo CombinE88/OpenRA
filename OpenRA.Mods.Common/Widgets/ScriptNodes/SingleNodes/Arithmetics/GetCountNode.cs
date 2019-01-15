@@ -70,7 +70,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
         {
             var outcon = OutConnections.First(c => c.ConTyp == ConnectionType.Integer);
             var incon = InConnections.First(c => c.ConTyp == ConnectionType.Universal);
-            var integ = 0;
 
             if (incon.In == null)
                 return;
@@ -79,18 +78,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 outcon.Number = incon.In.Number.Value;
             else if (incon.In.ConTyp == ConnectionType.ActorList)
             {
-                foreach (var actor in incon.In.ActorGroup)
-                {
-                        if (Methode == CompareMethode.AliveActors && !actor.IsDead && actor.IsInWorld)
-                            integ++;
-                        else if (Methode == CompareMethode.All)
-                            integ++;
-                }
-
-                outcon.Number = integ;
+                if (Methode == CompareMethode.AliveActors)
+                    outcon.Number = incon.In.ActorGroup.Count(a => !a.IsDead && a.IsInWorld);
+                else if (Methode == CompareMethode.All)
+                    outcon.Number = incon.In.ActorGroup.Length;
             }
             else if (incon.In.ConTyp == ConnectionType.PlayerGroup)
             {
+                var integ = 0;
                 foreach (var player in incon.In.PlayerGroup)
                 {
                     var play = self.World.Players.First(p => p.PlayerReference == player);
