@@ -354,6 +354,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new NodeWidget(nensw, nodeinfo);
                     nodes.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.SetCondition)
+                {
+                    var newNode = new SetConditionOnExec(nensw, nodeinfo);
+                    nodes.Add(newNode);
+                }
             }
 
             return nodes;
@@ -1041,6 +1046,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
                 newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
             }
+            else if (nodeType == NodeType.SetCondition)
+            {
+                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+
+                newNode = new SetConditionOnExec(nensw, nodeInfo);
+
+                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
+                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
+            }
 
             return newNode;
         }
@@ -1375,6 +1389,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new CameraRideNodeLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.SetCondition)
+                {
+                    var newNode = new SetConditionOnExecLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;
@@ -1463,5 +1482,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         IsBot,
         IsHumanPlayer,
         IsNoncombatant,
+        SetCondition,
     }
 }
