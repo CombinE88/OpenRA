@@ -183,10 +183,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 if (actCon1.In == null)
                     throw new YamlException(NodeId + "Actor not connected");
 
-                if (actCon1.In.ActorInfo == null)
+                if (actCon1.In.Actor == null)
                     return false;
 
-                return !actCon1.In.Actor.IsDead;
+                return !actCon1.In.Actor.IsDead || actCon1.In.Actor.IsInWorld;
             }
 
             if (NodeType == NodeType.IsDead)
@@ -196,10 +196,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 if (actCon1.In == null)
                     throw new YamlException(NodeId + "Actor not connected");
 
-                if (actCon1.In.ActorInfo == null)
+                if (actCon1.In.Actor == null)
                     return false;
 
-                return actCon1.In.Actor.IsDead;
+                return actCon1.In.Actor.IsDead || !actCon1.In.Actor.IsInWorld;
             }
 
             if (NodeType == NodeType.IsPlaying
