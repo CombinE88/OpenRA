@@ -45,6 +45,7 @@ namespace OpenRA.Mods.Common.Traits.Render
         readonly IMove movement;
         readonly WithSpriteBody wsb;
         string moveanimation;
+        string normalAniumation;
         private WithHarvestAnimation harvinfo;
 
         public WithMoveAnimation(ActorInitializer init, WithMoveAnimationInfo info)
@@ -63,16 +64,25 @@ namespace OpenRA.Mods.Common.Traits.Render
         void ITick.Tick(Actor self)
         {
             if (IsTraitDisabled || wsb.IsTraitDisabled)
+            {
+                if (wsb.DefaultAnimation.CurrentSequence.Name == moveanimation)
+                    wsb.DefaultAnimation.ReplaceAnim(self.Info.HasTraitInfo<WithHarvestAnimationInfo>() ? NormalizeMoveSequence(self, normalAniumation) : normalAniumation);
                 return;
+            }
 
             var isMoving = movement.IsMoving && !self.IsDead;
 
             if (!isMoving)
+            {
+                if (wsb.DefaultAnimation.CurrentSequence.Name == moveanimation)
+                    wsb.DefaultAnimation.ReplaceAnim(self.Info.HasTraitInfo<WithHarvestAnimationInfo>() ? NormalizeMoveSequence(self, normalAniumation) : normalAniumation);
                 return;
+            }
 
             if (wsb.DefaultAnimation.CurrentSequence.Name == moveanimation)
                 return;
 
+            normalAniumation = wsb.DefaultAnimation.CurrentSequence.Name;
             moveanimation = self.Info.HasTraitInfo<WithHarvestAnimationInfo>() ? NormalizeMoveSequence(self, Info.MoveSequence) : Info.MoveSequence;
 
             wsb.DefaultAnimation.ReplaceAnim(moveanimation);
