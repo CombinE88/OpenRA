@@ -37,10 +37,22 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			var gridButton = widget.GetOrNull<ButtonWidget>("GRID_BUTTON");
 			var terrainGeometryTrait = world.WorldActor.Trait<TerrainGeometryOverlay>();
 
+			var lockButton = widget.GetOrNull<ButtonWidget>("LOCK_BUTTON");
+			var terrainpassableTrait = world.WorldActor.Trait<TerrainPassableOverlay>();
+
+			var undoButton = widget.GetOrNull<ButtonWidget>("UNDO_BUTTON");
+			undoButton.OnClick = () => world.WorldActor.Trait<EditorUndoRedoLayer>().Undo(worldRenderer.World);
+
 			if (gridButton != null && terrainGeometryTrait != null)
 			{
 				gridButton.OnClick = () => terrainGeometryTrait.Enabled ^= true;
 				gridButton.IsHighlighted = () => terrainGeometryTrait.Enabled;
+			}
+
+			if (lockButton != null && terrainpassableTrait != null)
+			{
+				lockButton.OnClick = () => terrainpassableTrait.Enabled ^= true;
+				lockButton.IsHighlighted = () => terrainpassableTrait.Enabled;
 			}
 
 			var zoomDropdown = widget.GetOrNull<DropDownButtonWidget>("ZOOM_BUTTON");

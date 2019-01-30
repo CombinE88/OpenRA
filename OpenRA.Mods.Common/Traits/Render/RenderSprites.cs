@@ -40,6 +40,8 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Custom PlayerColorPalette: BaseName")]
 		[PaletteReference(true)] public readonly string PlayerPalette = "player";
 
+		public readonly bool OptionsScale = false;
+
 		[Desc("Change the sprite image size.")]
 		public readonly float Scale = 1f;
 
@@ -199,7 +201,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 					a.CachePalette(wr, owner);
 				}
 
-				foreach (var r in a.Animation.Render(self, wr, a.PaletteReference, Info.Scale))
+				foreach (var r in a.Animation.Render(self, wr, a.PaletteReference, Info.Scale * (Info.OptionsScale ? Game.Settings.Player.InfScale : 1)))
 					yield return r;
 			}
 		}
@@ -208,7 +210,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 		{
 			foreach (var a in anims)
 				if (a.IsVisible)
-					yield return a.Animation.ScreenBounds(self, wr, Info.Scale);
+					yield return a.Animation.ScreenBounds(self, wr, Info.Scale * (Info.OptionsScale ? Game.Settings.Player.InfScale : 1));
 		}
 
 		void ITick.Tick(Actor self)
@@ -281,7 +283,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 		{
 			return anims.Where(b => b.IsVisible
 				&& b.Animation.Animation.CurrentSequence != null)
-					.Select(a => (a.Animation.Animation.Image.Size.XY * Info.Scale).ToInt2())
+					.Select(a => (a.Animation.Animation.Image.Size.XY * Info.Scale * (Info.OptionsScale ? Game.Settings.Player.InfScale : 1)).ToInt2())
 					.FirstOrDefault();
 		}
 

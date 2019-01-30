@@ -167,6 +167,7 @@ namespace OpenRA
 			new MapField("LockPreview", required: false, ignoreIfValue: "False"),
 			new MapField("Players", "PlayerDefinitions"),
 			new MapField("Actors", "ActorDefinitions"),
+			new MapField("Nodes", "NodeDefinitions", required: false),
 			new MapField("Rules", "RuleDefinitions", required: false),
 			new MapField("Sequences", "SequenceDefinitions", required: false),
 			new MapField("ModelSequences", "ModelSequenceDefinitions", required: false),
@@ -196,6 +197,7 @@ namespace OpenRA
 		// Player and actor yaml. Public for access by the map importers and lint checks.
 		public List<MiniYamlNode> PlayerDefinitions = new List<MiniYamlNode>();
 		public List<MiniYamlNode> ActorDefinitions = new List<MiniYamlNode>();
+		public List<MiniYamlNode> NodeDefinitions = new List<MiniYamlNode>();
 
 		// Custom map yaml. Public for access by the map importers and lint checks
 		public readonly MiniYaml RuleDefinitions;
@@ -330,6 +332,7 @@ namespace OpenRA
 
 			PlayerDefinitions = MiniYaml.NodesOrEmpty(yaml, "Players");
 			ActorDefinitions = MiniYaml.NodesOrEmpty(yaml, "Actors");
+			NodeDefinitions = MiniYaml.NodesOrEmpty(yaml, "Nodes");
 
 			Grid = modData.Manifest.Get<MapGrid>();
 

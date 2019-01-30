@@ -173,13 +173,15 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 			{
 				hideMenu = true;
 				var editorActorLayer = world.WorldActor.Trait<EditorActorLayer>();
+				var editorNodeLayer = world.WorldActor.Trait<EditorNodeLayer>();
 				Ui.OpenWindow("SAVE_MAP_PANEL", new WidgetArgs()
 				{
 					{ "onSave", (Action<string>)(_ => hideMenu = false) },
 					{ "onExit", () => hideMenu = false },
 					{ "map", world.Map },
 					{ "playerDefinitions", editorActorLayer.Players.ToMiniYaml() },
-					{ "actorDefinitions", editorActorLayer.Save() }
+					{ "actorDefinitions", editorActorLayer.Save() },
+					{ "nodeDefinitions", editorNodeLayer.Save() }
 				});
 			};
 

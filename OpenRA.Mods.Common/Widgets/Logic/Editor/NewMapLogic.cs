@@ -87,7 +87,8 @@ namespace OpenRA.Mods.Common.Widgets.Logic
 					{ "onExit", () => { Ui.CloseWindow(); onExit(); } },
 					{ "map", map },
 					{ "playerDefinitions", map.PlayerDefinitions },
-					{ "actorDefinitions", map.ActorDefinitions }
+					{ "actorDefinitions", map.ActorDefinitions },
+					{ "nodeDefinitions", map.NodeDefinitions }
 				});
 			};
 		}

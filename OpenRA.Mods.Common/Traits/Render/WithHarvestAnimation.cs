@@ -17,7 +17,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 {
 	public class WithHarvestAnimationInfo : ITraitInfo, Requires<WithSpriteBodyInfo>, Requires<HarvesterInfo>
 	{
-		[Desc("Prefix added to idle and harvest sequences depending on fullness of harvester.")]
+		[Desc("Prefix added to idle, move and harvest sequences depending on fullness of harvester.")]
 		[SequenceReference(null, true)] public readonly string[] PrefixByFullness = { "" };
 
 		[Desc("Displayed while harvesting.")]
@@ -33,21 +33,24 @@ namespace OpenRA.Mods.Common.Traits.Render
 	{
 		public readonly WithHarvestAnimationInfo Info;
 		readonly WithSpriteBody wsb;
-		readonly Harvester harv;
+		public readonly Harvester Harv;
+		readonly IMove movement;
 
 		// TODO: Remove this once WithSpriteBody has its own replacement
 		public bool IsModifying;
+		public bool ChangeNot;
 
 		public WithHarvestAnimation(ActorInitializer init, WithHarvestAnimationInfo info)
 		{
 			Info = info;
-			harv = init.Self.Trait<Harvester>();
+			Harv = init.Self.Trait<Harvester>();
+			movement = init.Self.Trait<IMove>();
 			wsb = init.Self.TraitsImplementing<WithSpriteBody>().Single(w => w.Info.Name == Info.Body);
 		}
 
 		protected virtual string NormalizeHarvesterSequence(Actor self, string baseSequence)
 		{
-			var desiredState = harv.Fullness * (Info.PrefixByFullness.Length - 1) / 100;
+			var desiredState = Harv.Fullness * (Info.PrefixByFullness.Length - 1) / 100;
 			var desiredPrefix = Info.PrefixByFullness[desiredState];
 
 			if (wsb.DefaultAnimation.HasSequence(desiredPrefix + baseSequence))
@@ -58,6 +61,14 @@ namespace OpenRA.Mods.Common.Traits.Render
 
 		void ITick.Tick(Actor self)
 		{
+			if (ChangeNot)
+				return;
+
+			var isMoving = movement.IsMoving && !self.IsDead;
+
+			if (isMoving)
+				return;
+
 			var baseSequence = wsb.NormalizeSequence(self, wsb.Info.Sequence);
 			var sequence = NormalizeHarvesterSequence(self, baseSequence);
 			if (!IsModifying && wsb.DefaultAnimation.HasSequence(sequence) && wsb.DefaultAnimation.CurrentSequence.Name != sequence)
@@ -66,6 +77,11 @@ namespace OpenRA.Mods.Common.Traits.Render
 
 		void INotifyHarvesterAction.Harvested(Actor self, ResourceType resource)
 		{
+			var isMoving = movement.IsMoving && !self.IsDead;
+
+			if (isMoving)
+				return;
+
 			var baseSequence = wsb.NormalizeSequence(self, Info.HarvestSequence);
 			var sequence = NormalizeHarvesterSequence(self, baseSequence);
 			if (!IsModifying && wsb.DefaultAnimation.HasSequence(sequence))

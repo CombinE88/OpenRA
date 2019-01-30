@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Graphics;
+using OpenRA.Mods.Common.Traits;
 
 namespace OpenRA.Mods.Common.Widgets
 {
@@ -26,6 +27,8 @@ namespace OpenRA.Mods.Common.Widgets
 		readonly EditorViewportControllerWidget editorWidget;
 		readonly TerrainTemplatePreviewWidget preview;
 		readonly Rectangle bounds;
+
+		List<EditorAction> undoTiles = new List<EditorAction>();
 
 		bool painting;
 
@@ -91,6 +94,12 @@ namespace OpenRA.Mods.Common.Widgets
 			else
 				PaintCell(cell, isMoving);
 
+			if (undoTiles.Any())
+			{
+				worldRenderer.World.WorldActor.Trait<EditorUndoRedoLayer>().History.Add(undoTiles.ToArray());
+				undoTiles = new List<EditorAction>();
+			}
+
 			return true;
 		}
 
@@ -118,6 +127,15 @@ namespace OpenRA.Mods.Common.Widgets
 						var c = cell + new CVec(x, y);
 						if (!mapTiles.Contains(c))
 							continue;
+
+						undoTiles.Add(new EditorAction
+						{
+							Position = c,
+							Index = mapTiles[c].Index,
+							Type = mapTiles[c].Type,
+							Pasteterrain = true,
+							Hight = mapHeight[c]
+						});
 
 						mapTiles[c] = new TerrainTile(Template, index);
 						mapHeight[c] = (byte)(baseHeight + template[index].Height).Clamp(0, map.Grid.MaximumTerrainHeight);

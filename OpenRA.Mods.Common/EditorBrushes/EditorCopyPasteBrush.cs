@@ -116,6 +116,8 @@ namespace OpenRA.Mods.Common.Widgets
 			var tiles = new Dictionary<CPos, Tuple<TerrainTile, ResourceTile, byte>>();
 			var copyFilters = getCopyFilters();
 
+			var undoTiles = new List<EditorAction>();
+
 			foreach (var cell in source)
 			{
 				if (!mapTiles.Contains(cell) || !mapTiles.Contains(cell + offset))
@@ -145,6 +147,18 @@ namespace OpenRA.Mods.Common.Widgets
 
 			foreach (var kv in tiles)
 			{
+				undoTiles.Add(new EditorAction
+				{
+					Position = kv.Key,
+					Index = mapTiles[kv.Key].Index,
+					Type = mapTiles[kv.Key].Type,
+					NewResourceTile = mapResources[kv.Key],
+					RemoveRecource = kv.Value.Item2.Type != 0,
+					Addrecource = mapResources[kv.Key].Type != 0,
+					Hight = mapHeight[kv.Key],
+					Pasteterrain = true,
+				});
+
 				if (copyFilters.HasFlag(MapCopyFilters.Terrain))
 					mapTiles[kv.Key] = kv.Value.Item1;
 

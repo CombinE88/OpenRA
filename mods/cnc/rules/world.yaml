@@ -258,10 +258,13 @@ World:
 	RadarPings:
 	LoadWidgetAtGameStart:
 		ShellmapRoot: MENU_BACKGROUND
+	IngameNodeScriptSystem:
 
 EditorWorld:
 	Inherits: ^BaseWorld
 	EditorActorLayer:
 	EditorResourceLayer:
 	EditorSelectionLayer:
+	NodeSelectionLayer:
+	EditorNodeLayer:
 	LoadWidgetAtGameStart:

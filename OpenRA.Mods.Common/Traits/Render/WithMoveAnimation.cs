@@ -1,4 +1,5 @@
 #region Copyright & License Information
+
 /*
  * Copyright 2007-2019 The OpenRA Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
@@ -7,56 +8,98 @@
  * the License, or (at your option) any later version. For more
  * information, see COPYING.
  */
+
 #endregion
 
+using System.Drawing;
 using System.Linq;
+using OpenRA.Graphics;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Traits.Render
 {
-	public class WithMoveAnimationInfo : ConditionalTraitInfo, Requires<WithSpriteBodyInfo>, Requires<IMoveInfo>
-	{
-		[Desc("Displayed while moving.")]
-		[SequenceReference] public readonly string MoveSequence = "move";
+    public class WithMoveAnimationInfo : ConditionalTraitInfo, Requires<WithSpriteBodyInfo>, Requires<IMoveInfo>
+    {
+        [Desc("Displayed while moving.")] [SequenceReference]
+        public readonly string MoveSequence = "move";
 
-		[Desc("Which sprite body to modify.")]
-		public readonly string Body = "body";
+        [Desc("Which sprite body to modify.")] public readonly string Body = "body";
 
-		public override object Create(ActorInitializer init) { return new WithMoveAnimation(init, this); }
+        public override object Create(ActorInitializer init)
+        {
+            return new WithMoveAnimation(init, this);
+        }
 
-		public override void RulesetLoaded(Ruleset rules, ActorInfo ai)
-		{
-			var matches = ai.TraitInfos<WithSpriteBodyInfo>().Count(w => w.Name == Body);
-			if (matches != 1)
-				throw new YamlException("WithMoveAnimation needs exactly one sprite body with matching name.");
+        public override void RulesetLoaded(Ruleset rules, ActorInfo ai)
+        {
+            var matches = ai.TraitInfos<WithSpriteBodyInfo>().Count(w => w.Name == Body);
+            if (matches != 1)
+                throw new YamlException("WithMoveAnimation needs exactly one sprite body with matching name.");
 
-			base.RulesetLoaded(rules, ai);
-		}
-	}
+            base.RulesetLoaded(rules, ai);
+        }
+    }
 
-	public class WithMoveAnimation : ConditionalTrait<WithMoveAnimationInfo>, ITick
-	{
-		readonly IMove movement;
-		readonly WithSpriteBody wsb;
+    public class WithMoveAnimation : ConditionalTrait<WithMoveAnimationInfo>, ITick, INotifyCreated
+    {
+        readonly IMove movement;
+        readonly WithSpriteBody wsb;
+        string moveanimation;
+        string normalAniumation;
+        private WithHarvestAnimation harvinfo;
 
-		public WithMoveAnimation(ActorInitializer init, WithMoveAnimationInfo info)
-			: base(info)
-		{
-			movement = init.Self.Trait<IMove>();
-			wsb = init.Self.TraitsImplementing<WithSpriteBody>().Single(w => w.Info.Name == Info.Body);
-		}
+        public WithMoveAnimation(ActorInitializer init, WithMoveAnimationInfo info)
+            : base(info)
+        {
+            movement = init.Self.Trait<IMove>();
+            wsb = init.Self.TraitsImplementing<WithSpriteBody>().Single(w => w.Info.Name == Info.Body);
+            moveanimation = info.MoveSequence;
+        }
 
-		void ITick.Tick(Actor self)
-		{
-			if (IsTraitDisabled || wsb.IsTraitDisabled)
-				return;
+        void INotifyCreated.Created(Actor self)
+        {
+            harvinfo = self.TraitOrDefault<WithHarvestAnimation>();
+        }
 
-			var isMoving = movement.IsMoving && !self.IsDead;
+        void ITick.Tick(Actor self)
+        {
+            if (IsTraitDisabled || wsb.IsTraitDisabled)
+            {
+                if (wsb.DefaultAnimation.CurrentSequence.Name == moveanimation)
+                    wsb.DefaultAnimation.ReplaceAnim(self.Info.HasTraitInfo<WithHarvestAnimationInfo>() ? NormalizeMoveSequence(self, normalAniumation) : normalAniumation);
+                return;
+            }
 
-			if (isMoving ^ (wsb.DefaultAnimation.CurrentSequence.Name != Info.MoveSequence))
-				return;
+            var isMoving = movement.IsMoving && !self.IsDead;
 
-			wsb.DefaultAnimation.ReplaceAnim(isMoving ? Info.MoveSequence : wsb.Info.Sequence);
-		}
-	}
+            if (!isMoving)
+            {
+                if (wsb.DefaultAnimation.CurrentSequence.Name == moveanimation)
+                    wsb.DefaultAnimation.ReplaceAnim(self.Info.HasTraitInfo<WithHarvestAnimationInfo>() ? NormalizeMoveSequence(self, normalAniumation) : normalAniumation);
+                return;
+            }
+
+            if (wsb.DefaultAnimation.CurrentSequence.Name == moveanimation)
+                return;
+
+            normalAniumation = wsb.DefaultAnimation.CurrentSequence.Name;
+            moveanimation = self.Info.HasTraitInfo<WithHarvestAnimationInfo>() ? NormalizeMoveSequence(self, Info.MoveSequence) : Info.MoveSequence;
+
+            wsb.DefaultAnimation.ReplaceAnim(moveanimation);
+        }
+
+        string NormalizeMoveSequence(Actor self, string baseSequence)
+        {
+            if (harvinfo != null)
+            {
+                var desiredState = harvinfo.Harv.Fullness * (harvinfo.Info.PrefixByFullness.Length - 1) / 100;
+                var desiredPrefix = harvinfo.Info.PrefixByFullness[desiredState];
+
+                if (wsb.DefaultAnimation.HasSequence(desiredPrefix + baseSequence))
+                    return desiredPrefix + baseSequence;
+            }
+
+            return baseSequence;
+        }
+    }
 }
