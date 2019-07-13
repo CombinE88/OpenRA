@@ -94,10 +94,21 @@ namespace OpenRA.Mods.Common.Traits
 		{
 			var actors = world.FindBlockingActorsOnLine(start, end, width)
 				.Where(a =>
-					new WDist((args.Source - start).Length) < minBlockRange
-					&& a != args.SourceActor
-					&& !ignore.Contains(a)
-					&& !stances.Contains(a.Owner.Stances[args.SourceActor.Owner]));
+				{
+					if (a == args.SourceActor)
+						return false;
+
+					if ((a.CenterPosition - args.SourceActor.CenterPosition).Length <= minBlockRange.Length)
+						return false;
+
+					if (ignore.Contains(a))
+						return false;
+
+					if (stances.Any() && stances.Contains(a.Owner.Stances[args.SourceActor.Owner]))
+						return false;
+
+					return true;
+				});
 
 			var length = (end - start).Length;
 
@@ -109,34 +120,49 @@ namespace OpenRA.Mods.Common.Traits
 				if (!blockers.Any())
 					continue;
 
-				if (!alreadyChecked.Contains(a) && !ignore.Contains(a) && world.SharedRandom.Next(0, 100) >= chance)
+				var blocking = false;
+
+				var ran = world.SharedRandom.Next(0, 100);
+				if (!alreadyChecked.Contains(a) && !ignore.Contains(a) && ran >= chance)
+				{
+					ignore.Add(a);
+					alreadyChecked.Add(a);
 					continue;
+				}
 
 				var blocks = a.TraitsImplementing<BlocksProjectiles>();
 
-				var blocking = false;
-
 				foreach (var block in blocks)
 				{
-					if (!alreadyChecked.Contains(a) && !ignore.Contains(a) && world.SharedRandom.Next(0, 100) >= block.Info.BlockChance)
-					{
-						ignore.Add(a);
-						continue;
-					}
-
 					foreach (var type in block.Info.BlockTypes)
+					{
+						var r = world.SharedRandom.Next(0, 100);
+						if (!blockType.Contains(type) && !alreadyChecked.Contains(a) && !ignore.Contains(a) && r >= block.Info.BlockChance)
+						{
+							ignore.Add(a);
+							alreadyChecked.Add(a);
+							continue;
+						}
+
 						if (blockType.Contains(type))
+						{
 							blocking = true;
+							break;
+						}
+					}
 				}
 
 				// Check Adaptive distance, the longer the projectile travels the more likely it is to hit a blocking actor
 				if (adaptive && !alreadyChecked.Contains(a) && !ignore.Contains(a))
 				{
-					var adaptiveChance = 100 / ((args.PassiveTarget - args.Source).Length - minBlockRange.Length) * ((start - args.Source).Length - minBlockRange.Length);
+					var adaptiveChance = 100.0 / ((args.PassiveTarget - args.SourceActor.CenterPosition).Length - minBlockRange.Length);
+					adaptiveChance *= (start - args.SourceActor.CenterPosition).Length - minBlockRange.Length;
 
-					if (world.SharedRandom.Next(0, 100) >= adaptiveChance)
+					var r = world.SharedRandom.Next(20, 100);
+					if (r >= Math.Round(adaptiveChance))
 					{
 						ignore.Add(a);
+						alreadyChecked.Add(a);
 						continue;
 					}
 				}
@@ -148,7 +174,7 @@ namespace OpenRA.Mods.Common.Traits
 
 				var hitPos = WorldExtensions.MinimumPointLineProjection(start, end, a.CenterPosition);
 				var dat = world.Map.DistanceAboveTerrain(hitPos);
-				if ((hitPos - start).Length < length && blockers.Any(t => t.BlockingHeight > dat))
+				if ((hitPos - start).Length <= length && blockers.Any(t => t.BlockingHeight > dat))
 				{
 					hit = hitPos;
 					ignoreList = ignore;
