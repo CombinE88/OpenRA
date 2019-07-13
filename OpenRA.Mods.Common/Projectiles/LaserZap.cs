@@ -55,6 +55,21 @@ namespace OpenRA.Mods.Common.Projectiles
 		[Desc("Beam can be blocked.")]
 		public readonly bool Blockable = false;
 
+		[Desc("The closer the blocking actor is to the source, the less likely it will block.")]
+		public readonly bool AdaptiveBlockable = false;
+
+		[Desc("Types this projectile can be blocked by.")]
+		public readonly string[] BlockTypes = { "wall" };
+
+		[Desc("Actors in this range to the source will never block the projectile.")]
+		public readonly WDist MinBLockRange = new WDist(512);
+
+		[Desc("probability this projectile will be blocked 0-100%")]
+		public readonly int BlockChance = 100;
+
+		[Desc("Actors with these stances will be ignored and not blocking this projectile")]
+		public readonly Stance[] IgnoreStance = { };
+
 		[Desc("Draw a second beam (for 'glow' effect).")]
 		public readonly bool SecondaryBeam = false;
 
@@ -112,6 +127,9 @@ namespace OpenRA.Mods.Common.Projectiles
 		int interval;
 		bool showHitAnim;
 
+		List<Actor> ignoredActors = new List<Actor>();
+		List<Actor> checkedActors = new List<Actor>();
+
 		[Sync]
 		WPos target;
 
@@ -157,8 +175,22 @@ namespace OpenRA.Mods.Common.Projectiles
 
 			// Check for blocking actors
 			WPos blockedPos;
-			if (info.Blockable && BlocksProjectiles.AnyBlockingActorsBetween(world, source, target,
-				info.Width, out blockedPos))
+			if (info.Blockable && BlocksProjectiles.AnyBlockingActorsBetween(
+				    world,
+				    checkedActors,
+				    ignoredActors,
+				    args,
+				    info.IgnoreStance,
+				    info.BlockChance,
+				    info.AdaptiveBlockable,
+				    info.MinBLockRange,
+				    info.BlockTypes,
+				    source,
+				    target,
+				    info.Width,
+				    out blockedPos,
+				    out ignoredActors,
+				    out checkedActors))
 			{
 				target = blockedPos;
 			}

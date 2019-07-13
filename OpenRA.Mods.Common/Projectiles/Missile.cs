@@ -64,6 +64,21 @@ namespace OpenRA.Mods.Common.Projectiles
 		[Desc("Is the missile blocked by actors with BlocksProjectiles: trait.")]
 		public readonly bool Blockable = true;
 
+		[Desc("The closer the blocking actor is to the source, the less likely it will block.")]
+		public readonly bool AdaptiveBlockable = false;
+
+		[Desc("Types this projectile can be blocked by.")]
+		public readonly string[] BlockTypes = { "wall" };
+
+		[Desc("Actors in this range to the source will never block the projectile.")]
+		public readonly WDist MinBLockRange = new WDist(512);
+
+		[Desc("probability this projectile will be blocked 0-100%")]
+		public readonly int BlockChance = 100;
+
+		[Desc("Actors with these stances will be ignored and not blocking this projectile")]
+		public readonly Stance[] IgnoreStance = { };
+
 		[Desc("Is the missile aware of terrain height levels. Only needed for mods with real, non-visual height levels.")]
 		public readonly bool TerrainHeightAware = false;
 
@@ -202,6 +217,9 @@ namespace OpenRA.Mods.Common.Projectiles
 		int loopRadius;
 		WDist distanceCovered;
 		WDist rangeLimit;
+
+		List<Actor> ignoredActors = new List<Actor>();
+		List<Actor> checkedActors = new List<Actor>();
 
 		int renderFacing;
 
@@ -847,8 +865,22 @@ namespace OpenRA.Mods.Common.Projectiles
 			// Check for walls or other blocking obstacles
 			var shouldExplode = false;
 			WPos blockedPos;
-			if (info.Blockable && BlocksProjectiles.AnyBlockingActorsBetween(world, lastPos, pos, info.Width,
-				out blockedPos))
+			if (info.Blockable && BlocksProjectiles.AnyBlockingActorsBetween(
+				    world,
+				    checkedActors,
+				    ignoredActors,
+				    args,
+				    info.IgnoreStance,
+				    info.BlockChance,
+				    info.AdaptiveBlockable,
+				    info.MinBLockRange,
+				    info.BlockTypes,
+				    lastPos,
+				    pos,
+				    info.Width,
+				    out blockedPos,
+				    out ignoredActors,
+				    out checkedActors))
 			{
 				pos = blockedPos;
 				shouldExplode = true;
