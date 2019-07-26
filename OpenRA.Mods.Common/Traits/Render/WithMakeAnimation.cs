@@ -22,6 +22,9 @@ namespace OpenRA.Mods.Common.Traits.Render
 		[Desc("Sequence name to use.")]
 		[SequenceReference] public readonly string Sequence = "make";
 
+		[Desc("Sequence name to use.")]
+		[SequenceReference] public readonly string UndoSequence = "make";
+
 		[GrantedConditionReference]
 		[Desc("The condition to grant to self while the make animation is playing.")]
 		public readonly string Condition = null;
@@ -88,7 +91,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 			if (wsb == null)
 				return;
 
-			wsb.PlayCustomAnimationBackwards(self, info.Sequence, () =>
+			wsb.PlayCustomAnimationBackwards(self, info.UndoSequence, () =>
 			{
 				if (token != ConditionManager.InvalidConditionToken)
 					token = conditionManager.RevokeCondition(self, token);
@@ -109,7 +112,7 @@ namespace OpenRA.Mods.Common.Traits.Render
 				// by forcing the animation to frame 0 and regranting the make condition.
 				// These workarounds will break the actor if the followup activity doesn't dispose it!
 				if (wsb != null)
-					wsb.DefaultAnimation.PlayFetchIndex(info.Sequence, () => 0);
+					wsb.DefaultAnimation.PlayFetchIndex(info.UndoSequence, () => 0);
 
 				if (conditionManager != null && !string.IsNullOrEmpty(info.Condition))
 					token = conditionManager.GrantCondition(self, info.Condition);
