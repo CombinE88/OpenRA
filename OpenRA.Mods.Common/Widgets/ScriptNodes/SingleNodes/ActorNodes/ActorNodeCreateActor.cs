@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Effects;
+using OpenRA.Mods.Common.Widgets.Logic;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Primitives;
 

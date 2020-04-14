@@ -19,12 +19,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             textsize = Snw.FontRegular.Measure(text);
 
             butt = new ButtonWidget(snw.ModData);
-            butt.Bounds = new Rectangle(Game.Settings.Graphics.WindowedSize.X - 905 - 10 - textsize.X, 5, textsize.X + 20, 25);
+            butt.Bounds = new Rectangle(5, Game.Renderer.Resolution.Height - 30, textsize.X + 20, 25);
             butt.Text = text;
-            butt.OnClick = () =>
-            {
-                Snw.NodeWidget.Visible = !Snw.NodeWidget.Visible;
-            };
+            butt.OnClick = () => { Snw.Toggle(); };
             AddChild(butt);
         }
     }

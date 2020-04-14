@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics;
@@ -15,1033 +14,48 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 {
     public class NodeLibrary
     {
-        public NodeLibrary()
-        {
-        }
-
         public List<NodeWidget> LoadInNodes(NodeEditorNodeScreenWidget nensw, List<NodeInfo> nodeInfos)
         {
             List<NodeWidget> nodes = new List<NodeWidget>();
             foreach (var nodeinfo in nodeInfos)
             {
-                if (nodeinfo.NodeType == NodeType.MapInfoNode)
-                {
-                    var newNode = new MapInfoNode(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerCreateTimer)
-                {
-                    var newNode = new TriggerNodeCreateTimer(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerWorldLoaded)
-                {
-                    var newNode = new TriggerNodeWorldLoaded(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerTick)
-                {
-                    var newNode = new TriggerNodeTick(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredFootprint)
-                {
-                    var newNode = new TriggerNodeOnEnteredFootPrint(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredRange)
-                {
-                    var newNode = new TriggerNodeOnEnteredRange(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
-                {
-                    var newNode = new ActorNodeCreateActor(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorGetInformations)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
-                {
-                    var newNode = new GroupPlayerGroup(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueMove)
-                {
-                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueAttack)
-                {
-                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueHunt)
-                {
-                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueAttackMoveActivity)
-                {
-                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueSell)
-                {
-                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueFindResources)
-                {
-                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorKill)
-                {
-                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorRemove)
-                {
-                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorChangeOwner)
-                {
-                    var newNode = new ActorNodeQueueAbility(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.Reinforcements)
-                {
-                    var newNode = new FunctionNodeReinforcements(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ReinforcementsWithTransport)
-                {
-                    var newNode = new FunctionNodeReinforcements(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupActorGroup)
-                {
-                    var newNode = new GroupActorGroup(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupActorInfoGroup)
-                {
-                    var newNode = new GroupActorInfoGroup(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
-                {
-                    var newNode = new MapInfoActorInfoNode(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiPlayNotification)
-                {
-                    var newNode = new UiNodeUiSettings(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiPlaySound)
-                {
-                    var newNode = new UiNodeUiSettings(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiRadarPing)
-                {
-                    var newNode = new UiNodeUiSettings(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiTextMessage)
-                {
-                    var newNode = new UiNodeUiSettings(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiAddMissionText)
-                {
-                    var newNode = new UiNodeUiSettings(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
-                {
-                    var newNode = new MapInfoActorsonMap(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorReference)
-                {
-                    var newNode = new MapInfoActorsonMap(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnIdle)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnKilled)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnAllKilled)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerReset)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerStart)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerStop)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ArithmeticsOr)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ArithmeticsAnd)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CreateEffect)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CompareActors)
-                {
-                    var newNode = new ArithmecCompareNode(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.DoMultiple)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CountNode)
-                {
-                    var newNode = new GetCountNode(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ArithmeticsMath)
-                {
-                    var newNode = new ArithmeticMathNode(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiCompleteObjective)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiCompleteObjective)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiNewObjective)
-                {
-                    var newNode = new UiObjectivesNode(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.FindActorsOnFootprint)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.FinActorsInCircle)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.FilterActorGroup)
-                {
-                    var newNode = new FilterActorListByNode(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CheckCondition)
-                {
-                    var newNode = new CheckConditionNode(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CompareActor)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CompareNumber)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CompareActorInfo)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsAlive)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsDead)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsPlaying)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsBot)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsHumanPlayer)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsNoncombatant)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.HasWon)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.HasLost)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GlobalLightning)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.SetCameraPosition)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimedExecution)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TextChoice)
-                {
-                    var newNode = new TextBoxSelectNode(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CameraRide)
-                {
-                    var newNode = new NodeWidget(nensw, nodeinfo);
-                    nodes.Add(newNode);
-                }
+                var instanceType = NodeConstructorInfo.NodeConstructorInfos[nodeinfo.NodeType].ConstructorClass;
+
+                var newNode = (NodeWidget) instanceType
+                    .GetConstructor(new[] {typeof(NodeEditorNodeScreenWidget), typeof(NodeInfo)})
+                    .Invoke(new object[] {nensw, nodeinfo});
+                nodes.Add(newNode);
             }
 
             return nodes;
         }
 
-        public NodeWidget AddNode(NodeType nodeType, NodeEditorNodeScreenWidget nensw, string nodeId = null, string nodeName = null)
+        public NodeWidget AddNode(NodeType nodeType, NodeEditorNodeScreenWidget nensw, string nodeId = null,
+            string nodeName = null)
         {
             NodeWidget newNode = null;
 
-            if (nodeType == NodeType.MapInfoNode)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-                newNode = new MapInfoNode(nensw, nodeInfo);
-            }
-            else if (nodeType == NodeType.MapInfoActorInfoNode)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-                newNode = new MapInfoActorInfoNode(nensw, nodeInfo);
 
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfo, newNode));
-            }
-            else if (nodeType == NodeType.MapInfoActorReference)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-                newNode = new MapInfoActorsonMap(nensw, nodeInfo);
+            var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
-            }
-            else if (nodeType == NodeType.TriggerCreateTimer)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+            var instanceType = NodeConstructorInfo.NodeConstructorInfos[nodeType].ConstructorClass;
 
-                newNode = new TriggerNodeCreateTimer(nensw, nodeInfo);
+            newNode = (NodeWidget) instanceType
+                .GetConstructor(new[] {typeof(NodeEditorNodeScreenWidget), typeof(NodeInfo)})
+                .Invoke(new object[] {nensw, nodeInfo});
 
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.TimerConnection, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TimerReset)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+            if (NodeConstructorInfo.NodeConstructorInfos[nodeType].InConnections != null)
+                foreach (var connection in NodeConstructorInfo.NodeConstructorInfos[nodeType].InConnections)
+                {
+                    newNode.AddInConnection(new InConnection(connection, newNode));
+                }
 
-                newNode = new NodeWidget(nensw, nodeInfo);
+            if (NodeConstructorInfo.NodeConstructorInfos[nodeType].OutConnections != null)
+                foreach (var connection in NodeConstructorInfo.NodeConstructorInfos[nodeType].OutConnections)
+                {
+                    newNode.AddOutConnection(new OutConnection(connection, newNode));
+                }
 
-                newNode.AddInConnection(new InConnection(ConnectionType.TimerConnection, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TimerStart)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.TimerConnection, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TimerStop)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.TimerConnection, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TriggerWorldLoaded)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TriggerNodeWorldLoaded(nensw, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TriggerTick)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TriggerNodeTick(nensw, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TriggerOnEnteredFootprint)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TriggerNodeOnEnteredFootPrint(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.CellArray, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TriggerOnEnteredRange)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TriggerNodeOnEnteredRange(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TriggerOnIdle)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TriggerOnKilled)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TriggerOnAllKilled)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorCreateActor)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeCreateActor(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Actor, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorGetInformations)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeCreateActor(nensw, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfo, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Location, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-            }
-            else if (nodeType == NodeType.GroupPlayerGroup)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new GroupPlayerGroup(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.PlayerGroup, newNode));
-            }
-            else if (nodeType == NodeType.GroupActorGroup)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new GroupActorGroup(nensw, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
-            }
-            else if (nodeType == NodeType.GroupActorInfoGroup)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new GroupActorInfoGroup(nensw, nodeInfo);
-
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorInfoArray, newNode));
-            }
-            else if (nodeType == NodeType.ActorKill)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorRemove)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorChangeOwner)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorQueueMove)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorQueueAttack)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorQueueHunt)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorQueueAttackMoveActivity)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorQueueSell)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ActorQueueFindResources)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ActorNodeQueueAbility(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.Reinforcements)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new FunctionNodeReinforcements(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfoArray, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ReinforcementsWithTransport)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new FunctionNodeReinforcements(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfoArray, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.CellPath, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.UiPlayNotification)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.UiPlaySound)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.UiRadarPing)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.UiTextMessage)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.UiAddMissionText)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ArithmeticsOr)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.ArithmeticsAnd)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Repeatable, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.CreateEffect)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiNodeUiSettings(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.CompareActors)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ArithmecCompareNode(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Universal, newNode));
-            }
-            else if (nodeType == NodeType.DoMultiple)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.CountNode)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new GetCountNode(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Universal, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Integer, newNode));
-            }
-            else if (nodeType == NodeType.ArithmeticsMath)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new ArithmeticMathNode(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Integer, newNode));
-            }
-            else if (nodeType == NodeType.UiNewObjective)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new UiObjectivesNode(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.PlayerGroup, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Objective, newNode));
-            }
-            else if (nodeType == NodeType.UiCompleteObjective)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Objective, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.UiFailObjective)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Objective, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.FindActorsOnFootprint)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.CellArray, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.FinActorsInCircle)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.LocationRange, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.FilterActorGroup)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new FilterActorListByNode(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorList, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.ActorList, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.CheckCondition)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new CheckConditionNode(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Condition, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.CompareActor)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.CompareActorInfo)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.ActorInfo, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.IsAlive)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.IsDead)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Actor, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.CompareNumber)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.IsPlaying)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.IsBot)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.IsHumanPlayer)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.IsNoncombatant)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.HasWon)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.HasLost)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Condition, newNode));
-            }
-            else if (nodeType == NodeType.GlobalLightning)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.SetCameraPosition)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TimedExecution)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.TextChoice)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new TextBoxSelectNode(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.String, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-            }
-            else if (nodeType == NodeType.CameraRide)
-            {
-                var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-                newNode = new NodeWidget(nensw, nodeInfo);
-
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Location, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Integer, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Player, newNode));
-                newNode.AddInConnection(new InConnection(ConnectionType.Exec, newNode));
-                newNode.AddOutConnection(new OutConnection(ConnectionType.Exec, newNode));
-            }
 
             return newNode;
         }
@@ -1464,5 +478,1002 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         IsBot,
         IsHumanPlayer,
         IsNoncombatant,
+
+        // Variables
+        SetVariable,
+        GetVariable,
+    }
+
+    public class NodeContructor
+    {
+        public Type ConstructorClass;
+        public List<ConnectionType> InConnections;
+        public List<ConnectionType> OutConnections;
+    }
+
+    public static class NodeConstructorInfo
+    {
+        public static Dictionary<NodeType, NodeContructor> NodeConstructorInfos =
+            new Dictionary<NodeType, NodeContructor>
+            {
+                {
+                    NodeType.MapInfoNode, new NodeContructor
+                    {
+                        ConstructorClass = typeof(MapInfoNode)
+                    }
+                },
+                {
+                    NodeType.MapInfoActorInfoNode, new NodeContructor
+                    {
+                        ConstructorClass = typeof(MapInfoActorInfoNode),
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorInfo
+                        }
+                    }
+                },
+                {
+                    NodeType.MapInfoActorReference, new NodeContructor
+                    {
+                        ConstructorClass = typeof(MapInfoActorsonMap),
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList
+                        }
+                    }
+                },
+                {
+                    NodeType.TriggerCreateTimer, new NodeContructor
+                    {
+                        ConstructorClass = typeof(TriggerNodeCreateTimer),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Integer,
+                            ConnectionType.Repeatable,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.TimerConnection,
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.TimerReset, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.TimerConnection,
+                            ConnectionType.Exec,
+                        },
+                    }
+                },
+                {
+                    NodeType.TimerStart, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.TimerConnection,
+                            ConnectionType.Exec,
+                        },
+                    }
+                },
+                {
+                    NodeType.TimerStop, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.TimerConnection,
+                            ConnectionType.Exec,
+                        },
+                    }
+                },
+                {
+                    NodeType.TriggerWorldLoaded, new NodeContructor
+                    {
+                        ConstructorClass = typeof(TriggerNodeWorldLoaded),
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.TriggerTick, new NodeContructor
+                    {
+                        ConstructorClass = typeof(TriggerNodeTick),
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.TriggerOnEnteredFootprint, new NodeContructor
+                    {
+                        ConstructorClass = typeof(TriggerNodeOnEnteredFootPrint),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.PlayerGroup,
+                            ConnectionType.CellArray,
+                            ConnectionType.Repeatable
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.TriggerOnEnteredRange, new NodeContructor
+                    {
+                        ConstructorClass = typeof(TriggerNodeOnEnteredRange),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.PlayerGroup,
+                            ConnectionType.Location,
+                            ConnectionType.Integer,
+                            ConnectionType.Repeatable
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.TriggerOnIdle, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.Repeatable,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.TriggerOnKilled, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.TriggerOnAllKilled, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorList,
+                            ConnectionType.Repeatable,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorCreateActor, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeCreateActor),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorInfo,
+                            ConnectionType.Player,
+                            ConnectionType.Location,
+                            ConnectionType.Integer,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorGetInformations, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorInfo,
+                            ConnectionType.Location,
+                            ConnectionType.Player
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor
+                        }
+                    }
+                },
+                {
+                    NodeType.GroupPlayerGroup, new NodeContructor
+                    {
+                        ConstructorClass = typeof(GroupPlayerGroup),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.PlayerGroup
+                        }
+                    }
+                },
+                {
+                    NodeType.GroupActorGroup, new NodeContructor
+                    {
+                        ConstructorClass = typeof(GroupActorGroup),
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorList
+                        }
+                    }
+                },
+                {
+                    NodeType.GroupActorInfoGroup, new NodeContructor
+                    {
+                        ConstructorClass = typeof(GroupActorInfoGroup),
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorInfoArray
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorKill, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeQueueAbility),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorRemove, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeQueueAbility),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorChangeOwner, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeQueueAbility),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec,
+                            ConnectionType.Player
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueMove, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeQueueAbility),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Location,
+                            ConnectionType.Integer,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueAttack, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeQueueAbility),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Location,
+                            ConnectionType.Integer,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueHunt, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeQueueAbility),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Repeatable,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueAttackMoveActivity, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeQueueAbility),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Location,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueSell, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeQueueAbility),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Repeatable,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueFindResources, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ActorNodeQueueAbility),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.Reinforcements, new NodeContructor
+                    {
+                        ConstructorClass = typeof(FunctionNodeReinforcements),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                            ConnectionType.ActorInfoArray,
+                            ConnectionType.CellPath,
+                            ConnectionType.Integer,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ReinforcementsWithTransport, new NodeContructor
+                    {
+                        ConstructorClass = typeof(FunctionNodeReinforcements),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                            ConnectionType.ActorInfo,
+                            ConnectionType.ActorInfoArray,
+                            ConnectionType.CellPath,
+                            ConnectionType.CellPath,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.UiPlayNotification, new NodeContructor
+                    {
+                        ConstructorClass = typeof(UiNodeUiSettings),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.PlayerGroup,
+                            ConnectionType.String,
+                            ConnectionType.String,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.UiPlaySound, new NodeContructor
+                    {
+                        ConstructorClass = typeof(UiNodeUiSettings),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Location,
+                            ConnectionType.String,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.UiRadarPing, new NodeContructor
+                    {
+                        ConstructorClass = typeof(UiNodeUiSettings),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Location,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.UiTextMessage, new NodeContructor
+                    {
+                        ConstructorClass = typeof(UiNodeUiSettings),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.String,
+                            ConnectionType.String,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.UiAddMissionText, new NodeContructor
+                    {
+                        ConstructorClass = typeof(UiNodeUiSettings),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.String,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ArithmeticsOr, new NodeContructor
+                    {
+                        ConstructorClass = typeof(UiNodeUiSettings),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec,
+                            ConnectionType.Exec,
+                            ConnectionType.Repeatable,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.ArithmeticsAnd, new NodeContructor
+                    {
+                        ConstructorClass = typeof(UiNodeUiSettings),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec,
+                            ConnectionType.Exec,
+                            ConnectionType.Repeatable,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.CreateEffect, new NodeContructor
+                    {
+                        ConstructorClass = typeof(UiNodeUiSettings),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Location,
+                            ConnectionType.String,
+                            ConnectionType.String,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.CompareActors, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ArithmecCompareNode),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Universal,
+                            ConnectionType.Universal,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Universal
+                        }
+                    }
+                },
+                {
+                    NodeType.DoMultiple, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Integer,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.CountNode, new NodeContructor
+                    {
+                        ConstructorClass = typeof(GetCountNode),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Universal,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Integer
+                        }
+                    }
+                },
+                {
+                    NodeType.ArithmeticsMath, new NodeContructor
+                    {
+                        ConstructorClass = typeof(ArithmeticMathNode),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Integer,
+                            ConnectionType.Integer,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Integer
+                        }
+                    }
+                },
+                {
+                    NodeType.UiNewObjective, new NodeContructor
+                    {
+                        ConstructorClass = typeof(UiObjectivesNode),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.String,
+                            ConnectionType.Exec,
+                            ConnectionType.Player,
+                            ConnectionType.PlayerGroup,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Objective
+                        }
+                    }
+                },
+                {
+                    NodeType.UiCompleteObjective, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Objective,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.UiFailObjective, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Objective,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.FindActorsOnFootprint, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.CellArray,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.FinActorsInCircle, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.LocationRange,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.FilterActorGroup, new NodeContructor
+                    {
+                        ConstructorClass = typeof(FilterActorListByNode),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorList,
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.CheckCondition, new NodeContructor
+                    {
+                        ConstructorClass = typeof(CheckConditionNode),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec,
+                            ConnectionType.Condition,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec,
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.CompareActor, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.Actor,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.CompareActorInfo, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.ActorInfo,
+                            ConnectionType.ActorInfo,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.IsAlive, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.IsDead, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.CompareNumber, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Integer,
+                            ConnectionType.Integer,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.IsPlaying, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.IsBot, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.IsHumanPlayer, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.IsNoncombatant, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.HasWon, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.HasLost, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Condition,
+                        }
+                    }
+                },
+                {
+                    NodeType.GlobalLightning, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Integer,
+                            ConnectionType.Integer,
+                            ConnectionType.Integer,
+                            ConnectionType.Integer,
+                            ConnectionType.Exec
+                        },
+                    }
+                },
+                {
+                    NodeType.SetCameraPosition, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Player,
+                            ConnectionType.Location
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.TimedExecution, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Integer,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.TextChoice, new NodeContructor
+                    {
+                        ConstructorClass = typeof(TextBoxSelectNode),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec,
+                            ConnectionType.String
+                        },
+                    }
+                },
+                {
+                    NodeType.CameraRide, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Location,
+                            ConnectionType.Location,
+                            ConnectionType.Integer,
+                            ConnectionType.Player,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
+                        }
+                    }
+                },
+                {
+                    NodeType.GetVariable, new NodeContructor
+                    {
+                        ConstructorClass = typeof(NodeWidget),
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor
+                        }
+                    }
+                },
+            };
     }
 }

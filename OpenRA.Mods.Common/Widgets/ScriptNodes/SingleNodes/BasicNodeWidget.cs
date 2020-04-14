@@ -83,7 +83,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             AddChild(NodeIDTextfield = new TextFieldWidget());
             NodeIDTextfield.OnTextEdited = () => { NodeName = NodeIDTextfield.Text; };
-            NodeIDTextfield.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, WidgetEntries.Width - 10, 20);
+            NodeIDTextfield.Bounds =
+                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, WidgetEntries.Width - 10, 20);
         }
 
         public void SetOuts(List<OutConnection> o)
@@ -98,16 +99,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public override void Tick()
         {
-            GridPosX = Screen.CorrectCenterCoordinates.X + OffsetPosX - Screen.CenterCoordinates.X;
-            GridPosY = Screen.CorrectCenterCoordinates.Y + OffsetPosY - Screen.CenterCoordinates.Y;
+            GridPosX = Screen.CorrectCenterCoordinates.X + OffsetPosX - Screen.CenterCoordinates.X - Bounds.Width / 2;
+            GridPosY = Screen.CorrectCenterCoordinates.Y + OffsetPosY - Screen.CenterCoordinates.Y - Bounds.Height / 2;
 
             SizeY = Math.Max(InConnections.Count, OutConnections.Count) * 35;
             Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);
 
-            WidgetBackground = new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6);
+            WidgetBackground = new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6,
+                RenderBounds.Height + 6);
             DragBar = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 1, RenderBounds.Width - 27, 25);
             DeleteButton = new Rectangle(RenderBounds.X + RenderBounds.Width - 26, RenderBounds.Y + 1, 25, 25);
-            WidgetEntries = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 27, RenderBounds.Width - 2, RenderBounds.Height - 28);
+            WidgetEntries = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 27, RenderBounds.Width - 2,
+                RenderBounds.Height - 28);
             FreeWidgetEntries = new Rectangle(5, 27, WidgetEntries.Width - 10, WidgetEntries.Height - 28 - 26);
 
             var splitHeight = RenderBounds.Height / (InConnections.Count + 1);
@@ -120,7 +123,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             splitHeight = (RenderBounds.Height + 20) / (OutConnections.Count + 1);
             for (int i = 0; i < OutConnections.Count; i++)
             {
-                var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 5, RenderBounds.Y + splitHeight * (i + 1), 20, 20);
+                var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 5,
+                    RenderBounds.Y + splitHeight * (i + 1), 20, 20);
                 OutConnections[i].InWidgetPosition = rect;
             }
 
@@ -190,10 +194,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
                     if (found)
                     {
-                        Game.Renderer.RgbaColorRenderer.DrawLine(
-                            new int2(conout.X + 10, conout.Y + 10),
-                            new int2(conin.X + 10, conin.Y + 10),
-                            2, InConnections[i].Color);
+                        NodeEditorNodeScreenWidget.DrawLine(new int2(conout.X + 10, conout.Y + 10), new int2(conin.X + 10, conin.Y + 10), InConnections[i].Color);
                     }
                 }
             }
@@ -201,7 +202,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             if (!Screen.Bounds.Contains(WidgetBackground.X, WidgetBackground.Y)
                 && !Screen.Bounds.Contains(WidgetBackground.X + WidgetBackground.Width, WidgetBackground.Y)
                 && !Screen.Bounds.Contains(WidgetBackground.X, WidgetBackground.Y + WidgetBackground.Height)
-                && !Screen.Bounds.Contains(WidgetBackground.X + WidgetBackground.Width, WidgetBackground.Y + WidgetBackground.Height))
+                && !Screen.Bounds.Contains(WidgetBackground.X + WidgetBackground.Width,
+                    WidgetBackground.Y + WidgetBackground.Height))
             {
                 foreach (var child in Children)
                 {
@@ -222,11 +224,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             //// Debug
 
-            WidgetUtils.FillRectWithColor(new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height), Color.Brown);
+            WidgetUtils.FillRectWithColor(
+                new Rectangle(RenderBounds.X, RenderBounds.Y, RenderBounds.Width, RenderBounds.Height), Color.Brown);
             //// Outer
 
             if (Selected)
-                WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X - 1, WidgetBackground.Y - 1, WidgetBackground.Width + 2, WidgetBackground.Height + 2), Color.Blue);
+                WidgetUtils.FillRectWithColor(
+                    new Rectangle(WidgetBackground.X - 1, WidgetBackground.Y - 1, WidgetBackground.Width + 2,
+                        WidgetBackground.Height + 2), Color.Blue);
 
             WidgetUtils.DrawPanel(Background, WidgetBackground);
 
@@ -254,7 +259,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             var text = "X: " + OffsetPosX + " Y: " + OffsetPosY;
             Screen.Snw.FontRegular.DrawTextWithShadow(text,
-                new float2(WidgetBackground.X + WidgetBackground.Width - Screen.Snw.FontRegular.Measure(text).X - 10, WidgetBackground.Y + WidgetBackground.Height - 25),
+                new float2(WidgetBackground.X + WidgetBackground.Width - Screen.Snw.FontRegular.Measure(text).X - 10,
+                    WidgetBackground.Y + WidgetBackground.Height - 25),
                 Color.White, Color.Black, 1);
 
             Screen.Snw.FontRegular.DrawTextWithShadow(NodeName + " " + NodeID,
@@ -269,21 +275,25 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 if (InConnections[i].ConTyp == ConnectionType.Exec)
                 {
                     WidgetUtils.FillRectWithColor(
-                        new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1, InConnections[i].InWidgetPosition.Width + 2,
+                        new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1,
+                            InConnections[i].InWidgetPosition.Width + 2,
                             InConnections[i].InWidgetPosition.Width + 2), Color.Black);
                     WidgetUtils.FillRectWithColor(InConnections[i].InWidgetPosition, InConnections[i].Color);
                     WidgetUtils.FillRectWithColor(
-                        new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2, InConnections[i].InWidgetPosition.Width - 4,
+                        new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2,
+                            InConnections[i].InWidgetPosition.Width - 4,
                             InConnections[i].InWidgetPosition.Width - 4), Color.Black);
                 }
                 else
                 {
                     WidgetUtils.FillEllipseWithColor(
-                        new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1, InConnections[i].InWidgetPosition.Width + 2,
+                        new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1,
+                            InConnections[i].InWidgetPosition.Width + 2,
                             InConnections[i].InWidgetPosition.Width + 2), Color.Black);
                     WidgetUtils.FillEllipseWithColor(InConnections[i].InWidgetPosition, InConnections[i].Color);
                     WidgetUtils.FillEllipseWithColor(
-                        new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2, InConnections[i].InWidgetPosition.Width - 4,
+                        new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2,
+                            InConnections[i].InWidgetPosition.Width - 4,
                             InConnections[i].InWidgetPosition.Width - 4), Color.Black);
                 }
 
@@ -297,21 +307,25 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 if (OutConnections[i].ConTyp == ConnectionType.Exec)
                 {
                     WidgetUtils.FillRectWithColor(
-                        new Rectangle(OutConnections[i].InWidgetPosition.X - 1, OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
+                        new Rectangle(OutConnections[i].InWidgetPosition.X - 1,
+                            OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
                             OutConnections[i].InWidgetPosition.Width + 2), Color.Black);
                     WidgetUtils.FillRectWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].Color);
                     WidgetUtils.FillRectWithColor(
-                        new Rectangle(OutConnections[i].InWidgetPosition.X + 2, OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
+                        new Rectangle(OutConnections[i].InWidgetPosition.X + 2,
+                            OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
                             OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
                 }
                 else
                 {
                     WidgetUtils.FillEllipseWithColor(
-                        new Rectangle(OutConnections[i].InWidgetPosition.X - 1, OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
+                        new Rectangle(OutConnections[i].InWidgetPosition.X - 1,
+                            OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
                             OutConnections[i].InWidgetPosition.Width + 2), Color.Black);
                     WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].Color);
                     WidgetUtils.FillEllipseWithColor(
-                        new Rectangle(OutConnections[i].InWidgetPosition.X + 2, OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
+                        new Rectangle(OutConnections[i].InWidgetPosition.X + 2,
+                            OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
                             OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
                 }
 

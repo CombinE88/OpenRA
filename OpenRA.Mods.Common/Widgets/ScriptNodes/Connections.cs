@@ -227,4 +227,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Objective,
         Condition
     }
+    
+    public enum VariableType
+    {
+        // Regular Variables
+        Actor,
+        ActorInfo,
+        Player,
+        PlayerGroup,
+        Location,
+        LocationRange,
+        CellArray,
+        CellPath,
+        Integer,
+        ActorList
+    }
 }

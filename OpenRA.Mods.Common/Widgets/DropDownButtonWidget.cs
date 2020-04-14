@@ -37,6 +37,7 @@ namespace OpenRA.Mods.Common.Widgets
 			: base(widget)
 		{
 			PanelRoot = widget.PanelRoot;
+			OnClick = widget.OnClick;
 		}
 
 		public override void Draw()

@@ -316,7 +316,6 @@
     <Compile Include="Traits\Conditions\GrantExternalConditionToCrusher.cs" />
     <Compile Include="Traits\Conditions\GrantRandomCondition.cs" />
     <Compile Include="Traits\Contrail.cs" />
-    <Compile Include="Traits\ResourcePurifier.cs" />
     <Compile Include="Traits\TemporaryOwnerManager.cs" />
     <Compile Include="Traits\TooltipDescription.cs" />
     <Compile Include="Traits\Health.cs" />
@@ -547,8 +546,6 @@
     <Compile Include="Traits\Valued.cs" />
     <Compile Include="Traits\Voiced.cs" />
     <Compile Include="Traits\Wanders.cs" />
-    <Compile Include="Traits\World\EditorSculptureLayer.cs" />
-    <Compile Include="Traits\World\EditorUndoRedoLayer.cs" />
     <Compile Include="Traits\World\LegacyBridgeLayer.cs" />
     <Compile Include="Traits\World\CrateSpawner.cs" />
     <Compile Include="Traits\World\CreateMPPlayers.cs" />
@@ -563,7 +560,6 @@
     <Compile Include="Traits\World\PaletteFromGimpOrJascFile.cs" />
     <Compile Include="Traits\World\PaletteFromPng.cs" />
     <Compile Include="Traits\World\PaletteFromRGBA.cs" />
-    <Compile Include="Traits\World\TerrainPassableOverlay.cs" />
     <Compile Include="Traits\World\ValidateOrder.cs" />
     <Compile Include="Pathfinder\CellInfoLayerPool.cs" />
     <Compile Include="Pathfinder\Constants.cs" />
@@ -603,9 +599,9 @@
     <Compile Include="UtilityCommands\PngSheetExportMetadataCommand.cs" />
     <Compile Include="UtilityCommands\PngSheetImportMetadataCommand.cs" />
     <Compile Include="Widgets\Logic\MusicHotkeyLogic.cs" />
-    <Compile Include="Widgets\Logic\SculptDesignerLogic.cs" />
     <Compile Include="Widgets\ScriptNodes\AdvancedTextFieldWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\Connections.cs" />
+    <Compile Include="Widgets\ScriptNodes\Easing.cs" />
     <Compile Include="Widgets\ScriptNodes\EditorNodeBrushes\EditorNodeBrush.cs" />
     <Compile Include="Widgets\ScriptNodes\IngameNodeScriptSystem.cs" />
     <Compile Include="Widgets\ScriptNodes\IngameWidgets\TextChoiceLogic.cs" />
@@ -649,6 +645,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\TextBoxSelectNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\SetCameraPositionNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\UiNodeUiSettings.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Variables\GetVariable.cs" />
     <Compile Include="WorldExtensions.cs" />
     <Compile Include="UtilityCommands\GetMapHashCommand.cs" />
     <Compile Include="UtilityCommands\Glob.cs" />

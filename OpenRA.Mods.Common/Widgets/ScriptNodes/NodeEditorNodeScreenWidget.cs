@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Lifetime;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Scripting;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
@@ -35,6 +36,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public int2 CorrectCenterCoordinates = new int2(0, 0);
 
         public List<NodeWidget> Nodes = new List<NodeWidget>();
+        public List<VatiableInfo> VariableInfos = new List<VatiableInfo>();
 
         // Position of Mouse Cursor
         int2 oldCursorPosition;
@@ -59,7 +61,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         int timer;
 
         [ObjectCreator.UseCtor]
-        public NodeEditorNodeScreenWidget(ScriptNodeWidget snw, NodeEditorBackgroundWidget bgw, WorldRenderer worldRenderer, World world)
+        public NodeEditorNodeScreenWidget(ScriptNodeWidget snw, NodeEditorBackgroundWidget bgw,
+            WorldRenderer worldRenderer, World world)
         {
             Snw = snw;
             Bgw = bgw;
@@ -73,8 +76,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override void Tick()
         {
-            Bounds = new Rectangle(Bgw.RenderBounds.X + 200, Bgw.RenderBounds.Y + 5, Bgw.RenderBounds.Width - 205, Bgw.RenderBounds.Height - 10);
-            CorrectCenterCoordinates = new int2(RenderBounds.X + (RenderBounds.Width / 2), RenderBounds.Y + (RenderBounds.Height / 2));
+            Bounds = new Rectangle(Bgw.Bounds.X + 200, Bgw.Bounds.Y + 5, Bgw.Bounds.Width - 355,
+                Bgw.Bounds.Height - 10);
+            CorrectCenterCoordinates = new int2((Bounds.Width / 2), (Bounds.Height / 2));
 
             if (tick++ < 1)
             {
@@ -82,6 +86,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                 tick = 2;
             }
+        }
+
+        public void AddVariableInfo(VatiableInfo info)
+        {
+            VariableInfos.Add(info);
+        }
+
+        public void RemoveVariableInfo(VatiableInfo info)
+        {
+            if (VariableInfos.Contains(info))
+                VariableInfos.Remove(info);
         }
 
         public NodeWidget AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
@@ -146,7 +161,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (!Visible)
                 return false;
 
-            if (e.Event == KeyInputEvent.Down && e.Key == Keycode.C && e.Modifiers == Modifiers.Ctrl && selectedNodes.Any())
+            if (e.Event == KeyInputEvent.Down && e.Key == Keycode.C && e.Modifiers == Modifiers.Ctrl &&
+                selectedNodes.Any())
             {
                 copyNodes = new List<NodeWidget>();
                 foreach (var node in selectedNodes)
@@ -272,7 +288,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                                 connection.InWidgetPosition.Height + 40).Contains(mi.Location)
                             && CurrentBrush == NodeBrush.Connecting
                             && brushItem != null
-                            && (brushItem.Item2.ConTyp == connection.ConTyp || connection.ConTyp == ConnectionType.Universal || brushItem.Item2.ConTyp == ConnectionType.Universal))
+                            && (brushItem.Item2.ConTyp == connection.ConTyp ||
+                                connection.ConTyp == ConnectionType.Universal ||
+                                brushItem.Item2.ConTyp == ConnectionType.Universal))
                         {
                             connection.In = brushItem.Item2;
                         }
@@ -329,7 +347,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 CurrentBrush = NodeBrush.Drag;
             }
-            else if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
+            else if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down &&
+                     CurrentBrush == NodeBrush.Free)
             {
                 CurrentBrush = NodeBrush.Frame;
                 selectionStart = mi.Location;
@@ -340,7 +359,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 if (mi.Location != oldCursorPosition)
                 {
                     CenterCoordinates += oldCursorPosition - mi.Location;
-                    CorrectCenterCoordinates = new int2(RenderBounds.Width / 2 + CenterCoordinates.X, RenderBounds.Height / 2 + CenterCoordinates.Y);
+                    CorrectCenterCoordinates = new int2(RenderBounds.Width / 2 + CenterCoordinates.X,
+                        RenderBounds.Height / 2 + CenterCoordinates.Y);
                 }
             }
 
@@ -348,7 +368,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var sizeX = Math.Max(selectionStart.X, mi.Location.X) - Math.Min(selectionStart.X, mi.Location.X);
                 var sizeY = Math.Max(selectionStart.Y, mi.Location.Y) - Math.Min(selectionStart.Y, mi.Location.Y);
-                selectionRectangle = new Rectangle(Math.Min(selectionStart.X, mi.Location.X), Math.Min(selectionStart.Y, mi.Location.Y), sizeX, sizeY);
+                selectionRectangle = new Rectangle(Math.Min(selectionStart.X, mi.Location.X),
+                    Math.Min(selectionStart.Y, mi.Location.Y), sizeX, sizeY);
             }
 
             oldCursorPosition = mi.Location;
@@ -381,7 +402,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     return false;
                 }
 
-                if (node.WidgetBackground.Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
+                if (node.WidgetBackground.Contains(mi.Location) && mi.Button == MouseButton.Left &&
+                    mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
                 {
                     if (node.DeleteButton.Contains(mi.Location))
                     {
@@ -419,11 +441,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 for (int i = 0; i < node.OutConnections.Count; i++)
                 {
-                    if (node.OutConnections[i].InWidgetPosition.Contains(mi.Location) && mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down &&
+                    if (node.OutConnections[i].InWidgetPosition.Contains(mi.Location) &&
+                        mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down &&
                         CurrentBrush == NodeBrush.Free)
                     {
                         CurrentBrush = NodeBrush.Connecting;
-                        brushItem = new Tuple<Rectangle, OutConnection>(node.OutConnections[i].InWidgetPosition, node.OutConnections[i]);
+                        brushItem = new Tuple<Rectangle, OutConnection>(node.OutConnections[i].InWidgetPosition,
+                            node.OutConnections[i]);
                         return true;
                     }
                 }
@@ -449,10 +473,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public override void Draw()
         {
             text = "X: " + CenterCoordinates.X + " Y: " + CenterCoordinates.Y;
-            WidgetUtils.DrawPanel(Background, new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
+            WidgetUtils.DrawPanel(Background,
+                new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
             Snw.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
                 Color.White, Color.Black, 1);
-            Snw.FontRegular.DrawTextWithShadow(CurrentBrush.ToString(), new float2(RenderBounds.X + 2, RenderBounds.Y + 50),
+            Snw.FontRegular.DrawTextWithShadow(CurrentBrush.ToString(),
+                new float2(RenderBounds.X + 2, RenderBounds.Y + 50),
                 Color.White, Color.Black, 1);
             if (brushItem != null && CurrentBrush == NodeBrush.Connecting)
             {
@@ -477,14 +503,40 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     if (conTarget != oldCursorPosition)
                         break;
                 }
-
-                Game.Renderer.RgbaColorRenderer.DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), conTarget,
-                    2, brushItem.Item2.Color);
+                
+                NodeEditorNodeScreenWidget.DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), conTarget, brushItem.Item2.Color);
             }
 
             if (CurrentBrush == NodeBrush.Frame)
             {
                 WidgetUtils.FillRectWithColor(selectionRectangle, Color.FromArgb(100, 255, 255, 255));
+            }
+        }
+
+        public static void DrawLine(int2 from, int2 to, Color color)
+        {
+            if (from.X > to.X)
+            {
+                var tmp = from;
+                from = to;
+                to = tmp;
+            }
+            
+            var stepSize = 10;
+            var yDiff = to.Y - from.Y;
+
+            for (var x = from.X; x < to.X; x += stepSize)
+            {
+                var currentSegmentStartX = x;
+                var currentSegmentEndX = Math.Min(x + stepSize, to.X);
+                    
+                var currentSegmentStartY = (int) (from.Y + yDiff * Easing.InOutSine((currentSegmentStartX - from.X) / (double)(to.X - from.X)));
+                var currentSegmentEndY = (int) (from.Y + yDiff * Easing.InOutSine((currentSegmentEndX - from.X) / (double)(to.X - from.X)));
+                    
+                Game.Renderer.RgbaColorRenderer.DrawLine(
+                    new int2(currentSegmentStartX, currentSegmentStartY),
+                    new int2(currentSegmentEndX, currentSegmentEndY),
+                    2, color);
             }
         }
     }

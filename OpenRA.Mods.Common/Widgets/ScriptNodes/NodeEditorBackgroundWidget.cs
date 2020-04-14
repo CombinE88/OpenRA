@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mime;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -17,6 +18,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public ScriptNodeWidget Snw;
 
+        ScrollPanelWidget scrollPanel;
         NodeEditorNodeScreenWidget screenWidget;
         DropDownButtonWidget createNodesList;
         DropDownButtonWidget createActorNodesList;
@@ -38,7 +40,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             Children.Add(screenWidget = new NodeEditorNodeScreenWidget(Snw, this, worldRenderer, world));
 
-            Bounds = new Rectangle(100, 100, Snw.RenderBounds.Width - 200, Snw.RenderBounds.Height - 200);
+            Bounds = new Rectangle(5, 40, Game.Renderer.Resolution.Width - 265, Game.Renderer.Resolution.Height - 45);
 
             AddNodesList();
             AddActorList();
@@ -58,6 +60,138 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             uiNodesList.Text = "- Ui Nodes -";
             conditionNodesList.Text = "- Condition Nodes -";
 
+            // Add Variable Buttons
+
+
+            AddChild(scrollPanel = new ScrollPanelWidget(snw.ModData));
+            scrollPanel.Layout = new ListLayout(scrollPanel);
+            scrollPanel.Bounds = new Rectangle(Bounds.Width - 145, 40, 140, Bounds.Height - 60);
+
+            var addButton = new ButtonWidget(snw.ModData)
+            {
+                Bounds = new Rectangle(Bounds.Width - 145, 5, 140, 25),
+                Text = "Add Variable",
+                OnClick = () =>
+                {
+                    var variableItem = new VatiableInfo
+                    {
+                        VarType = VariableType.Actor
+                    };
+
+                    screenWidget.AddVariableInfo(variableItem);
+
+                    var variableTemplate = new ScrollItemWidget(snw.ModData)
+                    {
+                        Bounds = new Rectangle(0, 0, 110, 55)
+                    };
+
+                    var textFieldWidget = new TextFieldWidget
+                    {
+                        Bounds = new Rectangle(2, 2, 105, 25),
+                    };
+                    
+                    textFieldWidget.OnTextEdited = () =>
+                    {
+                        var counter = 1;
+                        var text = textFieldWidget.Text;
+                        while (screenWidget.VariableInfos.Any(v =>
+                            v.VariableName == textFieldWidget.Text && v != variableItem))
+                        {
+                            counter++;
+                            text += counter;
+                            textFieldWidget.Text = text;
+                        }
+
+                        variableItem.VariableName = textFieldWidget.Text;
+                    };
+
+                    variableTemplate.AddChild(textFieldWidget);
+                    
+                    var i = 1;
+                    var name = "var" + i;
+                    variableItem.VariableName = name;
+                    textFieldWidget.Text = name;
+                    while (screenWidget.VariableInfos.Any(v => v.VariableName == name && v != variableItem))
+                    {
+                        i++;
+                        name = "var" + i;
+                        variableItem.VariableName = name;
+                        textFieldWidget.Text = name;
+                    }
+
+                    List<VariableType> variableTypes = new List<VariableType>
+                    {
+                        VariableType.Actor,
+                        VariableType.ActorInfo,
+                        VariableType.Player,
+                        VariableType.PlayerGroup,
+                        VariableType.Location,
+                        VariableType.CellArray,
+                        VariableType.CellPath,
+                        VariableType.Integer,
+                        VariableType.ActorList
+                    };
+
+                    List<string> variableString = new List<string>
+                    {
+                        "Actor",
+                        "Actor Info",
+                        "Player",
+                        "Player Group",
+                        "Cell",
+                        "Cells",
+                        "Cell Path",
+                        "Integer",
+                        "Actor List",
+                    };
+
+                    var dropDownText = new DropDownButtonWidget(Snw.ModData);
+                    dropDownText.Text = "Actor";
+
+                    var type = VariableType.Actor;
+
+                    Func<VariableType, ScrollItemWidget, ScrollItemWidget> setupItemGroup = (option, template) =>
+                    {
+                        var item = ScrollItemWidget.Setup(template, () => type == option, () =>
+                        {
+                            type = option;
+                            dropDownText.Text = variableString[variableTypes.IndexOf(type)];
+                            variableItem.VarType = type;
+                            foreach (var node in screenWidget.Nodes.Where(n =>
+                                n is GetVariableNode && n.NodeType == NodeType.GetVariable))
+                            {
+                                ((GetVariableNode) node).Update();
+                            }
+                        });
+
+                        item.Get<LabelWidget>("LABEL").GetText = () => variableString[variableTypes.IndexOf(option)];
+                        return item;
+                    };
+
+                    dropDownText.OnClick = () =>
+                    {
+                        var nodes = variableTypes;
+                        dropDownText.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
+                    };
+
+                    variableTemplate.OnDoubleClick = () =>
+                    {
+                        scrollPanel.RemoveChild(variableTemplate);
+                        screenWidget.RemoveVariableInfo(variableItem);
+                    };
+
+                    variableTemplate.AddChild(dropDownText);
+                    dropDownText.Bounds = new Rectangle(2, 29, 105, 25);
+
+                    variableTemplate.IsVisible = () => true;
+                    scrollPanel.AddChild(variableTemplate);
+                }
+            };
+
+            AddChild(addButton);
+
+            // End
+
             AddChild(addNodeButton = new ButtonWidget(snw.ModData));
             addNodeButton.Bounds = new Rectangle(5, 400, 190, 25);
             addNodeButton.Text = "Add Node";
@@ -76,8 +210,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 }
 
                 Snw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfo = nodeInfos;
-
-                Visible = false;
+                Snw.World.WorldActor.Trait<EditorNodeLayer>().VariableInfos = screenWidget.VariableInfos;
+                Snw.Toggle();
             };
         }
 
@@ -87,18 +221,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 NodeType.MapInfoNode,
                 NodeType.MapInfoActorInfoNode,
-                NodeType.MapInfoActorReference
+                NodeType.MapInfoActorReference,
+                NodeType.GetVariable
             };
 
             List<string> outputNodeStrings = new List<string>
             {
                 "Info: Map Info",
                 "Info: Actor Info",
-                "Info: Actor"
+                "Info: Actor",
+                "Variable: Get"
             };
 
             nodeType = outputNodeTypes.First();
-
             AddChild(createNodesList = new DropDownButtonWidget(Snw.ModData));
             createNodesList.Bounds = new Rectangle(5, 5 + 26, 190, 25);
 
@@ -540,11 +675,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             };
         }
 
-        public override void Tick()
-        {
-            Bounds = new Rectangle(5, 20, Snw.RenderBounds.Width - 20, Snw.RenderBounds.Height - 20);
-        }
-
         public override bool HandleMouseInput(MouseInput mi)
         {
             if (!EventBounds.Contains(mi.Location))
@@ -557,7 +687,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override void Draw()
         {
-            WidgetUtils.DrawPanel(Background, new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
+            WidgetUtils.DrawPanel(Background,
+                new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
         }
     }
 }
