@@ -22,6 +22,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public class EditorNodeLayer : IWorldLoaded
     {
         public List<NodeInfo> NodeInfo = new List<NodeInfo>();
+        public List<VatiableInfo> VariableInfos = new List<VatiableInfo>();
         World world;
 
         public EditorNodeLayer(Actor self, EditorNodeLayerInfo info)
@@ -353,6 +354,26 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             return nodes;
         }
+    }
+
+    public class VatiableInfo
+    {
+        public string VariableName;
+        public VariableType VarType;
+
+        public Actor Actor = null;
+        public Actor[] ActorGroup = null;
+        public ActorInfo ActorInfo = null;
+        public ActorInfo[] ActorInfos = null;
+        public EditorActorPreview ActorPreview = null;
+        public EditorActorPreview[] ActorPreviews = null;
+        public string ActorId = null;
+        public string[] ActorIds = null;
+        public PlayerReference Player = null;
+        public PlayerReference[] PlayerGroup = null;
+        public CPos? Location = null;
+        public List<CPos> CellArray = new List<CPos>();
+        public int? Number = null;
     }
 
     public class NodeInfo
