@@ -236,88 +236,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             foreach (var variableInfo in VariableInfos)
             {
-                nodes.Add(new MiniYamlNode("Variable@" + variableInfo.VariableName, variableInfo.VarType.ToString(),
-                    SaveVariableSettings(variableInfo)));
+                nodes.Add(new MiniYamlNode("Variable@" + variableInfo.VariableName, variableInfo.VarType.ToString()));
             }
 
             return nodes;
-        }
-
-        public List<MiniYamlNode> SaveVariableSettings(VatiableInfo variableInfo)
-        {
-            var varSettings = new List<MiniYamlNode>();
-
-            if (variableInfo.Actor != null)
-                varSettings.Add(new MiniYamlNode("Actor", variableInfo.ActorPreview.ID));
-            if (variableInfo.Player != null)
-                varSettings.Add(new MiniYamlNode("Player", variableInfo.Player.Name));
-            if (variableInfo.Timer != null)
-                varSettings.Add(new MiniYamlNode("Timer", variableInfo.Timer.NodeId));
-            if (variableInfo.ActorGroup != null)
-            {
-                string text = "";
-                foreach (var play in variableInfo.ActorPreviews)
-                {
-                    if (play == variableInfo.ActorPreviews.Last())
-                        text += play.ID;
-                    else
-                        text += play.ID + ",";
-
-                    varSettings.Add(new MiniYamlNode("Actors", text));
-                }
-            }
-
-            if (variableInfo.ActorInfo != null)
-                varSettings.Add(new MiniYamlNode("ActorInfo", variableInfo.ActorInfo.Name));
-            if (variableInfo.ActorInfos != null)
-            {
-                string text = "";
-                foreach (var play in variableInfo.ActorInfos)
-                {
-                    if (play == variableInfo.ActorInfos.Last())
-                        text += play.Name;
-                    else
-                        text += play.Name + ",";
-                }
-
-                varSettings.Add(new MiniYamlNode("ActorInfos", text));
-            }
-
-            if (variableInfo.CellArray != null)
-            {
-                var text = "";
-                foreach (var cell in variableInfo.CellArray)
-                {
-                    if (cell != variableInfo.CellArray.Last())
-                        text += cell.ToString() + "|";
-                    else
-                        text += cell.ToString();
-                }
-
-                varSettings.Add(new MiniYamlNode("Cells", text));
-            }
-
-            if (variableInfo.PlayerGroup != null)
-            {
-                string text = "";
-                foreach (var play in variableInfo.PlayerGroup)
-                {
-                    if (play == variableInfo.PlayerGroup.Last())
-                        text += play.Name;
-                    else
-                        text += play.Name + ",";
-                }
-
-                varSettings.Add(new MiniYamlNode("Players", text));
-            }
-
-            if (variableInfo.Location != null)
-                varSettings.Add(new MiniYamlNode("Cell",
-                    variableInfo.Location.Value.X + "," + variableInfo.Location.Value.Y));
-            if (variableInfo.Number != null)
-                varSettings.Add(new MiniYamlNode("Integer", variableInfo.Number.ToString()));
-
-            return varSettings;
         }
 
         public List<MiniYamlNode> SaveEntries(NodeInfo nodeInfo)
