@@ -391,6 +391,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new CameraRideNodeLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
+                else if (nodeinfo.NodeType == NodeType.SetVariable)
+                {
+                    var newNode = new SetVariableLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
+                else if (nodeinfo.NodeType == NodeType.GetVariable)
+                {
+                    var newNode = new GetVariableLogic(nodeinfo, inss);
+                    nodeList.Add(newNode);
+                }
             }
 
             return nodeList;

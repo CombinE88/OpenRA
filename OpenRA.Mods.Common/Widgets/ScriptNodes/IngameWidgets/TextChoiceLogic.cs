@@ -55,7 +55,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.IngameWidgets
                         }
 
                     label.Text = textNode.Text;
-                    label.TextColor = Color.Black;
                     label.VAlign = TextVAlign.Top;
 
                     currentTextBos = textNode;

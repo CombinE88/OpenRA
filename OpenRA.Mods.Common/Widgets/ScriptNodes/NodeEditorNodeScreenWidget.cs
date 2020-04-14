@@ -36,7 +36,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public int2 CorrectCenterCoordinates = new int2(0, 0);
 
         public List<NodeWidget> Nodes = new List<NodeWidget>();
-        public List<VatiableInfo> VariableInfos = new List<VatiableInfo>();
+        public List<VariableInfo> VariableInfos = new List<VariableInfo>();
 
         // Position of Mouse Cursor
         int2 oldCursorPosition;
@@ -82,18 +82,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             if (tick++ < 1)
             {
+                LoadInVariables();
                 LoadInNodes();
 
                 tick = 2;
             }
         }
 
-        public void AddVariableInfo(VatiableInfo info)
+        public void AddVariableInfo(VariableInfo info)
         {
             VariableInfos.Add(info);
         }
 
-        public void RemoveVariableInfo(VatiableInfo info)
+        public void RemoveVariableInfo(VariableInfo info)
         {
             if (VariableInfos.Contains(info))
                 VariableInfos.Remove(info);
@@ -119,7 +120,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             NodeID++;
             return "ND" + (NodeID < 10 ? "0" + NodeID : NodeID.ToString());
         }
-
+        void LoadInVariables()
+        {
+            foreach (var variableInfo in World.WorldActor.Trait<EditorNodeLayer>().VariableInfos)
+            {
+                Bgw.AddNewVariable(variableInfo.VarType, variableInfo.VariableName);
+            }
+        }
+        
         void LoadInNodes()
         {
             Nodes = nodeLibrary.LoadInNodes(this, World.WorldActor.Trait<EditorNodeLayer>().NodeInfos);

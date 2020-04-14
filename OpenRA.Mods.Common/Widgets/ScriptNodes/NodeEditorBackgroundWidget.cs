@@ -71,172 +71,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 Bounds = new Rectangle(Bounds.Width - 145, 5, 140, 25),
                 Text = "Add Variable",
-                OnClick = () =>
-                {
-                    var variableItem = new VatiableInfo
-                    {
-                        VarType = VariableType.Actor
-                    };
-
-                    var variableTemplate = new ScrollItemWidget(snw.ModData)
-                    {
-                        Bounds = new Rectangle(0, 0, 110, 55)
-                    };
-
-                    var textFieldWidget = new TextFieldWidget
-                    {
-                        Bounds = new Rectangle(2, 2, 105, 25),
-                    };
-
-                    textFieldWidget.OnTextEdited = () =>
-                    {
-                        if (textFieldWidget.Text == variableItem.VariableName)
-                            return;
-
-                        var counter = 1;
-                        var text = textFieldWidget.Text;
-                        while (screenWidget.VariableInfos.Any(v =>
-                            v.VariableName == textFieldWidget.Text && v != variableItem))
-                        {
-                            counter++;
-                            text += counter;
-                            textFieldWidget.Text = text;
-                        }
-
-                        variableItem.VariableName = textFieldWidget.Text;
-
-                        foreach (var node in screenWidget.Nodes.Where(n =>
-                            n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
-                            (n as GetVariableNode).SelectedVariable == variableItem))
-                        {
-                            ((GetVariableNode) node).Update(false);
-                        }
-
-                        foreach (var node in screenWidget.Nodes.Where(n =>
-                            n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
-                            (n as SetVariableNode).SelectedVariable == variableItem))
-                        {
-                            ((SetVariableNode) node).Update(false);
-                        }
-                    };
-
-                    variableTemplate.AddChild(textFieldWidget);
-
-                    var i = 1;
-                    var name = "var" + i;
-                    variableItem.VariableName = name;
-                    textFieldWidget.Text = name;
-                    while (screenWidget.VariableInfos.Any(v => v.VariableName == name && v != variableItem))
-                    {
-                        i++;
-                        name = "var" + i;
-                        variableItem.VariableName = name;
-                        textFieldWidget.Text = name;
-                    }
-
-                    List<VariableType> variableTypes = new List<VariableType>
-                    {
-                        VariableType.Actor,
-                        VariableType.ActorInfo,
-                        VariableType.Player,
-                        VariableType.PlayerGroup,
-                        VariableType.Location,
-                        VariableType.CellArray,
-                        VariableType.CellPath,
-                        VariableType.Integer,
-                        VariableType.ActorList,
-                        VariableType.Timer,
-                        VariableType.Objective
-                    };
-
-                    List<string> variableString = new List<string>
-                    {
-                        "Actor",
-                        "Actor Info",
-                        "Player",
-                        "Player Group",
-                        "Cell",
-                        "Cells",
-                        "Cell Path",
-                        "Integer",
-                        "Actor List",
-                        "Timer",
-                        "Objective"
-                    };
-
-                    var dropDownText = new DropDownButtonWidget(Snw.ModData);
-                    dropDownText.Text = "Actor";
-
-                    var type = VariableType.Actor;
-
-                    Func<VariableType, ScrollItemWidget, ScrollItemWidget> setupItemGroup = (option, template) =>
-                    {
-                        var item = ScrollItemWidget.Setup(template, () => type == option, () =>
-                        {
-                            type = option;
-                            dropDownText.Text = variableString[variableTypes.IndexOf(type)];
-
-                            var oldType = variableItem.VarType;
-                            variableItem.VarType = option;
-
-                            if (variableItem.VarType == oldType)
-                                return;
-
-                            foreach (var node in screenWidget.Nodes.Where(n =>
-                                n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
-                                (n as GetVariableNode).SelectedVariable == variableItem))
-                            {
-                                ((GetVariableNode) node).Update(true);
-                            }
-
-                            foreach (var node in screenWidget.Nodes.Where(n =>
-                                n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
-                                (n as SetVariableNode).SelectedVariable == variableItem))
-                            {
-                                ((SetVariableNode) node).Update(true);
-                            }
-                        });
-
-                        item.Get<LabelWidget>("LABEL").GetText = () => variableString[variableTypes.IndexOf(option)];
-
-                        return item;
-                    };
-
-                    dropDownText.OnClick = () =>
-                    {
-                        var nodes = variableTypes;
-                        dropDownText.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
-                    };
-
-                    variableTemplate.OnDoubleClick = () =>
-                    {
-                        foreach (var node in screenWidget.Nodes.Where(n =>
-                            n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
-                            (n as GetVariableNode).SelectedVariable == variableItem))
-                        {
-                            dropDownText.Text = "SELECT VARIABLE";
-                            ((GetVariableNode) node).SelectedVariable = null;
-                        }
-
-                        foreach (var node in screenWidget.Nodes.Where(n =>
-                            n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
-                            (n as SetVariableNode).SelectedVariable == variableItem))
-                        {
-                            dropDownText.Text = "SELECT VARIABLE";
-                            ((SetVariableNode) node).SelectedVariable = null;
-                        }
-
-                        scrollPanel.RemoveChild(variableTemplate);
-                        screenWidget.RemoveVariableInfo(variableItem);
-                    };
-
-                    screenWidget.AddVariableInfo(variableItem);
-                    variableTemplate.AddChild(dropDownText);
-                    dropDownText.Bounds = new Rectangle(2, 29, 105, 25);
-
-                    variableTemplate.IsVisible = () => true;
-                    scrollPanel.AddChild(variableTemplate);
-                }
+                OnClick = () => { AddNewVariable(VariableType.Actor); }
             };
 
             AddChild(addButton);
@@ -264,6 +99,173 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 Snw.World.WorldActor.Trait<EditorNodeLayer>().VariableInfos = screenWidget.VariableInfos;
                 Snw.Toggle();
             };
+        }
+
+        public void AddNewVariable(VariableType variableType, string variableName = "var")
+        {
+            var variableItem = new VariableInfo
+            {
+                VarType = variableType
+            };
+
+            var variableTemplate = new ScrollItemWidget(Snw.ModData)
+            {
+                Bounds = new Rectangle(0, 0, 110, 55)
+            };
+
+            var textFieldWidget = new TextFieldWidget
+            {
+                Bounds = new Rectangle(2, 2, 105, 25),
+            };
+
+            textFieldWidget.OnTextEdited = () =>
+            {
+                if (textFieldWidget.Text == variableItem.VariableName)
+                    return;
+
+                var counter = 1;
+                var text = textFieldWidget.Text;
+                while (screenWidget.VariableInfos.Any(v =>
+                    v.VariableName == textFieldWidget.Text && v != variableItem))
+                {
+                    text += counter;
+                    textFieldWidget.Text = text;
+                    counter++;
+                }
+
+                variableItem.VariableName = textFieldWidget.Text;
+
+                foreach (var node in screenWidget.Nodes.Where(n =>
+                    n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
+                    (n as GetVariableNode).VariableReference == variableItem))
+                {
+                    ((GetVariableNode) node).Update(false);
+                }
+
+                foreach (var node in screenWidget.Nodes.Where(n =>
+                    n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
+                    (n as SetVariableNode).VariableReference == variableItem))
+                {
+                    ((SetVariableNode) node).Update(false);
+                }
+            };
+
+            variableTemplate.AddChild(textFieldWidget);
+
+            var i = 1;
+            var name = variableName;
+            variableItem.VariableName = name;
+            textFieldWidget.Text = name;
+            while (screenWidget.VariableInfos.Any(v => v.VariableName == name && v != variableItem))
+            {
+                name = variableName + i;
+                variableItem.VariableName = name;
+                textFieldWidget.Text = name;
+                i++;
+            }
+
+            List<VariableType> variableTypes = new List<VariableType>
+            {
+                VariableType.Actor,
+                VariableType.ActorInfo,
+                VariableType.Player,
+                VariableType.PlayerGroup,
+                VariableType.Location,
+                VariableType.CellArray,
+                VariableType.CellPath,
+                VariableType.Integer,
+                VariableType.ActorList,
+                VariableType.Timer,
+                VariableType.Objective
+            };
+
+            List<string> variableString = new List<string>
+            {
+                "Actor",
+                "Actor Info",
+                "Player",
+                "Player Group",
+                "Cell",
+                "Cells",
+                "Cell Path",
+                "Integer",
+                "Actor List",
+                "Timer",
+                "Objective"
+            };
+
+            var dropDownText = new DropDownButtonWidget(Snw.ModData);
+            dropDownText.Text = variableString[variableTypes.IndexOf(variableType)];
+
+            var type = variableType;
+
+            Func<VariableType, ScrollItemWidget, ScrollItemWidget> setupItemGroup = (option, template) =>
+            {
+                var item = ScrollItemWidget.Setup(template, () => type == option, () =>
+                {
+                    type = option;
+                    dropDownText.Text = variableString[variableTypes.IndexOf(type)];
+
+                    var oldType = variableItem.VarType;
+                    variableItem.VarType = option;
+
+                    if (variableItem.VarType == oldType)
+                        return;
+
+                    foreach (var node in screenWidget.Nodes.Where(n =>
+                        n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
+                        (n as GetVariableNode).VariableReference == variableItem))
+                    {
+                        ((GetVariableNode) node).Update(true);
+                    }
+
+                    foreach (var node in screenWidget.Nodes.Where(n =>
+                        n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
+                        (n as SetVariableNode).VariableReference == variableItem))
+                    {
+                        ((SetVariableNode) node).Update(true);
+                    }
+                });
+
+                item.Get<LabelWidget>("LABEL").GetText = () => variableString[variableTypes.IndexOf(option)];
+
+                return item;
+            };
+
+            dropDownText.OnClick = () =>
+            {
+                var nodes = variableTypes;
+                dropDownText.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
+            };
+
+            variableTemplate.OnDoubleClick = () =>
+            {
+                foreach (var node in screenWidget.Nodes.Where(n =>
+                    n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
+                    (n as GetVariableNode).VariableReference == variableItem))
+                {
+                    dropDownText.Text = "SELECT VARIABLE";
+                    ((GetVariableNode) node).VariableReference = null;
+                }
+
+                foreach (var node in screenWidget.Nodes.Where(n =>
+                    n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
+                    (n as SetVariableNode).VariableReference == variableItem))
+                {
+                    dropDownText.Text = "SELECT VARIABLE";
+                    ((SetVariableNode) node).VariableReference = null;
+                }
+
+                scrollPanel.RemoveChild(variableTemplate);
+                screenWidget.RemoveVariableInfo(variableItem);
+            };
+
+            screenWidget.AddVariableInfo(variableItem);
+            variableTemplate.AddChild(dropDownText);
+            dropDownText.Bounds = new Rectangle(2, 29, 105, 25);
+
+            variableTemplate.IsVisible = () => true;
+            scrollPanel.AddChild(variableTemplate);
         }
 
         void AddNodesList()

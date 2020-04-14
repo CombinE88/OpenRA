@@ -23,7 +23,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public class EditorNodeLayer : IWorldLoaded
     {
         public List<NodeInfo> NodeInfos = new List<NodeInfo>();
-        public List<VatiableInfo> VariableInfos = new List<VatiableInfo>();
+        public List<VariableInfo> VariableInfos = new List<VariableInfo>();
         World world;
 
         public EditorNodeLayer(Actor self, EditorNodeLayerInfo info)
@@ -36,11 +36,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (world.Type != WorldType.Editor)
                 return;
 
-            foreach (var kv in world.Map.NodeDefinitions)
-                Add(kv);
+            foreach (var kv in world.Map.NodeDefinitions.Where(def => def.Key.Split('@').First() == "Variable"))
+                AddVariables(kv);
+            foreach (var kv in world.Map.NodeDefinitions.Where(def => def.Key.Split('@').First() != "Variable"))
+                AddNodeInfos(kv);
         }
 
-        void Add(MiniYamlNode nodes)
+        void AddVariables(MiniYamlNode vars)
+        {
+            string[] infos = vars.Key.Split('@');
+            string varType = infos.Last();
+
+            var values = (VariableType[]) Enum.GetValues(typeof(VariableType));
+
+            var varInfo = new VariableInfo
+            {
+                VariableName = varType,
+                VarType = values.First(e => e.ToString() == vars.Value.Value)
+            };
+
+            VariableInfos.Add(varInfo);
+        }
+
+        void AddNodeInfos(MiniYamlNode nodes)
         {
             string[] infos = nodes.Key.Split('@');
             string nodeName = infos.First();
@@ -67,7 +85,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     nodeInfo.OffsetPosY = offsetY;
                 }
 
-                if (node.Key == "Methode")
+                if (node.Key == "Method")
                 {
                     CompareMethode[] methodes = (CompareMethode[]) Enum.GetValues(typeof(CompareMethode));
                     nodeInfo.Methode = methodes.First(e => e.ToString() == node.Value.Value);
@@ -77,6 +95,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {
                     CompareItem[] item = (CompareItem[]) Enum.GetValues(typeof(CompareItem));
                     nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
+                }
+
+                if (node.Key == "VariableReference")
+                {
+                    nodeInfo.VariableReference = node.Value.Value;
                 }
 
                 if (node.Key.Contains("In@"))
@@ -253,6 +276,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (nodeInfo.Item != null)
                 nodes.Add(new MiniYamlNode("Item", nodeInfo.Item.ToString()));
 
+            if (nodeInfo.VariableReference != null)
+                nodes.Add(new MiniYamlNode("VariableReference", nodeInfo.VariableReference));
+
             foreach (var outCon in nodeInfo.OutConnectionsReference)
             {
                 nodes.Add(new MiniYamlNode("Out@" + outCon.ConnectionId, "", OutConnections(outCon)));
@@ -366,7 +392,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         }
     }
 
-    public class VatiableInfo
+    public class VariableInfo
     {
         public string VariableName;
         public VariableType VarType;
@@ -392,6 +418,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public NodeType NodeType;
         public string NodeName;
         public string NodeID;
+        public string VariableReference;
         public int? OffsetPosX = null;
         public int? OffsetPosY = null;
         public List<InConReference> InConnectionsReference = null;

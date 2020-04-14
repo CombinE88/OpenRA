@@ -14,6 +14,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         int outConnectionCounter = 1;
         public CompareMethode? Methode = null;
         public CompareItem? Item = null;
+        public VariableInfo VariableReference = null;
 
         public NodeWidget(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen)
         {
@@ -50,6 +51,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             nodeInfo.OffsetPosY = OffsetPosY;
             nodeInfo.Methode = Methode;
             nodeInfo.Item = Item;
+            nodeInfo.VariableReference = VariableReference != null ? VariableReference.VariableName : null;
 
             return nodeInfo;
         }

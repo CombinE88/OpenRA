@@ -27,6 +27,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public class IngameNodeScriptSystem : IWorldLoaded, ITick
     {
         public List<NodeLogic> NodeLogics = new List<NodeLogic>();
+        public List<VariableInfo> VariableInfos = new List<VariableInfo>();
+
         public WorldRenderer WorldRenderer;
         List<NodeInfo> nodesInfos = new List<NodeInfo>();
 
@@ -45,8 +47,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             WorldRenderer = wr;
 
-            foreach (var kv in w.Map.NodeDefinitions)
-                Add(kv);
+            foreach (var kv in w.Map.NodeDefinitions.Where(def => def.Key.Split('@').First() == "Variable"))
+                SetUpVariables(kv);
+
+            foreach (var kv in w.Map.NodeDefinitions.Where(def => def.Key.Split('@').First() != "Variable"))
+                AddNodeLogic(kv);
 
             NodeLogics = library.InitializeNodes(this, nodesInfos);
 
@@ -68,13 +73,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             initialized = true;
         }
 
-        void Add(MiniYamlNode nodes)
+        void SetUpVariables(MiniYamlNode vars)
+        {
+            string[] infos = vars.Key.Split('@');
+            string varType = infos.Last();
+
+            var values = (VariableType[]) Enum.GetValues(typeof(VariableType));
+
+            var varInfo = new VariableInfo
+            {
+                VariableName = varType,
+                VarType = values.First(e => e.ToString() == vars.Value.Value)
+            };
+
+            VariableInfos.Add(varInfo);
+        }
+
+        void AddNodeLogic(MiniYamlNode nodes)
         {
             string[] infos = nodes.Key.Split('@');
             string nodeName = infos.First();
             string nodeId = infos.Last();
 
-            NodeType[] nodeTypes = (NodeType[])Enum.GetValues(typeof(NodeType));
+            NodeType[] nodeTypes = (NodeType[]) Enum.GetValues(typeof(NodeType));
             NodeType nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
 
             NodeInfo nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
@@ -97,14 +118,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                 if (node.Key == "Methode")
                 {
-                    CompareMethode[] methodes = (CompareMethode[])Enum.GetValues(typeof(CompareMethode));
+                    CompareMethode[] methodes = (CompareMethode[]) Enum.GetValues(typeof(CompareMethode));
                     nodeInfo.Methode = methodes.First(e => e.ToString() == node.Value.Value);
                 }
 
                 if (node.Key == "Item")
                 {
-                    CompareItem[] item = (CompareItem[])Enum.GetValues(typeof(CompareItem));
+                    CompareItem[] item = (CompareItem[]) Enum.GetValues(typeof(CompareItem));
                     nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
+                }
+
+                if (node.Key == "VariableReference")
+                {
+                    nodeInfo.VariableReference = node.Value.Value;
                 }
 
                 if (node.Key.Contains("In@"))
@@ -118,7 +144,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     {
                         if (incon.Key == "ConnectionType")
                         {
-                            ConnectionType[] values = (ConnectionType[])Enum.GetValues(typeof(ConnectionType));
+                            ConnectionType[] values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
                             inCon.ConTyp = values.First(e => e.ToString() == incon.Value.Value);
                         }
 
@@ -140,7 +166,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     {
                         if (outcon.Key == "ConnectionType")
                         {
-                            ConnectionType[] values = (ConnectionType[])Enum.GetValues(typeof(ConnectionType));
+                            ConnectionType[] values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
                             outCon.ConTyp = values.First(e => e.ToString() == outcon.Value.Value);
                         }
 
