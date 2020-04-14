@@ -9,6 +9,7 @@ using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 {
@@ -1467,11 +1468,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 {
                     NodeType.GetVariable, new NodeContructor
                     {
-                        ConstructorClass = typeof(NodeWidget),
+                        ConstructorClass = typeof(GetVariableNode),
                         OutConnections = new List<ConnectionType>
                         {
                             ConnectionType.Actor
                         }
+                    }
+                },
+                {
+                    NodeType.SetVariable, new NodeContructor
+                    {
+                        ConstructorClass = typeof(SetVariableNode),
+                        InConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Actor,
+                            ConnectionType.Exec
+                        },
                     }
                 },
             };

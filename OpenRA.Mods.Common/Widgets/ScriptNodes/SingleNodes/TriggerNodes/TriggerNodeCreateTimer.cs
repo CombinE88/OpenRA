@@ -110,14 +110,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
             if (timer == null)
                 throw new YamlException(NodeId + "Timer not found");
 
-            if (NodeType == NodeType.TimerReset)
-                timer.ResetTimer();
-
-            if (NodeType == NodeType.TimerStart)
-                timer.StartTimer();
-
-            if (NodeType == NodeType.TimerStop)
-                timer.StopTimer();
+            switch (NodeType)
+            {
+                case NodeType.TimerReset:
+                    timer.ResetTimer();
+                    break;
+                case NodeType.TimerStart:
+                    timer.StartTimer();
+                    break;
+                case NodeType.TimerStop:
+                    timer.StopTimer();
+                    break;
+            }
         }
     }
 }

@@ -122,7 +122,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void LoadInNodes()
         {
-            Nodes = nodeLibrary.LoadInNodes(this, World.WorldActor.Trait<EditorNodeLayer>().NodeInfo);
+            Nodes = nodeLibrary.LoadInNodes(this, World.WorldActor.Trait<EditorNodeLayer>().NodeInfos);
 
             foreach (var node in Nodes)
             {

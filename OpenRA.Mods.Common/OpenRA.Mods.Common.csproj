@@ -646,6 +646,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\SetCameraPositionNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\UiNodeUiSettings.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Variables\GetVariable.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\Variables\SettVariable.cs" />
     <Compile Include="WorldExtensions.cs" />
     <Compile Include="UtilityCommands\GetMapHashCommand.cs" />
     <Compile Include="UtilityCommands\Glob.cs" />

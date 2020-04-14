@@ -190,10 +190,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     Color = Color.LawnGreen;
                     break;
                 case ConnectionType.Objective:
-                    Color = Color.LawnGreen;
+                    Color = Color.PaleGreen;
                     break;
                 case ConnectionType.Condition:
                     Color = Color.DarkRed;
+                    break;
+                case ConnectionType.Variable:
+                    Color = Color.DimGray;
                     break;
             }
         }
@@ -225,7 +228,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         // Specific Connections
         TimerConnection,
         Objective,
-        Condition
+        Condition,
+        Variable
     }
     
     public enum VariableType
@@ -236,10 +240,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Player,
         PlayerGroup,
         Location,
-        LocationRange,
         CellArray,
         CellPath,
         Integer,
-        ActorList
+        ActorList,
+        Timer,
+        Objective
     }
 }

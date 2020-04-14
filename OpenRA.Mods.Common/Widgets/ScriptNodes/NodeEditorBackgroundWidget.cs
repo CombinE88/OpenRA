@@ -78,8 +78,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         VarType = VariableType.Actor
                     };
 
-                    screenWidget.AddVariableInfo(variableItem);
-
                     var variableTemplate = new ScrollItemWidget(snw.ModData)
                     {
                         Bounds = new Rectangle(0, 0, 110, 55)
@@ -89,9 +87,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     {
                         Bounds = new Rectangle(2, 2, 105, 25),
                     };
-                    
+
                     textFieldWidget.OnTextEdited = () =>
                     {
+                        if (textFieldWidget.Text == variableItem.VariableName)
+                            return;
+
                         var counter = 1;
                         var text = textFieldWidget.Text;
                         while (screenWidget.VariableInfos.Any(v =>
@@ -103,10 +104,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         }
 
                         variableItem.VariableName = textFieldWidget.Text;
+
+                        foreach (var node in screenWidget.Nodes.Where(n =>
+                            n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
+                            (n as GetVariableNode).SelectedVariable == variableItem))
+                        {
+                            ((GetVariableNode) node).Update(false);
+                        }
+
+                        foreach (var node in screenWidget.Nodes.Where(n =>
+                            n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
+                            (n as SetVariableNode).SelectedVariable == variableItem))
+                        {
+                            ((SetVariableNode) node).Update(false);
+                        }
                     };
 
                     variableTemplate.AddChild(textFieldWidget);
-                    
+
                     var i = 1;
                     var name = "var" + i;
                     variableItem.VariableName = name;
@@ -129,7 +144,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         VariableType.CellArray,
                         VariableType.CellPath,
                         VariableType.Integer,
-                        VariableType.ActorList
+                        VariableType.ActorList,
+                        VariableType.Timer,
+                        VariableType.Objective
                     };
 
                     List<string> variableString = new List<string>
@@ -143,6 +160,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         "Cell Path",
                         "Integer",
                         "Actor List",
+                        "Timer",
+                        "Objective"
                     };
 
                     var dropDownText = new DropDownButtonWidget(Snw.ModData);
@@ -156,15 +175,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         {
                             type = option;
                             dropDownText.Text = variableString[variableTypes.IndexOf(type)];
-                            variableItem.VarType = type;
+
+                            var oldType = variableItem.VarType;
+                            variableItem.VarType = option;
+
+                            if (variableItem.VarType == oldType)
+                                return;
+
                             foreach (var node in screenWidget.Nodes.Where(n =>
-                                n is GetVariableNode && n.NodeType == NodeType.GetVariable))
+                                n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
+                                (n as GetVariableNode).SelectedVariable == variableItem))
                             {
-                                ((GetVariableNode) node).Update();
+                                ((GetVariableNode) node).Update(true);
+                            }
+
+                            foreach (var node in screenWidget.Nodes.Where(n =>
+                                n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
+                                (n as SetVariableNode).SelectedVariable == variableItem))
+                            {
+                                ((SetVariableNode) node).Update(true);
                             }
                         });
 
                         item.Get<LabelWidget>("LABEL").GetText = () => variableString[variableTypes.IndexOf(option)];
+
                         return item;
                     };
 
@@ -176,10 +210,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                     variableTemplate.OnDoubleClick = () =>
                     {
+                        foreach (var node in screenWidget.Nodes.Where(n =>
+                            n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
+                            (n as GetVariableNode).SelectedVariable == variableItem))
+                        {
+                            dropDownText.Text = "SELECT VARIABLE";
+                            ((GetVariableNode) node).SelectedVariable = null;
+                        }
+
+                        foreach (var node in screenWidget.Nodes.Where(n =>
+                            n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
+                            (n as SetVariableNode).SelectedVariable == variableItem))
+                        {
+                            dropDownText.Text = "SELECT VARIABLE";
+                            ((SetVariableNode) node).SelectedVariable = null;
+                        }
+
                         scrollPanel.RemoveChild(variableTemplate);
                         screenWidget.RemoveVariableInfo(variableItem);
                     };
 
+                    screenWidget.AddVariableInfo(variableItem);
                     variableTemplate.AddChild(dropDownText);
                     dropDownText.Bounds = new Rectangle(2, 29, 105, 25);
 
@@ -209,7 +260,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     nodeInfos.Add(node.BuildNodeInfo());
                 }
 
-                Snw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfo = nodeInfos;
+                Snw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfos = nodeInfos;
                 Snw.World.WorldActor.Trait<EditorNodeLayer>().VariableInfos = screenWidget.VariableInfos;
                 Snw.Toggle();
             };
@@ -222,7 +273,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.MapInfoNode,
                 NodeType.MapInfoActorInfoNode,
                 NodeType.MapInfoActorReference,
-                NodeType.GetVariable
+                NodeType.GetVariable,
+                NodeType.SetVariable
             };
 
             List<string> outputNodeStrings = new List<string>
@@ -230,7 +282,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Info: Map Info",
                 "Info: Actor Info",
                 "Info: Actor",
-                "Variable: Get"
+                "Variable: Get",
+                "Variable: Set"
             };
 
             nodeType = outputNodeTypes.First();
@@ -273,8 +326,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 NodeType.ActorGetInformations,
                 NodeType.ActorKill,
                 NodeType.ActorRemove,
-                NodeType.ActorQueueMove,
                 NodeType.ActorChangeOwner,
+                NodeType.ActorQueueMove,
                 NodeType.ActorQueueAttack,
                 NodeType.ActorQueueHunt,
                 NodeType.ActorQueueAttackMoveActivity,
