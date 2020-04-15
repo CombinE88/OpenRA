@@ -35,7 +35,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             nodeSelectionLayer.Clear();
             nodeSelectionLayer.SetRange(new WDist(0));
 
-            outConnection.Widget.Screen.Bgw.Visible = false;
+            outConnection.Widget.Screen.BackgroundWidget.Visible = false;
 
             function = onFinished;
 
@@ -92,7 +92,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             {
                 if (mi.Event == MouseInputEvent.Up)
                 {
-                    outCon.Widget.Screen.Bgw.Visible = true;
+                    outCon.Widget.Screen.BackgroundWidget.Visible = true;
                     if (nodeSelectionLayer.Mode == CellPicking.Array || nodeSelectionLayer.Mode == CellPicking.Path)
                         outCon.CellArray = nodeSelectionLayer.CellRegion;
                     if ((nodeSelectionLayer.Mode == CellPicking.Single || nodeSelectionLayer.Mode == CellPicking.Range) && nodeSelectionLayer.CellRegion.Any())

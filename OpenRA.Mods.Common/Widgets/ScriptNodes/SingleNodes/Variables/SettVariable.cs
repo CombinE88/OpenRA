@@ -13,7 +13,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables
 
         public SetVariableNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            AddChild(availableVariables = new DropDownButtonWidget(Screen.Snw.ModData));
+            AddChild(availableVariables = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData));
             Func<VariableInfo, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => VariableReference == option, () =>

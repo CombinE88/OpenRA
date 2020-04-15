@@ -1,20 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Dynamic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.Remoting.Lifetime;
 using OpenRA.Graphics;
-using OpenRA.Mods.Common.Scripting;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -23,20 +13,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     {
         public readonly string Background = "textfield";
 
-        public int NodeID;
-        public WorldRenderer WorldRenderer;
-        public World World;
+        public int NodeId;
+        public readonly World World;
+        public readonly WorldRenderer WorldRenderer;
 
-        public NodeEditorBackgroundWidget Bgw;
+        public readonly NodeEditorBackgroundWidget BackgroundWidget;
 
-        public ScriptNodeWidget Snw;
+        public readonly ScriptNodeWidget ScriptNodeWidget;
 
         // Coordinate System
         public int2 CenterCoordinates = new int2(0, 0);
         public int2 CorrectCenterCoordinates = new int2(0, 0);
 
         public List<NodeWidget> Nodes = new List<NodeWidget>();
-        public List<VariableInfo> VariableInfos = new List<VariableInfo>();
+        public readonly List<VariableInfo> VariableInfos = new List<VariableInfo>();
 
         // Position of Mouse Cursor
         int2 oldCursorPosition;
@@ -57,27 +47,34 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         List<NodeWidget> copyNodes = new List<NodeWidget>();
         int copyCounter = 0;
 
-        NodeLibrary nodeLibrary;
+        readonly NodeLibrary nodeLibrary;
         int timer;
 
+        DropDownMenuWidget dropDownMenuWidget;
+        readonly List<Widget> DropDownMenu = new List<Widget>();
+
         [ObjectCreator.UseCtor]
-        public NodeEditorNodeScreenWidget(ScriptNodeWidget snw, NodeEditorBackgroundWidget bgw,
+        public NodeEditorNodeScreenWidget(ScriptNodeWidget scriptNodeWidget,
+            NodeEditorBackgroundWidget backgroundWidget,
             WorldRenderer worldRenderer, World world)
         {
-            Snw = snw;
-            Bgw = bgw;
-            WorldRenderer = worldRenderer;
+            ScriptNodeWidget = scriptNodeWidget;
+            BackgroundWidget = backgroundWidget;
             World = world;
+            WorldRenderer = worldRenderer;
 
             nodeLibrary = new NodeLibrary();
 
             CurrentBrush = NodeBrush.Free;
+
+            CreateLeftClickDropDownMenu();
         }
 
         public override void Tick()
         {
-            Bounds = new Rectangle(Bgw.Bounds.X + 200, Bgw.Bounds.Y + 5, Bgw.Bounds.Width - 355,
-                Bgw.Bounds.Height - 10);
+            Bounds = new Rectangle(BackgroundWidget.Bounds.X + 200, BackgroundWidget.Bounds.Y + 5,
+                BackgroundWidget.Bounds.Width - 355,
+                BackgroundWidget.Bounds.Height - 10);
             CorrectCenterCoordinates = new int2((Bounds.Width / 2), (Bounds.Height / 2));
 
             if (tick++ < 1)
@@ -87,6 +84,56 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                 tick = 2;
             }
+        }
+
+        void CreateLeftClickDropDownMenu()
+        {
+            dropDownMenuWidget = new DropDownMenuWidget()
+            {
+                Bounds = new Rectangle(0, 0, 180, 75),
+                Visible = false
+            };
+
+            var element1 = new ButtonWidget(ScriptNodeWidget.ModData)
+            {
+                Bounds = new Rectangle(0, 0, 180, 75),
+                Text = "height = 75",
+            };
+            var element2 = new ButtonWidget(ScriptNodeWidget.ModData)
+            {
+                Bounds = new Rectangle(0, 0, 180, 35),
+                Text = "height = 35",
+            };
+            var element3 = new ButtonWidget(ScriptNodeWidget.ModData)
+            {
+                Bounds = new Rectangle(0, 0, 180, 55),
+                Text = "height = 55"
+            };
+
+            element1.OnClick = () => DropDownMenuWidget.Collapse(dropDownMenuWidget);
+            element2.OnClick = () => DropDownMenuWidget.Collapse(dropDownMenuWidget);
+
+
+            var element4 = new DropDownMenuWidget()
+            {
+                Bounds = new Rectangle(180, 0, 180, 55),
+                Visible = false
+            };
+
+            element3.OnClick = () =>
+            {
+                DropDownMenuWidget.Collapse(dropDownMenuWidget);
+                element4.Visible = true;
+            };
+
+            element3.AddChild(element4);
+
+            dropDownMenuWidget.AddDropDownMenu(element1);
+            dropDownMenuWidget.AddDropDownMenu(element2);
+            dropDownMenuWidget.AddDropDownMenu(element3);
+
+
+            AddChild(dropDownMenuWidget);
         }
 
         public void AddVariableInfo(VariableInfo info)
@@ -117,17 +164,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         string NewId()
         {
-            NodeID++;
-            return "ND" + (NodeID < 10 ? "0" + NodeID : NodeID.ToString());
+            NodeId++;
+            return "ND" + (NodeId < 10 ? "0" + NodeId : NodeId.ToString());
         }
+
         void LoadInVariables()
         {
             foreach (var variableInfo in World.WorldActor.Trait<EditorNodeLayer>().VariableInfos)
             {
-                Bgw.AddNewVariable(variableInfo.VarType, variableInfo.VariableName);
+                BackgroundWidget.AddNewVariable(variableInfo.VarType, variableInfo.VariableName);
             }
         }
-        
+
         void LoadInNodes()
         {
             Nodes = nodeLibrary.LoadInNodes(this, World.WorldActor.Trait<EditorNodeLayer>().NodeInfos);
@@ -155,7 +203,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 count = Math.Max(c, count);
             }
 
-            NodeID = count;
+            NodeId = count;
         }
 
         public void DeleteNode(NodeWidget widget)
@@ -281,7 +329,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 brushItem = null;
                 nodeBrush = null;
                 oldCursorPosition = mi.Location;
+                dropDownMenuWidget.Visible = false;
                 return false;
+            }
+
+            if ((mi.Button == MouseButton.Left || mi.Button == MouseButton.Right) && dropDownMenuWidget.Visible &&
+                CurrentBrush == NodeBrush.Free)
+            {
+                DropDownMenuWidget.Collapse(dropDownMenuWidget);
+                dropDownMenuWidget.Visible = false;
+            }
+
+            if (mi.Button == MouseButton.Middle && CurrentBrush == NodeBrush.Free)
+            {
+                CurrentBrush = NodeBrush.CreateNode;
+                dropDownMenuWidget.Visible = true;
+                dropDownMenuWidget.Bounds = new Rectangle(mi.Location.X - Bounds.X, mi.Location.Y - Bounds.Y,
+                    dropDownMenuWidget.Bounds.Width,
+                    dropDownMenuWidget.Bounds.Height);
             }
 
             if (mi.Button != MouseButton.Left && mi.Button != MouseButton.Right)
@@ -483,9 +548,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             text = "X: " + CenterCoordinates.X + " Y: " + CenterCoordinates.Y;
             WidgetUtils.DrawPanel(Background,
                 new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
-            Snw.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
+            ScriptNodeWidget.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
                 Color.White, Color.Black, 1);
-            Snw.FontRegular.DrawTextWithShadow(CurrentBrush.ToString(),
+            ScriptNodeWidget.FontRegular.DrawTextWithShadow(CurrentBrush.ToString(),
                 new float2(RenderBounds.X + 2, RenderBounds.Y + 50),
                 Color.White, Color.Black, 1);
             if (brushItem != null && CurrentBrush == NodeBrush.Connecting)
@@ -511,8 +576,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     if (conTarget != oldCursorPosition)
                         break;
                 }
-                
-                NodeEditorNodeScreenWidget.DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), conTarget, brushItem.Item2.Color);
+
+                NodeEditorNodeScreenWidget.DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), conTarget,
+                    brushItem.Item2.Color);
             }
 
             if (CurrentBrush == NodeBrush.Frame)
@@ -529,7 +595,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 from = to;
                 to = tmp;
             }
-            
+
             var stepSize = 10;
             var yDiff = to.Y - from.Y;
 
@@ -537,10 +603,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var currentSegmentStartX = x;
                 var currentSegmentEndX = Math.Min(x + stepSize, to.X);
-                    
-                var currentSegmentStartY = (int) (from.Y + yDiff * Easing.InOutSine((currentSegmentStartX - from.X) / (double)(to.X - from.X)));
-                var currentSegmentEndY = (int) (from.Y + yDiff * Easing.InOutSine((currentSegmentEndX - from.X) / (double)(to.X - from.X)));
-                    
+
+                var currentSegmentStartY =
+                    (int) (from.Y + yDiff *
+                           Easing.InOutSine((currentSegmentStartX - from.X) / (double) (to.X - from.X)));
+                var currentSegmentEndY =
+                    (int) (from.Y + yDiff * Easing.InOutSine((currentSegmentEndX - from.X) / (double) (to.X - from.X)));
+
                 Game.Renderer.RgbaColorRenderer.DrawLine(
                     new int2(currentSegmentStartX, currentSegmentStartY),
                     new int2(currentSegmentEndX, currentSegmentEndY),
@@ -556,6 +625,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Drag,
         Node,
         Frame,
-        MoveFrame
+        MoveFrame,
+        CreateNode
     }
 }

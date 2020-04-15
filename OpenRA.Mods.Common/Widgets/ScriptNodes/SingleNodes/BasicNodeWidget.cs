@@ -63,7 +63,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         [ObjectCreator.UseCtor]
         public BasicNodeWidget(NodeEditorNodeScreenWidget screen)
         {
-            Editor = screen.Snw.Parent.Get<EditorViewportControllerWidget>("MAP_EDITOR");
+            Editor = screen.ScriptNodeWidget.Parent.Get<EditorViewportControllerWidget>("MAP_EDITOR");
             Screen = screen;
 
             InConnections = new List<InConnection>();
@@ -242,31 +242,31 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             //// InconnectioNButtons
 
             WidgetUtils.FillRectWithColor(AddOutput, Color.DarkGray);
-            Screen.Snw.FontRegular.DrawTextWithShadow("+", new float2(AddOutput.X + 2, AddOutput.Y + 2),
+            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow("+", new float2(AddOutput.X + 2, AddOutput.Y + 2),
                 Color.White, Color.Black, 2);
 
             WidgetUtils.FillRectWithColor(RemoveOutput, Color.DarkGray);
-            Screen.Snw.FontRegular.DrawTextWithShadow("-", new float2(RemoveOutput.X + 2, RemoveOutput.Y + 2),
+            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow("-", new float2(RemoveOutput.X + 2, RemoveOutput.Y + 2),
                 Color.White, Color.Black, 2);
 
             WidgetUtils.FillRectWithColor(AddInput, Color.DarkGray);
-            Screen.Snw.FontRegular.DrawTextWithShadow("+", new float2(AddInput.X + 2, AddInput.Y + 2),
+            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow("+", new float2(AddInput.X + 2, AddInput.Y + 2),
                 Color.White, Color.Black, 2);
 
             WidgetUtils.FillRectWithColor(RemoveInput, Color.DarkGray);
-            Screen.Snw.FontRegular.DrawTextWithShadow("-", new float2(RemoveInput.X + 2, RemoveInput.Y + 2),
+            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow("-", new float2(RemoveInput.X + 2, RemoveInput.Y + 2),
                 Color.White, Color.Black, 2);
 
             var text = "X: " + OffsetPosX + " Y: " + OffsetPosY;
-            Screen.Snw.FontRegular.DrawTextWithShadow(text,
-                new float2(WidgetBackground.X + WidgetBackground.Width - Screen.Snw.FontRegular.Measure(text).X - 10,
+            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow(text,
+                new float2(WidgetBackground.X + WidgetBackground.Width - Screen.ScriptNodeWidget.FontRegular.Measure(text).X - 10,
                     WidgetBackground.Y + WidgetBackground.Height - 25),
                 Color.White, Color.Black, 1);
 
-            Screen.Snw.FontRegular.DrawTextWithShadow(NodeName + " " + NodeID,
+            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow(NodeName + " " + NodeID,
                 new float2(DragBar.X, DragBar.Y - 2),
                 Color.White, Color.Black, 1);
-            Screen.Snw.FontSmall.DrawTextWithShadow(NodeType.ToString(),
+            Screen.ScriptNodeWidget.FontSmall.DrawTextWithShadow(NodeType.ToString(),
                 new float2(DragBar.X + 2, DragBar.Y + 12),
                 Color.White, Color.Black, 1);
 
@@ -297,7 +297,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                             InConnections[i].InWidgetPosition.Width - 4), Color.Black);
                 }
 
-                Screen.Snw.FontSmall.DrawTextWithShadow(InConnections[i].ConTyp.ToString(),
+                Screen.ScriptNodeWidget.FontSmall.DrawTextWithShadow(InConnections[i].ConTyp.ToString(),
                     new int2(InConnections[i].InWidgetPosition.X + 22, InConnections[i].InWidgetPosition.Y + 4),
                     Color.White, Color.Black, 1);
             }
@@ -330,7 +330,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 }
 
                 if (Screen.CurrentBrush == NodeBrush.Connecting)
-                    Screen.Snw.FontSmall.DrawTextWithShadow(OutConnections[i].ConTyp.ToString(),
+                    Screen.ScriptNodeWidget.FontSmall.DrawTextWithShadow(OutConnections[i].ConTyp.ToString(),
                         new int2(OutConnections[i].InWidgetPosition.X + 22, OutConnections[i].InWidgetPosition.Y + 4),
                         Color.White, Color.Black, 1);
             }

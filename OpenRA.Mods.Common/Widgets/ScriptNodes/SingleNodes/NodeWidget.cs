@@ -32,8 +32,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 NodeID = nodeInfo.NodeID;
             else
             {
-                screen.NodeID += 1;
-                NodeID = "ND" + (screen.NodeID < 10 ? "0" + screen.NodeID : Screen.NodeID.ToString());
+                screen.NodeId += 1;
+                NodeID = "ND" + (screen.NodeId < 10 ? "0" + screen.NodeId : Screen.NodeId.ToString());
             }
 
             NodeType = nodeInfo.NodeType;

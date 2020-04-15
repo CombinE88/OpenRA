@@ -25,7 +25,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             textField = new TextFieldWidget();
             AddChild(textField);
 
-            var ruleActors = Screen.Snw.World.Map.Rules.Actors.Values
+            var ruleActors = Screen.ScriptNodeWidget.World.Map.Rules.Actors.Values
                 .Where(a =>
                 {
                     if (a.Name.Contains('^'))
@@ -50,7 +50,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             selectedActorInfo = ruleActors.First();
 
-            AddChild(playerSelection = new DropDownButtonWidget(Screen.Snw.ModData));
+            AddChild(playerSelection = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData));
             AddChild(preview = new ActorPreviewWidget(screen.WorldRenderer));
 
             preview.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 90);

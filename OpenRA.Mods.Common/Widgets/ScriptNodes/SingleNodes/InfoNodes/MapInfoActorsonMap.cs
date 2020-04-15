@@ -11,7 +11,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
         public MapInfoActorsonMap(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            button = new ButtonWidget(screen.Snw.ModData);
+            button = new ButtonWidget(screen.ScriptNodeWidget.ModData);
             AddChild(button);
             button.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 34, FreeWidgetEntries.Width, 25);
             button.Text = "Add Actor";
@@ -21,7 +21,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     CellPicking.Actor,
                     OutConnections.First(c => c.ConTyp == ConnectionType.ActorList),
                     Editor,
-                    Screen.Snw.WorldRenderer,
+                    Screen.ScriptNodeWidget.WorldRenderer,
                     () =>
                     {
                         button.Text = OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorPrevs != null

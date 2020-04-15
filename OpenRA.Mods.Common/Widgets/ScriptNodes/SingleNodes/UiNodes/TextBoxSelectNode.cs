@@ -16,7 +16,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
         public TextBoxSelectNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
             ButtonWidget addButton;
-            AddChild(addButton = new ButtonWidget(screen.Snw.ModData));
+            AddChild(addButton = new ButtonWidget(screen.ScriptNodeWidget.ModData));
             addButton.Bounds = new Rectangle(FreeWidgetEntries.X + 10, FreeWidgetEntries.Y + 21, WidgetEntries.Width - 20, 20);
             addButton.Text = "Add Choice";
             addButton.OnClick = () =>
@@ -33,7 +33,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
         {
             base.AddOutConConstructor(connection);
 
-            var button = new ButtonWidget(Screen.Snw.ModData);
+            var button = new ButtonWidget(Screen.ScriptNodeWidget.ModData);
             button.Text = "Remove";
 
             AddChild(button);

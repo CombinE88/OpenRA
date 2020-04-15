@@ -44,7 +44,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             nodeType = typeType.First();
 
-            AddChild(addButton = new ButtonWidget(screen.Snw.ModData));
+            AddChild(addButton = new ButtonWidget(screen.ScriptNodeWidget.ModData));
             addButton.Bounds = new Rectangle(FreeWidgetEntries.X + WidgetEntries.Width - 10 - 25, FreeWidgetEntries.Y + 21, 25, 20);
             addButton.Text = "+";
 
@@ -55,7 +55,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 AddOutConConstructor(connection);
             };
 
-            AddChild(createInfoList = new DropDownButtonWidget(screen.Snw.ModData));
+            AddChild(createInfoList = new DropDownButtonWidget(screen.ScriptNodeWidget.ModData));
             createInfoList.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 21, WidgetEntries.Width - 10 - 25, 20);
 
             Func<ConnectionType, ScrollItemWidget, ScrollItemWidget> setupItemOutput = (option, template) =>
@@ -112,10 +112,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             }
             else if (connection.ConTyp == ConnectionType.Location)
             {
-                var wid = new ButtonWidget(Screen.Snw.ModData);
+                var wid = new ButtonWidget(Screen.ScriptNodeWidget.ModData);
                 wid.OnClick = () =>
                 {
-                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Single, connection, Editor, Screen.Snw.WorldRenderer,
+                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Single, connection, Editor, Screen.ScriptNodeWidget.WorldRenderer,
                         () => { wid.Text = "Cell: " + connection.Location; }));
                 };
                 AddChild(wid);
@@ -126,10 +126,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             }
             else if (connection.ConTyp == ConnectionType.CellPath)
             {
-                var wid = new ButtonWidget(Screen.Snw.ModData);
+                var wid = new ButtonWidget(Screen.ScriptNodeWidget.ModData);
                 wid.OnClick = () =>
                 {
-                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Path, connection, Editor, Screen.Snw.WorldRenderer,
+                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Path, connection, Editor, Screen.ScriptNodeWidget.WorldRenderer,
                         () => { wid.Text = "Path: " + connection.CellArray.Count; }));
                 };
                 AddChild(wid);
@@ -140,10 +140,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             }
             else if (connection.ConTyp == ConnectionType.CellArray)
             {
-                var wid = new ButtonWidget(Screen.Snw.ModData);
+                var wid = new ButtonWidget(Screen.ScriptNodeWidget.ModData);
                 wid.OnClick = () =>
                 {
-                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Array, connection, Editor, Screen.Snw.WorldRenderer,
+                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Array, connection, Editor, Screen.ScriptNodeWidget.WorldRenderer,
                         () => { wid.Text = "Array: " + connection.CellArray.Count + " Cells"; }));
                 };
                 AddChild(wid);
@@ -154,10 +154,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             }
             else if (connection.ConTyp == ConnectionType.LocationRange)
             {
-                var wid = new ButtonWidget(Screen.Snw.ModData);
+                var wid = new ButtonWidget(Screen.ScriptNodeWidget.ModData);
                 wid.OnClick = () =>
                 {
-                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Range, connection, Editor, Screen.Snw.WorldRenderer,
+                    Editor.SetBrush(new EditorNodeBrushBrush(CellPicking.Range, connection, Editor, Screen.ScriptNodeWidget.WorldRenderer,
                         () => { wid.Text = "Cell: " + connection.Location + " | " + connection.Number; }));
                 };
                 AddChild(wid);
@@ -168,9 +168,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             }
             else if (connection.ConTyp == ConnectionType.Player)
             {
-                var editorLayer = Screen.Snw.World.WorldActor.Trait<EditorActorLayer>();
+                var editorLayer = Screen.ScriptNodeWidget.World.WorldActor.Trait<EditorActorLayer>();
                 var selectedOwner = editorLayer.Players.Players.Values.First();
-                var playerSelection = new DropDownButtonWidget(Screen.Snw.ModData);
+                var playerSelection = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData);
 
                 Func<PlayerReference, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
                 {
@@ -219,7 +219,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             else
                 parralelWidgetList.Add(null);
 
-            var button = new ButtonWidget(Screen.Snw.ModData);
+            var button = new ButtonWidget(Screen.ScriptNodeWidget.ModData);
             button.Text = "-";
 
             AddChild(button);

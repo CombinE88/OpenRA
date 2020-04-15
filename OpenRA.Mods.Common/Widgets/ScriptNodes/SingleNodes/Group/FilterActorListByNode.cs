@@ -25,7 +25,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             };
 
             selectedMethode = Methode.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.Snw.ModData);
+            methodeSelection = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData);
 
             Func<CompareMethode, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
@@ -59,7 +59,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             };
 
             selectedItem = Item.Value;
-            itemSelection = new DropDownButtonWidget(Screen.Snw.ModData);
+            itemSelection = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData);
 
             Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
