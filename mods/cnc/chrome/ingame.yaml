@@ -286,6 +286,35 @@ Container@PLAYER_WIDGETS:
 		LogicKeyListener@CONTROLGROUP_KEYHANDLER:
 			Logic: ControlGroupLogic
 		LogicTicker@SIDEBAR_TICKER:
+		Container@TEXTCHOISE:
+			Logic: TextChoiceLogic
+			X: 300
+			Y: 150
+			Width: WINDOW_RIGHT - 600
+			Height: WINDOW_BOTTOM - 300
+			Children:
+				Background@CHOICEBACKGROUND:
+					Logic: MenuButtonsChromeLogic
+					X: 0
+					Y: 0
+					Width: PARENT_RIGHT
+					Height: PARENT_BOTTOM
+					Background: panel-gray
+					Children:
+						Background@TEXTBACKGROUND:
+							X: 15
+							Y: 15
+							Width: PARENT_RIGHT - 30
+							Height: PARENT_BOTTOM - 15 - 25 - 30
+							Background: panel-black
+						Label@TEXT:
+							X: 30
+							Y: 30
+							Width: PARENT_RIGHT - 60
+							Height: PARENT_BOTTOM - 15 - 25 - 60
+							Align: Left
+							Font: Bold
+							Text: {0}
 		Container@SUPPORT_POWERS:
 			Logic: SupportPowerBinLogic
 			X: 10
