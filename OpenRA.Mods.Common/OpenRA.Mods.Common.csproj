@@ -598,6 +598,7 @@
     <Compile Include="Warheads\ChangeOwnerWarhead.cs" />
     <Compile Include="UtilityCommands\PngSheetExportMetadataCommand.cs" />
     <Compile Include="UtilityCommands\PngSheetImportMetadataCommand.cs" />
+    <Compile Include="Widgets\DropDownMenuExpandButton.cs" />
     <Compile Include="Widgets\DropDownMenuWidget.cs" />
     <Compile Include="Widgets\Logic\MusicHotkeyLogic.cs" />
     <Compile Include="Widgets\ScriptNodes\AdvancedTextFieldWidget.cs" />

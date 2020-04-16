@@ -35,12 +35,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public World World;
         bool initialized = false;
         int ti;
-        NodeLibrary library;
 
         public IngameNodeScriptSystem(ActorInitializer init)
         {
             World = init.Self.World;
-            library = new NodeLibrary();
         }
 
         public void WorldLoaded(World w, WorldRenderer wr)
@@ -53,7 +51,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             foreach (var kv in w.Map.NodeDefinitions.Where(def => def.Key.Split('@').First() != "Variable"))
                 AddNodeLogic(kv);
 
-            NodeLogics = library.InitializeNodes(this, nodesInfos);
+            NodeLogics = NodeLibrary.InitializeNodes(this, nodesInfos);
 
             foreach (var node in NodeLogics)
             {

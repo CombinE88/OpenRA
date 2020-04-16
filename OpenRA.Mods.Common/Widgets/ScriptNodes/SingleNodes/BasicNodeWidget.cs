@@ -99,8 +99,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public override void Tick()
         {
-            GridPosX = Screen.CorrectCenterCoordinates.X + OffsetPosX - Screen.CenterCoordinates.X - Bounds.Width / 2;
-            GridPosY = Screen.CorrectCenterCoordinates.Y + OffsetPosY - Screen.CenterCoordinates.Y - Bounds.Height / 2;
+            GridPosX = Screen.WidgetScreenCenterCoordinates.X + OffsetPosX - Screen.CenterCoordinates.X - Bounds.Width / 2;
+            GridPosY = Screen.WidgetScreenCenterCoordinates.Y + OffsetPosY - Screen.CenterCoordinates.Y - Bounds.Height / 2;
 
             SizeY = Math.Max(InConnections.Count, OutConnections.Count) * 35;
             Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);

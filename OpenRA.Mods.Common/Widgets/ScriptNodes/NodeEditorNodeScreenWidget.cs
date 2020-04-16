@@ -23,7 +23,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         // Coordinate System
         public int2 CenterCoordinates = new int2(0, 0);
-        public int2 CorrectCenterCoordinates = new int2(0, 0);
+        public int2 WidgetScreenCenterCoordinates = new int2(0, 0);
+        public int2 MouseOffsetCoordinates = new int2(0, 0);
 
         public List<NodeWidget> Nodes = new List<NodeWidget>();
         public readonly List<VariableInfo> VariableInfos = new List<VariableInfo>();
@@ -47,11 +48,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         List<NodeWidget> copyNodes = new List<NodeWidget>();
         int copyCounter = 0;
 
-        readonly NodeLibrary nodeLibrary;
         int timer;
-
-        DropDownMenuWidget dropDownMenuWidget;
-        readonly List<Widget> DropDownMenu = new List<Widget>();
 
         [ObjectCreator.UseCtor]
         public NodeEditorNodeScreenWidget(ScriptNodeWidget scriptNodeWidget,
@@ -63,20 +60,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             World = world;
             WorldRenderer = worldRenderer;
 
-            nodeLibrary = new NodeLibrary();
-
             CurrentBrush = NodeBrush.Free;
-
-            CreateLeftClickDropDownMenu();
         }
 
         public override void Tick()
         {
-            Bounds = new Rectangle(BackgroundWidget.Bounds.X + 200, BackgroundWidget.Bounds.Y + 5,
-                BackgroundWidget.Bounds.Width - 355,
-                BackgroundWidget.Bounds.Height - 10);
-            CorrectCenterCoordinates = new int2((Bounds.Width / 2), (Bounds.Height / 2));
-
             if (tick++ < 1)
             {
                 LoadInVariables();
@@ -84,56 +72,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                 tick = 2;
             }
-        }
-
-        void CreateLeftClickDropDownMenu()
-        {
-            dropDownMenuWidget = new DropDownMenuWidget()
-            {
-                Bounds = new Rectangle(0, 0, 180, 75),
-                Visible = false
-            };
-
-            var element1 = new ButtonWidget(ScriptNodeWidget.ModData)
-            {
-                Bounds = new Rectangle(0, 0, 180, 75),
-                Text = "height = 75",
-            };
-            var element2 = new ButtonWidget(ScriptNodeWidget.ModData)
-            {
-                Bounds = new Rectangle(0, 0, 180, 35),
-                Text = "height = 35",
-            };
-            var element3 = new ButtonWidget(ScriptNodeWidget.ModData)
-            {
-                Bounds = new Rectangle(0, 0, 180, 55),
-                Text = "height = 55"
-            };
-
-            element1.OnClick = () => DropDownMenuWidget.Collapse(dropDownMenuWidget);
-            element2.OnClick = () => DropDownMenuWidget.Collapse(dropDownMenuWidget);
-
-
-            var element4 = new DropDownMenuWidget()
-            {
-                Bounds = new Rectangle(180, 0, 180, 55),
-                Visible = false
-            };
-
-            element3.OnClick = () =>
-            {
-                DropDownMenuWidget.Collapse(dropDownMenuWidget);
-                element4.Visible = true;
-            };
-
-            element3.AddChild(element4);
-
-            dropDownMenuWidget.AddDropDownMenu(element1);
-            dropDownMenuWidget.AddDropDownMenu(element2);
-            dropDownMenuWidget.AddDropDownMenu(element3);
-
-
-            AddChild(dropDownMenuWidget);
         }
 
         public void AddVariableInfo(VariableInfo info)
@@ -149,17 +87,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public NodeWidget AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
         {
-            var node = nodeLibrary.AddNode(nodeType, this, nodeId, nodeName);
+            var node = NodeLibrary.AddNode(nodeType, this, nodeId, nodeName);
 
-            if (node != null)
-            {
-                AddChild(node);
-                Nodes.Add(node);
+            if (node == null) return null;
 
-                return node;
-            }
+            AddChild(node);
+            Nodes.Add(node);
 
-            return null;
+            return node;
         }
 
         string NewId()
@@ -178,7 +113,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void LoadInNodes()
         {
-            Nodes = nodeLibrary.LoadInNodes(this, World.WorldActor.Trait<EditorNodeLayer>().NodeInfos);
+            Nodes = NodeLibrary.LoadInNodes(this, World.WorldActor.Trait<EditorNodeLayer>().NodeInfos);
 
             foreach (var node in Nodes)
             {
@@ -292,7 +227,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 }
             }
 
-            newNodes = nodeLibrary.LoadInNodes(this, infos);
+            newNodes = NodeLibrary.LoadInNodes(this, infos);
 
             foreach (var node in newNodes)
             {
@@ -329,24 +264,33 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 brushItem = null;
                 nodeBrush = null;
                 oldCursorPosition = mi.Location;
-                dropDownMenuWidget.Visible = false;
+                BackgroundWidget.DropDownMenuWidget.Visible = false;
                 return false;
             }
 
-            if ((mi.Button == MouseButton.Left || mi.Button == MouseButton.Right) && dropDownMenuWidget.Visible &&
+            if ((mi.Button == MouseButton.Left || mi.Button == MouseButton.Right) &&
+                BackgroundWidget.DropDownMenuWidget.Visible &&
                 CurrentBrush == NodeBrush.Free)
             {
-                DropDownMenuWidget.Collapse(dropDownMenuWidget);
-                dropDownMenuWidget.Visible = false;
+                DropDownMenuWidget.Collapse(BackgroundWidget.DropDownMenuWidget);
+                BackgroundWidget.DropDownMenuWidget.Visible = false;
             }
 
             if (mi.Button == MouseButton.Middle && CurrentBrush == NodeBrush.Free)
             {
+                var newMouseGridCoordinates = new int2(mi.Location.X - BackgroundWidget.Bounds.X - Bounds.X,
+                    mi.Location.Y - BackgroundWidget.Bounds.Y - Bounds.Y);
+
+                MouseOffsetCoordinates =
+                    new int2(CenterCoordinates.X - (RenderBounds.Width / 2 - newMouseGridCoordinates.X),
+                        CenterCoordinates.Y - (RenderBounds.Height / 2 - newMouseGridCoordinates.Y));
+
                 CurrentBrush = NodeBrush.CreateNode;
-                dropDownMenuWidget.Visible = true;
-                dropDownMenuWidget.Bounds = new Rectangle(mi.Location.X - Bounds.X, mi.Location.Y - Bounds.Y,
-                    dropDownMenuWidget.Bounds.Width,
-                    dropDownMenuWidget.Bounds.Height);
+                BackgroundWidget.DropDownMenuWidget.Visible = true;
+                BackgroundWidget.DropDownMenuWidget.Bounds = new Rectangle(newMouseGridCoordinates.X,
+                    newMouseGridCoordinates.Y,
+                    BackgroundWidget.DropDownMenuWidget.Bounds.Width,
+                    BackgroundWidget.DropDownMenuWidget.Bounds.Height);
             }
 
             if (mi.Button != MouseButton.Left && mi.Button != MouseButton.Right)
@@ -432,8 +376,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 if (mi.Location != oldCursorPosition)
                 {
                     CenterCoordinates += oldCursorPosition - mi.Location;
-                    CorrectCenterCoordinates = new int2(RenderBounds.Width / 2 + CenterCoordinates.X,
-                        RenderBounds.Height / 2 + CenterCoordinates.Y);
                 }
             }
 
@@ -577,7 +519,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         break;
                 }
 
-                NodeEditorNodeScreenWidget.DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), conTarget,
+                DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), conTarget,
                     brushItem.Item2.Color);
             }
 
@@ -606,14 +548,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                 var currentSegmentStartY =
                     (int) (from.Y + yDiff *
-                           Easing.InOutSine((currentSegmentStartX - from.X) / (double) (to.X - from.X)));
+                           Easing.InOutCubic((currentSegmentStartX - from.X) / (double) (to.X - from.X)));
                 var currentSegmentEndY =
-                    (int) (from.Y + yDiff * Easing.InOutSine((currentSegmentEndX - from.X) / (double) (to.X - from.X)));
+                    (int) (from.Y + yDiff *
+                           Easing.InOutCubic((currentSegmentEndX - from.X) / (double) (to.X - from.X)));
 
                 Game.Renderer.RgbaColorRenderer.DrawLine(
                     new int2(currentSegmentStartX, currentSegmentStartY),
                     new int2(currentSegmentEndX, currentSegmentEndY),
-                    2, color);
+                    3, color);
             }
         }
     }

@@ -20,16 +20,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         ScrollPanelWidget scrollPanel;
         NodeEditorNodeScreenWidget screenWidget;
-        DropDownButtonWidget createNodesList;
-        DropDownButtonWidget createActorNodesList;
-        DropDownButtonWidget triggerNodesList;
-        DropDownButtonWidget groupNodesList;
-        DropDownButtonWidget arithmeticNodesList;
-        DropDownButtonWidget functionNodesList;
-        DropDownButtonWidget uiNodesList;
-        DropDownButtonWidget conditionNodesList;
 
         NodeType nodeType;
+
+        public DropDownMenuWidget DropDownMenuWidget;
 
         ButtonWidget addNodeButton;
 
@@ -38,30 +32,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             Snw = snw;
 
-            Children.Add(screenWidget = new NodeEditorNodeScreenWidget(Snw, this, worldRenderer, world));
-
             Bounds = new Rectangle(5, 40, Game.Renderer.Resolution.Width - 265, Game.Renderer.Resolution.Height - 45);
 
-            AddNodesList();
-            AddActorList();
-            AddTriggerList();
-            AddGroupList();
-            AddArithmeticList();
-            AddFunctionsList();
-            AddUiList();
-            AddConditionList();
+            screenWidget = new NodeEditorNodeScreenWidget(Snw, this, worldRenderer, world)
+            {
+                Bounds = new Rectangle(Bounds.X + 5, Bounds.Y + 5,
+                    Bounds.Width - 160,
+                    Bounds.Height - 10),
+                WidgetScreenCenterCoordinates = new int2((Bounds.Width / 2), (Bounds.Height / 2))
+            };
 
-            createActorNodesList.Text = "- Actor Nodes -";
-            triggerNodesList.Text = "- Trigger Nodes -";
-            createNodesList.Text = "- Info Nodes -";
-            groupNodesList.Text = "- Group Nodes -";
-            arithmeticNodesList.Text = "- Arithmetic Nodes -";
-            functionNodesList.Text = "- Function Nodes -";
-            uiNodesList.Text = "- Ui Nodes -";
-            conditionNodesList.Text = "- Condition Nodes -";
+            Children.Add(screenWidget);
 
             // Add Variable Buttons
-
 
             AddChild(scrollPanel = new ScrollPanelWidget(snw.ModData));
             scrollPanel.Layout = new ListLayout(scrollPanel);
@@ -78,14 +61,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             // End
 
-            AddChild(addNodeButton = new ButtonWidget(snw.ModData));
-            addNodeButton.Bounds = new Rectangle(5, 400, 190, 25);
-            addNodeButton.Text = "Add Node";
-            addNodeButton.OnClick = () => { screenWidget.AddNode(nodeType); };
-
             var closeButton = new ButtonWidget(snw.ModData);
             AddChild(closeButton);
-            closeButton.Bounds = new Rectangle(5, 600, 190, 25);
+            closeButton.Bounds = new Rectangle(5, Bounds.Height - 5 - 25, 190, 25);
             closeButton.Text = "Close";
             closeButton.OnClick = () =>
             {
@@ -99,6 +77,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 Snw.World.WorldActor.Trait<EditorNodeLayer>().VariableInfos = screenWidget.VariableInfos;
                 Snw.Toggle();
             };
+
+            CreateLeftClickDropDownMenu();
         }
 
         public void AddNewVariable(VariableType variableType, string variableName = "var")
@@ -268,482 +248,220 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             scrollPanel.AddChild(variableTemplate);
         }
 
-        void AddNodesList()
-        {
-            List<NodeType> outputNodeTypes = new List<NodeType>
-            {
-                NodeType.MapInfoNode,
-                NodeType.MapInfoActorInfoNode,
-                NodeType.MapInfoActorReference,
-                NodeType.GetVariable,
-                NodeType.SetVariable
-            };
-
-            List<string> outputNodeStrings = new List<string>
-            {
-                "Info: Map Info",
-                "Info: Actor Info",
-                "Info: Actor",
-                "Variable: Get",
-                "Variable: Set"
-            };
-
-            nodeType = outputNodeTypes.First();
-            AddChild(createNodesList = new DropDownButtonWidget(Snw.ModData));
-            createNodesList.Bounds = new Rectangle(5, 5 + 26, 190, 25);
-
-            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemOutput = (option, template) =>
-            {
-                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
-                {
-                    nodeType = option;
-
-                    createNodesList.Text = outputNodeStrings[outputNodeTypes.IndexOf(nodeType)];
-                    createActorNodesList.Text = "- Actor Nodes -";
-                    triggerNodesList.Text = "- Trigger Nodes -";
-                    groupNodesList.Text = "- Group Nodes -";
-                    arithmeticNodesList.Text = "- Arithmetic Nodes -";
-                    functionNodesList.Text = "- Function Nodes -";
-                    uiNodesList.Text = "- Ui Nodes -";
-                    conditionNodesList.Text = "- Condition Nodes -";
-                });
-
-                item.Get<LabelWidget>("LABEL").GetText = () => outputNodeStrings[outputNodeTypes.IndexOf(option)];
-
-                return item;
-            };
-
-            createNodesList.OnClick = () =>
-            {
-                var nodes = outputNodeTypes;
-                createNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemOutput);
-            };
-        }
-
-        void AddActorList()
-        {
-            List<NodeType> actorNodeTypes = new List<NodeType>
-            {
-                NodeType.ActorCreateActor,
-                NodeType.ActorGetInformations,
-                NodeType.ActorKill,
-                NodeType.ActorRemove,
-                NodeType.ActorChangeOwner,
-                NodeType.ActorQueueMove,
-                NodeType.ActorQueueAttack,
-                NodeType.ActorQueueHunt,
-                NodeType.ActorQueueAttackMoveActivity,
-                NodeType.ActorQueueSell,
-                NodeType.ActorQueueFindResources
-            };
-
-            List<string> actorNodeStrings = new List<string>
-            {
-                "Actor: Create Actor",
-                "Actor: Informations of Actor",
-                "Actor: Kill",
-                "Actor: Remove",
-                "Actor: Change Owner",
-                "Activity: Queue Move",
-                "Activity: Queue Attack",
-                "Activity: Queue Hunt",
-                "Activity: Queue AttackMoveActivity",
-                "Activity: Queue Sell",
-                "Activity: QueueFindResources"
-            };
-
-            AddChild(createActorNodesList = new DropDownButtonWidget(Snw.ModData));
-            createActorNodesList.Bounds = new Rectangle(5, 5 + 26 + 26, 190, 25);
-
-            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemActor = (option, template) =>
-            {
-                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
-                {
-                    nodeType = option;
-
-                    createActorNodesList.Text = actorNodeStrings[actorNodeTypes.IndexOf(nodeType)];
-                    createNodesList.Text = "- Info Nodes -";
-                    triggerNodesList.Text = "- Trigger Nodes -";
-                    groupNodesList.Text = "- Group Nodes -";
-                    arithmeticNodesList.Text = "- Arithmetic Nodes -";
-                    functionNodesList.Text = "- Function Nodes -";
-                    uiNodesList.Text = "- Ui Nodes -";
-                    conditionNodesList.Text = "- Condition Nodes -";
-                });
-
-                item.Get<LabelWidget>("LABEL").GetText = () => actorNodeStrings[actorNodeTypes.IndexOf(option)];
-
-                return item;
-            };
-
-            createActorNodesList.OnClick = () =>
-            {
-                var nodes = actorNodeTypes;
-                createActorNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemActor);
-            };
-        }
-
-        void AddTriggerList()
-        {
-            List<NodeType> triggerNodeTypes = new List<NodeType>
-            {
-                NodeType.TriggerWorldLoaded,
-                NodeType.TriggerCreateTimer,
-                NodeType.TriggerTick,
-                NodeType.TriggerOnEnteredFootprint,
-                NodeType.TriggerOnEnteredRange,
-                NodeType.TriggerOnIdle,
-                NodeType.TriggerOnKilled,
-                NodeType.TriggerOnAllKilled,
-                NodeType.TimerStop,
-                NodeType.TimerStart,
-                NodeType.TimerReset
-            };
-
-            List<string> triggerNodeStrings = new List<string>
-            {
-                "Trigger: World Loaded",
-                "Trigger: Create Timer",
-                "Trigger: On Tick",
-                "Trigger: On Entered Footprint",
-                "Trigger: On Entered Range",
-                "Trigger: On Actor Idle",
-                "Trigger: On Actor Killed",
-                "Trigger: On All Actors Killed",
-                "Timer: Stop Timer",
-                "Timer: Start Timer",
-                "Timer: Reset Timer"
-            };
-
-            AddChild(triggerNodesList = new DropDownButtonWidget(Snw.ModData));
-            triggerNodesList.Bounds = new Rectangle(5, 5 + 26 + 26 + 26, 190, 25);
-
-            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemTrigger = (option, template) =>
-            {
-                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
-                {
-                    nodeType = option;
-
-                    triggerNodesList.Text = triggerNodeStrings[triggerNodeTypes.IndexOf(nodeType)];
-                    createNodesList.Text = "- Info Nodes -";
-                    createActorNodesList.Text = "- Actor Nodes -";
-                    groupNodesList.Text = "- Group Nodes -";
-                    arithmeticNodesList.Text = "- Arithmetic Nodes -";
-                    functionNodesList.Text = "- Function Nodes -";
-                    uiNodesList.Text = "- Ui Nodes -";
-                    conditionNodesList.Text = "- Condition Nodes -";
-                });
-
-                item.Get<LabelWidget>("LABEL").GetText = () => triggerNodeStrings[triggerNodeTypes.IndexOf(option)];
-
-                return item;
-            };
-
-            triggerNodesList.OnClick = () =>
-            {
-                var nodes = triggerNodeTypes;
-                triggerNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemTrigger);
-            };
-        }
-
-        void AddGroupList()
-        {
-            List<NodeType> groupNodeTypes = new List<NodeType>
-            {
-                NodeType.GroupPlayerGroup,
-                NodeType.GroupActorInfoGroup,
-                NodeType.GroupActorGroup,
-                NodeType.FinActorsInCircle,
-                NodeType.FindActorsOnFootprint,
-                NodeType.FilterActorGroup
-            };
-
-            List<string> groupNodeStrings = new List<string>
-            {
-                "Group: Player Group",
-                "Group: Actor Info Group",
-                "Group: Actor Group",
-                "Group: Find Actors in Circle",
-                "Group: Find Actors on Footprint",
-                "Group: Filter Actors in Group"
-            };
-
-            AddChild(groupNodesList = new DropDownButtonWidget(Snw.ModData));
-            groupNodesList.Bounds = new Rectangle(5, 5 + 26 + 26 + 26 + 26, 190, 25);
-
-            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemGroup = (option, template) =>
-            {
-                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
-                {
-                    nodeType = option;
-
-                    groupNodesList.Text = groupNodeStrings[groupNodeTypes.IndexOf(nodeType)];
-                    createActorNodesList.Text = "- Actor Nodes -";
-                    triggerNodesList.Text = "- Trigger Nodes -";
-                    createNodesList.Text = "- Info Nodes -";
-                    arithmeticNodesList.Text = "- Arithmetic Nodes -";
-                    functionNodesList.Text = "- Function Nodes -";
-                    uiNodesList.Text = "- Ui Nodes -";
-                    conditionNodesList.Text = "- Condition Nodes -";
-                });
-
-                item.Get<LabelWidget>("LABEL").GetText = () => groupNodeStrings[groupNodeTypes.IndexOf(option)];
-
-                return item;
-            };
-
-            groupNodesList.OnClick = () =>
-            {
-                var nodes = groupNodeTypes;
-                groupNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
-            };
-        }
-
-        void AddArithmeticList()
-        {
-            List<NodeType> nodeTypes = new List<NodeType>
-            {
-                NodeType.ArithmeticsAnd,
-                NodeType.ArithmeticsOr,
-                NodeType.ArithmeticsMath,
-                NodeType.CountNode,
-                NodeType.CompareActors,
-                NodeType.DoMultiple
-            };
-
-            List<string> nodeStrings = new List<string>
-            {
-                "Arithmetics: And Trigger",
-                "Arithmetics: Or Trigger",
-                "Arithmetics: Math",
-                "Arithmetics: Get Count",
-                "Compare: Actors",
-                "Repeating: Action"
-            };
-
-            AddChild(arithmeticNodesList = new DropDownButtonWidget(Snw.ModData));
-            arithmeticNodesList.Bounds = new Rectangle(5, 5 + 26 + 26 + 26 + 26 + 26, 190, 25);
-
-            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemGroup = (option, template) =>
-            {
-                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
-                {
-                    nodeType = option;
-
-                    arithmeticNodesList.Text = nodeStrings[nodeTypes.IndexOf(nodeType)];
-                    createActorNodesList.Text = "- Actor Nodes -";
-                    triggerNodesList.Text = "- Trigger Nodes -";
-                    createNodesList.Text = "- Info Nodes -";
-                    groupNodesList.Text = "- Group Nodes -";
-                    functionNodesList.Text = "- Function Nodes -";
-                    uiNodesList.Text = "- Ui Nodes -";
-                    conditionNodesList.Text = "- Condition Nodes -";
-                });
-
-                item.Get<LabelWidget>("LABEL").GetText = () => nodeStrings[nodeTypes.IndexOf(option)];
-
-                return item;
-            };
-
-            arithmeticNodesList.OnClick = () =>
-            {
-                var nodes = nodeTypes;
-                arithmeticNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
-            };
-        }
-
-        void AddFunctionsList()
-        {
-            List<NodeType> nodeTypes = new List<NodeType>
-            {
-                NodeType.Reinforcements,
-                NodeType.ReinforcementsWithTransport,
-                NodeType.CreateEffect,
-                NodeType.TimedExecution
-            };
-
-            List<string> nodeStrings = new List<string>
-            {
-                "Function: Reinforcements",
-                "Function: Reinforce (Transport)",
-                "Function: Create Effect",
-                "Function: Timed Execution"
-            };
-
-            AddChild(functionNodesList = new DropDownButtonWidget(Snw.ModData));
-            functionNodesList.Bounds = new Rectangle(5, 5 + 26 + 26 + 26 + 26 + 26 + 26, 190, 25);
-
-            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemGroup = (option, template) =>
-            {
-                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
-                {
-                    nodeType = option;
-
-                    functionNodesList.Text = nodeStrings[nodeTypes.IndexOf(nodeType)];
-                    createActorNodesList.Text = "- Actor Nodes -";
-                    triggerNodesList.Text = "- Trigger Nodes -";
-                    createNodesList.Text = "- Info Nodes -";
-                    groupNodesList.Text = "- Group Nodes -";
-                    arithmeticNodesList.Text = "- Arithmetic Nodes -";
-                    conditionNodesList.Text = "- Condition Nodes -";
-                });
-
-                item.Get<LabelWidget>("LABEL").GetText = () => nodeStrings[nodeTypes.IndexOf(option)];
-
-                return item;
-            };
-
-            functionNodesList.OnClick = () =>
-            {
-                var nodes = nodeTypes;
-                functionNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
-            };
-        }
-
-        void AddUiList()
-        {
-            List<NodeType> nodeTypes = new List<NodeType>
-            {
-                NodeType.UiPlayNotification,
-                NodeType.UiPlaySound,
-                NodeType.UiRadarPing,
-                NodeType.UiTextMessage,
-                NodeType.UiAddMissionText,
-                NodeType.UiNewObjective,
-                NodeType.UiCompleteObjective,
-                NodeType.UiFailObjective,
-                NodeType.TextChoice,
-                NodeType.SetCameraPosition,
-                NodeType.CameraRide,
-                NodeType.GlobalLightning
-            };
-
-            List<string> nodeStrings = new List<string>
-            {
-                "Ui: Play Notification",
-                "Ui: Play Play Sound at",
-                "Ui: Radar Ping",
-                "Ui: Chat Text message",
-                "Ui: Show Mission Text",
-                "Ui: Add Objective",
-                "Ui: Complete Objective",
-                "Ui: Fail Objective",
-                "Ui: Text Choice",
-                "Player: Set Camera Location",
-                "Player: Camera Ride",
-                "Global Lightning: Change RGBA"
-            };
-
-            AddChild(uiNodesList = new DropDownButtonWidget(Snw.ModData));
-            uiNodesList.Bounds = new Rectangle(5, 5 + 26 + 26 + 26 + 26 + 26 + 26 + 26, 190, 25);
-
-            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemGroup = (option, template) =>
-            {
-                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
-                {
-                    nodeType = option;
-
-                    uiNodesList.Text = nodeStrings[nodeTypes.IndexOf(nodeType)];
-                    createActorNodesList.Text = "- Actor Nodes -";
-                    triggerNodesList.Text = "- Trigger Nodes -";
-                    createNodesList.Text = "- Info Nodes -";
-                    groupNodesList.Text = "- Group Nodes -";
-                    arithmeticNodesList.Text = "- Arithmetic Nodes -";
-                    functionNodesList.Text = "- Function Nodes -";
-                    conditionNodesList.Text = "- Condition Nodes -";
-                });
-
-                item.Get<LabelWidget>("LABEL").GetText = () => nodeStrings[nodeTypes.IndexOf(option)];
-
-                return item;
-            };
-
-            uiNodesList.OnClick = () =>
-            {
-                var nodes = nodeTypes;
-                uiNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
-            };
-        }
-
-        void AddConditionList()
-        {
-            List<NodeType> nodeTypes = new List<NodeType>
-            {
-                NodeType.CheckCondition,
-                NodeType.CompareActor,
-                NodeType.CompareNumber,
-                NodeType.CompareActorInfo,
-                NodeType.IsDead,
-                NodeType.IsAlive,
-                NodeType.IsPlaying,
-                NodeType.HasLost,
-                NodeType.HasWon,
-                NodeType.IsHumanPlayer,
-                NodeType.IsBot,
-                NodeType.IsNoncombatant
-            };
-
-            List<string> nodeStrings = new List<string>
-            {
-                "Check Condition Node",
-                "Con.: Same actor",
-                "Con.: Same number",
-                "Con.: Same actortype",
-                "Con.: is dead",
-                "Con.: is alive",
-                "Player: is Playing",
-                "Player: has Lost",
-                "Player: has Won",
-                "Player: is Human",
-                "Player: is Bot",
-                "Player: is Noncombatant"
-            };
-
-            AddChild(conditionNodesList = new DropDownButtonWidget(Snw.ModData));
-            conditionNodesList.Bounds = new Rectangle(5, 5 + 26 + 26 + 26 + 26 + 26 + 26 + 26 + 26, 190, 25);
-
-            Func<NodeType, ScrollItemWidget, ScrollItemWidget> setupItemGroup = (option, template) =>
-            {
-                var item = ScrollItemWidget.Setup(template, () => nodeType == option, () =>
-                {
-                    nodeType = option;
-
-                    conditionNodesList.Text = nodeStrings[nodeTypes.IndexOf(nodeType)];
-                    createActorNodesList.Text = "- Actor Nodes -";
-                    triggerNodesList.Text = "- Trigger Nodes -";
-                    createNodesList.Text = "- Info Nodes -";
-                    groupNodesList.Text = "- Group Nodes -";
-                    arithmeticNodesList.Text = "- Arithmetic Nodes -";
-                    functionNodesList.Text = "- Function Nodes -";
-                    uiNodesList.Text = "- Ui Nodes -";
-                });
-
-                item.Get<LabelWidget>("LABEL").GetText = () => nodeStrings[nodeTypes.IndexOf(option)];
-
-                return item;
-            };
-
-            conditionNodesList.OnClick = () =>
-            {
-                var nodes = nodeTypes;
-                conditionNodesList.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, nodes, setupItemGroup);
-            };
-        }
-
-        public override bool HandleMouseInput(MouseInput mi)
-        {
-            if (!EventBounds.Contains(mi.Location))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         public override void Draw()
         {
-            WidgetUtils.DrawPanel(Background,
-                new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
+            WidgetUtils.DrawPanel(Background, RenderBounds);
+        }
+
+        void CreateLeftClickDropDownMenu()
+        {
+            DropDownMenuWidget = new DropDownMenuWidget()
+            {
+                Bounds = new Rectangle(0, 0, 180, 75),
+                Visible = false
+            };
+
+            var infoNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.MapInfoNode, "Global Info"},
+                {NodeType.MapInfoActorInfo, "Actor Type Info"},
+                {NodeType.MapInfoActorReference, "Actor on Map"}
+            };
+
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Info Nodes", infoNodes));
+
+            var variableNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.GetVariable, "Variable: Get"},
+                {NodeType.SetVariable, "Variable: Set"}
+            };
+
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Variable Nodes", variableNodes));
+
+            var actorNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.ActorGetInformations, "Informations of Actor"},
+                {NodeType.ActorKill, "Kill"},
+                {NodeType.ActorRemove, "Remove"},
+                {NodeType.ActorChangeOwner, "Change Owner"},
+            };
+            var actorQueueNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.ActorQueueMove, "Queue Move"},
+                {NodeType.ActorQueueAttack, "Queue Attack"},
+                {NodeType.ActorQueueHunt, "Queue Hunt"},
+                {NodeType.ActorQueueAttackMoveActivity, "Queue AttackMoveActivity"},
+                {NodeType.ActorQueueSell, "Queue Sell"},
+                {NodeType.ActorQueueFindResources, "QueueFindResources"}
+            };
+
+            var actorSubMenu = GetSubMenue("Actor Activity", actorNodes);
+            actorSubMenu.AddDropDownMenu(GetSubMenue("Queue Activities", actorQueueNodes));
+
+            DropDownMenuWidget.AddDropDownMenu(actorSubMenu);
+
+            var triggerNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.TriggerWorldLoaded, "World Loaded"},
+                {NodeType.TriggerCreateTimer, "Create Timer"},
+                {NodeType.TriggerTick, "On Tick"},
+                {NodeType.TriggerOnEnteredFootprint, "On Entered Footprint"},
+                {NodeType.TriggerOnEnteredRange, "On Entered Range"},
+                {NodeType.TriggerOnIdle, "On Actor Idle"},
+                {NodeType.TriggerOnKilled, "On Actor Killed"},
+                {NodeType.TriggerOnAllKilled, "On All Actors Killed"},
+            };
+
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Trigger", triggerNodes));
+
+            var timerNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.TimerStop, "Stop Timer"},
+                {NodeType.TimerStart, "Start Timer"},
+                {NodeType.TimerReset, "Reset Timer"}
+            };
+
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Timer", timerNodes));
+
+            var groupNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.GroupPlayerGroup, "Player Group"},
+                {NodeType.GroupActorInfoGroup, "Actor Info Group"},
+                {NodeType.GroupActorGroup, "Actor Group"},
+                {NodeType.FinActorsInCircle, "Find Actors in Circle"},
+                {NodeType.FindActorsOnFootprint, "Find Actors on Footprint"},
+                {NodeType.FilterActorGroup, "Filter Actors in Group"}
+            };
+
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Actor/Player Group", groupNodes));
+
+            var arithmeticNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.ArithmeticsAnd, "And Trigger"},
+                {NodeType.ArithmeticsOr, "Or Trigger"},
+                {NodeType.ArithmeticsMath, "Math"},
+                {NodeType.Count, "Get Count"},
+                {NodeType.CompareActors, "Compare: Actors"}
+            };
+
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Arithmetic's", arithmeticNodes));
+
+            var functionNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.ActorCreateActor, "Create Actor"},
+                {NodeType.Reinforcements, "Reinforcements"},
+                {NodeType.ReinforcementsWithTransport, "Reinforcements (Transport)"},
+                {NodeType.CreateEffect, "Create Effect"},
+                {NodeType.TimedExecution, "Timed Execution"},
+                {NodeType.DoMultiple, "Repeating: Action"}
+            };
+
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Functions", functionNodes));
+
+            var uiNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.UiPlayNotification, "Play Notification"},
+                {NodeType.UiPlaySound, "Play Play Sound Location"},
+                {NodeType.UiRadarPing, "Radar Ping"},
+                {NodeType.UiTextMessage, "Chat Text message"},
+                {NodeType.TextChoice, "Text Choice"},
+                {NodeType.SetCameraPosition, "Set Camera Location"},
+                {NodeType.CameraRide, "Camera Ride"},
+                {NodeType.GlobalLightning, "Change Global Lightning"},
+            };
+
+            var uiObjectiveNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.UiNewObjective, "Add Objective"},
+                {NodeType.UiCompleteObjective, "Complete Objective"},
+                {NodeType.UiFailObjective, "Fail Objective"},
+                {NodeType.UiAddMissionText, "Show Mission Text"},
+            };
+
+            var uiSubMenu =
+                new DropDownMenuExpandButton(Snw.ModData, new Rectangle(0, 0, 160, 25))
+                {
+                    Text = "User Interface"
+                };
+
+            uiSubMenu.AddDropDownMenu(GetSubMenue("General UI", uiNodes));
+            uiSubMenu.AddDropDownMenu(GetSubMenue("Objectives", uiObjectiveNodes));
+
+            DropDownMenuWidget.AddDropDownMenu(uiSubMenu);
+
+            var actorConditionNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.CompareActor, "Same actor"},
+                {NodeType.CompareNumber, "Same number"},
+                {NodeType.CompareActorInfo, "Same actortype"},
+                {NodeType.IsDead, "Actor is dead"},
+                {NodeType.IsAlive, "Actor is alive"},
+            };
+
+            var playerConditionNodes = new Dictionary<NodeType, string>
+            {
+                {NodeType.IsPlaying, "Player is Playing"},
+                {NodeType.HasLost, "Player has Lost"},
+                {NodeType.HasWon, "Player has Won"},
+                {NodeType.IsHumanPlayer, "Player is Human"},
+                {NodeType.IsBot, "Player is Bot"},
+                {NodeType.IsNoncombatant, "Player is Noncombatant"},
+            };
+
+            var conditionsSubMenu =
+                new DropDownMenuExpandButton(Snw.ModData, new Rectangle(0, 0, 160, 25))
+                {
+                    Text = "Conditions"
+                };
+
+            var checkConditionButton = new ButtonWidget(Snw.ModData)
+            {
+                Bounds = new Rectangle(0, 0, 130, 25),
+                Text = "Check Condition",
+                OnClick = () =>
+                {
+                    screenWidget.AddNode(NodeType.CheckCondition);
+                    DropDownMenuWidget.Collapse(DropDownMenuWidget);
+                    DropDownMenuWidget.Visible = false;
+                }
+            };
+
+            conditionsSubMenu.AddDropDownMenu(checkConditionButton);
+            conditionsSubMenu.AddDropDownMenu(GetSubMenue("Actor Conditions", actorConditionNodes));
+            conditionsSubMenu.AddDropDownMenu(GetSubMenue("Player Conditions", playerConditionNodes));
+
+            DropDownMenuWidget.AddDropDownMenu(conditionsSubMenu);
+
+
+            AddChild(DropDownMenuWidget);
+        }
+
+        DropDownMenuExpandButton GetSubMenue(string label, Dictionary<NodeType, string> types)
+        {
+            var actorNodes = new DropDownMenuExpandButton(Snw.ModData, new Rectangle(0, 0, 160, 25))
+            {
+                Text = label
+            };
+
+            foreach (var type in types)
+            {
+                var newWidget = new ButtonWidget(Snw.ModData)
+                {
+                    Bounds = new Rectangle(0, 0,
+                        types.Max(t => Snw.FontRegular.Measure(t.Value).X) + 25, 25),
+                    Text = type.Value,
+                    Align = TextAlign.Left,
+                    OnClick = () =>
+                    {
+                        screenWidget.AddNode(type.Key);
+                        DropDownMenuWidget.Collapse(DropDownMenuWidget);
+                        DropDownMenuWidget.Visible = false;
+                    }
+                };
+                actorNodes.AddDropDownMenu(newWidget);
+            }
+
+            return actorNodes;
         }
     }
 }

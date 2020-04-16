@@ -13,9 +13,9 @@ using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 {
-    public class NodeLibrary
+    public static class NodeLibrary
     {
-        public List<NodeWidget> LoadInNodes(NodeEditorNodeScreenWidget nensw, List<NodeInfo> nodeInfos)
+        public static List<NodeWidget> LoadInNodes(NodeEditorNodeScreenWidget nensw, List<NodeInfo> nodeInfos)
         {
             List<NodeWidget> nodes = new List<NodeWidget>();
             foreach (var nodeinfo in nodeInfos)
@@ -31,7 +31,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
             return nodes;
         }
 
-        public NodeWidget AddNode(NodeType nodeType, NodeEditorNodeScreenWidget nensw, string nodeId = null,
+        public static NodeWidget AddNode(NodeType nodeType, NodeEditorNodeScreenWidget nensw, string nodeId = null,
             string nodeName = null)
         {
             NodeWidget newNode = null;
@@ -61,7 +61,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
             return newNode;
         }
 
-        public List<NodeLogic> InitializeNodes(IngameNodeScriptSystem inss, List<NodeInfo> nodesInfos)
+        public static List<NodeLogic> InitializeNodes(IngameNodeScriptSystem inss, List<NodeInfo> nodesInfos)
         {
             var nodeList = new List<NodeLogic>();
             foreach (var nodeinfo in nodesInfos)
@@ -166,7 +166,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new FunctionLogicReinforcements(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
+                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfo)
                 {
                     var newNode = new MapInfoLogicNode(nodeinfo, inss);
                     nodeList.Add(newNode);
@@ -196,7 +196,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new UiLogicUiSettings(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfoNode)
+                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfo)
                 {
                     var newNode = new NodeLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
@@ -266,7 +266,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     var newNode = new DoRepeatingNodeLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
                 }
-                else if (nodeinfo.NodeType == NodeType.CountNode)
+                else if (nodeinfo.NodeType == NodeType.Count)
                 {
                     var newNode = new GetCountNodeLogic(nodeinfo, inss);
                     nodeList.Add(newNode);
@@ -411,7 +411,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
     {
         // MapInfo
         MapInfoNode,
-        MapInfoActorInfoNode,
+        MapInfoActorInfo,
         MapInfoActorReference,
 
         // Actor
@@ -453,7 +453,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         ArithmeticsOr,
         CompareActors,
         DoMultiple,
-        CountNode,
+        Count,
         ArithmeticsMath,
 
         // Complex Functions
@@ -514,7 +514,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     }
                 },
                 {
-                    NodeType.MapInfoActorInfoNode, new NodeContructor
+                    NodeType.MapInfoActorInfo, new NodeContructor
                     {
                         ConstructorClass = typeof(MapInfoActorInfoNode),
                         OutConnections = new List<ConnectionType>
@@ -1105,7 +1105,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     }
                 },
                 {
-                    NodeType.CountNode, new NodeContructor
+                    NodeType.Count, new NodeContructor
                     {
                         ConstructorClass = typeof(GetCountNode),
                         InConnections = new List<ConnectionType>

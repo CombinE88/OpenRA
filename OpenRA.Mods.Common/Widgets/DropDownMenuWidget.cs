@@ -33,6 +33,12 @@ namespace OpenRA.Mods.Common.Widgets
                 elementList.Sum(e => e.Bounds.Height));
 
             AddChild(element);
+
+            foreach (var child in elementList)
+            {
+                child.Bounds = new Rectangle(child.Bounds.X, child.Bounds.Y, elementList.Max(e => e.Bounds.Width),
+                    child.Bounds.Height);
+            }
         }
 
         public static void Collapse(Widget widget)
@@ -43,6 +49,7 @@ namespace OpenRA.Mods.Common.Widgets
                 {
                     element.Visible = false;
                 }
+
                 Collapse(element);
             }
         }

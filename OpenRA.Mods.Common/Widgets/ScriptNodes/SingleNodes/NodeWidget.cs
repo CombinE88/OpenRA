@@ -23,8 +23,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             NodeInfo = nodeInfo;
 
-            OffsetPosX = nodeInfo.OffsetPosX ?? screen.CenterCoordinates.X;
-            OffsetPosY = nodeInfo.OffsetPosY ?? screen.CenterCoordinates.Y;
+            OffsetPosX = nodeInfo.OffsetPosX ?? screen.MouseOffsetCoordinates.X;
+            OffsetPosY = nodeInfo.OffsetPosY ?? screen.MouseOffsetCoordinates.Y;
 
             Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);
 
