@@ -171,6 +171,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables
                     OutConnections.First(c => c.ConnectionTyp == ConnectionType.TimerConnection).Logic =
                         SelectedSharedVariable.Timer;
                     break;
+                case VariableType.LocationRange:
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.LocationRange).Number =
+                        SelectedSharedVariable.Number;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.LocationRange).Location =
+                        SelectedSharedVariable.Location;
+                    break;
             }
         }
     }

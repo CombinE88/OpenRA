@@ -1,3 +1,4 @@
+using System.Linq;
 using OpenRA.Mods.Common.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
@@ -36,6 +37,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                 lighting.Blue = b;
                 lighting.Ambient = a;
             }
+            
+            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
+            if (oCon != null)
+                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
+                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
+                {
+                    var inCon = node.InConnections.FirstOrDefault(c =>
+                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
+                    if (inCon != null)
+                        inCon.Execute = true;
+                }
         }
     }
 }

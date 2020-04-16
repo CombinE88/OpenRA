@@ -240,6 +240,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Integer,
         ActorList,
         Timer,
-        Objective
+        Objective,
+        LocationRange
     }
 }

@@ -20,7 +20,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public DropDownMenuWidget DropDownMenuWidget;
 
         [ObjectCreator.UseCtorAttribute]
-        public NodeEditorBackgroundWidget(NodeScriptContainerWidget nodeScriptContainerWidget, WorldRenderer worldRenderer,
+        public NodeEditorBackgroundWidget(NodeScriptContainerWidget nodeScriptContainerWidget,
+            WorldRenderer worldRenderer,
             World world)
         {
             this.nodeScriptContainerWidget = nodeScriptContainerWidget;
@@ -147,7 +148,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 VariableType.Integer,
                 VariableType.ActorList,
                 VariableType.Timer,
-                VariableType.Objective
+                VariableType.Objective,
+                VariableType.LocationRange
             };
 
             var variableString = new List<string>
@@ -162,7 +164,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Integer",
                 "Actor List",
                 "Timer",
-                "Objective"
+                "Objective",
+                "Location + Range"
             };
 
             var dropDownText = new DropDownButtonWidget(nodeScriptContainerWidget.ModData);
@@ -302,7 +305,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             var triggerNodes = new Dictionary<NodeType, string>
             {
                 {NodeType.TriggerWorldLoaded, "World Loaded"},
-                {NodeType.TriggerCreateTimer, "Create Timer"},
                 {NodeType.TriggerTick, "On Tick"},
                 {NodeType.TriggerOnEnteredFootprint, "On Entered Footprint"},
                 {NodeType.TriggerOnEnteredRange, "On Entered Range"},
@@ -315,6 +317,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             var timerNodes = new Dictionary<NodeType, string>
             {
+                {NodeType.TriggerCreateTimer, "Create Timer"},
                 {NodeType.TimerStop, "Stop Timer"},
                 {NodeType.TimerStart, "Start Timer"},
                 {NodeType.TimerReset, "Reset Timer"}
@@ -437,10 +440,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         DropDownMenuExpandButton GetSubMenu(string label, Dictionary<NodeType, string> types)
         {
-            var actorNodes = new DropDownMenuExpandButton(nodeScriptContainerWidget.ModData, new Rectangle(0, 0, 160, 25))
-            {
-                Text = label
-            };
+            var actorNodes =
+                new DropDownMenuExpandButton(nodeScriptContainerWidget.ModData, new Rectangle(0, 0, 160, 25))
+                {
+                    Text = label
+                };
 
             foreach (var newWidget in types.Select(type => new ButtonWidget(nodeScriptContainerWidget.ModData)
             {

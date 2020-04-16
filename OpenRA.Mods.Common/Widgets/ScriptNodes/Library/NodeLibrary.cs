@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics;
@@ -34,14 +35,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         public static NodeWidget AddNode(NodeType nodeType, NodeEditorNodeScreenWidget nensw, string nodeId = null,
             string nodeName = null)
         {
-            NodeWidget newNode = null;
+            if (nodeType == NodeType.TriggerWorldLoaded &&
+                nensw.Nodes.Any(n => n.NodeType == NodeType.TriggerWorldLoaded))
+                return null;
 
+            if (nodeType == NodeType.TriggerTick &&
+                nensw.Nodes.Any(n => n.NodeType == NodeType.TriggerTick))
+                return null;
 
             var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
             var instanceType = NodeConstructorInfo.NodeConstructorInfos[nodeType].ConstructorClass;
 
-            newNode = (NodeWidget) instanceType
+            var newNode = (NodeWidget) instanceType
                 .GetConstructor(new[] {typeof(NodeEditorNodeScreenWidget), typeof(NodeInfo)})
                 .Invoke(new object[] {nensw, nodeInfo});
 
@@ -52,7 +58,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
             if (NodeConstructorInfo.NodeConstructorInfos[nodeType].OutConnections != null)
                 foreach (var connection in NodeConstructorInfo.NodeConstructorInfos[nodeType].OutConnections)
                     newNode.AddOutConnection(new OutConnection(connection, newNode));
-
 
             return newNode;
         }
@@ -553,6 +558,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         {
                             ConnectionType.TimerConnection,
                             ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
                         }
                     }
                 },
@@ -564,6 +573,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         {
                             ConnectionType.TimerConnection,
                             ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
                         }
                     }
                 },
@@ -574,6 +587,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         InConnections = new List<ConnectionType>
                         {
                             ConnectionType.TimerConnection,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
                             ConnectionType.Exec
                         }
                     }
@@ -1140,7 +1157,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         },
                         OutConnections = new List<ConnectionType>
                         {
-                            ConnectionType.Objective
+                            ConnectionType.Objective,
+                            ConnectionType.Exec
                         }
                     }
                 },
@@ -1407,6 +1425,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                             ConnectionType.Integer,
                             ConnectionType.Integer,
                             ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
                         }
                     }
                 },
@@ -1448,6 +1470,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         {
                             ConnectionType.Exec,
                             ConnectionType.String
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
+                            ConnectionType.Exec
                         }
                     }
                 },
@@ -1486,6 +1512,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         InConnections = new List<ConnectionType>
                         {
                             ConnectionType.Actor,
+                            ConnectionType.Exec
+                        },
+                        OutConnections = new List<ConnectionType>
+                        {
                             ConnectionType.Exec
                         }
                     }

@@ -281,7 +281,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     && (brushItem.Item2.ConnectionTyp == connection.ConnectionTyp ||
                         connection.ConnectionTyp == ConnectionType.Universal ||
                         brushItem.Item2.ConnectionTyp == ConnectionType.Universal))))
+                {
                     connection.In = brushItem.Item2;
+                    
+                    // May only have one execution line per execution OutConnection
+                    if (brushItem.Item2.ConnectionTyp == ConnectionType.Exec)
+                        foreach (var con in Nodes.SelectMany(node =>
+                            node.InConnections.Where(con => con.In == brushItem.Item2 && connection != con)))
+                            con.In = null;
+                }
 
                 // Frame nodes for selecting
                 if (CurrentBrush == NodeBrush.Frame)
@@ -442,7 +450,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             text = "X: " + CenterCoordinates.X + " Y: " + CenterCoordinates.Y;
             WidgetUtils.DrawPanel(background,
                 new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
-            NodeScriptContainerWidget.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
+            NodeScriptContainerWidget.FontRegular.DrawTextWithShadow(text,
+                new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
                 Color.White, Color.Black, 1);
             NodeScriptContainerWidget.FontRegular.DrawTextWithShadow(CurrentBrush.ToString(),
                 new float2(RenderBounds.X + 2, RenderBounds.Y + 50),

@@ -166,11 +166,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables
                     selectedSharedVariable.Number =
                         InConnections.First(c => c.ConnectionTyp == ConnectionType.Objective).In.Number;
                     break;
+                case VariableType.LocationRange:
+                    selectedSharedVariable.Number =
+                        InConnections.First(c => c.ConnectionTyp == ConnectionType.LocationRange).In.Number;
+                    selectedSharedVariable.Location =
+                        InConnections.First(c => c.ConnectionTyp == ConnectionType.LocationRange).In.Location;
+                    break;
             }
 
             foreach (var getterLogic in IngameNodeScriptSystem.NodeLogics.Where(v =>
                 v is GetVariableLogic && (v as GetVariableLogic).SelectedSharedVariable == selectedSharedVariable))
                 ((GetVariableLogic) getterLogic).Refresh();
+
+            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
+            if (oCon != null)
+                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
+                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
+                {
+                    var inCon = node.InConnections.FirstOrDefault(c =>
+                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
+                    if (inCon != null)
+                        inCon.Execute = true;
+                }
         }
     }
 }
