@@ -94,6 +94,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (node == null)
                 return;
 
+            node.DeleteButton.OnClick = () => { RemoveNode(node); };
             AddChild(node);
             Nodes.Add(node);
         }
@@ -283,7 +284,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         brushItem.Item2.ConnectionTyp == ConnectionType.Universal))))
                 {
                     connection.In = brushItem.Item2;
-                    
+
                     // May only have one execution line per execution OutConnection
                     if (brushItem.Item2.ConnectionTyp == ConnectionType.Exec)
                         foreach (var con in Nodes.SelectMany(node =>
@@ -390,12 +391,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 if (!node.WidgetBackground.Contains(mi.Location) || mi.Button != MouseButton.Left ||
                     mi.Event != MouseInputEvent.Down || CurrentBrush != NodeBrush.Free) continue;
                 {
-                    if (node.DeleteButton.Contains(mi.Location))
-                    {
-                        RemoveNode(node);
-                        return true;
-                    }
-
                     if (!node.DragBar.Contains(mi.Location) || CurrentBrush != NodeBrush.Free) continue;
                     if (!selectedNodes.Any())
                     {

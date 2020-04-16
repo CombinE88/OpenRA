@@ -60,6 +60,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             closeButton.Text = "Close";
             closeButton.OnClick = () =>
             {
+                screenWidget.YieldKeyboardFocus();
                 var nodeInfos = screenWidget.Nodes.Select(node => node.BuildNodeInfo()).ToList();
 
                 this.nodeScriptContainerWidget.World.WorldActor.Trait<EditorNodeLayer>().NodeInfos = nodeInfos;

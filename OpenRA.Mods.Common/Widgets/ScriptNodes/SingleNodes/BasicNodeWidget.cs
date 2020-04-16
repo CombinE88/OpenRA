@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Widgets;
 
@@ -20,7 +21,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public Rectangle AddInput;
         public Rectangle AddOutput;
         public int2 CursorLocation;
-        public Rectangle DeleteButton;
+        public ButtonWidget DeleteButton;
 
         // Node Inhalte
         public Rectangle DragBar;
@@ -77,9 +78,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             WidgetBackground = new Rectangle(Bounds.X - 3, Bounds.Y - 3, Bounds.Width + 6, Bounds.Height + 6);
             DragBar = new Rectangle(Bounds.X + 1, Bounds.Y + 1, Bounds.Width - 27, 25);
-            DeleteButton = new Rectangle(Bounds.X + Bounds.Width - 26, Bounds.Y + 1, 25, 25);
             WidgetEntries = new Rectangle(Bounds.X + 1, Bounds.Y + 27, Bounds.Width - 2, Bounds.Height - 28);
             FreeWidgetEntries = new Rectangle(5, 30, WidgetEntries.Width - 10, WidgetEntries.Height - 28 - 26);
+
+            AddChild(DeleteButton = new ButtonWidget(Screen.NodeScriptContainerWidget.ModData)
+            {
+                Text = "X",
+                Bounds = new Rectangle(Bounds.X + Bounds.Width - 26, Bounds.Y + 1, 25, 25)
+            });
 
             AddChild(NodeIDTextfield = new TextFieldWidget());
             NodeIDTextfield.OnTextEdited = () => { NodeName = NodeIDTextfield.Text; };
@@ -87,14 +93,38 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y, WidgetEntries.Width - 10, 20);
         }
 
-        public void SetOuts(List<OutConnection> o)
+        public
+            void
+            SetOuts
+            (
+                List
+                    <
+                        OutConnection
+                    >
+                    o
+            )
         {
-            OutConnections = o;
+            OutConnections
+                =
+                o
+                ;
         }
 
-        public void SetIns(List<InConnection> i)
+        public
+            void
+            SetIns
+            (
+                List
+                    <
+                        InConnection
+                    >
+                    i
+            )
         {
-            InConnections = i;
+            InConnections
+                =
+                i
+                ;
         }
 
         public override void Tick()
@@ -110,7 +140,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             WidgetBackground = new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6,
                 RenderBounds.Height + 6);
             DragBar = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 1, RenderBounds.Width - 27, 25);
-            DeleteButton = new Rectangle(RenderBounds.X + RenderBounds.Width - 26, RenderBounds.Y + 1, 25, 25);
             WidgetEntries = new Rectangle(RenderBounds.X + 1, RenderBounds.Y + 27, RenderBounds.Width - 2,
                 RenderBounds.Height - 28);
             FreeWidgetEntries = new Rectangle(5, 27, WidgetEntries.Width - 10, WidgetEntries.Height - 28 - 26);
@@ -200,16 +229,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 && !Screen.Bounds.Contains(WidgetBackground.X + WidgetBackground.Width,
                     WidgetBackground.Y + WidgetBackground.Height))
             {
-                foreach (var child in Children)
-                    if (child.Visible)
-                        child.Visible = false;
+                foreach (var child in Children.Where(child => child.Visible))
+                    child.Visible = false;
 
                 return;
             }
 
-            foreach (var child in Children)
-                if (!child.Visible)
-                    child.Visible = true;
+            foreach (var child in Children.Where(child => !child.Visible))
+                child.Visible = true;
 
             //// Debug
 
@@ -225,13 +252,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             WidgetUtils.DrawPanel(Background, WidgetBackground);
 
             WidgetUtils.DrawPanel(BackgroundDrag, DragBar);
-            WidgetUtils.DrawPanel(BackgroundCross, DeleteButton);
             WidgetUtils.DrawPanel(BackgroundEntries, WidgetEntries);
 
-            //// InconnectioNButtons
+            //// InConnection Buttons
 
             WidgetUtils.FillRectWithColor(AddOutput, Color.DarkGray);
-            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow("+", new float2(AddOutput.X + 2, AddOutput.Y + 2),
+            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow("+",
+                new float2(AddOutput.X + 2, AddOutput.Y + 2),
                 Color.White, Color.Black, 2);
 
             WidgetUtils.FillRectWithColor(RemoveOutput, Color.DarkGray);
@@ -240,7 +267,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 Color.White, Color.Black, 2);
 
             WidgetUtils.FillRectWithColor(AddInput, Color.DarkGray);
-            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow("+", new float2(AddInput.X + 2, AddInput.Y + 2),
+            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow("+",
+                new float2(AddInput.X + 2, AddInput.Y + 2),
                 Color.White, Color.Black, 2);
 
             WidgetUtils.FillRectWithColor(RemoveInput, Color.DarkGray);
@@ -323,7 +351,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 }
 
                 if (Screen.CurrentBrush == NodeBrush.Connecting)
-                    Screen.NodeScriptContainerWidget.FontSmall.DrawTextWithShadow(OutConnections[i].ConnectionTyp.ToString(),
+                    Screen.NodeScriptContainerWidget.FontSmall.DrawTextWithShadow(
+                        OutConnections[i].ConnectionTyp.ToString(),
                         new int2(OutConnections[i].InWidgetPosition.X + 22, OutConnections[i].InWidgetPosition.Y + 4),
                         Color.White, Color.Black, 1);
             }
