@@ -8,33 +8,33 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class ArithmecCompareNode : NodeWidget
     {
-        CompareMethode selectedMethode;
-        DropDownButtonWidget methodeSelection;
+        readonly DropDownButtonWidget itemSelection;
+        readonly DropDownButtonWidget methodeSelection;
         CompareItem selectedItem;
-        DropDownButtonWidget itemSelection;
+        CompareMethod selectedMethod;
 
         public ArithmecCompareNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Methode = CompareMethode.Max;
+            Methode = CompareMethod.Max;
             Item = CompareItem.Health;
 
-            List<CompareMethode> methodes = new List<CompareMethode>
+            var methodes = new List<CompareMethod>
             {
-                CompareMethode.Max,
-                CompareMethode.Min
+                CompareMethod.Max,
+                CompareMethod.Min
             };
 
-            selectedMethode = Methode.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData);
+            selectedMethod = Methode.Value;
+            methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareMethode, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
+            Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
-                var item = ScrollItemWidget.Setup(template, () => selectedMethode == option, () =>
+                var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
-                    selectedMethode = option;
+                    selectedMethod = option;
 
-                    methodeSelection.Text = selectedMethode.ToString();
-                    Methode = selectedMethode;
+                    methodeSelection.Text = selectedMethod.ToString();
+                    Methode = selectedMethod;
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => option.ToString();
@@ -42,13 +42,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 return item;
             };
 
-            methodeSelection.OnClick = () => { methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2); };
+            methodeSelection.OnClick = () =>
+            {
+                methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
+            };
 
-            methodeSelection.Text = selectedMethode.ToString();
+            methodeSelection.Text = selectedMethod.ToString();
 
             AddChild(methodeSelection);
 
-            List<CompareItem> items = new List<CompareItem>
+            var items = new List<CompareItem>
             {
                 CompareItem.Health,
                 CompareItem.Damage,
@@ -58,7 +61,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
             };
 
             selectedItem = Item.Value;
-            itemSelection = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData);
+            itemSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
             Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
@@ -75,24 +78,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 return item;
             };
 
-            itemSelection.OnClick = () => { itemSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, items, setupItem); };
+            itemSelection.OnClick = () =>
+            {
+                itemSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, items, setupItem);
+            };
 
             itemSelection.Text = selectedItem.ToString();
 
             AddChild(itemSelection);
 
-            methodeSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
-            itemSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 100, FreeWidgetEntries.Width, 25);
+            methodeSelection.Bounds =
+                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
+            itemSelection.Bounds =
+                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 100, FreeWidgetEntries.Width, 25);
         }
 
         public override void AddOutConConstructor(OutConnection connection)
         {
             base.AddOutConConstructor(connection);
 
-            if (NodeInfo.Methode != null)
+            if (NodeInfo.Method != null)
             {
-                selectedMethode = NodeInfo.Methode.Value;
-                methodeSelection.Text = NodeInfo.Methode.Value.ToString();
+                selectedMethod = NodeInfo.Method.Value;
+                methodeSelection.Text = NodeInfo.Method.Value.ToString();
             }
 
             if (NodeInfo.Item != null)
@@ -105,22 +113,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
     public class ArithmecCompareLogic : NodeLogic
     {
-        public ArithmecCompareLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public ArithmecCompareLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
         public override void Tick(Actor self)
         {
-            List<InConnection> inc = new List<InConnection>
+            var inc = new List<InConnection>
             {
-                InConnections.First(c => c.ConTyp == ConnectionType.Actor),
-                InConnections.Last(c => c.ConTyp == ConnectionType.Actor)
+                InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor),
+                InConnections.Last(c => c.ConnectionTyp == ConnectionType.Actor)
             };
 
             if (inc[0].In == null || inc[1].In == null)
                 return;
 
-            List<int> ints = new List<int>
+            var ints = new List<int>
             {
                 0,
                 0
@@ -128,63 +137,62 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
             if (Item == CompareItem.Damage)
             {
-                if (inc[0].In.ConTyp == ConnectionType.Actor)
+                if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null && inc[0].In.Actor.Trait<Health>() != null)
                         ints[0] = inc[0].In.Actor.Trait<Health>().MaxHP - inc[0].In.Actor.Trait<Health>().HP;
 
-                if (inc[1].In.ConTyp == ConnectionType.Actor)
+                if (inc[1].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[1].In.Actor != null && inc[1].In.Actor.Trait<Health>() != null)
                         ints[1] = inc[1].In.Actor.Trait<Health>().MaxHP - inc[1].In.Actor.Trait<Health>().HP;
             }
 
             if (Item == CompareItem.Health)
             {
-                if (inc[0].In.ConTyp == ConnectionType.Actor)
+                if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null && inc[0].In.Actor.Trait<Health>() != null)
                         ints[0] = inc[0].In.Actor.Trait<Health>().MaxHP;
 
-                if (inc[1].In.ConTyp == ConnectionType.Actor)
+                if (inc[1].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[1].In.Actor != null && inc[1].In.Actor.Trait<Health>() != null)
                         ints[1] = inc[1].In.Actor.Trait<Health>().MaxHP;
             }
 
             if (Item == CompareItem.Speed)
             {
-                if (inc[0].In.ConTyp == ConnectionType.Actor)
+                if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null && inc[0].In.Actor.Info.TraitInfo<MobileInfo>() != null)
                         ints[0] = inc[0].In.Actor.Info.TraitInfo<MobileInfo>().Speed;
 
-                if (inc[1].In.ConTyp == ConnectionType.Actor)
+                if (inc[1].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[1].In.Actor != null && inc[1].In.Actor.Info.TraitInfo<MobileInfo>() != null)
                         ints[1] = inc[1].In.Actor.Info.TraitInfo<MobileInfo>().Speed;
             }
 
             if (Item == CompareItem.LocationX)
             {
-                if (inc[0].In.ConTyp == ConnectionType.Actor)
+                if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null)
                         ints[0] = inc[0].In.Actor.Location.X;
 
-                if (inc[1].In.ConTyp == ConnectionType.Actor)
+                if (inc[1].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[1].In.Actor != null)
                         ints[1] = inc[1].In.Actor.Location.X;
             }
 
             if (Item == CompareItem.LocationY)
             {
-                if (inc[0].In.ConTyp == ConnectionType.Actor)
+                if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null)
                         ints[0] = inc[0].In.Actor.Location.Y;
 
-                if (inc[1].In.ConTyp == ConnectionType.Actor)
+                if (inc[1].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[1].In.Actor != null)
                         ints[1] = inc[1].In.Actor.Location.Y;
             }
 
-            if (Methode == CompareMethode.Max)
-            {
-                OutConnections.First(c => c.ConTyp == ConnectionType.Universal).Actor = inc[ints.IndexOf(Math.Max(ints[0], ints[1]))].In.Actor;
-            }
+            if (Methode == CompareMethod.Max)
+                OutConnections.First(c => c.ConnectionTyp == ConnectionType.Universal).Actor =
+                    inc[ints.IndexOf(Math.Max(ints[0], ints[1]))].In.Actor;
         }
     }
 }

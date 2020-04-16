@@ -2,22 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes;
-using OpenRA.Traits;
-using OpenRA.Widgets;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
     public class TextBoxSelectNode : NodeWidget
     {
-        List<ButtonWidget> parralelButtons = new List<ButtonWidget>();
+        readonly List<ButtonWidget> parralelButtons = new List<ButtonWidget>();
 
         public TextBoxSelectNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
             ButtonWidget addButton;
-            AddChild(addButton = new ButtonWidget(screen.ScriptNodeWidget.ModData));
-            addButton.Bounds = new Rectangle(FreeWidgetEntries.X + 10, FreeWidgetEntries.Y + 21, WidgetEntries.Width - 20, 20);
+            AddChild(addButton = new ButtonWidget(screen.NodeScriptContainerWidget.ModData));
+            addButton.Bounds = new Rectangle(FreeWidgetEntries.X + 10, FreeWidgetEntries.Y + 21,
+                WidgetEntries.Width - 20, 20);
             addButton.Text = "Add Choice";
             addButton.OnClick = () =>
             {
@@ -33,7 +30,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
         {
             base.AddOutConConstructor(connection);
 
-            var button = new ButtonWidget(Screen.ScriptNodeWidget.ModData);
+            var button = new ButtonWidget(Screen.NodeScriptContainerWidget.ModData);
             button.Text = "Remove";
 
             AddChild(button);
@@ -41,8 +38,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             button.OnClick = () =>
             {
-                for (int j = 0; j < parralelButtons.Count; j++)
-                {
+                for (var j = 0; j < parralelButtons.Count; j++)
                     if (parralelButtons[j] == button)
                     {
                         RemoveChild(parralelButtons[j]);
@@ -53,7 +49,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
                         break;
                     }
-                }
             };
         }
 
@@ -61,44 +56,43 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
         {
             base.Tick();
 
-            for (int i = 0; i < parralelButtons.Count; i++)
+            for (var i = 0; i < parralelButtons.Count; i++)
             {
                 var splitHeight = RenderBounds.Height / (parralelButtons.Count + 3);
-                parralelButtons[i].Bounds = new Rectangle(FreeWidgetEntries.X + 20, FreeWidgetEntries.Y + splitHeight * (i + 3), WidgetEntries.Width - 40, 20);
+                parralelButtons[i].Bounds = new Rectangle(FreeWidgetEntries.X + 20,
+                    FreeWidgetEntries.Y + splitHeight * (i + 3), WidgetEntries.Width - 40, 20);
             }
 
             var nsplitHeight = (RenderBounds.Height + 20) / (OutConnections.Count + 3);
-            for (int i = 0; i < OutConnections.Count; i++)
+            for (var i = 0; i < OutConnections.Count; i++)
             {
-                var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 5, RenderBounds.Y + nsplitHeight * (i + 3), 20, 20);
+                var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 5,
+                    RenderBounds.Y + nsplitHeight * (i + 3), 20, 20);
                 OutConnections[i].InWidgetPosition = rect;
             }
         }
     }
 
-    class TextBoxSelectLogic : NodeLogic
+    internal class TextBoxSelectLogic : NodeLogic
     {
+        List<InConnection> inCons = new List<InConnection>();
+        public bool Listen;
         public List<Tuple<InConnection, string>> Options = new List<Tuple<InConnection, string>>();
-        public bool Listen = false;
         public string Text;
 
-        List<InConnection> inCons = new List<InConnection>();
-
-        public TextBoxSelectLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public TextBoxSelectLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
         public override void Execute(World world)
         {
-            inCons = InConnections.Where(i => i.ConTyp == ConnectionType.String).ToList();
+            inCons = InConnections.Where(i => i.ConnectionTyp == ConnectionType.String).ToList();
             inCons.Remove(inCons.First());
 
-            Text = InConnections.First(i => i.ConTyp == ConnectionType.String).In.String;
+            Text = InConnections.First(i => i.ConnectionTyp == ConnectionType.String).In.String;
 
-            foreach (var inCon in inCons)
-            {
-                Options.Add(new Tuple<InConnection, string>(inCon, inCon.In.String));
-            }
+            foreach (var inCon in inCons) Options.Add(new Tuple<InConnection, string>(inCon, inCon.In.String));
 
             world.SetPauseState(true);
             Listen = true;
@@ -111,14 +105,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             var oCon = OutConnections[inCons.IndexOf(choice)];
             if (oCon != null)
-            {
-                foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
+                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
                 {
-                    var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                    var inCon = node.InConnections.FirstOrDefault(c =>
+                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
                     if (inCon != null)
                         inCon.Execute = true;
                 }
-            }
 
             Listen = false;
         }

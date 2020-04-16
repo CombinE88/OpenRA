@@ -1,34 +1,31 @@
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using OpenRA.Graphics;
-using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
     public class CameraRideNodeLogic : NodeLogic
     {
-        WPos target;
-        WPos source;
-        int currentLength = 0;
+        bool active;
+        int currentLength;
+        readonly IngameNodeScriptSystem ingameNodeScriptSystem;
         int maxLength;
         Player ply;
-        IngameNodeScriptSystem insc;
-        bool active;
+        WPos source;
+        WPos target;
 
-        public CameraRideNodeLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public CameraRideNodeLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
-            this.insc = insc;
+            this.ingameNodeScriptSystem = ingameNodeScriptSystem;
         }
 
         public override void Execute(World world)
         {
-            if (insc.WorldRenderer == null || active)
+            if (ingameNodeScriptSystem.WorldRenderer == null || active)
                 return;
-            var numb = InConnections.First(c => c.ConTyp == ConnectionType.Integer);
-            var inPly = InConnections.First(c => c.ConTyp == ConnectionType.Player);
-            var inCon = InConnections.First(c => c.ConTyp == ConnectionType.Location);
-            var inCon2 = InConnections.Last(c => c.ConTyp == ConnectionType.Location);
+            var numb = InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer);
+            var inPly = InConnections.First(c => c.ConnectionTyp == ConnectionType.Player);
+            var inCon = InConnections.First(c => c.ConnectionTyp == ConnectionType.Location);
+            var inCon2 = InConnections.Last(c => c.ConnectionTyp == ConnectionType.Location);
             if (numb.In == null)
                 throw new YamlException(NodeId + "Time not connected");
             if (inPly.In == null)
@@ -41,11 +38,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                 return;
 
             if (inCon2.In == null || inCon2.In.Location == null)
-                source = insc.WorldRenderer.Viewport.CenterPosition;
+                source = ingameNodeScriptSystem.WorldRenderer.Viewport.CenterPosition;
             else
-            {
                 source = world.Map.CenterOfCell(inCon2.In.Location.Value);
-            }
 
             target = world.Map.CenterOfCell(inCon.In.Location.Value);
             ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
@@ -58,26 +53,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             if (!active)
                 return;
             if (maxLength > currentLength)
+            {
                 currentLength++;
+            }
             else if (active)
             {
-                var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
+                var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
                 if (oCon != null)
-                {
-                    foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
+                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
                     {
-                        var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                        var inCon = node.InConnections.FirstOrDefault(c =>
+                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
                         if (inCon != null)
                             inCon.Execute = true;
                     }
-                }
 
                 active = false;
             }
 
             var pos = source + (target - source) / maxLength * currentLength;
 
-            insc.WorldRenderer.Viewport.Center(pos);
+            ingameNodeScriptSystem.WorldRenderer.Viewport.Center(pos);
         }
     }
 }

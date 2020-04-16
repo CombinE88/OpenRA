@@ -612,6 +612,7 @@
     <Compile Include="Widgets\ScriptNodes\NodeEditorNodeScreenWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorTraits\NodeSelectionLayer.cs" />
     <Compile Include="Widgets\ScriptNodes\EditorNodeLayer.cs" />
+    <Compile Include="Widgets\ScriptNodes\NodeScriptContainerWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\ShowWidgetsButton.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeCreateActor.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\ActorNodes\ActorNodeQueueAbility.cs" />
@@ -633,7 +634,6 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorInfoNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorsonMap.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoNode.cs" />
-    <Compile Include="Widgets\ScriptNodes\SingleNodes\ScriptNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeCreateTimer.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\NodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeOnEnteredFootPrint.cs" />

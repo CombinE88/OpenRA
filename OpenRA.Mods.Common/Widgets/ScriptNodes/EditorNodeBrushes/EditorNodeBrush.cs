@@ -1,28 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRA.Activities;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
-using OpenRA.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeEditorTraits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
 {
     public class EditorNodeBrushBrush : IEditorBrush
     {
-        readonly EditorViewportControllerWidget editorWidget;
         readonly EditorActorLayer editorLayer;
+        readonly EditorViewportControllerWidget editorWidget;
         public List<EditorActorPreview> Actor = new List<EditorActorPreview>();
+        readonly Action function;
+        readonly NodeSelectionLayer nodeSelectionLayer;
 
-        OutConnection outCon;
-        NodeSelectionLayer nodeSelectionLayer;
-        WorldRenderer worldRenderer;
+        readonly OutConnection outCon;
         int range;
-        Action function;
         int2 worldPixel;
+        readonly WorldRenderer worldRenderer;
 
-        public EditorNodeBrushBrush(CellPicking mode, OutConnection outConnection, EditorViewportControllerWidget editorWidget, WorldRenderer wr, Action onFinished = null)
+        public EditorNodeBrushBrush(CellPicking mode, OutConnection outConnection,
+            EditorViewportControllerWidget editorWidget, WorldRenderer wr, Action onFinished = null)
         {
             outCon = outConnection;
             worldRenderer = wr;
@@ -39,8 +38,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
 
             function = onFinished;
 
-            if (outConnection.CellArray != null && outConnection.CellArray.Any() && (mode == CellPicking.Array || mode == CellPicking.Path))
+            if (outConnection.CellArray != null && outConnection.CellArray.Any() &&
+                (mode == CellPicking.Array || mode == CellPicking.Path))
+            {
                 nodeSelectionLayer.LoadInPath(outConnection.CellArray);
+            }
             else if (outConnection.Number != null && mode == CellPicking.Range)
             {
                 range = outConnection.Number.Value;
@@ -48,26 +50,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
                 if (outConnection.Location != null)
                     nodeSelectionLayer.AddCell(outConnection.Location.Value);
             }
-            else if (outConnection.ActorPrevs != null && outConnection.ActorPrevs.Any() && mode == CellPicking.Actor)
+            else if (outConnection.ActorPreviews != null && outConnection.ActorPreviews.Any() &&
+                     mode == CellPicking.Actor)
             {
-                nodeSelectionLayer.Actors = outConnection.ActorPrevs.ToList();
+                nodeSelectionLayer.Actors = outConnection.ActorPreviews.ToList();
             }
             else if (outConnection.Location != null && mode == CellPicking.Single)
             {
                 nodeSelectionLayer.AddCell(outConnection.Location.Value);
             }
-        }
-
-        long CalculateActorSelectionPriority(EditorActorPreview actor)
-        {
-            var centerPixel = new int2(actor.Bounds.X, actor.Bounds.Y);
-            var pixelDistance = (centerPixel - worldPixel).Length;
-
-            // If 2+ actors have the same pixel position, then the highest appears on top.
-            var worldZPosition = actor.CenterPosition.Z;
-
-            // Sort by pixel distance then in world z position.
-            return ((long)pixelDistance << 32) + worldZPosition;
         }
 
         public bool HandleMouseInput(MouseInput mi)
@@ -78,7 +69,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
             if (mi.Button != MouseButton.Left && mi.Button != MouseButton.Right)
                 return false;
 
-            if (nodeSelectionLayer.Mode == CellPicking.Actor && mi.Event == MouseInputEvent.Down && mi.Button == MouseButton.Left && underCursor != null)
+            if (nodeSelectionLayer.Mode == CellPicking.Actor && mi.Event == MouseInputEvent.Down &&
+                mi.Button == MouseButton.Left && underCursor != null)
             {
                 if (nodeSelectionLayer.Actors.Contains(underCursor) && mi.Modifiers == Modifiers.Ctrl)
                     nodeSelectionLayer.Actors.Remove(underCursor);
@@ -95,18 +87,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
                     outCon.Widget.Screen.BackgroundWidget.Visible = true;
                     if (nodeSelectionLayer.Mode == CellPicking.Array || nodeSelectionLayer.Mode == CellPicking.Path)
                         outCon.CellArray = nodeSelectionLayer.CellRegion;
-                    if ((nodeSelectionLayer.Mode == CellPicking.Single || nodeSelectionLayer.Mode == CellPicking.Range) && nodeSelectionLayer.CellRegion.Any())
+                    if ((nodeSelectionLayer.Mode == CellPicking.Single ||
+                         nodeSelectionLayer.Mode == CellPicking.Range) && nodeSelectionLayer.CellRegion.Any())
                         outCon.Location = nodeSelectionLayer.CellRegion.First();
                     if (nodeSelectionLayer.Mode == CellPicking.Range)
                         outCon.Number = range;
                     if (nodeSelectionLayer.Actors.Any() && nodeSelectionLayer.Mode == CellPicking.Actor)
-                    {
-                        outCon.ActorPrevs = nodeSelectionLayer.Actors.ToArray();
-                    }
+                        outCon.ActorPreviews = nodeSelectionLayer.Actors.ToArray();
                     else
-                    {
-                        outCon.ActorPrevs = null;
-                    }
+                        outCon.ActorPreviews = null;
 
                     nodeSelectionLayer.Clear();
                     nodeSelectionLayer.SetRange(new WDist(0));
@@ -121,19 +110,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
                 return false;
             }
 
-            if (mi.Button == MouseButton.Left && mi.Modifiers == Modifiers.Shift && nodeSelectionLayer.Mode == CellPicking.Array)
+            if (mi.Button == MouseButton.Left && mi.Modifiers == Modifiers.Shift &&
+                nodeSelectionLayer.Mode == CellPicking.Array)
             {
                 nodeSelectionLayer.RemoveCell(worldRenderer.Viewport.ViewToWorld(mi.Location));
                 return true;
             }
 
-            if (mi.Button == MouseButton.Left && mi.Modifiers == Modifiers.Shift && nodeSelectionLayer.Mode == CellPicking.Path && mi.Event == MouseInputEvent.Down)
+            if (mi.Button == MouseButton.Left && mi.Modifiers == Modifiers.Shift &&
+                nodeSelectionLayer.Mode == CellPicking.Path && mi.Event == MouseInputEvent.Down)
             {
                 nodeSelectionLayer.RemoveCell(worldRenderer.Viewport.ViewToWorld(mi.Location));
                 return true;
             }
 
-            if (mi.Button == MouseButton.Left && nodeSelectionLayer.Mode == CellPicking.Path && mi.Event == MouseInputEvent.Down)
+            if (mi.Button == MouseButton.Left && nodeSelectionLayer.Mode == CellPicking.Path &&
+                mi.Event == MouseInputEvent.Down)
             {
                 nodeSelectionLayer.AddCell(worldRenderer.Viewport.ViewToWorld(mi.Location));
                 return true;
@@ -145,7 +137,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
                 return true;
             }
 
-            if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down && nodeSelectionLayer.Mode == CellPicking.Range)
+            if (mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down &&
+                nodeSelectionLayer.Mode == CellPicking.Range)
             {
                 nodeSelectionLayer.Clear();
                 nodeSelectionLayer.AddCell(worldRenderer.Viewport.ViewToWorld(mi.Location));
@@ -155,12 +148,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
 
             if (mi.Button == MouseButton.Left && nodeSelectionLayer.Mode == CellPicking.Range)
             {
-                range = (nodeSelectionLayer.FixedCursorPosition - worldRenderer.Viewport.ViewToWorld(mi.Location)).Length;
+                range = (nodeSelectionLayer.FixedCursorPosition - worldRenderer.Viewport.ViewToWorld(mi.Location))
+                    .Length;
                 nodeSelectionLayer.SetRange(new WDist(range * 1024));
                 return true;
             }
 
-            if (mi.Button == MouseButton.Left && nodeSelectionLayer.Mode == CellPicking.Single && mi.Event == MouseInputEvent.Down)
+            if (mi.Button == MouseButton.Left && nodeSelectionLayer.Mode == CellPicking.Single &&
+                mi.Event == MouseInputEvent.Down)
             {
                 nodeSelectionLayer.Clear();
                 nodeSelectionLayer.AddCell(worldRenderer.Viewport.ViewToWorld(mi.Location));
@@ -176,6 +171,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes
 
         public void Dispose()
         {
+        }
+
+        long CalculateActorSelectionPriority(EditorActorPreview actor)
+        {
+            var centerPixel = new int2(actor.Bounds.X, actor.Bounds.Y);
+            var pixelDistance = (centerPixel - worldPixel).Length;
+
+            // If 2+ actors have the same pixel position, then the highest appears on top.
+            var worldZPosition = actor.CenterPosition.Z;
+
+            // Sort by pixel distance then in world z position.
+            return ((long) pixelDistance << 32) + worldZPosition;
         }
     }
 }

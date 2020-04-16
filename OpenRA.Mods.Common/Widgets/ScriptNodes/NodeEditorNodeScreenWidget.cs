@@ -11,67 +11,69 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
     public class NodeEditorNodeScreenWidget : Widget
     {
-        public readonly string Background = "textfield";
-
-        public int NodeId;
-        public readonly World World;
-        public readonly WorldRenderer WorldRenderer;
+        // Widget Properties
+        readonly string background = "textfield";
 
         public readonly NodeEditorBackgroundWidget BackgroundWidget;
-
-        public readonly ScriptNodeWidget ScriptNodeWidget;
+        public readonly NodeScriptContainerWidget NodeScriptContainerWidget;
+        public readonly List<VariableInfo> VariableInfos = new List<VariableInfo>();
+        public readonly World World;
+        public readonly WorldRenderer WorldRenderer;
+        Tuple<Rectangle, OutConnection> brushItem;
 
         // Coordinate System
         public int2 CenterCoordinates = new int2(0, 0);
-        public int2 WidgetScreenCenterCoordinates = new int2(0, 0);
-        public int2 MouseOffsetCoordinates = new int2(0, 0);
+        int copyCounter;
 
+        // Copy Paste nodes storage
+        List<NodeWidget> copyNodes = new List<NodeWidget>();
+        bool first;
+        public int2 MouseOffsetCoordinates = new int2(0, 0);
+        BasicNodeWidget nodeBrush;
+
+        // Saved Nodes and Variables
         public List<NodeWidget> Nodes = new List<NodeWidget>();
-        public readonly List<VariableInfo> VariableInfos = new List<VariableInfo>();
 
         // Position of Mouse Cursor
         int2 oldCursorPosition;
 
-        // Coordinates of the Center
-        string text;
-
-        public NodeBrush CurrentBrush { get; private set; }
-        Tuple<Rectangle, OutConnection> brushItem = null;
-        BasicNodeWidget nodeBrush = null;
+        public int RunningNodeId;
 
         // SelectioNFrame
         List<NodeWidget> selectedNodes = new List<NodeWidget>();
-        int2 selectionStart;
         Rectangle selectionRectangle;
-        int tick;
+        int2 selectionStart;
 
-        List<NodeWidget> copyNodes = new List<NodeWidget>();
-        int copyCounter = 0;
+        // Coordinates of the Center
+        string text;
 
+        // Mouse counterTimer
         int timer;
+        public int2 WidgetScreenCenterCoordinates = new int2(0, 0);
 
-        [ObjectCreator.UseCtor]
-        public NodeEditorNodeScreenWidget(ScriptNodeWidget scriptNodeWidget,
+        [ObjectCreator.UseCtorAttribute]
+        public NodeEditorNodeScreenWidget(NodeScriptContainerWidget nodeScriptContainerWidget,
             NodeEditorBackgroundWidget backgroundWidget,
             WorldRenderer worldRenderer, World world)
         {
-            ScriptNodeWidget = scriptNodeWidget;
+            NodeScriptContainerWidget = nodeScriptContainerWidget;
             BackgroundWidget = backgroundWidget;
             World = world;
             WorldRenderer = worldRenderer;
-
             CurrentBrush = NodeBrush.Free;
         }
 
+        // Working Brush
+        public NodeBrush CurrentBrush { get; private set; }
+
         public override void Tick()
         {
-            if (tick++ < 1)
-            {
-                LoadInVariables();
-                LoadInNodes();
+            if (first)
+                return;
 
-                tick = 2;
-            }
+            LoadInVariables();
+            LoadInNodes();
+            first = true;
         }
 
         public void AddVariableInfo(VariableInfo info)
@@ -85,63 +87,53 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 VariableInfos.Remove(info);
         }
 
-        public NodeWidget AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
+        public void AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
         {
             var node = NodeLibrary.AddNode(nodeType, this, nodeId, nodeName);
 
-            if (node == null) return null;
+            if (node == null)
+                return;
 
             AddChild(node);
             Nodes.Add(node);
-
-            return node;
         }
 
-        string NewId()
+        string FetchNewAvailableId()
         {
-            NodeId++;
-            return "ND" + (NodeId < 10 ? "0" + NodeId : NodeId.ToString());
+            RunningNodeId++;
+            return "ND" + (RunningNodeId < 10 ? "0" + RunningNodeId : RunningNodeId.ToString());
         }
 
         void LoadInVariables()
         {
             foreach (var variableInfo in World.WorldActor.Trait<EditorNodeLayer>().VariableInfos)
-            {
                 BackgroundWidget.AddNewVariable(variableInfo.VarType, variableInfo.VariableName);
-            }
         }
 
         void LoadInNodes()
         {
             Nodes = NodeLibrary.LoadInNodes(this, World.WorldActor.Trait<EditorNodeLayer>().NodeInfos);
-
             foreach (var node in Nodes)
-            {
                 AddChild(node);
-            }
 
             foreach (var node in Nodes)
-            {
                 node.AddOutConnectionReferences();
-            }
 
             foreach (var node in Nodes)
-            {
                 node.AddInConnectionReferences();
-            }
 
-            int count = 0;
+            var count = 0;
             foreach (var node in Nodes)
             {
                 int c;
-                int.TryParse(node.NodeInfo.NodeID.Replace("ND", ""), out c);
+                int.TryParse(node.NodeInfo.NodeId.Replace("ND", ""), out c);
                 count = Math.Max(c, count);
             }
 
-            NodeId = count;
+            RunningNodeId = count;
         }
 
-        public void DeleteNode(NodeWidget widget)
+        void RemoveNode(NodeWidget widget)
         {
             Nodes.Remove(widget);
             RemoveChild(widget);
@@ -152,103 +144,81 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (!Visible)
                 return false;
 
+            // Copy selected nodes
             if (e.Event == KeyInputEvent.Down && e.Key == Keycode.C && e.Modifiers == Modifiers.Ctrl &&
                 selectedNodes.Any())
             {
                 copyNodes = new List<NodeWidget>();
-                foreach (var node in selectedNodes)
-                {
-                    copyNodes.Add(node);
-                }
+                foreach (var node in selectedNodes) copyNodes.Add(node);
 
                 copyCounter = 1;
                 return true;
             }
 
+            // Paste stored nodes
             if (e.Event == KeyInputEvent.Down && e.Key == Keycode.V && e.Modifiers == Modifiers.Ctrl)
             {
-                var newCopyNodes = Paste();
+                var newCopyNodes = PasteStoredNodes();
 
-                foreach (var node in selectedNodes)
-                {
-                    node.Selected = false;
-                }
+                foreach (var node in selectedNodes) node.Selected = false;
 
                 selectedNodes = newCopyNodes;
 
-                foreach (var node in selectedNodes)
-                {
-                    node.Selected = true;
-                }
+                foreach (var node in selectedNodes) node.Selected = true;
 
                 copyCounter++;
                 return true;
             }
 
-            if (selectedNodes.Any() && e.Event == KeyInputEvent.Down && e.Key == Keycode.DELETE)
-            {
-                foreach (var node in selectedNodes)
-                {
-                    DeleteNode(node);
-                }
+            // Delete selected nodes
+            if (!selectedNodes.Any() || e.Event != KeyInputEvent.Down || e.Key != Keycode.DELETE)
+                return false;
 
-                selectedNodes = new List<NodeWidget>();
-            }
+            foreach (var node in selectedNodes)
+                RemoveNode(node);
+
+            selectedNodes = new List<NodeWidget>();
 
             return false;
         }
 
-        List<NodeWidget> Paste()
+        List<NodeWidget> PasteStoredNodes()
         {
-            List<NodeInfo> infos = new List<NodeInfo>();
-            List<NodeWidget> newNodes;
-
-            foreach (var node in copyNodes)
-            {
-                var newNodeInfo = node.BuildNodeInfo();
-                infos.Add(newNodeInfo);
-            }
+            var infos = copyNodes.Select(node => node.BuildNodeInfo()).ToList();
 
             foreach (var info in infos)
             {
-                var oldId = info.NodeID;
-                var newId = NewId();
+                var oldId = info.NodeId;
+                var newId = FetchNewAvailableId();
 
-                info.NodeID = newId;
+                info.NodeId = newId;
                 info.NodeName = null;
 
-                foreach (var subInfo in infos)
-                {
-                    foreach (var connection in subInfo.InConnectionsReference)
-                    {
-                        if (connection.WidgetReferenceId == oldId)
-                            connection.WidgetReferenceId = newId;
-                    }
-                }
+                foreach (var connection in infos.SelectMany(subInfo =>
+                    subInfo.InConnectionsReference.Where(connection => connection.WidgetReferenceId == oldId)))
+                    connection.WidgetReferenceId = newId;
             }
 
-            newNodes = NodeLibrary.LoadInNodes(this, infos);
+            // Create new nodes with nodeInfos of stored nodes
+            var newNodes = NodeLibrary.LoadInNodes(this, infos);
 
             foreach (var node in newNodes)
             {
                 Nodes.Add(node);
                 AddChild(node);
-                if (node != null)
-                {
-                    node.OffsetPosX -= 20 * copyCounter;
-                    node.OffsetPosY -= 20 * copyCounter;
-                }
+
+                if (node == null)
+                    continue;
+
+                node.OffsetPosX -= 20 * copyCounter;
+                node.OffsetPosY -= 20 * copyCounter;
             }
 
             foreach (var node in newNodes)
-            {
                 node.AddOutConnectionReferences();
-            }
 
             foreach (var node in newNodes)
-            {
                 node.AddInConnectionReferences();
-            }
 
             return newNodes;
         }
@@ -258,6 +228,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (EventBounds.Contains(mi.Location) && mi.Event == MouseInputEvent.Down)
                 TakeKeyboardFocus();
 
+            // Clear Brush
             if (!RenderBounds.Contains(mi.Location) && CurrentBrush == NodeBrush.Free)
             {
                 CurrentBrush = NodeBrush.Free;
@@ -265,9 +236,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 nodeBrush = null;
                 oldCursorPosition = mi.Location;
                 BackgroundWidget.DropDownMenuWidget.Visible = false;
+                YieldKeyboardFocus();
                 return false;
             }
 
+            // Close open dropDownMenus
             if ((mi.Button == MouseButton.Left || mi.Button == MouseButton.Right) &&
                 BackgroundWidget.DropDownMenuWidget.Visible &&
                 CurrentBrush == NodeBrush.Free)
@@ -276,6 +249,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 BackgroundWidget.DropDownMenuWidget.Visible = false;
             }
 
+            // Open dropDownMenu for new node Creation
             if (mi.Button == MouseButton.Middle && CurrentBrush == NodeBrush.Free)
             {
                 var newMouseGridCoordinates = new int2(mi.Location.X - BackgroundWidget.Bounds.X - Bounds.X,
@@ -285,46 +259,38 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     new int2(CenterCoordinates.X - (RenderBounds.Width / 2 - newMouseGridCoordinates.X),
                         CenterCoordinates.Y - (RenderBounds.Height / 2 - newMouseGridCoordinates.Y));
 
-                CurrentBrush = NodeBrush.CreateNode;
+                // Make the Widget visible
                 BackgroundWidget.DropDownMenuWidget.Visible = true;
+                // Orient the menu to mouse cursor
                 BackgroundWidget.DropDownMenuWidget.Bounds = new Rectangle(newMouseGridCoordinates.X,
                     newMouseGridCoordinates.Y,
                     BackgroundWidget.DropDownMenuWidget.Bounds.Width,
                     BackgroundWidget.DropDownMenuWidget.Bounds.Height);
             }
 
+            // Connecting lines
             if (mi.Button != MouseButton.Left && mi.Button != MouseButton.Right)
             {
-                foreach (var node in Nodes)
-                {
-                    foreach (var connection in node.InConnections)
-                    {
-                        if (new Rectangle(connection.InWidgetPosition.X - 20,
-                                connection.InWidgetPosition.Y - 20,
-                                connection.InWidgetPosition.Width + 40,
-                                connection.InWidgetPosition.Height + 40).Contains(mi.Location)
-                            && CurrentBrush == NodeBrush.Connecting
-                            && brushItem != null
-                            && (brushItem.Item2.ConTyp == connection.ConTyp ||
-                                connection.ConTyp == ConnectionType.Universal ||
-                                brushItem.Item2.ConTyp == ConnectionType.Universal))
-                        {
-                            connection.In = brushItem.Item2;
-                        }
-                    }
-                }
+                foreach (var connection in Nodes.SelectMany(node => node.InConnections.Where(connection =>
+                    new Rectangle(connection.InWidgetPosition.X - 20,
+                        connection.InWidgetPosition.Y - 20,
+                        connection.InWidgetPosition.Width + 40,
+                        connection.InWidgetPosition.Height + 40).Contains(mi.Location)
+                    && CurrentBrush == NodeBrush.Connecting
+                    && brushItem != null
+                    && (brushItem.Item2.ConnectionTyp == connection.ConnectionTyp ||
+                        connection.ConnectionTyp == ConnectionType.Universal ||
+                        brushItem.Item2.ConnectionTyp == ConnectionType.Universal))))
+                    connection.In = brushItem.Item2;
 
+                // Frame nodes for selecting
                 if (CurrentBrush == NodeBrush.Frame)
-                {
-                    foreach (var node in Nodes)
+                    foreach (var node in Nodes.Where(node =>
+                        selectionRectangle.Contains(node.WidgetBackground) && !selectedNodes.Contains(node)))
                     {
-                        if (selectionRectangle.Contains(node.WidgetBackground) && !selectedNodes.Contains(node))
-                        {
-                            selectedNodes.Add(node);
-                            node.Selected = true;
-                        }
+                        selectedNodes.Add(node);
+                        node.Selected = true;
                     }
-                }
 
                 CurrentBrush = NodeBrush.Free;
                 brushItem = null;
@@ -344,17 +310,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (mi.Button == MouseButton.Right)
             {
                 timer++;
-                if (selectedNodes.Any() && mi.Event == MouseInputEvent.Down)
-                {
-                    timer = 0;
-                }
+                if (selectedNodes.Any() && mi.Event == MouseInputEvent.Down) timer = 0;
 
                 if (selectedNodes.Any() && mi.Event == MouseInputEvent.Up && timer < 3)
                 {
-                    foreach (var node in selectedNodes)
-                    {
-                        node.Selected = false;
-                    }
+                    foreach (var node in selectedNodes) node.Selected = false;
 
                     selectedNodes = new List<NodeWidget>();
                 }
@@ -371,27 +331,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 selectionStart = mi.Location;
             }
 
-            if (CurrentBrush == NodeBrush.Drag)
+            switch (CurrentBrush)
             {
-                if (mi.Location != oldCursorPosition)
+                case NodeBrush.Drag:
                 {
-                    CenterCoordinates += oldCursorPosition - mi.Location;
-                }
-            }
+                    if (mi.Location != oldCursorPosition) CenterCoordinates += oldCursorPosition - mi.Location;
 
-            if (CurrentBrush == NodeBrush.Frame)
-            {
-                var sizeX = Math.Max(selectionStart.X, mi.Location.X) - Math.Min(selectionStart.X, mi.Location.X);
-                var sizeY = Math.Max(selectionStart.Y, mi.Location.Y) - Math.Min(selectionStart.Y, mi.Location.Y);
-                selectionRectangle = new Rectangle(Math.Min(selectionStart.X, mi.Location.X),
-                    Math.Min(selectionStart.Y, mi.Location.Y), sizeX, sizeY);
+                    break;
+                }
+                case NodeBrush.Frame:
+                {
+                    var sizeX = Math.Max(selectionStart.X, mi.Location.X) - Math.Min(selectionStart.X, mi.Location.X);
+                    var sizeY = Math.Max(selectionStart.Y, mi.Location.Y) - Math.Min(selectionStart.Y, mi.Location.Y);
+                    selectionRectangle = new Rectangle(Math.Min(selectionStart.X, mi.Location.X),
+                        Math.Min(selectionStart.Y, mi.Location.Y), sizeX, sizeY);
+                    break;
+                }
             }
 
             oldCursorPosition = mi.Location;
             return true;
         }
 
-        public bool HandleNodes(MouseInput mi)
+        bool HandleNodes(MouseInput mi)
         {
             foreach (var node in Nodes)
             {
@@ -417,32 +379,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     return false;
                 }
 
-                if (node.WidgetBackground.Contains(mi.Location) && mi.Button == MouseButton.Left &&
-                    mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free)
+                if (!node.WidgetBackground.Contains(mi.Location) || mi.Button != MouseButton.Left ||
+                    mi.Event != MouseInputEvent.Down || CurrentBrush != NodeBrush.Free) continue;
                 {
                     if (node.DeleteButton.Contains(mi.Location))
                     {
-                        DeleteNode(node);
+                        RemoveNode(node);
                         return true;
                     }
 
-                    if (node.DragBar.Contains(mi.Location) && CurrentBrush == NodeBrush.Free)
+                    if (!node.DragBar.Contains(mi.Location) || CurrentBrush != NodeBrush.Free) continue;
+                    if (!selectedNodes.Any())
                     {
-                        if (!selectedNodes.Any())
-                        {
-                            node.CursorLocation = mi.Location;
-                            CurrentBrush = NodeBrush.Node;
-                            nodeBrush = node;
-                        }
-                        else
-                        {
-                            foreach (var subnode in selectedNodes)
-                            {
-                                subnode.CursorLocation = mi.Location;
-                            }
+                        node.CursorLocation = mi.Location;
+                        CurrentBrush = NodeBrush.Node;
+                        nodeBrush = node;
+                    }
+                    else
+                    {
+                        foreach (var subnode in selectedNodes) subnode.CursorLocation = mi.Location;
 
-                            CurrentBrush = NodeBrush.MoveFrame;
-                        }
+                        CurrentBrush = NodeBrush.MoveFrame;
                     }
                 }
             }
@@ -450,35 +407,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             return false;
         }
 
-        public bool ConnectNodes(MouseInput mi)
+        bool ConnectNodes(MouseInput mi)
         {
             foreach (var node in Nodes)
             {
-                for (int i = 0; i < node.OutConnections.Count; i++)
+                foreach (var outCon in node.OutConnections.Where(outCon =>
+                    outCon.InWidgetPosition.Contains(mi.Location) && mi.Button == MouseButton.Left &&
+                    mi.Event == MouseInputEvent.Down && CurrentBrush == NodeBrush.Free))
                 {
-                    if (node.OutConnections[i].InWidgetPosition.Contains(mi.Location) &&
-                        mi.Button == MouseButton.Left && mi.Event == MouseInputEvent.Down &&
-                        CurrentBrush == NodeBrush.Free)
-                    {
-                        CurrentBrush = NodeBrush.Connecting;
-                        brushItem = new Tuple<Rectangle, OutConnection>(node.OutConnections[i].InWidgetPosition,
-                            node.OutConnections[i]);
-                        return true;
-                    }
+                    CurrentBrush = NodeBrush.Connecting;
+                    brushItem = new Tuple<Rectangle, OutConnection>(outCon.InWidgetPosition,
+                        outCon);
+                    return true;
                 }
 
-                foreach (var connection in node.InConnections)
+                foreach (var connection in node.InConnections.Where(connection =>
+                    connection.InWidgetPosition.Contains(mi.Location)
+                    && mi.Button == MouseButton.Right
+                    && mi.Event == MouseInputEvent.Down
+                    && CurrentBrush == NodeBrush.Free
+                    && connection.In != null))
                 {
-                    if (connection.InWidgetPosition.Contains(mi.Location)
-                        && mi.Button == MouseButton.Right
-                        && mi.Event == MouseInputEvent.Down
-                        && CurrentBrush == NodeBrush.Free
-                        && connection.In != null)
-                    {
-                        connection.In.Out = null;
-                        connection.In = null;
-                        return true;
-                    }
+                    connection.In.Out = null;
+                    connection.In = null;
+                    return true;
                 }
             }
 
@@ -488,11 +440,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public override void Draw()
         {
             text = "X: " + CenterCoordinates.X + " Y: " + CenterCoordinates.Y;
-            WidgetUtils.DrawPanel(Background,
+            WidgetUtils.DrawPanel(background,
                 new Rectangle(RenderBounds.X - 3, RenderBounds.Y - 3, RenderBounds.Width + 6, RenderBounds.Height + 6));
-            ScriptNodeWidget.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
+            NodeScriptContainerWidget.FontRegular.DrawTextWithShadow(text, new float2(RenderBounds.X + 2, RenderBounds.Y + 2),
                 Color.White, Color.Black, 1);
-            ScriptNodeWidget.FontRegular.DrawTextWithShadow(CurrentBrush.ToString(),
+            NodeScriptContainerWidget.FontRegular.DrawTextWithShadow(CurrentBrush.ToString(),
                 new float2(RenderBounds.X + 2, RenderBounds.Y + 50),
                 Color.White, Color.Black, 1);
             if (brushItem != null && CurrentBrush == NodeBrush.Connecting)
@@ -505,11 +457,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                             connection.InWidgetPosition.Y - 10,
                             connection.InWidgetPosition.Width + 20,
                             connection.InWidgetPosition.Height + 20).Contains(oldCursorPosition)
-                        && (connection.ConTyp == brushItem.Item2.ConTyp
-                            || connection.ConTyp == ConnectionType.Undefined
-                            || connection.ConTyp == ConnectionType.Universal
-                            || brushItem.Item2.ConTyp == ConnectionType.Undefined
-                            || brushItem.Item2.ConTyp == ConnectionType.Universal))
+                        && (connection.ConnectionTyp == brushItem.Item2.ConnectionTyp
+                            || connection.ConnectionTyp == ConnectionType.Undefined
+                            || connection.ConnectionTyp == ConnectionType.Universal
+                            || brushItem.Item2.ConnectionTyp == ConnectionType.Undefined
+                            || brushItem.Item2.ConnectionTyp == ConnectionType.Universal))
                     {
                         conTarget = new int2(connection.InWidgetPosition.X + 10, connection.InWidgetPosition.Y + 10);
                         break;
@@ -524,9 +476,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             }
 
             if (CurrentBrush == NodeBrush.Frame)
-            {
                 WidgetUtils.FillRectWithColor(selectionRectangle, Color.FromArgb(100, 255, 255, 255));
-            }
         }
 
         public static void DrawLine(int2 from, int2 to, Color color)
@@ -538,10 +488,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 to = tmp;
             }
 
-            var stepSize = 10;
-            var yDiff = to.Y - from.Y;
+            const int stepSize = 10;
 
-            for (var x = from.X; x < to.X; x += stepSize)
+            var yDiff = to.Y - from.Y;
+            for (var x = from.X;
+                x < to.X;
+                x += stepSize)
             {
                 var currentSegmentStartX = x;
                 var currentSegmentEndX = Math.Min(x + stepSize, to.X);
@@ -568,7 +520,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Drag,
         Node,
         Frame,
-        MoveFrame,
-        CreateNode
+        MoveFrame
     }
 }

@@ -8,33 +8,33 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
     public class FilterActorListByNode : NodeWidget
     {
-        CompareMethode selectedMethode;
-        DropDownButtonWidget methodeSelection;
+        readonly DropDownButtonWidget itemSelection;
+        readonly DropDownButtonWidget methodeSelection;
         CompareItem selectedItem;
-        DropDownButtonWidget itemSelection;
+        CompareMethod selectedMethod;
 
         public FilterActorListByNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Methode = CompareMethode.Contains;
+            Methode = CompareMethod.Contains;
             Item = CompareItem.Owner;
 
-            List<CompareMethode> methodes = new List<CompareMethode>
+            var methodes = new List<CompareMethod>
             {
-                CompareMethode.Contains,
-                CompareMethode.ContainsNot
+                CompareMethod.Contains,
+                CompareMethod.ContainsNot
             };
 
-            selectedMethode = Methode.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData);
+            selectedMethod = Methode.Value;
+            methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareMethode, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
+            Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
-                var item = ScrollItemWidget.Setup(template, () => selectedMethode == option, () =>
+                var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
-                    selectedMethode = option;
+                    selectedMethod = option;
 
-                    methodeSelection.Text = selectedMethode.ToString();
-                    Methode = selectedMethode;
+                    methodeSelection.Text = selectedMethod.ToString();
+                    Methode = selectedMethod;
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => option.ToString();
@@ -42,13 +42,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 return item;
             };
 
-            methodeSelection.OnClick = () => { methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2); };
+            methodeSelection.OnClick = () =>
+            {
+                methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
+            };
 
-            methodeSelection.Text = selectedMethode.ToString();
+            methodeSelection.Text = selectedMethod.ToString();
 
             AddChild(methodeSelection);
 
-            List<CompareItem> items = new List<CompareItem>
+            var items = new List<CompareItem>
             {
                 CompareItem.Owner,
                 CompareItem.Building,
@@ -59,7 +62,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             };
 
             selectedItem = Item.Value;
-            itemSelection = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData);
+            itemSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
             Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
@@ -76,24 +79,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 return item;
             };
 
-            itemSelection.OnClick = () => { itemSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, items, setupItem); };
+            itemSelection.OnClick = () =>
+            {
+                itemSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, items, setupItem);
+            };
 
             itemSelection.Text = selectedItem.ToString();
 
             AddChild(itemSelection);
 
-            methodeSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
-            itemSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 100, FreeWidgetEntries.Width, 25);
+            methodeSelection.Bounds =
+                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
+            itemSelection.Bounds =
+                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 100, FreeWidgetEntries.Width, 25);
         }
 
         public override void AddOutConConstructor(OutConnection connection)
         {
             base.AddOutConConstructor(connection);
 
-            if (NodeInfo.Methode != null)
+            if (NodeInfo.Method != null)
             {
-                selectedMethode = NodeInfo.Methode.Value;
-                methodeSelection.Text = NodeInfo.Methode.Value.ToString();
+                selectedMethod = NodeInfo.Method.Value;
+                methodeSelection.Text = NodeInfo.Method.Value.ToString();
             }
 
             if (NodeInfo.Item != null)
@@ -106,65 +114,68 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
     public class FilterActorListByLogic : NodeLogic
     {
-        public FilterActorListByLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public FilterActorListByLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
         public override void Execute(World world)
         {
-            var actIn = InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In;
-            var actOut = OutConnections.First(c => c.ConTyp == ConnectionType.ActorList);
+            var actIn = InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).In;
+            var actOut = OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList);
 
             if (actIn == null)
                 throw new YamlException(NodeId + "Actor List not connected");
 
             if (Item == CompareItem.Owner)
             {
-                var ply = InConnections.First(c => c.ConTyp == ConnectionType.ActorList).In;
+                var ply = InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).In;
 
                 if (ply == null)
                     throw new YamlException(NodeId + "Player not connected");
 
-                if (Methode == CompareMethode.Contains)
-                    actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Owner == world.Players.First(p => p.InternalName == ply.Player.Name)).ToArray();
+                if (Methode == CompareMethod.Contains)
+                    actOut.ActorGroup = actIn.ActorGroup
+                        .Where(c => c.Owner == world.Players.First(p => p.InternalName == ply.Player.Name)).ToArray();
                 else
-                    actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Owner == world.Players.First(p => p.InternalName != ply.Player.Name)).ToArray();
+                    actOut.ActorGroup = actIn.ActorGroup
+                        .Where(c => c.Owner == world.Players.First(p => p.InternalName != ply.Player.Name)).ToArray();
             }
             else if (Item == CompareItem.Aircraft)
             {
-                if (Methode == CompareMethode.Contains)
+                if (Methode == CompareMethod.Contains)
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Aircraft>() != null).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Aircraft>() == null).ToArray();
             }
             else if (Item == CompareItem.Building)
             {
-                if (Methode == CompareMethode.Contains)
+                if (Methode == CompareMethod.Contains)
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Building>() != null).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Building>() == null).ToArray();
             }
             else if (Item == CompareItem.Unit)
             {
-                if (Methode == CompareMethode.Contains)
+                if (Methode == CompareMethod.Contains)
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Mobile>() != null).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Mobile>() == null).ToArray();
             }
             else if (Item == CompareItem.ActorTypes)
             {
-                var strngs = InConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).In;
+                var strngs = InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).In;
                 if (strngs == null)
                     throw new YamlException(NodeId + "Actor Types not connected");
 
-                if (Methode == CompareMethode.Contains)
+                if (Methode == CompareMethod.Contains)
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => strngs.ActorInfos.Contains(c.Info)).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => !strngs.ActorInfos.Contains(c.Info)).ToArray();
             }
             else if (Item == CompareItem.IsIdle)
             {
-                if (Methode == CompareMethode.Contains)
+                if (Methode == CompareMethod.Contains)
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.IsIdle).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => !c.IsIdle).ToArray();
@@ -172,16 +183,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             if (actOut.ActorGroup.Any())
             {
-                var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
+                var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
                 if (oCon != null)
-                {
-                    foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
+                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
                     {
-                        var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                        var inCon = node.InConnections.FirstOrDefault(c =>
+                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
                         if (inCon != null)
                             inCon.Execute = true;
                     }
-                }
             }
         }
     }

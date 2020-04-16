@@ -2,20 +2,20 @@ using System.Drawing;
 using OpenRA.Graphics;
 using OpenRA.Widgets;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
-    public class ScriptNodeWidget : Widget
+    public class NodeScriptContainerWidget : Widget
     {
-        public SpriteFont FontRegular;
-        public SpriteFont FontSmall;
-        public World World;
-        public WorldRenderer WorldRenderer;
-        public NodeEditorBackgroundWidget NodeWidget;
-        public ModData ModData;
-        ShowWidgetsButtonWidget showWidget;
+        public readonly SpriteFont FontRegular;
+        public readonly SpriteFont FontSmall;
+        public readonly ModData ModData;
+        public readonly NodeEditorBackgroundWidget NodeWidget;
+        readonly ShowWidgetsButtonWidget showWidget;
+        public readonly World World;
+        public readonly WorldRenderer WorldRenderer;
 
-        [ObjectCreator.UseCtor]
-        public ScriptNodeWidget(World world, WorldRenderer worldRenderer, ModData modData)
+        [ObjectCreator.UseCtorAttribute]
+        public NodeScriptContainerWidget(World world, WorldRenderer worldRenderer, ModData modData)
         {
             World = world;
             WorldRenderer = worldRenderer;

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using OpenRA.Mods.Common.Traits;
@@ -8,24 +7,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
     public class InConnection
     {
-        public BasicNodeWidget Widget;
-        public NodeLogic Logic;
-        public ConnectionType ConTyp;
+        public Color Color;
         public string ConnectionId;
+        public ConnectionType ConnectionTyp;
         public bool Execute = false;
 
-        public Rectangle InWidgetPosition;
-
         public OutConnection In;
-        public Color Color;
 
-        public InConnection(ConnectionType conectionType, BasicNodeWidget widget = null, NodeLogic nodeLogic = null)
+        public Rectangle InWidgetPosition;
+        public BasicNodeWidget Widget;
+
+        public InConnection(ConnectionType connectionType, BasicNodeWidget widget = null)
         {
-            ConTyp = conectionType;
+            ConnectionTyp = connectionType;
             Widget = widget;
-            Logic = nodeLogic;
 
-            switch (conectionType)
+            switch (connectionType)
             {
                 // Irregular Connections
                 case ConnectionType.Exec:
@@ -98,36 +95,35 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
     public class OutConnection
     {
-        public ConnectionType ConTyp;
-        public BasicNodeWidget Widget;
-        public string ConnectionId;
-        public NodeLogic Logic;
-
-        public Rectangle InWidgetPosition;
-
-        public InConnection Out;
-        public Color Color;
-
         public Actor Actor = null;
         public Actor[] ActorGroup = null;
         public ActorInfo ActorInfo = null;
         public ActorInfo[] ActorInfos = null;
         public EditorActorPreview ActorPrev = null;
-        public EditorActorPreview[] ActorPrevs = null;
+        public EditorActorPreview[] ActorPreviews = null;
+        public bool Boolean = true;
+        public List<CPos> CellArray = new List<CPos>();
+        public Color Color;
+        public string ConnectionId;
+        public ConnectionType ConnectionTyp;
+
+        public Rectangle InWidgetPosition;
+        public CPos? Location = null;
+        public NodeLogic Logic;
+        public int? Number = null;
+
+        public InConnection Out;
         public PlayerReference Player = null;
         public PlayerReference[] PlayerGroup = null;
-        public CPos? Location = null;
-        public List<CPos> CellArray = new List<CPos>();
-        public int? Number = null;
         public string String = null;
         public string[] Strings = { };
-        public bool Boolean = true;
+        public BasicNodeWidget Widget;
 
-        public OutConnection(ConnectionType conectionType, BasicNodeWidget widget = null)
+        public OutConnection(ConnectionType connectionType, BasicNodeWidget widget = null)
         {
-            ConTyp = conectionType;
+            ConnectionTyp = connectionType;
             Widget = widget;
-            switch (conectionType)
+            switch (connectionType)
             {
                 // Irregular Connections
                 case ConnectionType.Exec:
@@ -230,7 +226,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Condition,
         Variable
     }
-    
+
     public enum VariableType
     {
         // Regular Variables

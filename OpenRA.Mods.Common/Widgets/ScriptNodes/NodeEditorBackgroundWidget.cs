@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Net.Mime;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables;
 using OpenRA.Widgets;
 
@@ -14,43 +12,37 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public class NodeEditorBackgroundWidget : Widget
     {
         // Background
-        public readonly string Background = "panel-black";
+        readonly string background = "panel-black";
 
-        public ScriptNodeWidget Snw;
-
-        ScrollPanelWidget scrollPanel;
-        NodeEditorNodeScreenWidget screenWidget;
-
-        NodeType nodeType;
-
+        readonly NodeScriptContainerWidget nodeScriptContainerWidget;
+        readonly NodeEditorNodeScreenWidget screenWidget;
+        readonly ScrollPanelWidget scrollPanel;
         public DropDownMenuWidget DropDownMenuWidget;
 
-        ButtonWidget addNodeButton;
-
-        [ObjectCreator.UseCtor]
-        public NodeEditorBackgroundWidget(ScriptNodeWidget snw, WorldRenderer worldRenderer, World world)
+        [ObjectCreator.UseCtorAttribute]
+        public NodeEditorBackgroundWidget(NodeScriptContainerWidget nodeScriptContainerWidget, WorldRenderer worldRenderer,
+            World world)
         {
-            Snw = snw;
+            this.nodeScriptContainerWidget = nodeScriptContainerWidget;
 
             Bounds = new Rectangle(5, 40, Game.Renderer.Resolution.Width - 265, Game.Renderer.Resolution.Height - 45);
 
-            screenWidget = new NodeEditorNodeScreenWidget(Snw, this, worldRenderer, world)
+            screenWidget = new NodeEditorNodeScreenWidget(this.nodeScriptContainerWidget, this, worldRenderer, world)
             {
                 Bounds = new Rectangle(Bounds.X + 5, Bounds.Y + 5,
                     Bounds.Width - 160,
                     Bounds.Height - 10),
-                WidgetScreenCenterCoordinates = new int2((Bounds.Width / 2), (Bounds.Height / 2))
+                WidgetScreenCenterCoordinates = new int2(Bounds.Width / 2, Bounds.Height / 2)
             };
 
             Children.Add(screenWidget);
 
             // Add Variable Buttons
-
-            AddChild(scrollPanel = new ScrollPanelWidget(snw.ModData));
+            AddChild(scrollPanel = new ScrollPanelWidget(nodeScriptContainerWidget.ModData));
             scrollPanel.Layout = new ListLayout(scrollPanel);
             scrollPanel.Bounds = new Rectangle(Bounds.Width - 145, 40, 140, Bounds.Height - 60);
 
-            var addButton = new ButtonWidget(snw.ModData)
+            var addButton = new ButtonWidget(nodeScriptContainerWidget.ModData)
             {
                 Bounds = new Rectangle(Bounds.Width - 145, 5, 140, 25),
                 Text = "Add Variable",
@@ -61,21 +53,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             // End
 
-            var closeButton = new ButtonWidget(snw.ModData);
+            var closeButton = new ButtonWidget(nodeScriptContainerWidget.ModData);
             AddChild(closeButton);
             closeButton.Bounds = new Rectangle(5, Bounds.Height - 5 - 25, 190, 25);
             closeButton.Text = "Close";
             closeButton.OnClick = () =>
             {
-                List<NodeInfo> nodeInfos = new List<NodeInfo>();
-                foreach (var node in screenWidget.Nodes)
-                {
-                    nodeInfos.Add(node.BuildNodeInfo());
-                }
+                var nodeInfos = screenWidget.Nodes.Select(node => node.BuildNodeInfo()).ToList();
 
-                Snw.World.WorldActor.Trait<EditorNodeLayer>().NodeInfos = nodeInfos;
-                Snw.World.WorldActor.Trait<EditorNodeLayer>().VariableInfos = screenWidget.VariableInfos;
-                Snw.Toggle();
+                this.nodeScriptContainerWidget.World.WorldActor.Trait<EditorNodeLayer>().NodeInfos = nodeInfos;
+                this.nodeScriptContainerWidget.World.WorldActor.Trait<EditorNodeLayer>().VariableInfos =
+                    screenWidget.VariableInfos;
+                this.nodeScriptContainerWidget.Toggle();
             };
 
             CreateLeftClickDropDownMenu();
@@ -88,14 +77,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 VarType = variableType
             };
 
-            var variableTemplate = new ScrollItemWidget(Snw.ModData)
+            var variableTemplate = new ScrollItemWidget(nodeScriptContainerWidget.ModData)
             {
                 Bounds = new Rectangle(0, 0, 110, 55)
             };
 
             var textFieldWidget = new TextFieldWidget
             {
-                Bounds = new Rectangle(2, 2, 105, 25),
+                Bounds = new Rectangle(2, 2, 105, 25)
             };
 
             textFieldWidget.OnTextEdited = () =>
@@ -116,18 +105,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 variableItem.VariableName = textFieldWidget.Text;
 
                 foreach (var node in screenWidget.Nodes.Where(n =>
-                    n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
-                    (n as GetVariableNode).VariableReference == variableItem))
                 {
+                    var node = n as GetVariableNode;
+                    return node != null && node.NodeType == NodeType.GetVariable &&
+                           node.VariableReference == variableItem;
+                }))
                     ((GetVariableNode) node).Update(false);
-                }
 
                 foreach (var node in screenWidget.Nodes.Where(n =>
-                    n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
-                    (n as SetVariableNode).VariableReference == variableItem))
                 {
+                    var node = n as SetVariableNode;
+                    return node != null && node.NodeType == NodeType.SetVariable &&
+                           node.VariableReference == variableItem;
+                }))
                     ((SetVariableNode) node).Update(false);
-                }
             };
 
             variableTemplate.AddChild(textFieldWidget);
@@ -144,7 +135,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 i++;
             }
 
-            List<VariableType> variableTypes = new List<VariableType>
+            var variableTypes = new List<VariableType>
             {
                 VariableType.Actor,
                 VariableType.ActorInfo,
@@ -159,7 +150,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 VariableType.Objective
             };
 
-            List<string> variableString = new List<string>
+            var variableString = new List<string>
             {
                 "Actor",
                 "Actor Info",
@@ -174,7 +165,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 "Objective"
             };
 
-            var dropDownText = new DropDownButtonWidget(Snw.ModData);
+            var dropDownText = new DropDownButtonWidget(nodeScriptContainerWidget.ModData);
             dropDownText.Text = variableString[variableTypes.IndexOf(variableType)];
 
             var type = variableType;
@@ -193,18 +184,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         return;
 
                     foreach (var node in screenWidget.Nodes.Where(n =>
-                        n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
-                        (n as GetVariableNode).VariableReference == variableItem))
                     {
+                        var node = n as GetVariableNode;
+                        return node != null && node.NodeType == NodeType.GetVariable &&
+                               node.VariableReference == variableItem;
+                    }))
                         ((GetVariableNode) node).Update(true);
-                    }
 
                     foreach (var node in screenWidget.Nodes.Where(n =>
-                        n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
-                        (n as SetVariableNode).VariableReference == variableItem))
                     {
+                        var node = n as SetVariableNode;
+                        return node != null && node.NodeType == NodeType.SetVariable &&
+                               node.VariableReference == variableItem;
+                    }))
                         ((SetVariableNode) node).Update(true);
-                    }
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => variableString[variableTypes.IndexOf(option)];
@@ -221,16 +214,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             variableTemplate.OnDoubleClick = () =>
             {
                 foreach (var node in screenWidget.Nodes.Where(n =>
-                    n is GetVariableNode && n.NodeType == NodeType.GetVariable &&
-                    (n as GetVariableNode).VariableReference == variableItem))
+                {
+                    var node = n as GetVariableNode;
+                    return node != null && node.NodeType == NodeType.GetVariable &&
+                           node.VariableReference == variableItem;
+                }))
                 {
                     dropDownText.Text = "SELECT VARIABLE";
                     ((GetVariableNode) node).VariableReference = null;
                 }
 
                 foreach (var node in screenWidget.Nodes.Where(n =>
-                    n is SetVariableNode && n.NodeType == NodeType.SetVariable &&
-                    (n as SetVariableNode).VariableReference == variableItem))
+                {
+                    var node = n as SetVariableNode;
+                    return node != null && node.NodeType == NodeType.SetVariable &&
+                           node.VariableReference == variableItem;
+                }))
                 {
                     dropDownText.Text = "SELECT VARIABLE";
                     ((SetVariableNode) node).VariableReference = null;
@@ -250,12 +249,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public override void Draw()
         {
-            WidgetUtils.DrawPanel(Background, RenderBounds);
+            WidgetUtils.DrawPanel(background, RenderBounds);
         }
 
         void CreateLeftClickDropDownMenu()
         {
-            DropDownMenuWidget = new DropDownMenuWidget()
+            DropDownMenuWidget = new DropDownMenuWidget
             {
                 Bounds = new Rectangle(0, 0, 180, 75),
                 Visible = false
@@ -268,7 +267,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.MapInfoActorReference, "Actor on Map"}
             };
 
-            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Info Nodes", infoNodes));
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Info Nodes", infoNodes));
 
             var variableNodes = new Dictionary<NodeType, string>
             {
@@ -276,14 +275,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.SetVariable, "Variable: Set"}
             };
 
-            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Variable Nodes", variableNodes));
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Variable Nodes", variableNodes));
 
             var actorNodes = new Dictionary<NodeType, string>
             {
                 {NodeType.ActorGetInformations, "Informations of Actor"},
                 {NodeType.ActorKill, "Kill"},
                 {NodeType.ActorRemove, "Remove"},
-                {NodeType.ActorChangeOwner, "Change Owner"},
+                {NodeType.ActorChangeOwner, "Change Owner"}
             };
             var actorQueueNodes = new Dictionary<NodeType, string>
             {
@@ -295,8 +294,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.ActorQueueFindResources, "QueueFindResources"}
             };
 
-            var actorSubMenu = GetSubMenue("Actor Activity", actorNodes);
-            actorSubMenu.AddDropDownMenu(GetSubMenue("Queue Activities", actorQueueNodes));
+            var actorSubMenu = GetSubMenu("Actor Activity", actorNodes);
+            actorSubMenu.AddDropDownMenu(GetSubMenu("Queue Activities", actorQueueNodes));
 
             DropDownMenuWidget.AddDropDownMenu(actorSubMenu);
 
@@ -309,10 +308,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.TriggerOnEnteredRange, "On Entered Range"},
                 {NodeType.TriggerOnIdle, "On Actor Idle"},
                 {NodeType.TriggerOnKilled, "On Actor Killed"},
-                {NodeType.TriggerOnAllKilled, "On All Actors Killed"},
+                {NodeType.TriggerOnAllKilled, "On All Actors Killed"}
             };
 
-            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Trigger", triggerNodes));
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Trigger", triggerNodes));
 
             var timerNodes = new Dictionary<NodeType, string>
             {
@@ -321,7 +320,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.TimerReset, "Reset Timer"}
             };
 
-            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Timer", timerNodes));
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Timer", timerNodes));
 
             var groupNodes = new Dictionary<NodeType, string>
             {
@@ -333,7 +332,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.FilterActorGroup, "Filter Actors in Group"}
             };
 
-            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Actor/Player Group", groupNodes));
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Actor/Player Group", groupNodes));
 
             var arithmeticNodes = new Dictionary<NodeType, string>
             {
@@ -344,7 +343,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.CompareActors, "Compare: Actors"}
             };
 
-            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Arithmetic's", arithmeticNodes));
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Arithmetic's", arithmeticNodes));
 
             var functionNodes = new Dictionary<NodeType, string>
             {
@@ -356,7 +355,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.DoMultiple, "Repeating: Action"}
             };
 
-            DropDownMenuWidget.AddDropDownMenu(GetSubMenue("Functions", functionNodes));
+            DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Functions", functionNodes));
 
             var uiNodes = new Dictionary<NodeType, string>
             {
@@ -367,7 +366,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.TextChoice, "Text Choice"},
                 {NodeType.SetCameraPosition, "Set Camera Location"},
                 {NodeType.CameraRide, "Camera Ride"},
-                {NodeType.GlobalLightning, "Change Global Lightning"},
+                {NodeType.GlobalLightning, "Change Global Lightning"}
             };
 
             var uiObjectiveNodes = new Dictionary<NodeType, string>
@@ -375,17 +374,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.UiNewObjective, "Add Objective"},
                 {NodeType.UiCompleteObjective, "Complete Objective"},
                 {NodeType.UiFailObjective, "Fail Objective"},
-                {NodeType.UiAddMissionText, "Show Mission Text"},
+                {NodeType.UiAddMissionText, "Show Mission Text"}
             };
 
             var uiSubMenu =
-                new DropDownMenuExpandButton(Snw.ModData, new Rectangle(0, 0, 160, 25))
+                new DropDownMenuExpandButton(nodeScriptContainerWidget.ModData, new Rectangle(0, 0, 160, 25))
                 {
                     Text = "User Interface"
                 };
 
-            uiSubMenu.AddDropDownMenu(GetSubMenue("General UI", uiNodes));
-            uiSubMenu.AddDropDownMenu(GetSubMenue("Objectives", uiObjectiveNodes));
+            uiSubMenu.AddDropDownMenu(GetSubMenu("General UI", uiNodes));
+            uiSubMenu.AddDropDownMenu(GetSubMenu("Objectives", uiObjectiveNodes));
 
             DropDownMenuWidget.AddDropDownMenu(uiSubMenu);
 
@@ -393,9 +392,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 {NodeType.CompareActor, "Same actor"},
                 {NodeType.CompareNumber, "Same number"},
-                {NodeType.CompareActorInfo, "Same actortype"},
+                {NodeType.CompareActorInfo, "Same Actor Type"},
                 {NodeType.IsDead, "Actor is dead"},
-                {NodeType.IsAlive, "Actor is alive"},
+                {NodeType.IsAlive, "Actor is alive"}
             };
 
             var playerConditionNodes = new Dictionary<NodeType, string>
@@ -405,16 +404,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 {NodeType.HasWon, "Player has Won"},
                 {NodeType.IsHumanPlayer, "Player is Human"},
                 {NodeType.IsBot, "Player is Bot"},
-                {NodeType.IsNoncombatant, "Player is Noncombatant"},
+                {NodeType.IsNoncombatant, "Player is Noncombatant"}
             };
 
             var conditionsSubMenu =
-                new DropDownMenuExpandButton(Snw.ModData, new Rectangle(0, 0, 160, 25))
+                new DropDownMenuExpandButton(nodeScriptContainerWidget.ModData, new Rectangle(0, 0, 160, 25))
                 {
                     Text = "Conditions"
                 };
 
-            var checkConditionButton = new ButtonWidget(Snw.ModData)
+            var checkConditionButton = new ButtonWidget(nodeScriptContainerWidget.ModData)
             {
                 Bounds = new Rectangle(0, 0, 130, 25),
                 Text = "Check Condition",
@@ -427,8 +426,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             };
 
             conditionsSubMenu.AddDropDownMenu(checkConditionButton);
-            conditionsSubMenu.AddDropDownMenu(GetSubMenue("Actor Conditions", actorConditionNodes));
-            conditionsSubMenu.AddDropDownMenu(GetSubMenue("Player Conditions", playerConditionNodes));
+            conditionsSubMenu.AddDropDownMenu(GetSubMenu("Actor Conditions", actorConditionNodes));
+            conditionsSubMenu.AddDropDownMenu(GetSubMenu("Player Conditions", playerConditionNodes));
 
             DropDownMenuWidget.AddDropDownMenu(conditionsSubMenu);
 
@@ -436,30 +435,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             AddChild(DropDownMenuWidget);
         }
 
-        DropDownMenuExpandButton GetSubMenue(string label, Dictionary<NodeType, string> types)
+        DropDownMenuExpandButton GetSubMenu(string label, Dictionary<NodeType, string> types)
         {
-            var actorNodes = new DropDownMenuExpandButton(Snw.ModData, new Rectangle(0, 0, 160, 25))
+            var actorNodes = new DropDownMenuExpandButton(nodeScriptContainerWidget.ModData, new Rectangle(0, 0, 160, 25))
             {
                 Text = label
             };
 
-            foreach (var type in types)
+            foreach (var newWidget in types.Select(type => new ButtonWidget(nodeScriptContainerWidget.ModData)
             {
-                var newWidget = new ButtonWidget(Snw.ModData)
+                Bounds = new Rectangle(0, 0,
+                    types.Max(t => nodeScriptContainerWidget.FontRegular.Measure(t.Value).X) + 25, 25),
+                Text = type.Value,
+                Align = TextAlign.Left,
+                OnClick = () =>
                 {
-                    Bounds = new Rectangle(0, 0,
-                        types.Max(t => Snw.FontRegular.Measure(t.Value).X) + 25, 25),
-                    Text = type.Value,
-                    Align = TextAlign.Left,
-                    OnClick = () =>
-                    {
-                        screenWidget.AddNode(type.Key);
-                        DropDownMenuWidget.Collapse(DropDownMenuWidget);
-                        DropDownMenuWidget.Visible = false;
-                    }
-                };
+                    screenWidget.AddNode(type.Key);
+                    DropDownMenuWidget.Collapse(DropDownMenuWidget);
+                    DropDownMenuWidget.Visible = false;
+                }
+            }))
                 actorNodes.AddDropDownMenu(newWidget);
-            }
 
             return actorNodes;
         }

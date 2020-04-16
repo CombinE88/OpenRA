@@ -12,7 +12,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -22,72 +21,43 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
     public class AdvancedTextFieldType : Widget
     {
-        string text = "";
-
-        public string Text
-        {
-            get
-            {
-                return text;
-            }
-
-            set
-            {
-                text = RemoveInvalidCharacters(value ?? "");
-                CursorPosition = CursorPosition.Clamp(0, text.Length);
-                ClearSelection();
-            }
-        }
-
-        public int MaxLength = 0;
-        public int VisualHeight = 1;
-        public int LeftMargin = 5;
-        public int RightMargin = 5;
+        protected int blinkCycle = 10;
 
         public bool Disabled = false;
-
-        TextFieldType type = TextFieldType.General;
-
-        public TextFieldType Type
-        {
-            get
-            {
-                return type;
-            }
-
-            set
-            {
-                type = value;
-
-                // Revalidate text
-                text = RemoveInvalidCharacters(text);
-                CursorPosition = CursorPosition.Clamp(0, text.Length);
-            }
-        }
-
-        public Func<bool> OnEnterKey = () => false;
-        public Func<bool> OnTabKey = () => false;
-        public Func<bool> OnEscKey = () => false;
-        public Func<bool> OnAltKey = () => false;
-        public Func<bool> OnUpKey = () => false;
-        public Func<bool> OnDownKey = () => false;
-        public Func<bool> OnDeleteKey = () => false;
-        public Func<bool> OnBackspaceKey = () => false;
-        public Action OnLoseFocus = () => { };
-        public Action OnTextEdited = () => { };
-        public int CursorPosition { get; set; }
+        public string Font = ChromeMetrics.Get<string>("TextfieldFont");
 
         public Func<bool> IsDisabled;
         public Func<bool> IsValid = () => true;
-        public string Font = ChromeMetrics.Get<string>("TextfieldFont");
-        public Color TextColor = ChromeMetrics.Get<Color>("TextfieldColor");
-        public Color TextColorDisabled = ChromeMetrics.Get<Color>("TextfieldColorDisabled");
-        public Color TextColorInvalid = ChromeMetrics.Get<Color>("TextfieldColorInvalid");
-        public Color TextColorHighlight = ChromeMetrics.Get<Color>("TextfieldColorHighlight");
+        public int LeftMargin = 5;
+
+        public int MaxLength;
+        public bool MouseSelectionActive;
+        public Func<bool> OnAltKey = () => false;
+        public Func<bool> OnBackspaceKey = () => false;
+        public Func<bool> OnDeleteKey = () => false;
+        public Func<bool> OnDownKey = () => false;
+
+        public Func<bool> OnEnterKey = () => false;
+        public Func<bool> OnEscKey = () => false;
+        public Action OnLoseFocus = () => { };
+        public Func<bool> OnTabKey = () => false;
+        public Action OnTextEdited = () => { };
+        public Func<bool> OnUpKey = () => false;
+        public int RightMargin = 5;
+        public int SelectionEndIndex = -1;
 
         public int SelectionStartIndex = -1;
-        public int SelectionEndIndex = -1;
-        public bool MouseSelectionActive = false;
+        protected bool showCursor = true;
+        string text = "";
+        public Color TextColor = ChromeMetrics.Get<Color>("TextfieldColor");
+        public Color TextColorDisabled = ChromeMetrics.Get<Color>("TextfieldColorDisabled");
+        public Color TextColorHighlight = ChromeMetrics.Get<Color>("TextfieldColorHighlight");
+        public Color TextColorInvalid = ChromeMetrics.Get<Color>("TextfieldColorInvalid");
+
+        TextFieldType type = TextFieldType.General;
+        public int VisualHeight = 1;
+
+        bool wasDisabled;
 
         public AdvancedTextFieldType()
         {
@@ -110,6 +80,34 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             VisualHeight = widget.VisualHeight;
             IsDisabled = widget.IsDisabled;
         }
+
+        public string Text
+        {
+            get { return text; }
+
+            set
+            {
+                text = RemoveInvalidCharacters(value ?? "");
+                CursorPosition = CursorPosition.Clamp(0, text.Length);
+                ClearSelection();
+            }
+        }
+
+        public TextFieldType Type
+        {
+            get { return type; }
+
+            set
+            {
+                type = value;
+
+                // Revalidate text
+                text = RemoveInvalidCharacters(text);
+                CursorPosition = CursorPosition.Clamp(0, text.Length);
+            }
+        }
+
+        public int CursorPosition { get; set; }
 
         public override bool YieldKeyboardFocus()
         {
@@ -135,11 +133,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     MouseSelectionActive = false;
                     return true;
                 }
-                else if (mi.Event != MouseInputEvent.Move)
-                    return false;
+
+                if (mi.Event != MouseInputEvent.Move) return false;
             }
             else if (mi.Event != MouseInputEvent.Down)
+            {
                 return false;
+            }
 
             // Attempt to take keyboard focus
             if (!RenderBounds.Contains(mi.Location) || !TakeKeyboardFocus())
@@ -152,7 +152,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             var cachedCursorPos = CursorPosition;
             CursorPosition = ClosestCursorPosition(mi.Location.X);
 
-            if (mi.Modifiers.HasModifier(Modifiers.Shift) || (mi.Event == MouseInputEvent.Move && MouseSelectionActive))
+            if (mi.Modifiers.HasModifier(Modifiers.Shift) || mi.Event == MouseInputEvent.Move && MouseSelectionActive)
                 HandleSelectionUpdate(cachedCursorPos, CursorPosition);
             else
                 ClearSelection();
@@ -279,7 +279,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     {
                         var cachedCurrentCursorPos = CursorPosition;
 
-                        if ((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) || (isOSX && e.Modifiers.HasModifier(Modifiers.Alt)))
+                        if (!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl) ||
+                            isOSX && e.Modifiers.HasModifier(Modifiers.Alt))
                             CursorPosition = GetPrevWhitespaceIndex();
                         else if (isOSX && e.Modifiers.HasModifier(Modifiers.Meta))
                             CursorPosition = 0;
@@ -300,7 +301,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     {
                         var cachedCurrentCursorPos = CursorPosition;
 
-                        if ((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) || (isOSX && e.Modifiers.HasModifier(Modifiers.Alt)))
+                        if (!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl) ||
+                            isOSX && e.Modifiers.HasModifier(Modifiers.Alt))
                             CursorPosition = GetNextWhitespaceIndex();
                         else if (isOSX && e.Modifiers.HasModifier(Modifiers.Meta))
                             CursorPosition = Text.Length;
@@ -378,11 +380,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
                 case Keycode.X:
                     ResetBlinkCycle();
-                    if (((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) || (isOSX && e.Modifiers.HasModifier(Modifiers.Meta))) &&
+                    if ((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl) ||
+                         isOSX && e.Modifiers.HasModifier(Modifiers.Meta)) &&
                         !string.IsNullOrEmpty(Text) && SelectionStartIndex != -1)
                     {
-                        var lowestIndex = SelectionStartIndex < SelectionEndIndex ? SelectionStartIndex : SelectionEndIndex;
-                        var highestIndex = SelectionStartIndex < SelectionEndIndex ? SelectionEndIndex : SelectionStartIndex;
+                        var lowestIndex = SelectionStartIndex < SelectionEndIndex
+                            ? SelectionStartIndex
+                            : SelectionEndIndex;
+                        var highestIndex = SelectionStartIndex < SelectionEndIndex
+                            ? SelectionEndIndex
+                            : SelectionStartIndex;
                         Game.Renderer.SetClipboardText(Text.Substring(lowestIndex, highestIndex - lowestIndex));
 
                         RemoveSelectedText();
@@ -392,11 +399,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     break;
                 case Keycode.C:
                     ResetBlinkCycle();
-                    if (((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) || (isOSX && e.Modifiers.HasModifier(Modifiers.Meta)))
+                    if ((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl) ||
+                         isOSX && e.Modifiers.HasModifier(Modifiers.Meta))
                         && !string.IsNullOrEmpty(Text) && SelectionStartIndex != -1)
                     {
-                        var lowestIndex = SelectionStartIndex < SelectionEndIndex ? SelectionStartIndex : SelectionEndIndex;
-                        var highestIndex = SelectionStartIndex < SelectionEndIndex ? SelectionEndIndex : SelectionStartIndex;
+                        var lowestIndex = SelectionStartIndex < SelectionEndIndex
+                            ? SelectionStartIndex
+                            : SelectionEndIndex;
+                        var highestIndex = SelectionStartIndex < SelectionEndIndex
+                            ? SelectionEndIndex
+                            : SelectionStartIndex;
                         Game.Renderer.SetClipboardText(Text.Substring(lowestIndex, highestIndex - lowestIndex));
                     }
 
@@ -406,11 +418,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     // cmd+delete is equivalent to ctrl+k on non-osx
                     ResetBlinkCycle();
                     if (SelectionStartIndex != -1)
+                    {
                         RemoveSelectedText();
+                    }
                     else if (CursorPosition < Text.Length)
                     {
                         // Write directly to the Text backing field to avoid unnecessary validation
-                        if ((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) || (isOSX && e.Modifiers.HasModifier(Modifiers.Alt)))
+                        if (!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl) ||
+                            isOSX && e.Modifiers.HasModifier(Modifiers.Alt))
                             text = text.Substring(0, CursorPosition) + text.Substring(GetNextWhitespaceIndex());
                         else if (isOSX && e.Modifiers.HasModifier(Modifiers.Meta))
                             text = text.Remove(CursorPosition);
@@ -429,11 +444,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     // cmd+backspace is equivalent to ctrl+u on non-osx
                     ResetBlinkCycle();
                     if (SelectionStartIndex != -1)
+                    {
                         RemoveSelectedText();
+                    }
                     else if (CursorPosition > 0)
                     {
                         // Write directly to the Text backing field to avoid unnecessary validation
-                        if ((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) || (isOSX && e.Modifiers.HasModifier(Modifiers.Alt)))
+                        if (!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl) ||
+                            isOSX && e.Modifiers.HasModifier(Modifiers.Alt))
                         {
                             var prevWhitespace = GetPrevWhitespaceIndex();
                             text = text.Substring(0, prevWhitespace) + text.Substring(CursorPosition);
@@ -464,7 +482,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     if (SelectionStartIndex != -1)
                         RemoveSelectedText();
 
-                    if ((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) || (isOSX && e.Modifiers.HasModifier(Modifiers.Meta)))
+                    if (!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl) ||
+                        isOSX && e.Modifiers.HasModifier(Modifiers.Meta))
                     {
                         var clipboardText = Game.Renderer.GetClipboardText();
 
@@ -481,14 +500,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     break;
                 case Keycode.A:
                     // Ctrl+A as Select-All, or Cmd+A on OSX
-                    if ((!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) || (isOSX && e.Modifiers.HasModifier(Modifiers.Meta)))
+                    if (!isOSX && e.Modifiers.HasModifier(Modifiers.Ctrl) ||
+                        isOSX && e.Modifiers.HasModifier(Modifiers.Meta))
                     {
                         ClearSelection();
                         HandleSelectionUpdate(0, Text.Length);
                     }
 
-                    break;
-                default:
                     break;
             }
 
@@ -560,11 +578,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             }
         }
 
-        protected int blinkCycle = 10;
-        protected bool showCursor = true;
-
-        bool wasDisabled;
-
         public override void Tick()
         {
             // Remove the blinking cursor when disabled
@@ -618,13 +631,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             // Draw the highlight around the selected area
             if (SelectionStartIndex != -1)
             {
-                var visualSelectionStartIndex = SelectionStartIndex < SelectionEndIndex ? SelectionStartIndex : SelectionEndIndex;
-                var visualSelectionEndIndex = SelectionStartIndex < SelectionEndIndex ? SelectionEndIndex : SelectionStartIndex;
+                var visualSelectionStartIndex =
+                    SelectionStartIndex < SelectionEndIndex ? SelectionStartIndex : SelectionEndIndex;
+                var visualSelectionEndIndex =
+                    SelectionStartIndex < SelectionEndIndex ? SelectionEndIndex : SelectionStartIndex;
                 var highlightStartX = font.Measure(apparentText.Substring(0, visualSelectionStartIndex)).X;
                 var highlightEndX = font.Measure(apparentText.Substring(0, visualSelectionEndIndex)).X;
 
                 WidgetUtils.FillRectWithColor(
-                    new Rectangle(textPos.X + highlightStartX, textPos.Y, highlightEndX - highlightStartX, Bounds.Height - (verticalMargin * 2)), TextColorHighlight);
+                    new Rectangle(textPos.X + highlightStartX, textPos.Y, highlightEndX - highlightStartX,
+                        Bounds.Height - verticalMargin * 2), TextColorHighlight);
             }
 
             var color =

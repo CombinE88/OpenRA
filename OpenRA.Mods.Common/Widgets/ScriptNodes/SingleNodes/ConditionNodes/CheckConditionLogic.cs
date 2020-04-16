@@ -2,39 +2,38 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 {
     public class CheckConditionNode : NodeWidget
     {
-        CompareMethode selectedMethode;
-        DropDownButtonWidget methodeSelection;
-        LabelWidget labal1;
-        LabelWidget labal2;
+        readonly LabelWidget labal1;
+        readonly LabelWidget labal2;
+        readonly DropDownButtonWidget methodeSelection;
+        CompareMethod selectedMethod;
 
         public CheckConditionNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Methode = CompareMethode.True;
+            Methode = CompareMethod.True;
 
-            List<CompareMethode> methodes = new List<CompareMethode>
+            var methodes = new List<CompareMethod>
             {
-                CompareMethode.True,
-                CompareMethode.False
+                CompareMethod.True,
+                CompareMethod.False
             };
 
-            selectedMethode = Methode.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData);
+            selectedMethod = Methode.Value;
+            methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareMethode, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
+            Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
-                var item = ScrollItemWidget.Setup(template, () => selectedMethode == option, () =>
+                var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
-                    selectedMethode = option;
+                    selectedMethod = option;
 
-                    methodeSelection.Text = selectedMethode.ToString();
-                    Methode = selectedMethode;
+                    methodeSelection.Text = selectedMethod.ToString();
+                    Methode = selectedMethod;
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => option.ToString();
@@ -42,17 +41,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 return item;
             };
 
-            methodeSelection.OnClick = () => { methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2); };
+            methodeSelection.OnClick = () =>
+            {
+                methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
+            };
 
-            methodeSelection.Text = selectedMethode.ToString();
+            methodeSelection.Text = selectedMethod.ToString();
 
-            methodeSelection.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
+            methodeSelection.Bounds =
+                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
 
             labal1 = new LabelWidget();
             labal2 = new LabelWidget();
 
-            labal1.Bounds = new Rectangle(FreeWidgetEntries.X + 150, FreeWidgetEntries.Y + 45, FreeWidgetEntries.Width - 150, 25);
-            labal2.Bounds = new Rectangle(FreeWidgetEntries.X + 150, FreeWidgetEntries.Y + 125, FreeWidgetEntries.Width - 150, 25);
+            labal1.Bounds = new Rectangle(FreeWidgetEntries.X + 150, FreeWidgetEntries.Y + 45,
+                FreeWidgetEntries.Width - 150, 25);
+            labal2.Bounds = new Rectangle(FreeWidgetEntries.X + 150, FreeWidgetEntries.Y + 125,
+                FreeWidgetEntries.Width - 150, 25);
 
             labal1.Text = "True";
             labal2.Text = "False";
@@ -67,59 +72,63 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
         {
             base.AddOutConConstructor(connection);
 
-            if (NodeInfo.Methode != null)
+            if (NodeInfo.Method != null)
             {
-                selectedMethode = NodeInfo.Methode.Value;
-                methodeSelection.Text = NodeInfo.Methode.Value.ToString();
+                selectedMethod = NodeInfo.Method.Value;
+                methodeSelection.Text = NodeInfo.Method.Value.ToString();
             }
         }
     }
 
     public class CheckConditionLogic : NodeLogic
     {
-        public CheckConditionLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public CheckConditionLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
         public override void Execute(World world)
         {
-            var inCo = InConnections.First(c => c.ConTyp == ConnectionType.Condition);
+            var inCo = InConnections.First(c => c.ConnectionTyp == ConnectionType.Condition);
 
             if (inCo.In == null)
                 throw new YamlException(NodeId + "Condition not connected");
 
-            if ((inCo.In.Logic.CheckCondition(world) && Methode == CompareMethode.True) || (!inCo.In.Logic.CheckCondition(world) && Methode == CompareMethode.False))
+            if (inCo.In.Logic.CheckCondition(world) && Methode == CompareMethod.True ||
+                !inCo.In.Logic.CheckCondition(world) && Methode == CompareMethod.False)
             {
-                var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
+                var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
                 if (oCon != null)
-                {
-                    foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
+                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
                     {
-                        var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                        var inCon = node.InConnections.FirstOrDefault(c =>
+                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
                         if (inCon != null)
                             inCon.Execute = true;
                     }
-                }
             }
-            else if ((!inCo.In.Logic.CheckCondition(world) && Methode == CompareMethode.True) || (inCo.In.Logic.CheckCondition(world) && Methode == CompareMethode.False))
+            else if (!inCo.In.Logic.CheckCondition(world) && Methode == CompareMethod.True ||
+                     inCo.In.Logic.CheckCondition(world) && Methode == CompareMethod.False)
             {
-                var oCon = OutConnections.LastOrDefault(o => o.ConTyp == ConnectionType.Exec);
+                var oCon = OutConnections.LastOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
                 if (oCon != null)
-                {
-                    foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
+                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
                     {
-                        var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                        var inCon = node.InConnections.FirstOrDefault(c =>
+                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
                         if (inCon != null)
                             inCon.Execute = true;
                     }
-                }
             }
         }
     }
 
     public class ProvideCondition : NodeLogic
     {
-        public ProvideCondition(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public ProvideCondition(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
@@ -127,8 +136,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
         {
             if (NodeType == NodeType.CompareActor)
             {
-                var actCon1 = InConnections.First(c => c.ConTyp == ConnectionType.Actor);
-                var actCon2 = InConnections.Last(c => c.ConTyp == ConnectionType.Actor);
+                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor);
+                var actCon2 = InConnections.Last(c => c.ConnectionTyp == ConnectionType.Actor);
 
                 if (actCon1.In == null)
                     throw new YamlException(NodeId + "Actor 1 not connected");
@@ -144,8 +153,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 
             if (NodeType == NodeType.CompareNumber)
             {
-                var actCon1 = InConnections.First(c => c.ConTyp == ConnectionType.Integer);
-                var actCon2 = InConnections.Last(c => c.ConTyp == ConnectionType.Integer);
+                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer);
+                var actCon2 = InConnections.Last(c => c.ConnectionTyp == ConnectionType.Integer);
 
                 if (actCon1.In == null)
                     throw new YamlException(NodeId + "Number 1 not connected");
@@ -161,8 +170,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 
             if (NodeType == NodeType.CompareActorInfo)
             {
-                var actCon1 = InConnections.First(c => c.ConTyp == ConnectionType.ActorInfo);
-                var actCon2 = InConnections.Last(c => c.ConTyp == ConnectionType.ActorInfo);
+                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo);
+                var actCon2 = InConnections.Last(c => c.ConnectionTyp == ConnectionType.ActorInfo);
 
                 if (actCon1.In == null)
                     throw new YamlException(NodeId + "Actor Info 1 not connected");
@@ -178,7 +187,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 
             if (NodeType == NodeType.IsAlive)
             {
-                var actCon1 = InConnections.First(c => c.ConTyp == ConnectionType.Actor);
+                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor);
 
                 if (actCon1.In == null)
                     throw new YamlException(NodeId + "Actor not connected");
@@ -191,7 +200,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 
             if (NodeType == NodeType.IsDead)
             {
-                var actCon1 = InConnections.First(c => c.ConTyp == ConnectionType.Actor);
+                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor);
 
                 if (actCon1.In == null)
                     throw new YamlException(NodeId + "Actor not connected");
@@ -209,7 +218,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 || NodeType == NodeType.HasWon
                 || NodeType == NodeType.HasLost)
             {
-                var actCon1 = InConnections.First(c => c.ConTyp == ConnectionType.Player);
+                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Player);
 
                 if (actCon1.In == null)
                     throw new YamlException(NodeId + "Player not connected");

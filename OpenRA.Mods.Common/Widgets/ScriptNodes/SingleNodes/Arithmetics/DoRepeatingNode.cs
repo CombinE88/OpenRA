@@ -7,13 +7,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
         int repeat;
         int repeatwaiter;
 
-        public DoRepeatingNodeLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public DoRepeatingNodeLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
         public override void Execute(World world)
         {
-            var incon = InConnections.First(c => c.ConTyp == ConnectionType.Integer);
+            var incon = InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer);
             if (incon.In != null && incon.In.Number != null)
                 repeat += incon.In.Number.Value;
         }
@@ -29,16 +30,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
             if (repeat <= 0)
                 return;
 
-            var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
+            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
             if (oCon != null)
-            {
-                foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
+                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
                 {
-                    var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                    var inCon = node.InConnections.FirstOrDefault(c =>
+                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
                     if (inCon != null)
                         inCon.Execute = true;
                 }
-            }
 
             repeatwaiter = 5;
             repeat--;

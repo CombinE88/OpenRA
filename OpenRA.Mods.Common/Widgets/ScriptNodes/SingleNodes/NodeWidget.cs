@@ -4,16 +4,15 @@ using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 {
     public class NodeWidget : BasicNodeWidget
     {
         int inConnectionCounter = 1;
-        int outConnectionCounter = 1;
-        public CompareMethode? Methode = null;
         public CompareItem? Item = null;
+        public CompareMethod? Methode = null;
+        int outConnectionCounter = 1;
         public VariableInfo VariableReference = null;
 
         public NodeWidget(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen)
@@ -28,12 +27,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);
 
-            if (nodeInfo.NodeID != null)
-                NodeID = nodeInfo.NodeID;
+            if (nodeInfo.NodeId != null)
+            {
+                NodeID = nodeInfo.NodeId;
+            }
             else
             {
-                screen.NodeId += 1;
-                NodeID = "ND" + (screen.NodeId < 10 ? "0" + screen.NodeId : Screen.NodeId.ToString());
+                screen.RunningNodeId += 1;
+                NodeID = "ND" + (screen.RunningNodeId < 10
+                             ? "0" + screen.RunningNodeId
+                             : Screen.RunningNodeId.ToString());
             }
 
             NodeType = nodeInfo.NodeType;
@@ -49,7 +52,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             nodeInfo.OutConnectionsReference = ReferenceOutConnections();
             nodeInfo.OffsetPosX = OffsetPosX;
             nodeInfo.OffsetPosY = OffsetPosY;
-            nodeInfo.Methode = Methode;
+            nodeInfo.Method = Methode;
             nodeInfo.Item = Item;
             nodeInfo.VariableReference = VariableReference != null ? VariableReference.VariableName : null;
 
@@ -104,12 +107,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         {
             SetOuts(BuildOutConnections(NodeInfo));
 
-            foreach (var connection in OutConnections)
-            {
-                AddOutConConstructor(connection);
-            }
+            foreach (var connection in OutConnections) AddOutConConstructor(connection);
 
-            int count = 0;
+            var count = 0;
             foreach (var node in OutConnections)
             {
                 int c;
@@ -124,7 +124,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         {
             SetIns(BuildInConnections(NodeInfo));
 
-            int count = 0;
+            var count = 0;
             foreach (var node in InConnections)
             {
                 int c;
@@ -137,7 +137,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         List<OutConReference> ReferenceOutConnections()
         {
-            List<OutConReference> outConRef = new List<OutConReference>();
+            var outConRef = new List<OutConReference>();
 
             foreach (var outCon in OutConnections)
             {
@@ -150,9 +150,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 outRef.ActorInfo = outCon.ActorInfo ?? null;
                 outRef.CellArray = outCon.CellArray != null ? new List<CPos>(outCon.CellArray) : null;
                 outRef.ActorPreview = outCon.ActorPrev ?? null;
-                outRef.ActorPreviews = outCon.ActorPrevs != null ? new List<EditorActorPreview>(outCon.ActorPrevs).ToArray() : null;
+                outRef.ActorPreviews = outCon.ActorPreviews != null
+                    ? new List<EditorActorPreview>(outCon.ActorPreviews).ToArray()
+                    : null;
                 outRef.ConnectionId = outCon.ConnectionId;
-                outRef.ConTyp = outCon.ConTyp;
+                outRef.ConTyp = outCon.ConnectionTyp;
 
                 outConRef.Add(outRef);
             }
@@ -162,13 +164,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         List<InConReference> ReferenceInConnections()
         {
-            List<InConReference> outConRef = new List<InConReference>();
+            var outConRef = new List<InConReference>();
 
             foreach (var inCon in InConnections)
             {
                 var inRef = new InConReference();
                 inRef.ConnectionId = inCon.ConnectionId;
-                inRef.ConTyp = inCon.ConTyp;
+                inRef.ConTyp = inCon.ConnectionTyp;
                 if (inCon.In != null)
                 {
                     inRef.WidgetNodeReference = inCon.In.ConnectionId ?? null;
@@ -183,7 +185,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         List<OutConnection> BuildOutConnections(NodeInfo nodeInfo)
         {
-            List<OutConnection> readyOutCons = new List<OutConnection>();
+            var readyOutCons = new List<OutConnection>();
 
             foreach (var conRef in nodeInfo.OutConnectionsReference)
             {
@@ -196,7 +198,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 connection.Player = conRef.Player ?? null;
                 connection.ActorInfo = conRef.ActorInfo ?? null;
                 connection.CellArray = conRef.CellArray ?? null;
-                connection.ActorPrevs = conRef.ActorPreviews ?? null;
+                connection.ActorPreviews = conRef.ActorPreviews ?? null;
                 connection.ConnectionId = conRef.ConnectionId;
 
                 readyOutCons.Add(connection);
@@ -207,7 +209,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         List<InConnection> BuildInConnections(NodeInfo nodeInfo)
         {
-            List<InConnection> readyOutCons = new List<InConnection>();
+            var readyOutCons = new List<InConnection>();
 
             foreach (var conRef in nodeInfo.InConnectionsReference)
             {
@@ -215,7 +217,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
                 connection.ConnectionId = conRef.ConnectionId ?? null;
                 var referenceNode = Screen.Nodes.FirstOrDefault(n => n.NodeID == conRef.WidgetReferenceId);
-                var referenceConnection = referenceNode != null ? referenceNode.OutConnections.FirstOrDefault(c => c.ConnectionId == conRef.WidgetNodeReference) : null;
+                var referenceConnection = referenceNode != null
+                    ? referenceNode.OutConnections.FirstOrDefault(c => c.ConnectionId == conRef.WidgetNodeReference)
+                    : null;
                 connection.In = referenceConnection ?? null;
 
                 readyOutCons.Add(connection);
@@ -231,28 +235,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
     public class NodeLogic
     {
-        public readonly string NodeId;
-        public readonly NodeType NodeType;
-        public readonly string NodeName;
-        public readonly NodeInfo NodeInfo;
-
-        public readonly CompareMethode? Methode;
         public readonly CompareItem? Item;
 
+        public readonly CompareMethod? Methode;
+        public readonly string NodeId;
+        public readonly NodeInfo NodeInfo;
+        public readonly string NodeName;
+        public readonly NodeType NodeType;
+
         public List<InConnection> InConnections = new List<InConnection>();
+
+        public IngameNodeScriptSystem IngameNodeScriptSystem;
         public List<OutConnection> OutConnections = new List<OutConnection>();
 
-        public IngameNodeScriptSystem Insc;
-
-        public NodeLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc)
+        public NodeLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem)
         {
-            Insc = insc;
-            NodeId = nodeinfo.NodeID;
-            NodeType = nodeinfo.NodeType;
-            NodeInfo = nodeinfo;
-            NodeName = nodeinfo.NodeName;
-            Methode = nodeinfo.Methode;
-            Item = nodeinfo.Item;
+            IngameNodeScriptSystem = ingameNodeScriptSystem;
+            NodeId = nodeInfo.NodeId;
+            NodeType = nodeInfo.NodeType;
+            NodeInfo = nodeInfo;
+            NodeName = nodeInfo.NodeName;
+            Methode = nodeInfo.Method;
+            Item = nodeInfo.Item;
         }
 
         public void AddOutConnectionReferences()
@@ -277,7 +281,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         List<OutConnection> BuildOutConnections(NodeInfo nodeInfo)
         {
-            List<OutConnection> readyOutCons = new List<OutConnection>();
+            var readyOutCons = new List<OutConnection>();
 
             foreach (var conRef in nodeInfo.OutConnectionsReference)
             {
@@ -292,13 +296,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 connection.CellArray = conRef.CellArray ?? null;
                 if (conRef.ActorId != null)
                 {
-                    var actor = Insc.World.WorldActor.Trait<SpawnMapActors>().Actors.FirstOrDefault(a => a.Key == conRef.ActorId).Value;
+                    var actor = IngameNodeScriptSystem.World.WorldActor.Trait<SpawnMapActors>().Actors
+                        .FirstOrDefault(a => a.Key == conRef.ActorId).Value;
                     if (actor != null)
                         connection.Actor = actor;
                 }
 
-                Dictionary<string, Actor> actorList = Insc.World.WorldActor.Trait<SpawnMapActors>().Actors;
-                List<Actor> act = new List<Actor>();
+                var actorList = IngameNodeScriptSystem.World.WorldActor.Trait<SpawnMapActors>().Actors;
+                var act = new List<Actor>();
 
                 if (conRef.ActorIds != null && conRef.ActorIds.Any())
                 {
@@ -329,15 +334,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         List<InConnection> BuildInConnections(NodeInfo nodeInfo)
         {
-            List<InConnection> readyOutCons = new List<InConnection>();
+            var readyOutCons = new List<InConnection>();
 
             foreach (var conRef in nodeInfo.InConnectionsReference)
             {
                 var connection = new InConnection(conRef.ConTyp);
 
                 connection.ConnectionId = conRef.ConnectionId ?? null;
-                var referenceNode = Insc.NodeLogics.FirstOrDefault(n => n.NodeId == conRef.WidgetReferenceId);
-                var referenceConnection = referenceNode != null ? referenceNode.OutConnections.FirstOrDefault(c => c.ConnectionId == conRef.WidgetNodeReference) : null;
+                var referenceNode =
+                    IngameNodeScriptSystem.NodeLogics.FirstOrDefault(n => n.NodeId == conRef.WidgetReferenceId);
+                var referenceConnection = referenceNode != null
+                    ? referenceNode.OutConnections.FirstOrDefault(c => c.ConnectionId == conRef.WidgetNodeReference)
+                    : null;
                 connection.In = referenceConnection ?? null;
                 if (referenceConnection != null)
                     connection.In.Logic = referenceConnection.Logic ?? null;
@@ -367,15 +375,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public virtual void ExecuteTick(Actor self)
         {
-            foreach (var conn in InConnections.Where(c => c.ConTyp == ConnectionType.Exec))
-            {
+            foreach (var conn in InConnections.Where(c => c.ConnectionTyp == ConnectionType.Exec))
                 if (conn.Execute)
                 {
                     Execute(self.World);
                     conn.Execute = false;
                     break;
                 }
-            }
         }
     }
 }

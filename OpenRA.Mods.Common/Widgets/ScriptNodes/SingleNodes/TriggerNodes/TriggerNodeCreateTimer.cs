@@ -1,7 +1,5 @@
-using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
@@ -14,14 +12,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
     public class TriggerLogicCreateTimer : NodeLogic
     {
-        bool timerStarted;
         bool repeating;
-        bool timerDone;
 
         int timer;
+        bool timerDone;
         int timerMax;
+        bool timerStarted;
 
-        public TriggerLogicCreateTimer(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public TriggerLogicCreateTimer(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
+            nodeInfo, ingameNodeScriptSystem)
         {
         }
 
@@ -48,8 +47,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Tick(Actor self)
         {
-            if (InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Repeatable) != null
-                && InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Repeatable).In != null)
+            if (InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Repeatable) != null
+                && InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Repeatable).In != null)
                 repeating = true;
             else if (repeating)
                 repeating = false;
@@ -58,7 +57,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 return;
 
             if (timer < timerMax)
+            {
                 timer++;
+            }
             else if (!timerDone)
             {
                 timer = 0;
@@ -70,7 +71,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void DoAfterConnections()
         {
-            var conInInt = InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Integer);
+            var conInInt = InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Integer);
             if (conInInt == null || conInInt.In.Number == null)
                 throw new YamlException(NodeId + "Timer time not connected");
 
@@ -79,28 +80,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         void ExecuteTimer(World world)
         {
-            var oCon = OutConnections.FirstOrDefault(o => o.ConTyp == ConnectionType.Exec);
+            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
             if (oCon != null)
-            {
-                foreach (var node in Insc.NodeLogics.Where(n => n.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec) != null))
+                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
+                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
                 {
-                    var inCon = node.InConnections.FirstOrDefault(c => c.ConTyp == ConnectionType.Exec && c.In == oCon);
+                    var inCon = node.InConnections.FirstOrDefault(c =>
+                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
                     if (inCon != null)
                         inCon.Execute = true;
                 }
-            }
         }
     }
 
-    class TimerLogics : NodeLogic
+    internal class TimerLogics : NodeLogic
     {
-        public TimerLogics(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public TimerLogics(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
         public override void Execute(World world)
         {
-            var timercon = InConnections.First(c => c.ConTyp == ConnectionType.TimerConnection);
+            var timercon = InConnections.First(c => c.ConnectionTyp == ConnectionType.TimerConnection);
 
             if (timercon.In == null)
                 throw new YamlException(NodeId + "Timer not connected");

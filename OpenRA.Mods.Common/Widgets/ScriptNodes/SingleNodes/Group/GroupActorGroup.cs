@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
@@ -20,11 +19,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 AddInConnection(inCon);
             }
             else if (none.Length > 1)
+            {
                 foreach (var con in none)
-                {
                     if (con != none.First())
                         InConnections.Remove(con);
-                }
+            }
 
             base.Tick();
         }
@@ -46,11 +45,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 AddInConnection(inCon);
             }
             else if (none.Length > 1)
+            {
                 foreach (var con in none)
-                {
                     if (con != none.First())
                         InConnections.Remove(con);
-                }
+            }
 
             base.Tick();
         }
@@ -60,7 +59,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
     {
         List<Actor> actors = new List<Actor>();
 
-        public GroupActorLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public GroupActorLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
@@ -69,7 +69,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             var changeActors = new List<Actor>();
             foreach (var info in InConnections.Where(c =>
             {
-                if (c.ConTyp != ConnectionType.Actor)
+                if (c.ConnectionTyp != ConnectionType.Actor)
                     return false;
 
                 if (c.In == null)
@@ -83,13 +83,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
                 return true;
             }))
-            {
                 actors.Add(info.In.Actor);
-            }
 
             actors = changeActors;
 
-            OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
+            OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
         }
 
         public override void Tick(Actor self)
@@ -97,7 +95,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             var changeActors = new List<Actor>();
             foreach (var info in InConnections.Where(c =>
             {
-                if (c.ConTyp != ConnectionType.Actor)
+                if (c.ConnectionTyp != ConnectionType.Actor)
                     return false;
 
                 if (c.In == null)
@@ -111,13 +109,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
                 return true;
             }))
-            {
                 actors.Add(info.In.Actor);
-            }
 
             actors = changeActors;
 
-            OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
+            OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
         }
     }
 
@@ -125,7 +121,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
     {
         List<ActorInfo> actors = new List<ActorInfo>();
 
-        public GroupActorInfoLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public GroupActorInfoLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
@@ -134,7 +131,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             var changeActors = new List<ActorInfo>();
             var incon = InConnections.Where(c =>
             {
-                if (c.ConTyp != ConnectionType.ActorInfo)
+                if (c.ConnectionTyp != ConnectionType.ActorInfo)
                     return false;
 
                 if (c.In == null)
@@ -146,14 +143,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 return true;
             });
 
-            foreach (var info in incon)
-            {
-                changeActors.Add(info.In.ActorInfo);
-            }
+            foreach (var info in incon) changeActors.Add(info.In.ActorInfo);
 
             actors = changeActors;
 
-            OutConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).ActorInfos = actors.ToArray();
+            OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).ActorInfos = actors.ToArray();
         }
 
         public override void Tick(Actor self)
@@ -162,7 +156,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             var incon = InConnections.Where(c =>
             {
-                if (c.ConTyp != ConnectionType.ActorInfo)
+                if (c.ConnectionTyp != ConnectionType.ActorInfo)
                     return false;
 
                 if (c.In == null)
@@ -174,14 +168,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 return true;
             });
 
-            foreach (var info in incon)
-            {
-                changeActors.Add(info.In.ActorInfo);
-            }
+            foreach (var info in incon) changeActors.Add(info.In.ActorInfo);
 
             actors = changeActors;
 
-            OutConnections.First(c => c.ConTyp == ConnectionType.ActorInfoArray).ActorInfos = actors.ToArray();
+            OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).ActorInfos = actors.ToArray();
         }
     }
 }

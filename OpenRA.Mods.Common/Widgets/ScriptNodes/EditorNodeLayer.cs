@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
 using OpenRA.Traits;
 
@@ -22,9 +19,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
     public class EditorNodeLayer : IWorldLoaded
     {
+        readonly World world;
         public List<NodeInfo> NodeInfos = new List<NodeInfo>();
         public List<VariableInfo> VariableInfos = new List<VariableInfo>();
-        World world;
 
         public EditorNodeLayer(Actor self, EditorNodeLayerInfo info)
         {
@@ -44,8 +41,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddVariables(MiniYamlNode vars)
         {
-            string[] infos = vars.Key.Split('@');
-            string varType = infos.Last();
+            var infos = vars.Key.Split('@');
+            var varType = infos.Last();
 
             var values = (VariableType[]) Enum.GetValues(typeof(VariableType));
 
@@ -60,14 +57,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddNodeInfos(MiniYamlNode nodes)
         {
-            string[] infos = nodes.Key.Split('@');
-            string nodeName = infos.First();
-            string nodeID = infos.Last();
+            var infos = nodes.Key.Split('@');
+            var nodeName = infos.First();
+            var nodeId = infos.Last();
 
-            NodeType[] nodeTypes = (NodeType[]) Enum.GetValues(typeof(NodeType));
-            NodeType nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
+            var nodeTypes = (NodeType[]) Enum.GetValues(typeof(NodeType));
+            var nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
 
-            NodeInfo nodeInfo = new NodeInfo(nodeType, nodeID, nodeName);
+            var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
             var inCons = new List<InConReference>();
             var outCons = new List<OutConReference>();
@@ -75,31 +72,33 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             var dict = nodes.Value.ToDictionary();
             foreach (var node in dict)
             {
-                if (node.Key == "Pos")
+                switch (node.Key)
                 {
-                    int offsetX;
-                    int offsetY;
-                    int.TryParse(node.Value.Value.Split(',').First(), out offsetX);
-                    int.TryParse(node.Value.Value.Split(',').Last(), out offsetY);
-                    nodeInfo.OffsetPosX = offsetX;
-                    nodeInfo.OffsetPosY = offsetY;
-                }
-
-                if (node.Key == "Method")
-                {
-                    CompareMethode[] methodes = (CompareMethode[]) Enum.GetValues(typeof(CompareMethode));
-                    nodeInfo.Methode = methodes.First(e => e.ToString() == node.Value.Value);
-                }
-
-                if (node.Key == "Item")
-                {
-                    CompareItem[] item = (CompareItem[]) Enum.GetValues(typeof(CompareItem));
-                    nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
-                }
-
-                if (node.Key == "VariableReference")
-                {
-                    nodeInfo.VariableReference = node.Value.Value;
+                    case "Pos":
+                    {
+                        int offsetX;
+                        int offsetY;
+                        int.TryParse(node.Value.Value.Split(',').First(), out offsetX);
+                        int.TryParse(node.Value.Value.Split(',').Last(), out offsetY);
+                        nodeInfo.OffsetPosX = offsetX;
+                        nodeInfo.OffsetPosY = offsetY;
+                        break;
+                    }
+                    case "Method":
+                    {
+                        var methodes = (CompareMethod[]) Enum.GetValues(typeof(CompareMethod));
+                        nodeInfo.Method = methodes.First(e => e.ToString() == node.Value.Value);
+                        break;
+                    }
+                    case "Item":
+                    {
+                        var item = (CompareItem[]) Enum.GetValues(typeof(CompareItem));
+                        nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
+                        break;
+                    }
+                    case "VariableReference":
+                        nodeInfo.VariableReference = node.Value.Value;
+                        break;
                 }
 
                 if (node.Key.Contains("In@"))
@@ -113,7 +112,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     {
                         if (incon.Key == "ConnectionType")
                         {
-                            ConnectionType[] values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
+                            var values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
                             inCon.ConTyp = values.First(e => e.ToString() == incon.Value.Value);
                         }
 
@@ -126,116 +125,89 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 }
                 else if (node.Key.Contains("Out@"))
                 {
-                    var outCon = new OutConReference();
-                    outCons.Add(outCon);
+                    var outConReference = new OutConReference();
+                    outCons.Add(outConReference);
 
-                    outCon.ConnectionId = node.Key.Split('@').Last();
+                    outConReference.ConnectionId = node.Key.Split('@').Last();
 
-                    foreach (var outcon in node.Value.ToDictionary())
+                    foreach (var outCon in node.Value.ToDictionary())
                     {
-                        if (outcon.Key == "ConnectionType")
+                        if (outCon.Key == "ConnectionType")
                         {
-                            ConnectionType[] values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
-                            outCon.ConTyp = values.First(e => e.ToString() == outcon.Value.Value);
+                            var values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
+                            outConReference.ConTyp = values.First(e => e.ToString() == outCon.Value.Value);
                         }
 
-                        if (outcon.Key.Contains("String"))
+                        if (outCon.Key.Contains("String")) outConReference.String = outCon.Value.Value;
+
+                        if (outCon.Key.Contains("Strings")) outConReference.Strings = outCon.Value.Value.Split(',');
+
+                        if (outCon.Key.Contains("Players"))
                         {
-                            outCon.String = outcon.Value.Value;
+                            var playNames = outCon.Value.Value.Split(',');
+
+                            outConReference.PlayerGroup = playNames.Select(playerName =>
+                                world.WorldActor.Trait<EditorActorLayer>().Players.Players
+                                    .First(p => p.Key == playerName).Value).ToArray();
                         }
 
-                        if (outcon.Key.Contains("Strings"))
+                        if (outCon.Key.Contains("Player"))
+                            outConReference.Player = world.WorldActor.Trait<EditorActorLayer>().Players.Players
+                                .First(p => p.Key == outCon.Value.Value).Value;
+
+                        if (outCon.Key.Contains("ActorInfo"))
+                            outConReference.ActorInfo = world.Map.Rules.Actors[outCon.Value.Value];
+
+                        if (outCon.Key.Contains("ActorInfos"))
                         {
-                            outCon.Strings = outcon.Value.Value.Split(',');
+                            var actorNames = outCon.Value.Value.Split(',');
+
+                            outConReference.ActorInfos =
+                                actorNames.Select(name => world.Map.Rules.Actors[name]).ToArray();
                         }
 
-                        if (outcon.Key.Contains("Players"))
-                        {
-                            var playNames = outcon.Value.Value.Split(',');
-                            List<PlayerReference> list = new List<PlayerReference>();
-                            foreach (var playname in playNames)
-                            {
-                                list.Add(world.WorldActor.Trait<EditorActorLayer>().Players.Players
-                                    .First(p => p.Key == playname).Value);
-                            }
+                        if (outCon.Key.Contains("Actor"))
+                            outConReference.ActorPreview = world.WorldActor.Trait<EditorActorLayer>().Previews
+                                .FirstOrDefault(prev => prev.ID == outCon.Value.Value);
 
-                            outCon.PlayerGroup = list.ToArray();
+                        if (outCon.Key.Contains("Actors"))
+                        {
+                            var actorIds = outCon.Value.Value.Split(',');
+                            var prevList = world.WorldActor.Trait<EditorActorLayer>().Previews;
+
+                            outConReference.ActorPreviews = actorIds
+                                .Select(name => prevList.FirstOrDefault(a => a.ID == name))
+                                .Where(actorRef => actorRef != null).ToArray();
                         }
 
-                        if (outcon.Key.Contains("Player"))
+                        if (outCon.Key.Contains("Location"))
                         {
-                            outCon.Player = world.WorldActor.Trait<EditorActorLayer>().Players.Players
-                                .First(p => p.Key == outcon.Value.Value).Value;
-                        }
-
-                        if (outcon.Key.Contains("ActorInfo"))
-                        {
-                            outCon.ActorInfo = world.Map.Rules.Actors[outcon.Value.Value];
-                        }
-
-                        if (outcon.Key.Contains("ActorInfos"))
-                        {
-                            var actorNames = outcon.Value.Value.Split(',');
-                            List<ActorInfo> actorList = new List<ActorInfo>();
-                            foreach (var name in actorNames)
-                            {
-                                var actorRef = world.Map.Rules.Actors[name];
-                                actorList.Add(actorRef);
-                            }
-
-                            outCon.ActorInfos = actorList.ToArray();
-                        }
-
-                        if (outcon.Key.Contains("Actor"))
-                        {
-                            outCon.ActorPreview = world.WorldActor.Trait<EditorActorLayer>().Previews
-                                .FirstOrDefault(prev => prev.ID == outcon.Value.Value);
-                        }
-
-                        if (outcon.Key.Contains("Actors"))
-                        {
-                            var actorIds = outcon.Value.Value.Split(',');
-                            List<EditorActorPreview> actorList = new List<EditorActorPreview>();
-                            var prevlist = world.WorldActor.Trait<EditorActorLayer>().Previews;
-
-                            foreach (var name in actorIds)
-                            {
-                                var actorRef = prevlist.FirstOrDefault(a => a.ID == name);
-                                if (actorRef != null)
-                                    actorList.Add(actorRef);
-                            }
-
-                            outCon.ActorPreviews = actorList.ToArray();
-                        }
-
-                        if (outcon.Key.Contains("Location"))
-                        {
-                            string[] pos = outcon.Value.Value.Split(',');
+                            var pos = outCon.Value.Value.Split(',');
                             var x = 0;
                             var y = 0;
                             int.TryParse(pos[0], out x);
                             int.TryParse(pos[1], out y);
-                            outCon.Location = new CPos(x, y);
+                            outConReference.Location = new CPos(x, y);
                         }
 
-                        if (outcon.Key.Contains("Num"))
+                        if (outCon.Key.Contains("Num"))
                         {
-                            int num = 0;
-                            int.TryParse(outcon.Value.Value, out num);
-                            outCon.Number = num;
+                            var num = 0;
+                            int.TryParse(outCon.Value.Value, out num);
+                            outConReference.Number = num;
                         }
 
-                        if (outcon.Key.Contains("Cells"))
+                        if (outCon.Key.Contains("Cells"))
                         {
-                            string[] cells = outcon.Value.Value.Split('|');
+                            var cells = outCon.Value.Value.Split('|');
                             foreach (var cell in cells)
                             {
-                                string[] pos = cell.Split(',');
+                                var pos = cell.Split(',');
                                 var x = 0;
                                 var y = 0;
                                 int.TryParse(pos[0], out x);
                                 int.TryParse(pos[1], out y);
-                                outCon.CellArray.Add(new CPos(x, y));
+                                outConReference.CellArray.Add(new CPos(x, y));
                             }
                         }
                     }
@@ -250,28 +222,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public List<MiniYamlNode> Save()
         {
-            var nodes = new List<MiniYamlNode>();
-            foreach (var nodeInfo in NodeInfos)
-            {
-                nodes.Add(new MiniYamlNode(nodeInfo.NodeName + "@" + nodeInfo.NodeID, nodeInfo.NodeType.ToString(),
-                    SaveEntries(nodeInfo)));
-            }
-
-            foreach (var variableInfo in VariableInfos)
-            {
-                nodes.Add(new MiniYamlNode("Variable@" + variableInfo.VariableName, variableInfo.VarType.ToString()));
-            }
+            var nodes = NodeInfos.Select(nodeInfo => new MiniYamlNode(nodeInfo.NodeName + "@" + nodeInfo.NodeId,
+                nodeInfo.NodeType.ToString(), SaveEntries(nodeInfo))).ToList();
+            nodes.AddRange(VariableInfos.Select(variableInfo =>
+                new MiniYamlNode("Variable@" + variableInfo.VariableName, variableInfo.VarType.ToString())));
 
             return nodes;
         }
 
-        public List<MiniYamlNode> SaveEntries(NodeInfo nodeInfo)
+        List<MiniYamlNode> SaveEntries(NodeInfo nodeInfo)
         {
-            var nodes = new List<MiniYamlNode>();
-            nodes.Add(new MiniYamlNode("Pos", nodeInfo.OffsetPosX + "," + nodeInfo.OffsetPosY));
+            var nodes = new List<MiniYamlNode>
+            {
+                new MiniYamlNode("Pos", nodeInfo.OffsetPosX + "," + nodeInfo.OffsetPosY)
+            };
 
-            if (nodeInfo.Methode != null)
-                nodes.Add(new MiniYamlNode("Methode", nodeInfo.Methode.ToString()));
+            if (nodeInfo.Method != null)
+                nodes.Add(new MiniYamlNode("Methode", nodeInfo.Method.ToString()));
 
             if (nodeInfo.Item != null)
                 nodes.Add(new MiniYamlNode("Item", nodeInfo.Item.ToString()));
@@ -279,15 +246,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             if (nodeInfo.VariableReference != null)
                 nodes.Add(new MiniYamlNode("VariableReference", nodeInfo.VariableReference));
 
-            foreach (var outCon in nodeInfo.OutConnectionsReference)
-            {
-                nodes.Add(new MiniYamlNode("Out@" + outCon.ConnectionId, "", OutConnections(outCon)));
-            }
+            nodes.AddRange(nodeInfo.OutConnectionsReference.Select(outCon =>
+                new MiniYamlNode("Out@" + outCon.ConnectionId, "", OutConnections(outCon))));
 
             foreach (var inCon in nodeInfo.InConnectionsReference)
             {
-                List<MiniYamlNode> miniNode = new List<MiniYamlNode>();
-                miniNode.Add(new MiniYamlNode("ConnectionType", inCon.ConTyp.ToString()));
+                var miniNode = new List<MiniYamlNode>
+                {
+                    new MiniYamlNode("ConnectionType", inCon.ConTyp.ToString())
+                };
                 if (inCon.WidgetNodeReference != null)
                     miniNode.Add(new MiniYamlNode("Node@" + inCon.WidgetReferenceId, inCon.WidgetNodeReference));
 
@@ -297,7 +264,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             return nodes;
         }
 
-        public List<MiniYamlNode> OutConnections(OutConReference outCon)
+        static List<MiniYamlNode> OutConnections(OutConReference outCon)
         {
             var nodes = new List<MiniYamlNode>();
             nodes.Add(new MiniYamlNode("ConnectionType", outCon.ConTyp.ToString()));
@@ -309,14 +276,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             if (outCon.PlayerGroup != null && outCon.PlayerGroup.Any())
             {
-                string text = "";
+                var text = "";
                 foreach (var play in outCon.PlayerGroup)
-                {
                     if (play == outCon.PlayerGroup.Last())
                         text += play.Name;
                     else
                         text += play.Name + ",";
-                }
 
                 nodes.Add(new MiniYamlNode("Players", text));
             }
@@ -325,33 +290,26 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 nodes.Add(new MiniYamlNode("ActorInfo", outCon.ActorInfo.Name));
             if (outCon.ActorInfos != null && outCon.ActorInfos.Any())
             {
-                string text = "";
+                var text = "";
                 foreach (var play in outCon.ActorInfos)
-                {
                     if (play == outCon.ActorInfos.Last())
                         text += play.Name;
                     else
                         text += play.Name + ",";
-                }
 
                 nodes.Add(new MiniYamlNode("ActorInfos", text));
             }
 
-            if (outCon.ActorPreview != null)
-            {
-                nodes.Add(new MiniYamlNode("Actor", outCon.ActorPreview.ID));
-            }
+            if (outCon.ActorPreview != null) nodes.Add(new MiniYamlNode("Actor", outCon.ActorPreview.ID));
 
             if (outCon.ActorPreviews != null && outCon.ActorPreviews.Any())
             {
-                string text = "";
+                var text = "";
                 foreach (var play in outCon.ActorPreviews)
-                {
                     if (play == outCon.ActorPreviews.Last())
                         text += play.ID;
                     else
                         text += play.ID + ",";
-                }
 
                 nodes.Add(new MiniYamlNode("Actors", text));
             }
@@ -362,12 +320,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var text = "";
                 foreach (var cell in outCon.CellArray)
-                {
                     if (cell != outCon.CellArray.Last())
-                        text += cell.ToString() + "|";
+                        text += cell + "|";
                     else
                         text += cell.ToString();
-                }
 
                 nodes.Add(new MiniYamlNode("Cells", text));
             }
@@ -378,12 +334,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 var text = "";
                 foreach (var str in outCon.Strings)
-                {
                     if (str != outCon.Strings.Last())
                         text += str + ",";
                     else
                         text += str;
-                }
 
                 nodes.Add(new MiniYamlNode("Strings", text));
             }
@@ -394,85 +348,76 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
     public class VariableInfo
     {
-        public string VariableName;
-        public VariableType VarType;
-
         public Actor Actor = null;
         public Actor[] ActorGroup = null;
+        public string ActorId = null;
+        public string[] ActorIds = null;
         public ActorInfo ActorInfo = null;
         public ActorInfo[] ActorInfos = null;
         public EditorActorPreview ActorPreview = null;
         public EditorActorPreview[] ActorPreviews = null;
-        public string ActorId = null;
-        public string[] ActorIds = null;
+        public List<CPos> CellArray = new List<CPos>();
+        public CPos? Location = null;
+        public int? Number = null;
         public PlayerReference Player = null;
         public PlayerReference[] PlayerGroup = null;
-        public CPos? Location = null;
-        public List<CPos> CellArray = new List<CPos>();
-        public int? Number = null;
         public TriggerLogicCreateTimer Timer = null;
+        public string VariableName;
+        public VariableType VarType;
     }
 
     public class NodeInfo
     {
-        public NodeType NodeType;
-        public string NodeName;
-        public string NodeID;
-        public string VariableReference;
-        public int? OffsetPosX = null;
-        public int? OffsetPosY = null;
-        public List<InConReference> InConnectionsReference = null;
-        public List<OutConReference> OutConnectionsReference = null;
+        public List<InConReference> InConnectionsReference;
+        public CompareItem? Item;
 
-        public CompareMethode? Methode = null;
-        public CompareItem? Item = null;
+        public CompareMethod? Method;
+        public string NodeId;
+        public string NodeName;
+        public NodeType NodeType;
+        public int? OffsetPosX;
+        public int? OffsetPosY;
+        public List<OutConReference> OutConnectionsReference;
+        public string VariableReference;
 
         public NodeInfo(
             NodeType nodeType,
-            string nodeID,
+            string nodeId,
             string nodeName)
         {
             NodeType = nodeType;
             NodeName = nodeName;
-            NodeID = nodeID;
+            NodeId = nodeId;
         }
     }
 
     public class OutConReference
     {
-        public string ConnectionId;
-        public ConnectionType ConTyp;
-
-        public ActorInfo ActorInfo = null;
-        public ActorInfo[] ActorInfos = null;
-        public EditorActorPreview ActorPreview = null;
-        public EditorActorPreview[] ActorPreviews = null;
         public string ActorId = null;
         public string[] ActorIds = null;
-        public PlayerReference Player = null;
-        public PlayerReference[] PlayerGroup = null;
-        public CPos? Location = null;
-        public List<CPos> CellArray = new List<CPos>();
-        public int? Number = null;
-        public string String = null;
-        public string[] Strings = { };
 
-        public OutConReference()
-        {
-        }
+        public ActorInfo ActorInfo;
+        public ActorInfo[] ActorInfos;
+        public EditorActorPreview ActorPreview;
+        public EditorActorPreview[] ActorPreviews;
+        public List<CPos> CellArray = new List<CPos>();
+        public string ConnectionId;
+        public ConnectionType ConTyp;
+        public CPos? Location;
+        public int? Number;
+        public PlayerReference Player;
+        public PlayerReference[] PlayerGroup;
+        public string String;
+        public string[] Strings = { };
     }
 
     public class InConReference
     {
         public string ConnectionId;
         public ConnectionType ConTyp;
-
-        public string WidgetReferenceId;
         public string WidgetNodeReference;
 
-        public InConReference()
-        {
-        }
+        public string WidgetReferenceId;
     }
 
     public enum CompareItem
@@ -492,16 +437,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         IsIdle
     }
 
-    public enum CompareMethode
+    public enum CompareMethod
     {
         Max,
         Min,
-        Devide,
+        Divide,
         Multiply,
         Add,
-        Substract,
+        Subtract,
         All,
-        PleyerPlaying,
+        PlayerIsPlaying,
         AliveActors,
         Contains,
         ContainsNot,

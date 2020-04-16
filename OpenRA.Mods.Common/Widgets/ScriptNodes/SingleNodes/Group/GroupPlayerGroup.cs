@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
@@ -20,11 +19,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 AddInConnection(inCon);
             }
             else if (none.Length > 1)
+            {
                 foreach (var con in none)
-                {
                     if (con != none.First())
                         InConnections.Remove(con);
-                }
+            }
 
             base.Tick();
         }
@@ -34,7 +33,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
     {
         List<PlayerReference> players = new List<PlayerReference>();
 
-        public GroupPlayerLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public GroupPlayerLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
         }
 
@@ -43,7 +43,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             var changePlayers = new List<PlayerReference>();
             foreach (var info in InConnections.Where(c =>
             {
-                if (c.ConTyp != ConnectionType.Player)
+                if (c.ConnectionTyp != ConnectionType.Player)
                     return false;
 
                 if (c.In == null)
@@ -54,13 +54,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
                 return true;
             }))
-            {
                 changePlayers.Add(info.In.Player);
-            }
 
             players = changePlayers;
 
-            OutConnections.First(c => c.ConTyp == ConnectionType.PlayerGroup).PlayerGroup = players.ToArray();
+            OutConnections.First(c => c.ConnectionTyp == ConnectionType.PlayerGroup).PlayerGroup = players.ToArray();
         }
 
         public override void Tick(Actor self)
@@ -68,7 +66,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             var changePlayers = new List<PlayerReference>();
             foreach (var info in InConnections.Where(c =>
             {
-                if (c.ConTyp != ConnectionType.Player)
+                if (c.ConnectionTyp != ConnectionType.Player)
                     return false;
 
                 if (c.In == null)
@@ -79,13 +77,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
                 return true;
             }))
-            {
                 changePlayers.Add(info.In.Player);
-            }
 
             players = changePlayers;
 
-            OutConnections.First(c => c.ConTyp == ConnectionType.PlayerGroup).PlayerGroup = players.ToArray();
+            OutConnections.First(c => c.ConnectionTyp == ConnectionType.PlayerGroup).PlayerGroup = players.ToArray();
         }
     }
 }

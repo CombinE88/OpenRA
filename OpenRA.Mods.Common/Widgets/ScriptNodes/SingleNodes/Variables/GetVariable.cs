@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 
@@ -12,7 +11,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables
 
         public GetVariableNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            AddChild(availableVariables = new DropDownButtonWidget(Screen.ScriptNodeWidget.ModData));
+            AddChild(availableVariables = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData));
             Func<VariableInfo, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => VariableReference == option, () =>
@@ -117,47 +116,60 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables
     {
         public VariableInfo SelectedSharedVariable;
 
-        public GetVariableLogic(NodeInfo nodeinfo, IngameNodeScriptSystem insc) : base(nodeinfo, insc)
+        public GetVariableLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
+            ingameNodeScriptSystem)
         {
-            SelectedSharedVariable = insc.VariableInfos.First(v => v.VariableName == nodeinfo.VariableReference);
+            SelectedSharedVariable =
+                ingameNodeScriptSystem.VariableInfos.First(v => v.VariableName == nodeInfo.VariableReference);
         }
+
         public void Refresh()
         {
             switch (SelectedSharedVariable.VarType)
             {
                 case VariableType.Actor:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.Actor).Actor = SelectedSharedVariable.Actor;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).Actor =
+                        SelectedSharedVariable.Actor;
                     break;
                 case VariableType.ActorInfo:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.ActorInfo).ActorInfo = SelectedSharedVariable.ActorInfo;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo).ActorInfo =
+                        SelectedSharedVariable.ActorInfo;
                     break;
                 case VariableType.Player:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.Player).Player = SelectedSharedVariable.Player;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.Player).Player =
+                        SelectedSharedVariable.Player;
                     break;
                 case VariableType.PlayerGroup:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.PlayerGroup).PlayerGroup =
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.PlayerGroup).PlayerGroup =
                         SelectedSharedVariable.PlayerGroup;
                     break;
                 case VariableType.Location:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.Location).Location = SelectedSharedVariable.Location;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.Location).Location =
+                        SelectedSharedVariable.Location;
                     break;
                 case VariableType.CellArray:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.CellArray).CellArray = SelectedSharedVariable.CellArray;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.CellArray).CellArray =
+                        SelectedSharedVariable.CellArray;
                     break;
                 case VariableType.CellPath:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.CellArray).CellArray = SelectedSharedVariable.CellArray;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.CellArray).CellArray =
+                        SelectedSharedVariable.CellArray;
                     break;
                 case VariableType.Integer:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.Integer).Number = SelectedSharedVariable.Number;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.Integer).Number =
+                        SelectedSharedVariable.Number;
                     break;
                 case VariableType.ActorList:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.ActorList).ActorGroup = SelectedSharedVariable.ActorGroup;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).ActorGroup =
+                        SelectedSharedVariable.ActorGroup;
                     break;
                 case VariableType.Timer:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.Objective).Number = SelectedSharedVariable.Number;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.Objective).Number =
+                        SelectedSharedVariable.Number;
                     break;
                 case VariableType.Objective:
-                    OutConnections.First(c => c.ConTyp == ConnectionType.TimerConnection).Logic = SelectedSharedVariable.Timer;
+                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.TimerConnection).Logic =
+                        SelectedSharedVariable.Timer;
                     break;
             }
         }

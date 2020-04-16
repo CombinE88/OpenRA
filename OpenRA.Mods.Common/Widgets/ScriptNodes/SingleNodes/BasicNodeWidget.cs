@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Widgets;
 
@@ -9,61 +8,62 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 {
     public class BasicNodeWidget : Widget
     {
+        public readonly string Background = "dialog";
+
+        public readonly string BackgroundCross = "button";
+
         // BAckground
         public readonly string BackgroundDrag = "button-highlighted";
-        public readonly string BackgroundCross = "button";
         public readonly string BackgroundEntries = "button-pressed";
-
-        public readonly string Background = "dialog";
         public readonly EditorViewportControllerWidget Editor;
 
-        public NodeEditorNodeScreenWidget Screen;
+        public Rectangle AddInput;
+        public Rectangle AddOutput;
+        public int2 CursorLocation;
+        public Rectangle DeleteButton;
+
+        // Node Inhalte
+        public Rectangle DragBar;
+        public Rectangle FreeWidgetEntries;
 
         // Node Coordiantions in the System
         public int GridPosX;
         public int GridPosY;
-        public int SizeX;
-        public int SizeY;
-        public int OffsetPosX;
-        public int OffsetPosY;
-
-        // Node Inhalte
-        public Rectangle DragBar;
-        public Rectangle DeleteButton;
-        public Rectangle WidgetEntries;
-        public Rectangle WidgetBackground;
-
-        // Node Local Position
-        public int2 NewOffset;
-        public int2 CursorLocation;
 
         // Node Connections
         public List<InConnection> InConnections;
-        public List<OutConnection> OutConnections;
 
-        public Rectangle AddInput;
-        public Rectangle AddOutput;
+        // Node Local Position
+        public int2 NewOffset;
+        public string NodeID;
+
+        public TextFieldWidget NodeIDTextfield;
+        public NodeInfo NodeInfo;
+
+        public string NodeName = "General Widget";
+        public NodeType NodeType;
+        public int OffsetPosX;
+        public int OffsetPosY;
+        public List<OutConnection> OutConnections;
         public Rectangle RemoveInput;
         public Rectangle RemoveOutput;
-        public Rectangle FreeWidgetEntries;
-        public AdvancedTextFieldType Textfield;
+
+        public NodeEditorNodeScreenWidget Screen;
 
         // Node Informations
 
         // Selection
         public bool Selected;
+        public int SizeX;
+        public int SizeY;
+        public AdvancedTextFieldType Textfield;
+        public Rectangle WidgetBackground;
+        public Rectangle WidgetEntries;
 
-        public string NodeName = "General Widget";
-        public string NodeID;
-        public NodeType NodeType;
-        public NodeInfo NodeInfo;
-
-        public TextFieldWidget NodeIDTextfield;
-
-        [ObjectCreator.UseCtor]
+        [ObjectCreator.UseCtorAttribute]
         public BasicNodeWidget(NodeEditorNodeScreenWidget screen)
         {
-            Editor = screen.ScriptNodeWidget.Parent.Get<EditorViewportControllerWidget>("MAP_EDITOR");
+            Editor = screen.NodeScriptContainerWidget.Parent.Get<EditorViewportControllerWidget>("MAP_EDITOR");
             Screen = screen;
 
             InConnections = new List<InConnection>();
@@ -99,8 +99,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public override void Tick()
         {
-            GridPosX = Screen.WidgetScreenCenterCoordinates.X + OffsetPosX - Screen.CenterCoordinates.X - Bounds.Width / 2;
-            GridPosY = Screen.WidgetScreenCenterCoordinates.Y + OffsetPosY - Screen.CenterCoordinates.Y - Bounds.Height / 2;
+            GridPosX = Screen.WidgetScreenCenterCoordinates.X + OffsetPosX - Screen.CenterCoordinates.X -
+                       Bounds.Width / 2;
+            GridPosY = Screen.WidgetScreenCenterCoordinates.Y + OffsetPosY - Screen.CenterCoordinates.Y -
+                       Bounds.Height / 2;
 
             SizeY = Math.Max(InConnections.Count, OutConnections.Count) * 35;
             Bounds = new Rectangle(GridPosX, GridPosY, 200 + SizeX, 150 + SizeY);
@@ -114,14 +116,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             FreeWidgetEntries = new Rectangle(5, 27, WidgetEntries.Width - 10, WidgetEntries.Height - 28 - 26);
 
             var splitHeight = RenderBounds.Height / (InConnections.Count + 1);
-            for (int i = 0; i < InConnections.Count; i++)
+            for (var i = 0; i < InConnections.Count; i++)
             {
                 var rect = new Rectangle(RenderBounds.X - 15, RenderBounds.Y + splitHeight * (i + 1), 20, 20);
                 InConnections[i].InWidgetPosition = rect;
             }
 
             splitHeight = (RenderBounds.Height + 20) / (OutConnections.Count + 1);
-            for (int i = 0; i < OutConnections.Count; i++)
+            for (var i = 0; i < OutConnections.Count; i++)
             {
                 var rect = new Rectangle(RenderBounds.X + RenderBounds.Width - 5,
                     RenderBounds.Y + splitHeight * (i + 1), 20, 20);
@@ -129,10 +131,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             }
 
             foreach (var connection in OutConnections)
-            {
                 if (connection.Out != null && connection.Out.In == connection)
                     connection.Out.In = connection;
-            }
         }
 
         public override void DrawOuter()
@@ -169,35 +169,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public override void Draw()
         {
-            for (int i = 0; i < InConnections.Count; i++)
-            {
+            for (var i = 0; i < InConnections.Count; i++)
                 if (InConnections[i].In != null)
                 {
                     var found = false;
-                    Point conin = InConnections[i].InWidgetPosition.Location;
-                    Point conout = conin;
+                    var conin = InConnections[i].InWidgetPosition.Location;
+                    var conout = conin;
                     foreach (var node in Screen.Nodes)
                     {
-                        for (int j = 0; j < node.OutConnections.Count; j++)
-                        {
+                        for (var j = 0; j < node.OutConnections.Count; j++)
                             if (node.OutConnections[j] == InConnections[i].In)
                             {
                                 conout = node.OutConnections[j].InWidgetPosition.Location;
                                 found = true;
                                 break;
                             }
-                        }
 
                         if (found)
                             break;
                     }
 
                     if (found)
-                    {
-                        NodeEditorNodeScreenWidget.DrawLine(new int2(conout.X + 10, conout.Y + 10), new int2(conin.X + 10, conin.Y + 10), InConnections[i].Color);
-                    }
+                        NodeEditorNodeScreenWidget.DrawLine(new int2(conout.X + 10, conout.Y + 10),
+                            new int2(conin.X + 10, conin.Y + 10), InConnections[i].Color);
                 }
-            }
 
             if (!Screen.Bounds.Contains(WidgetBackground.X, WidgetBackground.Y)
                 && !Screen.Bounds.Contains(WidgetBackground.X + WidgetBackground.Width, WidgetBackground.Y)
@@ -206,21 +201,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     WidgetBackground.Y + WidgetBackground.Height))
             {
                 foreach (var child in Children)
-                {
                     if (child.Visible)
                         child.Visible = false;
-                }
 
                 return;
             }
-            else
-            {
-                foreach (var child in Children)
-                {
-                    if (!child.Visible)
-                        child.Visible = true;
-                }
-            }
+
+            foreach (var child in Children)
+                if (!child.Visible)
+                    child.Visible = true;
 
             //// Debug
 
@@ -242,37 +231,41 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             //// InconnectioNButtons
 
             WidgetUtils.FillRectWithColor(AddOutput, Color.DarkGray);
-            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow("+", new float2(AddOutput.X + 2, AddOutput.Y + 2),
+            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow("+", new float2(AddOutput.X + 2, AddOutput.Y + 2),
                 Color.White, Color.Black, 2);
 
             WidgetUtils.FillRectWithColor(RemoveOutput, Color.DarkGray);
-            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow("-", new float2(RemoveOutput.X + 2, RemoveOutput.Y + 2),
+            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow("-",
+                new float2(RemoveOutput.X + 2, RemoveOutput.Y + 2),
                 Color.White, Color.Black, 2);
 
             WidgetUtils.FillRectWithColor(AddInput, Color.DarkGray);
-            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow("+", new float2(AddInput.X + 2, AddInput.Y + 2),
+            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow("+", new float2(AddInput.X + 2, AddInput.Y + 2),
                 Color.White, Color.Black, 2);
 
             WidgetUtils.FillRectWithColor(RemoveInput, Color.DarkGray);
-            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow("-", new float2(RemoveInput.X + 2, RemoveInput.Y + 2),
+            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow("-",
+                new float2(RemoveInput.X + 2, RemoveInput.Y + 2),
                 Color.White, Color.Black, 2);
 
             var text = "X: " + OffsetPosX + " Y: " + OffsetPosY;
-            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow(text,
-                new float2(WidgetBackground.X + WidgetBackground.Width - Screen.ScriptNodeWidget.FontRegular.Measure(text).X - 10,
+            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow(text,
+                new float2(
+                    WidgetBackground.X + WidgetBackground.Width -
+                    Screen.NodeScriptContainerWidget.FontRegular.Measure(text).X - 10,
                     WidgetBackground.Y + WidgetBackground.Height - 25),
                 Color.White, Color.Black, 1);
 
-            Screen.ScriptNodeWidget.FontRegular.DrawTextWithShadow(NodeName + " " + NodeID,
+            Screen.NodeScriptContainerWidget.FontRegular.DrawTextWithShadow(NodeName + " " + NodeID,
                 new float2(DragBar.X, DragBar.Y - 2),
                 Color.White, Color.Black, 1);
-            Screen.ScriptNodeWidget.FontSmall.DrawTextWithShadow(NodeType.ToString(),
+            Screen.NodeScriptContainerWidget.FontSmall.DrawTextWithShadow(NodeType.ToString(),
                 new float2(DragBar.X + 2, DragBar.Y + 12),
                 Color.White, Color.Black, 1);
 
-            for (int i = 0; i < InConnections.Count; i++)
+            for (var i = 0; i < InConnections.Count; i++)
             {
-                if (InConnections[i].ConTyp == ConnectionType.Exec)
+                if (InConnections[i].ConnectionTyp == ConnectionType.Exec)
                 {
                     WidgetUtils.FillRectWithColor(
                         new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1,
@@ -297,14 +290,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                             InConnections[i].InWidgetPosition.Width - 4), Color.Black);
                 }
 
-                Screen.ScriptNodeWidget.FontSmall.DrawTextWithShadow(InConnections[i].ConTyp.ToString(),
+                Screen.NodeScriptContainerWidget.FontSmall.DrawTextWithShadow(InConnections[i].ConnectionTyp.ToString(),
                     new int2(InConnections[i].InWidgetPosition.X + 22, InConnections[i].InWidgetPosition.Y + 4),
                     Color.White, Color.Black, 1);
             }
 
-            for (int i = 0; i < OutConnections.Count; i++)
+            for (var i = 0; i < OutConnections.Count; i++)
             {
-                if (OutConnections[i].ConTyp == ConnectionType.Exec)
+                if (OutConnections[i].ConnectionTyp == ConnectionType.Exec)
                 {
                     WidgetUtils.FillRectWithColor(
                         new Rectangle(OutConnections[i].InWidgetPosition.X - 1,
@@ -330,7 +323,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 }
 
                 if (Screen.CurrentBrush == NodeBrush.Connecting)
-                    Screen.ScriptNodeWidget.FontSmall.DrawTextWithShadow(OutConnections[i].ConTyp.ToString(),
+                    Screen.NodeScriptContainerWidget.FontSmall.DrawTextWithShadow(OutConnections[i].ConnectionTyp.ToString(),
                         new int2(OutConnections[i].InWidgetPosition.X + 22, OutConnections[i].InWidgetPosition.Y + 4),
                         Color.White, Color.Black, 1);
             }

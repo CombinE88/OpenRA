@@ -2,16 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Graphics;
-using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -26,19 +18,37 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
     public class IngameNodeScriptSystem : IWorldLoaded, ITick
     {
+        readonly List<NodeInfo> nodesInfos = new List<NodeInfo>();
+        public readonly List<VariableInfo> VariableInfos = new List<VariableInfo>();
+
+        public readonly World World;
+        bool initialized;
         public List<NodeLogic> NodeLogics = new List<NodeLogic>();
-        public List<VariableInfo> VariableInfos = new List<VariableInfo>();
+        int ticker;
 
         public WorldRenderer WorldRenderer;
-        List<NodeInfo> nodesInfos = new List<NodeInfo>();
-
-        public World World;
-        bool initialized = false;
-        int ti;
 
         public IngameNodeScriptSystem(ActorInitializer init)
         {
             World = init.Self.World;
+        }
+
+        void ITick.Tick(Actor self)
+        {
+            if (!initialized)
+                return;
+
+            foreach (var node in NodeLogics)
+            {
+                node.Tick(self);
+                node.ExecuteTick(self);
+            }
+
+            if (ticker == 3)
+                foreach (var logic in NodeLogics.Where(l => l.NodeType == NodeType.TriggerWorldLoaded))
+                    logic.Execute(self.World);
+
+            if (ticker < 4) ticker++;
         }
 
         public void WorldLoaded(World w, WorldRenderer wr)
@@ -53,28 +63,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             NodeLogics = NodeLibrary.InitializeNodes(this, nodesInfos);
 
-            foreach (var node in NodeLogics)
-            {
-                node.AddOutConnectionReferences();
-            }
+            foreach (var node in NodeLogics) node.AddOutConnectionReferences();
 
-            foreach (var node in NodeLogics)
-            {
-                node.AddInConnectionReferences();
-            }
+            foreach (var node in NodeLogics) node.AddInConnectionReferences();
 
-            foreach (var node in NodeLogics)
-            {
-                node.DoAfterConnections();
-            }
+            foreach (var node in NodeLogics) node.DoAfterConnections();
 
             initialized = true;
         }
 
         void SetUpVariables(MiniYamlNode vars)
         {
-            string[] infos = vars.Key.Split('@');
-            string varType = infos.Last();
+            var infos = vars.Key.Split('@');
+            var varType = infos.Last();
 
             var values = (VariableType[]) Enum.GetValues(typeof(VariableType));
 
@@ -89,14 +90,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         void AddNodeLogic(MiniYamlNode nodes)
         {
-            string[] infos = nodes.Key.Split('@');
-            string nodeName = infos.First();
-            string nodeId = infos.Last();
+            var infos = nodes.Key.Split('@');
+            var nodeName = infos.First();
+            var nodeId = infos.Last();
 
-            NodeType[] nodeTypes = (NodeType[]) Enum.GetValues(typeof(NodeType));
-            NodeType nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
+            var nodeTypes = (NodeType[]) Enum.GetValues(typeof(NodeType));
+            var nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
 
-            NodeInfo nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+            var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
             var inCons = new List<InConReference>();
             var outCons = new List<OutConReference>();
@@ -104,154 +105,135 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             var dict = nodes.Value.ToDictionary();
             foreach (var node in dict)
             {
-                if (node.Key == "Pos")
+                switch (node.Key)
                 {
-                    int offsetX;
-                    int offsetY;
-                    int.TryParse(node.Value.Value.Split(',').First(), out offsetX);
-                    int.TryParse(node.Value.Value.Split(',').Last(), out offsetY);
-                    nodeInfo.OffsetPosX = offsetX;
-                    nodeInfo.OffsetPosY = offsetY;
-                }
-
-                if (node.Key == "Methode")
-                {
-                    CompareMethode[] methodes = (CompareMethode[]) Enum.GetValues(typeof(CompareMethode));
-                    nodeInfo.Methode = methodes.First(e => e.ToString() == node.Value.Value);
-                }
-
-                if (node.Key == "Item")
-                {
-                    CompareItem[] item = (CompareItem[]) Enum.GetValues(typeof(CompareItem));
-                    nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
-                }
-
-                if (node.Key == "VariableReference")
-                {
-                    nodeInfo.VariableReference = node.Value.Value;
+                    case "Pos":
+                    {
+                        int offsetX;
+                        int offsetY;
+                        int.TryParse(node.Value.Value.Split(',').First(), out offsetX);
+                        int.TryParse(node.Value.Value.Split(',').Last(), out offsetY);
+                        nodeInfo.OffsetPosX = offsetX;
+                        nodeInfo.OffsetPosY = offsetY;
+                        break;
+                    }
+                    case "Method":
+                    {
+                        var methodes = (CompareMethod[]) Enum.GetValues(typeof(CompareMethod));
+                        nodeInfo.Method = methodes.First(e => e.ToString() == node.Value.Value);
+                        break;
+                    }
+                    case "Item":
+                    {
+                        var item = (CompareItem[]) Enum.GetValues(typeof(CompareItem));
+                        nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
+                        break;
+                    }
+                    case "VariableReference":
+                        nodeInfo.VariableReference = node.Value.Value;
+                        break;
                 }
 
                 if (node.Key.Contains("In@"))
                 {
-                    var inCon = new InConReference();
-                    inCons.Add(inCon);
+                    var inConReference = new InConReference();
+                    inCons.Add(inConReference);
 
-                    inCon.ConnectionId = node.Key.Split('@').Last();
+                    inConReference.ConnectionId = node.Key.Split('@').Last();
 
-                    foreach (var incon in node.Value.ToDictionary())
+                    foreach (var inCon in node.Value.ToDictionary())
                     {
-                        if (incon.Key == "ConnectionType")
+                        if (inCon.Key == "ConnectionType")
                         {
-                            ConnectionType[] values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
-                            inCon.ConTyp = values.First(e => e.ToString() == incon.Value.Value);
+                            var values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
+                            inConReference.ConTyp = values.First(e => e.ToString() == inCon.Value.Value);
                         }
 
-                        if (incon.Key.Contains("Node@"))
+                        if (inCon.Key.Contains("Node@"))
                         {
-                            inCon.WidgetNodeReference = incon.Value.Value;
-                            inCon.WidgetReferenceId = incon.Key.Split('@').Last();
+                            inConReference.WidgetNodeReference = inCon.Value.Value;
+                            inConReference.WidgetReferenceId = inCon.Key.Split('@').Last();
                         }
                     }
                 }
                 else if (node.Key.Contains("Out@"))
                 {
-                    var outCon = new OutConReference();
-                    outCons.Add(outCon);
+                    var outConReference = new OutConReference();
+                    outCons.Add(outConReference);
 
-                    outCon.ConnectionId = node.Key.Split('@').Last();
+                    outConReference.ConnectionId = node.Key.Split('@').Last();
 
-                    foreach (var outcon in node.Value.ToDictionary())
+                    foreach (var outConnection in node.Value.ToDictionary())
                     {
-                        if (outcon.Key == "ConnectionType")
+                        if (outConnection.Key == "ConnectionType")
                         {
-                            ConnectionType[] values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
-                            outCon.ConTyp = values.First(e => e.ToString() == outcon.Value.Value);
+                            var values = (ConnectionType[]) Enum.GetValues(typeof(ConnectionType));
+                            outConReference.ConTyp = values.First(e => e.ToString() == outConnection.Value.Value);
                         }
 
-                        if (outcon.Key.Contains("String"))
+                        if (outConnection.Key.Contains("String")) outConReference.String = outConnection.Value.Value;
+
+                        if (outConnection.Key.Contains("Strings"))
+                            outConReference.Strings = outConnection.Value.Value.Split(',');
+
+                        if (outConnection.Key.Contains("Player"))
                         {
-                            outCon.String = outcon.Value.Value;
+                            var player = World.Players.FirstOrDefault(p => p.InternalName == outConnection.Value.Value);
+                            outConReference.Player = player != null ? player.PlayerReference : null;
                         }
 
-                        if (outcon.Key.Contains("Strings"))
+                        if (outConnection.Key.Contains("Players"))
                         {
-                            outCon.Strings = outcon.Value.Value.Split(',');
+                            var playNames = outConnection.Value.Value.Split(',');
+
+                            outConReference.PlayerGroup = playNames.Select(playname =>
+                                World.Players.First(p => p.InternalName == playname).PlayerReference).ToArray();
                         }
 
-                        if (outcon.Key.Contains("Player"))
+                        if (outConnection.Key.Contains("ActorInfo"))
+                            outConReference.ActorInfo = World.Map.Rules.Actors[outConnection.Value.Value];
+
+                        if (outConnection.Key.Contains("ActorInfos"))
                         {
-                            var player = World.Players.FirstOrDefault(p => p.InternalName == outcon.Value.Value);
-                            outCon.Player = player != null ? player.PlayerReference : null;
+                            var actorNames = outConnection.Value.Value.Split(',');
+
+                            outConReference.ActorInfos =
+                                actorNames.Select(name => World.Map.Rules.Actors[name]).ToArray();
                         }
 
-                        if (outcon.Key.Contains("Players"))
+                        if (outConnection.Key.Contains("Actor")) outConReference.ActorId = outConnection.Value.Value;
+
+                        if (outConnection.Key.Contains("Actors"))
+                            outConReference.ActorIds = outConnection.Value.Value.Split(',');
+
+                        if (outConnection.Key.Contains("Location"))
                         {
-                            var playNames = outcon.Value.Value.Split(',');
-                            List<PlayerReference> list = new List<PlayerReference>();
-                            foreach (var playname in playNames)
-                            {
-                                list.Add(World.Players.First(p => p.InternalName == playname).PlayerReference);
-                            }
-
-                            outCon.PlayerGroup = list.ToArray();
-                        }
-
-                        if (outcon.Key.Contains("ActorInfo"))
-                        {
-                            outCon.ActorInfo = World.Map.Rules.Actors[outcon.Value.Value];
-                        }
-
-                        if (outcon.Key.Contains("ActorInfos"))
-                        {
-                            var actorNames = outcon.Value.Value.Split(',');
-                            List<ActorInfo> actorList = new List<ActorInfo>();
-                            foreach (var name in actorNames)
-                            {
-                                var actorRef = World.Map.Rules.Actors[name];
-                                actorList.Add(actorRef);
-                            }
-
-                            outCon.ActorInfos = actorList.ToArray();
-                        }
-
-                        if (outcon.Key.Contains("Actor"))
-                        {
-                            outCon.ActorId = outcon.Value.Value;
-                        }
-
-                        if (outcon.Key.Contains("Actors"))
-                        {
-                            outCon.ActorIds = outcon.Value.Value.Split(',');
-                        }
-
-                        if (outcon.Key.Contains("Location"))
-                        {
-                            string[] pos = outcon.Value.Value.Split(',');
+                            var pos = outConnection.Value.Value.Split(',');
                             var x = 0;
                             var y = 0;
                             int.TryParse(pos[0], out x);
                             int.TryParse(pos[1], out y);
-                            outCon.Location = new CPos(x, y);
+                            outConReference.Location = new CPos(x, y);
                         }
 
-                        if (outcon.Key.Contains("Num"))
+                        if (outConnection.Key.Contains("Num"))
                         {
-                            int num = 0;
-                            int.TryParse(outcon.Value.Value, out num);
-                            outCon.Number = num;
+                            var num = 0;
+                            int.TryParse(outConnection.Value.Value, out num);
+                            outConReference.Number = num;
                         }
 
-                        if (outcon.Key.Contains("Cells"))
+                        if (!outConnection.Key.Contains("Cells")) continue;
                         {
-                            string[] cells = outcon.Value.Value.Split('|');
+                            var cells = outConnection.Value.Value.Split('|');
                             foreach (var cell in cells)
                             {
-                                string[] pos = cell.Split(',');
+                                var pos = cell.Split(',');
                                 var x = 0;
                                 var y = 0;
                                 int.TryParse(pos[0], out x);
                                 int.TryParse(pos[1], out y);
-                                outCon.CellArray.Add(new CPos(x, y));
+                                outConReference.CellArray.Add(new CPos(x, y));
                             }
                         }
                     }
@@ -262,29 +244,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             nodeInfo.InConnectionsReference = inCons;
 
             nodesInfos.Add(nodeInfo);
-        }
-
-        void ITick.Tick(Actor self)
-        {
-            if (!initialized)
-                return;
-
-            foreach (var node in NodeLogics)
-            {
-                node.Tick(self);
-                node.ExecuteTick(self);
-            }
-
-            if (ti == 3)
-                foreach (var logic in NodeLogics.Where(l => l.NodeType == NodeType.TriggerWorldLoaded))
-                {
-                    logic.Execute(self.World);
-                }
-
-            if (ti < 4)
-            {
-                ti++;
-            }
         }
     }
 }
