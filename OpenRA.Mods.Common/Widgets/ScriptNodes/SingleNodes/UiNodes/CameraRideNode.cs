@@ -46,29 +46,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
             maxLength = numb.In.Number.Value;
             active = true;
+
+            ForwardExec(this, 0);
         }
 
         public override void Tick(Actor self)
         {
             if (!active)
                 return;
+            
             if (maxLength > currentLength)
             {
                 currentLength++;
             }
             else if (active)
             {
-                var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-                if (oCon != null)
-                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                    {
-                        var inCon = node.InConnections.FirstOrDefault(c =>
-                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                        if (inCon != null)
-                            inCon.Execute = true;
-                    }
-
+                ForwardExec(this, 1);
                 active = false;
             }
 

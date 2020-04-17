@@ -15,10 +15,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
     {
         bool repeat;
         bool triggerOnEnter;
+        bool enabled;
 
         public TriggerLogicEnteredFootPrint(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
             nodeInfo, ingameNodeScriptSystem)
         {
+        }
+
+        public override void Execute(World world)
+        {
+            enabled = true;
+            ForwardExec(this, 1);
         }
 
         public override void DoAfterConnections()
@@ -29,7 +36,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Tick(Actor self)
         {
-            if (triggerOnEnter && !repeat)
+            if (!enabled || triggerOnEnter && !repeat)
                 return;
 
             if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.CellArray).In == null ||
@@ -54,16 +61,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
             if (actors.Any() && !triggerOnEnter)
             {
-                var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-                if (oCon != null)
-                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                    {
-                        var inCon = node.InConnections.FirstOrDefault(c =>
-                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                        if (inCon != null)
-                            inCon.Execute = true;
-                    }
+                
+                ForwardExec(this, 0);
 
                 triggerOnEnter = true;
             }

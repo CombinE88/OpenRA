@@ -251,17 +251,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     }
                 }
             }
-            
-            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-            if (oCon != null)
-                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                {
-                    var inCon = node.InConnections.FirstOrDefault(c =>
-                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                    if (inCon != null)
-                        inCon.Execute = true;
-                }
+
+            ForwardExec(this);
         }
     }
 }

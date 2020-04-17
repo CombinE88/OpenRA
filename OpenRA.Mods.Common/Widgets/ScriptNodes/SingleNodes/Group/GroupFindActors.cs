@@ -24,20 +24,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 outCon.ActorGroup = world.FindActorsInCircle(world.Map.CenterOfCell(integ.Location.Value),
                         WDist.FromCells(integ.Number.Value))
                     .Where(a => !a.IsDead && a.IsInWorld).ToArray();
-
-                if (outCon.ActorGroup.Any())
-                {
-                    var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-                    if (oCon != null)
-                        foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                            n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                        {
-                            var inCon = node.InConnections.FirstOrDefault(c =>
-                                c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                            if (inCon != null)
-                                inCon.Execute = true;
-                        }
-                }
             }
             else if (NodeType == NodeType.FindActorsOnFootprint)
             {
@@ -48,21 +34,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
                 outCon.ActorGroup = world.Actors
                     .Where(a => !a.IsDead && a.IsInWorld && integ.CellArray.Contains(a.Location)).ToArray();
-
-                if (outCon.ActorGroup.Any())
-                {
-                    var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-                    if (oCon != null)
-                        foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                            n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                        {
-                            var inCon = node.InConnections.FirstOrDefault(c =>
-                                c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                            if (inCon != null)
-                                inCon.Execute = true;
-                        }
-                }
             }
+
+            ForwardExec(this);
         }
     }
 }

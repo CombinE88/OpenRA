@@ -19,21 +19,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 && InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Repeatable).In != null)
                 repeating = true;
         }
-
-        public override void Execute(World world)
-        {
-            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-            if (oCon != null)
-                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                {
-                    var inCon = node.InConnections.FirstOrDefault(c =>
-                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                    if (inCon != null)
-                        inCon.Execute = true;
-                }
-        }
-
+        
         public override void ExecuteTick(Actor self)
         {
             if (NodeInfo.NodeType == NodeType.ArithmeticsOr && (repeating || !started))
@@ -41,7 +27,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 foreach (var conn in InConnections.Where(c => c.ConnectionTyp == ConnectionType.Exec))
                     if (conn.Execute)
                     {
-                        Execute(self.World);
+                        ForwardExec(this);
                         conn.Execute = false;
                         started = true;
                         break;
@@ -55,7 +41,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 if (!InConnections.Last(c => c.ConnectionTyp == ConnectionType.Exec).Execute)
                     return;
 
-                Execute(self.World);
+                ForwardExec(this);
                 started = true;
                 InConnections.First(c => c.ConnectionTyp == ConnectionType.Exec).Execute = false;
                 InConnections.Last(c => c.ConnectionTyp == ConnectionType.Exec).Execute = false;

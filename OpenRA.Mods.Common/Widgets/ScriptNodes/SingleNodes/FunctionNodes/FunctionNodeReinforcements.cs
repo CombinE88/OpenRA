@@ -100,6 +100,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     InConnections.First(c => c.ConnectionTyp == ConnectionType.CellPath).In.CellArray.ToArray(),
                     InConnections.Last(c => c.ConnectionTyp == ConnectionType.CellPath).In.CellArray.ToArray());
             }
+
+            ForwardExec(this, 1);
         }
 
         Actor CreateActor(World world, Player owner, string actorType, bool addToWorld, CPos? entryLocation = null,
@@ -165,17 +167,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             Action worldendAction = () =>
             {
                 OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
-
-                var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-                if (oCon != null)
-                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                    {
-                        var inCon = node.InConnections.FirstOrDefault(c =>
-                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                        if (inCon != null)
-                            inCon.Execute = true;
-                    }
+                ForwardExec(this, 1);
             };
             world.AddFrameEndTask(w => w.Add(new DelayedAction(leng, worldendAction)));
             return actors.ToArray();
@@ -252,23 +244,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 transport.QueueActivity(new WaitFor(() => cargo.IsEmpty(transport)));
             }
 
-            transport.QueueActivity(new CallFunc(() =>
-            {
-                var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-                if (oCon != null)
-                {
-                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).ActorGroup =
-                        passengers.ToArray();
-                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                    {
-                        var inCon = node.InConnections.FirstOrDefault(c =>
-                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                        if (inCon != null)
-                            inCon.Execute = true;
-                    }
-                }
-            }));
+            transport.QueueActivity(new CallFunc(() => { ForwardExec(this, 0); }));
             transport.QueueActivity(new Wait(aircraft != null ? 50 : 25));
 
             if (exitPath != null)

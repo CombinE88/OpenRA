@@ -6,6 +6,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
     public class TriggerOnIdle : NodeLogic
     {
         readonly List<Actor> idleActors = new List<Actor>();
+        bool enabled;
 
         public TriggerOnIdle(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
             ingameNodeScriptSystem)
@@ -21,42 +22,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
             if (!inCon.In.Actor.IsDead && inCon.In.Actor.IsInWorld)
                 idleActors.Add(inCon.In.Actor);
+
+            enabled = true;
+
+            ForwardExec(this, 1);
         }
 
         public override void Tick(Actor self)
         {
-            if (idleActors.Any())
+            if (!enabled || !idleActors.Any(a => !a.IsDead))
+                return;
+
+            var newList = idleActors.ToList();
+            foreach (var act in newList.Where(act => act.IsDead && !act.IsInWorld))
+                idleActors.Remove(act);
+
+            var idles = idleActors.ToList();
+            foreach (var actor in idles.Where(actor => actor.IsIdle))
             {
-                var newlist = idleActors.ToList();
-                foreach (var act in newlist)
-                    if (act.IsDead && !act.IsInWorld)
-                        idleActors.Remove(act);
+                OutConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).Actor = actor;
+                ForwardExec(this, 0);
 
-                var idles = idleActors.ToList();
-                foreach (var actor in idles)
-                    if (actor.IsIdle)
-                    {
-                        OutConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).Actor = actor;
-                        ExecuteOnidle(self.World);
-
-                        if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Repeatable).In != null)
-                            idleActors.Remove(actor);
-                    }
+                if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Repeatable).In != null)
+                    idleActors.Remove(actor);
             }
-        }
-
-        void ExecuteOnidle(World world)
-        {
-            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-            if (oCon != null)
-                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                {
-                    var inCon = node.InConnections.FirstOrDefault(c =>
-                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                    if (inCon != null)
-                        inCon.Execute = true;
-                }
         }
     }
 }

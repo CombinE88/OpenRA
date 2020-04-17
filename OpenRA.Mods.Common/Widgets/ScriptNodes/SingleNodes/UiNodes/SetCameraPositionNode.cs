@@ -40,6 +40,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                 return;
 
             ingameNodeScriptSystem.WorldRenderer.Viewport.Center(world.Map.CenterOfCell(loc));
+
+            ForwardExec(this);
         }
     }
 }

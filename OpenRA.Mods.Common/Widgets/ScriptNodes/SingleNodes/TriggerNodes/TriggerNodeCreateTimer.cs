@@ -27,6 +27,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
         public override void Execute(World world)
         {
             timerStarted = true;
+            ForwardExec(this, 1);
         }
 
         public void StopTimer()
@@ -65,7 +66,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 timer = 0;
                 if (!repeating)
                     timerDone = true;
-                ExecuteTimer(self.World);
+                ForwardExec(this, 0);
             }
         }
 
@@ -76,20 +77,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 throw new YamlException(NodeId + "Timer time not connected");
 
             timerMax = conInInt.In.Number.Value * 25;
-        }
-
-        void ExecuteTimer(World world)
-        {
-            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-            if (oCon != null)
-                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                {
-                    var inCon = node.InConnections.FirstOrDefault(c =>
-                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                    if (inCon != null)
-                        inCon.Execute = true;
-                }
         }
     }
 

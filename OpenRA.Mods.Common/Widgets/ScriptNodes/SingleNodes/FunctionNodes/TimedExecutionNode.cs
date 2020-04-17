@@ -17,15 +17,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
             Action delayedAction = () =>
             {
-                if (oCon != null)
-                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                    {
-                        var inCon = node.InConnections.FirstOrDefault(c =>
-                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                        if (inCon != null)
-                            inCon.Execute = true;
-                    }
+                ForwardExec(this, 0);
             };
 
             var conInInt = InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Integer);
@@ -34,6 +26,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 delay = conInInt.In.Number.Value;
 
             world.AddFrameEndTask(w => w.Add(new DelayedAction(delay, delayedAction)));
+            
+            ForwardExec(this, 1);
         }
     }
 }

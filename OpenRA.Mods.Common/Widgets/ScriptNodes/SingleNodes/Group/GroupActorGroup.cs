@@ -152,8 +152,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
         public override void Tick(Actor self)
         {
-            var changeActors = new List<ActorInfo>();
-
             var incon = InConnections.Where(c =>
             {
                 if (c.ConnectionTyp != ConnectionType.ActorInfo)
@@ -168,7 +166,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 return true;
             });
 
-            foreach (var info in incon) changeActors.Add(info.In.ActorInfo);
+            var changeActors = incon.Select(info => info.In.ActorInfo).ToList();
 
             actors = changeActors;
 

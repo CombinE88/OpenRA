@@ -34,6 +34,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In.String,
                     "terrain"));
             });
+
+            ForwardExec(this);
         }
     }
 }

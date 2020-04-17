@@ -383,5 +383,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     break;
                 }
         }
+
+        protected static void ForwardExec(NodeLogic self, int connectionNumber = 0)
+        {
+            var connections = self.OutConnections.Where(o => o.ConnectionTyp == ConnectionType.Exec).ToArray();
+
+            if (!connections.Any())
+                return;
+
+            var oCon = connections[connectionNumber];
+
+            if (oCon == null)
+                return;
+
+            foreach (var node in self.IngameNodeScriptSystem.NodeLogics.Where(n =>
+                n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
+            {
+                var inCon = node.InConnections.FirstOrDefault(c =>
+                    c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
+                if (inCon != null)
+                    inCon.Execute = true;
+            }
+        }
     }
 }

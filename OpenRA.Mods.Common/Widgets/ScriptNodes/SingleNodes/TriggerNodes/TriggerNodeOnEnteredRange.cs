@@ -14,6 +14,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
     {
         bool repeat;
         bool triggerOnEnter;
+        bool enabled;
 
         public TriggerLogicOnEnteredRange(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
             nodeInfo, ingameNodeScriptSystem)
@@ -26,9 +27,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
             repeat = boolean.In != null;
         }
 
+        public override void Execute(World world)
+        {
+            enabled = true;
+            ForwardExec(this , 1);
+        }
+
         public override void Tick(Actor self)
         {
-            if (triggerOnEnter && !repeat)
+            if (!enabled || triggerOnEnter && !repeat)
                 return;
 
             if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.LocationRange).In == null
@@ -55,17 +62,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
             if (!triggerOnEnter && actors.Any())
             {
-                var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-                if (oCon != null)
-                    foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                        n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                    {
-                        var inCon = node.InConnections.FirstOrDefault(c =>
-                            c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                        if (inCon != null)
-                            inCon.Execute = true;
-                    }
-
+                ForwardExec(this, 0);
                 triggerOnEnter = true;
             }
             else if (!actors.Any() && repeat)

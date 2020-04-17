@@ -6,6 +6,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
     public class TriggerOnKilled : NodeLogic
     {
         readonly List<Actor> actors = new List<Actor>();
+        bool enabled;
 
         public TriggerOnKilled(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
             ingameNodeScriptSystem)
@@ -21,34 +22,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
             if (!inCon.In.Actor.IsDead && inCon.In.Actor.IsInWorld && !actors.Contains(inCon.In.Actor))
                 actors.Add(inCon.In.Actor);
+
+            enabled = true;
+
+            ForwardExec(this, 1);
         }
 
         public override void Tick(Actor self)
         {
-            if (actors.Any())
+            if (!enabled || !actors.Any()) 
+                return;
+            
+            var idles = actors.ToList();
+            foreach (var actor in idles.Where(actor => actor.IsDead && actors.Contains(actor)))
             {
-                var idles = actors.ToList();
-                foreach (var actor in idles)
-                    if (actor.IsDead && actors.Contains(actor))
-                    {
-                        ExecuteOnDeath(self.World);
-                        actors.Remove(actor);
-                    }
+                ForwardExec(this, 0);
+                actors.Remove(actor);
             }
-        }
-
-        void ExecuteOnDeath(World world)
-        {
-            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-            if (oCon != null)
-                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                {
-                    var inCon = node.InConnections.FirstOrDefault(c =>
-                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                    if (inCon != null)
-                        inCon.Execute = true;
-                }
         }
     }
 
@@ -72,32 +62,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 inCon.In.ActorGroup.Any(a => !a.IsDead))
                 foreach (var actor in inCon.In.ActorGroup)
                     actors.Add(actor);
+            
+            ForwardExec(this, 1);
         }
 
         public override void Tick(Actor self)
         {
-            if (actors.Any())
-            {
-                if (actors.Any(a => !a.IsDead))
-                    return;
+            if (!actors.Any())
+                return;
 
-                actors = new List<Actor>();
-                ExecuteOnDeath(self.World);
-            }
-        }
+            if (actors.Any(a => !a.IsDead))
+                return;
 
-        void ExecuteOnDeath(World world)
-        {
-            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
-            if (oCon != null)
-                foreach (var node in IngameNodeScriptSystem.NodeLogics.Where(n =>
-                    n.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Exec) != null))
-                {
-                    var inCon = node.InConnections.FirstOrDefault(c =>
-                        c.ConnectionTyp == ConnectionType.Exec && c.In == oCon);
-                    if (inCon != null)
-                        inCon.Execute = true;
-                }
+            actors = new List<Actor>();
+            ForwardExec(this, 0);
         }
     }
 }
