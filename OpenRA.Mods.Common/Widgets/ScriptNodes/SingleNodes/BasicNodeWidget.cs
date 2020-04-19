@@ -61,9 +61,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public Rectangle WidgetBackground;
         public Rectangle WidgetEntries;
 
+        // Visual Error
+        public bool IncorrectConnected;
+        public Func<bool> IsIncorrectConnected;
+
         [ObjectCreator.UseCtorAttribute]
         public BasicNodeWidget(NodeEditorNodeScreenWidget screen)
         {
+            IsIncorrectConnected = () => InConnections.Any(inCon => inCon.In == null);
+
             Editor = screen.NodeScriptContainerWidget.Parent.Get<EditorViewportControllerWidget>("MAP_EDITOR");
             Screen = screen;
 
@@ -218,9 +224,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                             break;
                     }
 
-                    if (found)
-                        NodeEditorNodeScreenWidget.DrawLine(new int2(conout.X + 10, conout.Y + 10),
-                            new int2(conin.X + 10, conin.Y + 10), InConnections[i].Color);
+                    if (!found) continue;
+
+                    var lines = NodeEditorNodeScreenWidget.LineArray(
+                        new int2(conout.X + 10, conout.Y + 10), new int2(conin.X + 10, conin.Y + 10)).ToArray();
+                    foreach (var line in lines)
+                    {
+                        if (InConnections[i].ConnectionTyp == ConnectionType.Exec &&
+                            (IsIncorrectConnected() || InConnections[i].In.Widget.IsIncorrectConnected()) &&
+                            lines.IndexOf(line) % 2 == 0 || InConnections[i].ConnectionTyp != ConnectionType.Exec ||
+                            (!IsIncorrectConnected() && !InConnections[i].In.Widget.IsIncorrectConnected()))
+                            Game.Renderer.RgbaColorRenderer.DrawLine(
+                                new int2(line.X, line.Y),
+                                new int2(line.Width, line.Height),
+                                3, InConnections[i].Color);
+                    }
                 }
 
             if (!Screen.Bounds.Contains(WidgetBackground.X, WidgetBackground.Y)
@@ -355,6 +373,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                         OutConnections[i].ConnectionTyp.ToString(),
                         new int2(OutConnections[i].InWidgetPosition.X + 22, OutConnections[i].InWidgetPosition.Y + 4),
                         Color.White, Color.Black, 1);
+
+                if (IsIncorrectConnected())
+                    Screen.NodeScriptContainerWidget.FontBold.DrawTextWithShadow(
+                        "!",
+                        new int2(RenderBounds.X - 20, RenderBounds.Y),
+                        Color.Yellow, Color.Black, 1);
             }
 
             /* WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X, WidgetBackground.Y, 2, 2), Color.Blue);

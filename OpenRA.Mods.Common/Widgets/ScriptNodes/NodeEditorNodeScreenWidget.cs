@@ -5,6 +5,7 @@ using System.Linq;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
+using OpenRA.Server;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -497,15 +498,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                         break;
                 }
 
-                DrawLine(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), conTarget,
-                    brushItem.Item2.Color);
+                foreach (var line in LineArray(new int2(brushItem.Item1.X + 10, brushItem.Item1.Y + 10), conTarget))
+                {
+                    Game.Renderer.RgbaColorRenderer.DrawLine(
+                        new int2(line.X, line.Y),
+                        new int2(line.Width, line.Height),
+                        3, brushItem.Item2.Color);
+                }
             }
 
             if (CurrentBrush == NodeBrush.Frame)
                 WidgetUtils.FillRectWithColor(selectionRectangle, Color.FromArgb(100, 255, 255, 255));
         }
 
-        public static void DrawLine(int2 from, int2 to, Color color)
+        public static IEnumerable<Rectangle> LineArray(int2 from, int2 to)
         {
             if (from.X > to.X)
             {
@@ -515,6 +521,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             }
 
             const int stepSize = 10;
+
+            var drawSteps = new List<Rectangle>();
 
             var yDiff = to.Y - from.Y;
             for (var x = from.X;
@@ -531,11 +539,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     (int) (from.Y + yDiff *
                            Easing.InOutCubic((currentSegmentEndX - from.X) / (double) (to.X - from.X)));
 
-                Game.Renderer.RgbaColorRenderer.DrawLine(
-                    new int2(currentSegmentStartX, currentSegmentStartY),
-                    new int2(currentSegmentEndX, currentSegmentEndY),
-                    3, color);
+                drawSteps.Add(new Rectangle(currentSegmentStartX, currentSegmentStartY, currentSegmentEndX,
+                    currentSegmentEndY));
             }
+
+            return drawSteps.ToArray();
         }
     }
 

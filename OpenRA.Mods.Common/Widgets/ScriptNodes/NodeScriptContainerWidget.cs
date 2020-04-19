@@ -6,6 +6,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 {
     public class NodeScriptContainerWidget : Widget
     {
+        public readonly SpriteFont FontBold;
         public readonly SpriteFont FontRegular;
         public readonly SpriteFont FontSmall;
         public readonly ModData ModData;
@@ -22,6 +23,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             ModData = modData;
             Game.Renderer.Fonts.TryGetValue("Regular", out FontRegular);
             Game.Renderer.Fonts.TryGetValue("Small", out FontSmall);
+            Game.Renderer.Fonts.TryGetValue("BigBold", out FontBold);
 
             Children.Add(showWidget = new ShowWidgetsButtonWidget(this));
             Children.Add(NodeWidget = new NodeEditorBackgroundWidget(this, worldRenderer, world) {Visible = false});

@@ -147,7 +147,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             var myPosition = Widget.OutConnections.IndexOf(this);
             var getOutConnections = NodeConstructorInfo.NodeConstructorInfos[Widget.NodeType].OutConnections;
-            if (!getOutConnections.Any() || getOutConnections.Count < myPosition)
+            if (getOutConnections == null || !getOutConnections.Any() || getOutConnections.Count < myPosition)
                 return;
 
             Tooltip = getOutConnections[myPosition].Item2;
