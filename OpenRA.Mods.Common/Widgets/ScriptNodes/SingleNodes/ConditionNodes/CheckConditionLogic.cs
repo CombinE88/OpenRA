@@ -15,7 +15,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 
         public CheckConditionNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Methode = CompareMethod.True;
+            Method = CompareMethod.True;
 
             var methodes = new List<CompareMethod>
             {
@@ -23,7 +23,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 CompareMethod.False
             };
 
-            selectedMethod = Methode.Value;
+            selectedMethod = Method.Value;
             methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
             Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
@@ -33,7 +33,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                     selectedMethod = option;
 
                     methodeSelection.Text = selectedMethod.ToString();
-                    Methode = selectedMethod;
+                    Method = selectedMethod;
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => option.ToString();

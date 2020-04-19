@@ -6,7 +6,7 @@ using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes;
 using OpenRA.Widgets;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.IngameWidgets
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.OverlayWidgets
 {
     public class TextChoiceLogic : ChromeLogic
     {

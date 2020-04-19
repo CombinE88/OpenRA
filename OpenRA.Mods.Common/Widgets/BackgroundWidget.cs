@@ -16,7 +16,7 @@ namespace OpenRA.Mods.Common.Widgets
 {
 	public class BackgroundWidget : Widget
 	{
-		public readonly string Background = "dialog";
+		public string Background = "dialog";
 		public readonly bool ClickThrough = false;
 		public readonly bool Draggable = false;
 

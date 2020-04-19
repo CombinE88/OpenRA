@@ -606,7 +606,8 @@
     <Compile Include="Widgets\ScriptNodes\Easing.cs" />
     <Compile Include="Widgets\ScriptNodes\EditorNodeBrushes\EditorNodeBrush.cs" />
     <Compile Include="Widgets\ScriptNodes\IngameNodeScriptSystem.cs" />
-    <Compile Include="Widgets\ScriptNodes\IngameWidgets\TextChoiceLogic.cs" />
+    <Compile Include="Widgets\ScriptNodes\OverlayWidgets\NodeEditorTooltipWidget.cs" />
+    <Compile Include="Widgets\ScriptNodes\OverlayWidgets\TextChoiceLogic.cs" />
     <Compile Include="Widgets\ScriptNodes\Library\NodeLibrary.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorBackgroundWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\NodeEditorNodeScreenWidget.cs" />
@@ -634,6 +635,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorInfoNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoActorsonMap.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\InfoNodes\MapInfoNode.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\NodeLogic.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeCreateTimer.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\NodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\TriggerNodes\TriggerNodeOnEnteredFootPrint.cs" />

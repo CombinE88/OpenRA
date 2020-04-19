@@ -224,10 +224,32 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             return newNodes;
         }
 
+        string GetNodeAndToolTip(int2 mouseCoordinates)
+        {
+            var inConnection = Nodes.SelectMany(node => node.InConnections.Where(connection =>
+                connection.InWidgetPosition.Contains(mouseCoordinates))).ToArray();
+
+            var outConnection = Nodes.SelectMany(node => node.OutConnections.Where(connection =>
+                connection.InWidgetPosition.Contains(mouseCoordinates))).ToArray();
+
+            var tooltip = inConnection.Any() ? inConnection.FirstOrDefault().Tooltip :
+                outConnection.Any() ? outConnection.FirstOrDefault().Tooltip : null;
+
+            return tooltip;
+        }
+
         public override bool HandleMouseInput(MouseInput mi)
         {
             if (EventBounds.Contains(mi.Location) && mi.Event == MouseInputEvent.Down)
                 TakeKeyboardFocus();
+
+            // ShowTooltips
+            var tooltipText = GetNodeAndToolTip(mi.Location);
+            if (CurrentBrush == NodeBrush.Free && !string.IsNullOrEmpty(tooltipText))
+                BackgroundWidget.ToolTip.ShowToolTip(tooltipText,
+                    mi.Location - new int2(BackgroundWidget.Bounds.X - 10, BackgroundWidget.Bounds.Y));
+            else if (BackgroundWidget.ToolTip.Visible)
+                BackgroundWidget.ToolTip.Visible = false;
 
             // Clear Brush
             if (!RenderBounds.Contains(mi.Location) && CurrentBrush == NodeBrush.Free)

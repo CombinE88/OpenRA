@@ -53,11 +53,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
             if (NodeConstructorInfo.NodeConstructorInfos[nodeType].InConnections != null)
                 foreach (var connection in NodeConstructorInfo.NodeConstructorInfos[nodeType].InConnections)
-                    newNode.AddInConnection(new InConnection(connection, newNode));
+                    newNode.AddInConnection(new InConnection(connection.Item1, newNode));
 
             if (NodeConstructorInfo.NodeConstructorInfos[nodeType].OutConnections != null)
                 foreach (var connection in NodeConstructorInfo.NodeConstructorInfos[nodeType].OutConnections)
-                    newNode.AddOutConnection(new OutConnection(connection, newNode));
+                    newNode.AddOutConnection(new OutConnection(connection.Item1, newNode));
 
             return newNode;
         }
@@ -65,347 +65,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
         public static List<NodeLogic> InitializeNodes(IngameNodeScriptSystem inss, List<NodeInfo> nodesInfos)
         {
             var nodeList = new List<NodeLogic>();
-            foreach (var nodeinfo in nodesInfos)
-                if (nodeinfo.NodeType == NodeType.MapInfoNode)
-                {
-                    var newNode = new MapInfoLogicNode(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerWorldLoaded)
-                {
-                    var newNode = new TriggerLogicWorldLoaded(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerTick)
-                {
-                    var newNode = new TriggerLogicTick(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredFootprint)
-                {
-                    var newNode = new TriggerLogicEnteredFootPrint(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnEnteredRange)
-                {
-                    var newNode = new TriggerLogicOnEnteredRange(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerCreateTimer)
-                {
-                    var newNode = new TriggerLogicCreateTimer(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupPlayerGroup)
-                {
-                    var newNode = new GroupPlayerLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupActorGroup)
-                {
-                    var newNode = new GroupActorLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GroupActorInfoGroup)
-                {
-                    var newNode = new GroupActorInfoLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorCreateActor)
-                {
-                    var newNode = new ActorCreateActorLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueMove)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueAttack)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueHunt)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueAttackMoveActivity)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueSell)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueFindResources)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorKill)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorRemove)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorChangeOwner)
-                {
-                    var newNode = new ActorLogicQueueAbility(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.Reinforcements)
-                {
-                    var newNode = new FunctionLogicReinforcements(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ReinforcementsWithTransport)
-                {
-                    var newNode = new FunctionLogicReinforcements(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfo)
-                {
-                    var newNode = new MapInfoLogicNode(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiPlayNotification)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiPlaySound)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiRadarPing)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiTextMessage)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiAddMissionText)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorInfo)
-                {
-                    var newNode = new NodeLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.MapInfoActorReference)
-                {
-                    var newNode = new NodeLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnIdle)
-                {
-                    var newNode = new TriggerOnIdle(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnKilled)
-                {
-                    var newNode = new TriggerOnKilled(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TriggerOnAllKilled)
-                {
-                    var newNode = new TriggerOnAllKilled(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerReset)
-                {
-                    var newNode = new TimerLogics(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerStart)
-                {
-                    var newNode = new TimerLogics(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimerStop)
-                {
-                    var newNode = new TimerLogics(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ArithmeticsOr)
-                {
-                    var newNode = new ArithmeticBasicLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ArithmeticsAnd)
-                {
-                    var newNode = new ArithmeticBasicLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CreateEffect)
-                {
-                    var newNode = new FunctionCreateEffectLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorGetInformations)
-                {
-                    var newNode = new GetActorInformationsLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CompareActors)
-                {
-                    var newNode = new ArithmecCompareLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.DoMultiple)
-                {
-                    var newNode = new DoRepeatingNodeLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.Count)
-                {
-                    var newNode = new GetCountNodeLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ArithmeticsMath)
-                {
-                    var newNode = new ArithmeticMathNodeLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiNewObjective)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiFailObjective)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.UiCompleteObjective)
-                {
-                    var newNode = new UiLogicUiSettings(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.FindActorsOnFootprint)
-                {
-                    var newNode = new GroupFindActorsLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.ActorQueueFindResources)
-                {
-                    var newNode = new GroupFindActorsLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.FilterActorGroup)
-                {
-                    var newNode = new FilterActorListByLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CheckCondition)
-                {
-                    var newNode = new CheckConditionLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CompareActor)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CompareNumber)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CompareActorInfo)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsAlive)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsDead)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsPlaying)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsBot)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsHumanPlayer)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.IsNoncombatant)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.HasWon)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.HasLost)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GlobalLightning)
-                {
-                    var newNode = new ProvideCondition(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.SetCameraPosition)
-                {
-                    var newNode = new SetCameraPositionNode(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TimedExecution)
-                {
-                    var newNode = new TimedExecutionLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.TextChoice)
-                {
-                    var newNode = new TextBoxSelectLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.CameraRide)
-                {
-                    var newNode = new CameraRideNodeLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.SetVariable)
-                {
-                    var newNode = new SetVariableLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
-                else if (nodeinfo.NodeType == NodeType.GetVariable)
-                {
-                    var newNode = new GetVariableLogic(nodeinfo, inss);
-                    nodeList.Add(newNode);
-                }
+
+            foreach (var nodeInfo in nodesInfos)
+            {
+                var instanceType = NodeConstructorInfo.NodeConstructorInfos[nodeInfo.NodeType].LogicClass;
+
+                var newLogicNode = (NodeLogic) instanceType
+                    .GetConstructor(new[] {typeof(NodeEditorNodeScreenWidget), typeof(NodeInfo)})
+                    .Invoke(new object[] {nodeInfo, inss});
+
+                nodeList.Add(newLogicNode);
+            }
 
             return nodeList;
         }
@@ -502,28 +172,32 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
     public class NodeContructor
     {
         public Type ConstructorClass;
-        public List<ConnectionType> InConnections;
-        public List<ConnectionType> OutConnections;
+        public Type LogicClass;
+        public List<Tuple<ConnectionType, string>> InConnections;
+        public List<Tuple<ConnectionType, string>> OutConnections;
     }
 
     public static class NodeConstructorInfo
     {
-        public static Dictionary<NodeType, NodeContructor> NodeConstructorInfos =
+        public static readonly Dictionary<NodeType, NodeContructor> NodeConstructorInfos =
             new Dictionary<NodeType, NodeContructor>
             {
                 {
                     NodeType.MapInfoNode, new NodeContructor
                     {
-                        ConstructorClass = typeof(MapInfoNode)
+                        ConstructorClass = typeof(MapInfoNode),
+                        LogicClass = typeof(MapInfoLogicNode)
                     }
                 },
                 {
                     NodeType.MapInfoActorInfo, new NodeContructor
                     {
                         ConstructorClass = typeof(MapInfoActorInfoNode),
-                        OutConnections = new List<ConnectionType>
+                        LogicClass = typeof(MapInfoLogicNode),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorInfo
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, "Output: yaml name of choosen Actortype")
                         }
                     }
                 },
@@ -531,10 +205,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.MapInfoActorReference, new NodeContructor
                     {
                         ConstructorClass = typeof(MapInfoActorsonMap),
-                        OutConnections = new List<ConnectionType>
+                        LogicClass = typeof(NodeLogic),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, "")
                         }
                     }
                 },
@@ -542,17 +218,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TriggerCreateTimer, new NodeContructor
                     {
                         ConstructorClass = typeof(TriggerNodeCreateTimer),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TriggerLogicCreateTimer),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Integer,
-                            ConnectionType.Repeatable,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.TimerConnection,
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.TimerConnection, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -560,14 +238,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TimerReset, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TimerLogics),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.TimerConnection,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.TimerConnection, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -575,14 +255,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TimerStart, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TimerLogics),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.TimerConnection,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.TimerConnection, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -590,14 +272,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TimerStop, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TimerLogics),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.TimerConnection,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.TimerConnection, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -605,9 +289,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TriggerWorldLoaded, new NodeContructor
                     {
                         ConstructorClass = typeof(TriggerNodeWorldLoaded),
-                        OutConnections = new List<ConnectionType>
+                        LogicClass = typeof(TriggerLogicWorldLoaded),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -615,9 +301,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TriggerTick, new NodeContructor
                     {
                         ConstructorClass = typeof(TriggerNodeTick),
-                        OutConnections = new List<ConnectionType>
+                        LogicClass = typeof(TriggerLogicTick),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -625,17 +313,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TriggerOnEnteredFootprint, new NodeContructor
                     {
                         ConstructorClass = typeof(TriggerNodeOnEnteredFootPrint),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TriggerLogicEnteredFootPrint),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.PlayerGroup,
-                            ConnectionType.CellArray,
-                            ConnectionType.Repeatable,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.CellArray, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -643,17 +333,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TriggerOnEnteredRange, new NodeContructor
                     {
                         ConstructorClass = typeof(TriggerNodeOnEnteredRange),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TriggerLogicOnEnteredRange),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.PlayerGroup,
-                            ConnectionType.Location,
-                            ConnectionType.Integer,
-                            ConnectionType.Repeatable
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -661,17 +354,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TriggerOnIdle, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TriggerOnIdle),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.Repeatable,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -679,16 +374,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TriggerOnKilled, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TriggerOnKilled),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -696,16 +393,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TriggerOnAllKilled, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TriggerOnAllKilled),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorList,
-                            ConnectionType.Repeatable,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -713,18 +412,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorCreateActor, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeCreateActor),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorCreateActorLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorInfo,
-                            ConnectionType.Player,
-                            ConnectionType.Location,
-                            ConnectionType.Integer,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -732,15 +433,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorGetInformations, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(GetActorInformationsLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorInfo,
-                            ConnectionType.Location,
-                            ConnectionType.Player
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "")
                         }
                     }
                 },
@@ -748,13 +451,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.GroupPlayerGroup, new NodeContructor
                     {
                         ConstructorClass = typeof(GroupPlayerGroup),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(GroupPlayerLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.PlayerGroup
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, "")
                         }
                     }
                 },
@@ -762,9 +467,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.GroupActorGroup, new NodeContructor
                     {
                         ConstructorClass = typeof(GroupActorGroup),
-                        OutConnections = new List<ConnectionType>
+                        LogicClass = typeof(GroupActorLogic),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorList
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, "")
                         }
                     }
                 },
@@ -772,9 +479,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.GroupActorInfoGroup, new NodeContructor
                     {
                         ConstructorClass = typeof(GroupActorInfoGroup),
-                        OutConnections = new List<ConnectionType>
+                        LogicClass = typeof(GroupActorInfoLogic),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorInfoArray
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfoArray, "")
                         }
                     }
                 },
@@ -782,15 +491,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorKill, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeQueueAbility),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -798,15 +509,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorRemove, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeQueueAbility),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -814,16 +527,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorChangeOwner, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeQueueAbility),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec,
-                            ConnectionType.Player
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -831,17 +546,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorQueueMove, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeQueueAbility),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Location,
-                            ConnectionType.Integer,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -849,17 +566,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorQueueAttack, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeQueueAbility),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Location,
-                            ConnectionType.Integer,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -867,16 +586,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorQueueHunt, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeQueueAbility),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Repeatable,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -884,16 +605,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorQueueAttackMoveActivity, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeQueueAbility),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Location,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -901,16 +624,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorQueueSell, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeQueueAbility),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Repeatable,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -918,15 +643,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ActorQueueFindResources, new NodeContructor
                     {
                         ConstructorClass = typeof(ActorNodeQueueAbility),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -934,19 +661,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.Reinforcements, new NodeContructor
                     {
                         ConstructorClass = typeof(FunctionNodeReinforcements),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(FunctionLogicReinforcements),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player,
-                            ConnectionType.ActorInfoArray,
-                            ConnectionType.CellPath,
-                            ConnectionType.Integer,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfoArray, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.CellPath, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -954,20 +683,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ReinforcementsWithTransport, new NodeContructor
                     {
                         ConstructorClass = typeof(FunctionNodeReinforcements),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(FunctionLogicReinforcements),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player,
-                            ConnectionType.ActorInfo,
-                            ConnectionType.ActorInfoArray,
-                            ConnectionType.CellPath,
-                            ConnectionType.CellPath,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfoArray, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.CellPath, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.CellPath, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -975,16 +706,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.UiPlayNotification, new NodeContructor
                     {
                         ConstructorClass = typeof(UiNodeUiSettings),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.PlayerGroup,
-                            ConnectionType.String,
-                            ConnectionType.String,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -992,15 +725,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.UiPlaySound, new NodeContructor
                     {
                         ConstructorClass = typeof(UiNodeUiSettings),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Location,
-                            ConnectionType.String,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1008,14 +743,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.UiRadarPing, new NodeContructor
                     {
                         ConstructorClass = typeof(UiNodeUiSettings),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Location,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1023,15 +760,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.UiTextMessage, new NodeContructor
                     {
                         ConstructorClass = typeof(UiNodeUiSettings),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.String,
-                            ConnectionType.String,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1039,14 +778,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.UiAddMissionText, new NodeContructor
                     {
                         ConstructorClass = typeof(UiNodeUiSettings),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.String,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1054,15 +795,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ArithmeticsOr, new NodeContructor
                     {
                         ConstructorClass = typeof(UiNodeUiSettings),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ArithmeticBasicLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.Exec,
-                            ConnectionType.Repeatable
+                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1070,15 +813,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ArithmeticsAnd, new NodeContructor
                     {
                         ConstructorClass = typeof(UiNodeUiSettings),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ArithmeticBasicLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.Exec,
-                            ConnectionType.Repeatable
+                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1086,16 +831,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.CreateEffect, new NodeContructor
                     {
                         ConstructorClass = typeof(UiNodeUiSettings),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(FunctionCreateEffectLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Location,
-                            ConnectionType.String,
-                            ConnectionType.String,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1103,14 +850,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.CompareActors, new NodeContructor
                     {
                         ConstructorClass = typeof(ArithmecCompareNode),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ArithmecCompareLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Universal,
-                            ConnectionType.Universal
+                            new Tuple<ConnectionType, string>(ConnectionType.Universal, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Universal, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Universal
+                            new Tuple<ConnectionType, string>(ConnectionType.Universal, "")
                         }
                     }
                 },
@@ -1118,14 +867,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.DoMultiple, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(DoRepeatingNodeLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Integer,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1133,13 +884,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.Count, new NodeContructor
                     {
                         ConstructorClass = typeof(GetCountNode),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(GetCountNodeLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Universal
+                            new Tuple<ConnectionType, string>(ConnectionType.Universal, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Integer
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "")
                         }
                     }
                 },
@@ -1147,14 +900,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.ArithmeticsMath, new NodeContructor
                     {
                         ConstructorClass = typeof(ArithmeticMathNode),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ArithmeticMathNodeLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Integer,
-                            ConnectionType.Integer
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Integer
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "")
                         }
                     }
                 },
@@ -1162,17 +917,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.UiNewObjective, new NodeContructor
                     {
                         ConstructorClass = typeof(UiObjectivesNode),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.String,
-                            ConnectionType.Exec,
-                            ConnectionType.Player,
-                            ConnectionType.PlayerGroup
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Objective,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Objective, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1180,14 +937,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.UiCompleteObjective, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Objective,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Objective, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1195,14 +954,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.UiFailObjective, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Objective,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Objective, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1210,15 +971,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.FindActorsOnFootprint, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(GroupFindActorsLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.CellArray,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.CellArray, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1226,15 +989,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.FinActorsInCircle, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(GroupFindActorsLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.LocationRange,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.LocationRange, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1242,16 +1007,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.FilterActorGroup, new NodeContructor
                     {
                         ConstructorClass = typeof(FilterActorListByNode),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(FilterActorListByLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player,
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorList,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1259,15 +1026,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.CheckCondition, new NodeContructor
                     {
                         ConstructorClass = typeof(CheckConditionNode),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(CheckConditionLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1275,14 +1044,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.CompareActor, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.Actor
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1290,14 +1061,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.CompareActorInfo, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.ActorInfo,
-                            ConnectionType.ActorInfo
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1305,13 +1078,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.IsAlive, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1319,13 +1094,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.IsDead, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1333,14 +1110,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.CompareNumber, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Integer,
-                            ConnectionType.Integer
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1348,13 +1127,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.IsPlaying, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1362,13 +1143,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.IsBot, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1376,13 +1159,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.IsHumanPlayer, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1390,13 +1175,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.IsNoncombatant, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1404,13 +1191,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.HasWon, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1418,13 +1207,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.HasLost, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(ProvideCondition),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Condition
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
                         }
                     }
                 },
@@ -1432,17 +1223,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.GlobalLightning, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(GlobalLightningNodeLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Integer,
-                            ConnectionType.Integer,
-                            ConnectionType.Integer,
-                            ConnectionType.Integer,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Color: Red 0-256"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Color: Green 0-256"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Color: Blue 0-256"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Alpha: 0-256"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1450,15 +1243,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.SetCameraPosition, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(SetCameraPositionNode),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Player,
-                            ConnectionType.Location,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1466,15 +1261,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TimedExecution, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TimedExecutionLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Integer,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1482,14 +1279,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.TextChoice, new NodeContructor
                     {
                         ConstructorClass = typeof(TextBoxSelectNode),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(TextBoxSelectLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec,
-                            ConnectionType.String
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1497,18 +1296,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.CameraRide, new NodeContructor
                     {
                         ConstructorClass = typeof(NodeWidget),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(CameraRideNodeLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Location,
-                            ConnectionType.Location,
-                            ConnectionType.Integer,
-                            ConnectionType.Player,
-                            ConnectionType.Exec,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 },
@@ -1516,9 +1317,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.GetVariable, new NodeContructor
                     {
                         ConstructorClass = typeof(GetVariableNode),
-                        OutConnections = new List<ConnectionType>
+                        LogicClass = typeof(GetVariableLogic),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "")
                         }
                     }
                 },
@@ -1526,17 +1329,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     NodeType.SetVariable, new NodeContructor
                     {
                         ConstructorClass = typeof(SetVariableNode),
-                        InConnections = new List<ConnectionType>
+                        LogicClass = typeof(SetVariableLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Actor,
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
-                        OutConnections = new List<ConnectionType>
+                        OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            ConnectionType.Exec
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         }
                     }
                 }
             };
+        
     }
 }

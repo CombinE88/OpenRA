@@ -15,7 +15,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
         public FilterActorListByNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Methode = CompareMethod.Contains;
+            Method = CompareMethod.Contains;
             Item = CompareItem.Owner;
 
             var methodes = new List<CompareMethod>
@@ -24,7 +24,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 CompareMethod.ContainsNot
             };
 
-            selectedMethod = Methode.Value;
+            selectedMethod = Method.Value;
             methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
             Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
@@ -34,7 +34,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     selectedMethod = option;
 
                     methodeSelection.Text = selectedMethod.ToString();
-                    Methode = selectedMethod;
+                    Method = selectedMethod;
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => option.ToString();

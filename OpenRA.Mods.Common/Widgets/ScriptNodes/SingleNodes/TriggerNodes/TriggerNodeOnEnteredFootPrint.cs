@@ -39,29 +39,25 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
             if (!enabled || triggerOnEnter && !repeat)
                 return;
 
-            if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.CellArray).In == null ||
-                !InConnections.First(ic => ic.ConnectionTyp == ConnectionType.CellArray).In.CellArray.Any())
-                throw new YamlException(NodeId + ": Cell Array not connected");
+            var cellArray = GetLinkedConnectionFromInConnection(this, InConnections, ConnectionType.TimerConnection, 0);
+            var playerGroup =
+                GetLinkedConnectionFromInConnection(this, InConnections, ConnectionType.TimerConnection, 0);
 
-            if (InConnections.Any() &&
-                (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In == null
-                 || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In.PlayerGroup == null
-                 || !InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In.PlayerGroup.Any()))
-                throw new YamlException(NodeId + "player Group not connected");
+            if (!cellArray.CellArray.Any() || !playerGroup.PlayerGroup.Any())
+                return;
 
             var actors = self.World.Actors
                 .Where(a => !a.IsDead
                             && a.IsInWorld
                             && a.TraitOrDefault<Mobile>() != null
-                            && InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In.PlayerGroup
+                            && playerGroup.PlayerGroup
                                 .Contains(a.Owner.PlayerReference)
-                            && InConnections.First(ic => ic.ConnectionTyp == ConnectionType.CellArray).In.CellArray
+                            && cellArray.CellArray
                                 .Contains(a.Location))
                 .ToArray();
 
             if (actors.Any() && !triggerOnEnter)
             {
-                
                 ForwardExec(this, 0);
 
                 triggerOnEnter = true;

@@ -12,7 +12,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
         public ArithmeticMathNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Methode = CompareMethod.Add;
+            Method = CompareMethod.Add;
 
             var methodes = new List<CompareMethod>
             {
@@ -22,7 +22,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 CompareMethod.Divide
             };
 
-            selectedMethod = Methode.Value;
+            selectedMethod = Method.Value;
             methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
             Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
@@ -32,7 +32,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                     selectedMethod = option;
 
                     methodeSelection.Text = selectedMethod.ToString();
-                    Methode = selectedMethod;
+                    Method = selectedMethod;
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => option.ToString();

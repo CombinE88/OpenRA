@@ -33,6 +33,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         // Node Connections
         public List<InConnection> InConnections;
+        public List<OutConnection> OutConnections;
 
         // Node Local Position
         public int2 NewOffset;
@@ -45,7 +46,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public NodeType NodeType;
         public int OffsetPosX;
         public int OffsetPosY;
-        public List<OutConnection> OutConnections;
         public Rectangle RemoveInput;
         public Rectangle RemoveOutput;
 

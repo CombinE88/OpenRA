@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Graphics;
+using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.OverlayWidgets;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables;
 using OpenRA.Widgets;
 
@@ -18,6 +20,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         readonly NodeEditorNodeScreenWidget screenWidget;
         readonly ScrollPanelWidget scrollPanel;
         public DropDownMenuWidget DropDownMenuWidget;
+        public NodeEditorTooltipWidget ToolTip;
 
         [ObjectCreator.UseCtorAttribute]
         public NodeEditorBackgroundWidget(NodeScriptContainerWidget nodeScriptContainerWidget,
@@ -70,6 +73,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             };
 
             CreateLeftClickDropDownMenu();
+
+            ToolTip = new NodeEditorTooltipWidget(nodeScriptContainerWidget.FontRegular);
+            AddChild(ToolTip);
         }
 
         public void AddNewVariable(VariableType variableType, string variableName = "var")
@@ -256,6 +262,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             WidgetUtils.DrawPanel(background, RenderBounds);
         }
 
+        //// TODO Move to static class and make Static
         void CreateLeftClickDropDownMenu()
         {
             DropDownMenuWidget = new DropDownMenuWidget

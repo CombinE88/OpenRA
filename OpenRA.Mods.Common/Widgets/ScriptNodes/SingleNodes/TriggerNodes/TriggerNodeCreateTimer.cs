@@ -89,12 +89,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Execute(World world)
         {
-            var timercon = InConnections.First(c => c.ConnectionTyp == ConnectionType.TimerConnection);
+            var timerConnection = GetLinkedConnectionFromInConnection(this, InConnections, ConnectionType.TimerConnection, 0);
 
-            if (timercon.In == null)
-                throw new YamlException(NodeId + "Timer not connected");
-
-            var timer = timercon.In.Logic as TriggerLogicCreateTimer;
+            var timer = timerConnection.Logic as TriggerLogicCreateTimer;
 
             if (timer == null)
                 throw new YamlException(NodeId + "Timer not found");
