@@ -90,7 +90,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             inCons = InConnections.Where(i => i.ConnectionTyp == ConnectionType.String).ToList();
             inCons.Remove(inCons.First());
 
-            Text = InConnections.First(i => i.ConnectionTyp == ConnectionType.String).In.String;
+            Text =  GetLinkedConnectionFromInConnection(ConnectionType.String, 0).String;
 
             foreach (var inCon in inCons) Options.Add(new Tuple<InConnection, string>(inCon, inCon.In.String));
 

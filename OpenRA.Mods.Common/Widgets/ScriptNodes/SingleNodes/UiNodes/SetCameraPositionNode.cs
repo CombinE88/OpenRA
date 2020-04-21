@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
@@ -19,22 +20,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             if (ingameNodeScriptSystem.WorldRenderer == null)
                 return;
 
-            var inPly = InConnections.First(c => c.ConnectionTyp == ConnectionType.Player);
-            var inCon = InConnections.First(c => c.ConnectionTyp == ConnectionType.Location);
+            var inPly = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+            var inCon = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
 
-            if (inPly.In == null)
-                throw new YamlException(NodeId + "Player not connected");
-            if (inCon.In == null)
-                throw new YamlException(NodeId + "Location not connected");
+            if (inPly == null)
+            {
+                Debug.WriteLine(NodeId + "Player not connected");
+                return;
+            }
 
-            if (inPly.In.Player == null || world.LocalPlayer == null)
+            if (inCon == null)
+            {
+                Debug.WriteLine(NodeId + "Location not connected");
+                return;
+            }
+
+            if (inPly.Player == null || world.LocalPlayer == null)
                 return;
 
-            if (inCon.In.Location == null)
+            if (inCon.Location == null)
                 return;
 
-            ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
-            loc = inCon.In.Location.Value;
+            ply = world.Players.First(p => p.InternalName == inPly.Player.Name);
+            loc = inCon.Location.Value;
 
             if (loc == null || ingameNodeScriptSystem.WorldRenderer == null || world.LocalPlayer != ply)
                 return;

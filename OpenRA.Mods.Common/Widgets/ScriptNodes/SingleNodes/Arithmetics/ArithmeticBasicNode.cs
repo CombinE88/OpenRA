@@ -15,11 +15,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
         public override void DoAfterConnections()
         {
-            if (InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Repeatable) != null
-                && InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Repeatable).In != null)
+            var repeatable = GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0);
+            if (repeatable != null)
                 repeating = true;
         }
-        
+
         public override void ExecuteTick(Actor self)
         {
             if (NodeInfo.NodeType == NodeType.ArithmeticsOr && (repeating || !started))

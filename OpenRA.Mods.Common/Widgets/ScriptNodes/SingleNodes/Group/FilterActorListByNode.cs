@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
@@ -121,18 +122,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
         public override void Execute(World world)
         {
-            var actIn = InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).In;
+            var actIn = GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
             var actOut = OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList);
 
             if (actIn == null)
-                throw new YamlException(NodeId + "Actor List not connected");
+            {
+                Debug.WriteLine(NodeId + "Actor List not connected");
+                return;
+            }
 
             if (Item == CompareItem.Owner)
             {
-                var ply = InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).In;
+                var ply = GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
 
                 if (ply == null)
-                    throw new YamlException(NodeId + "Player not connected");
+                {
+                    Debug.WriteLine(NodeId + "Player not connected");
+                    return;
+                }
 
                 if (Methode == CompareMethod.Contains)
                     actOut.ActorGroup = actIn.ActorGroup
@@ -164,14 +171,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             }
             else if (Item == CompareItem.ActorTypes)
             {
-                var strngs = InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).In;
-                if (strngs == null)
-                    throw new YamlException(NodeId + "Actor Types not connected");
+                var strings = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfoArray, 0);
+                if (strings == null)
+                {
+                    Debug.WriteLine(NodeId + "Actor Types not connected");
+                    return;
+                }
 
                 if (Methode == CompareMethod.Contains)
-                    actOut.ActorGroup = actIn.ActorGroup.Where(c => strngs.ActorInfos.Contains(c.Info)).ToArray();
+                    actOut.ActorGroup = actIn.ActorGroup.Where(c => strings.ActorInfos.Contains(c.Info)).ToArray();
                 else
-                    actOut.ActorGroup = actIn.ActorGroup.Where(c => !strngs.ActorInfos.Contains(c.Info)).ToArray();
+                    actOut.ActorGroup = actIn.ActorGroup.Where(c => !strings.ActorInfos.Contains(c.Info)).ToArray();
             }
             else if (Item == CompareItem.IsIdle)
             {

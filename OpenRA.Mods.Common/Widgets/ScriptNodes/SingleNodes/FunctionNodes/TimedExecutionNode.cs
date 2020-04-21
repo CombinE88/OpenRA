@@ -13,20 +13,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
         public override void Execute(World world)
         {
-            var oCon = OutConnections.FirstOrDefault(o => o.ConnectionTyp == ConnectionType.Exec);
+            Action delayedAction = () => { ForwardExec(this, 0); };
 
-            Action delayedAction = () =>
-            {
-                ForwardExec(this, 0);
-            };
-
-            var conInInt = InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Integer);
+            var conInInt = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);;
             var delay = 0;
-            if (!(conInInt == null || conInInt.In == null || conInInt.In.Number == null))
-                delay = conInInt.In.Number.Value;
+            if (!(conInInt == null || conInInt == null || conInInt.Number == null))
+                delay = conInInt.Number.Value;
 
             world.AddFrameEndTask(w => w.Add(new DelayedAction(delay, delayedAction)));
-            
+
             ForwardExec(this, 1);
         }
     }

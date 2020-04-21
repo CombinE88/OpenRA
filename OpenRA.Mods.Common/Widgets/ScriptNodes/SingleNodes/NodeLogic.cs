@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
@@ -179,20 +180,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             }
         }
 
-        protected static OutConnection GetLinkedConnectionFromInConnection(NodeLogic logic,
-            List<InConnection> connections, ConnectionType connectionType,
+        protected OutConnection GetLinkedConnectionFromInConnection(ConnectionType connectionType,
             int position)
         {
-            var inConnections = connections.Where(c => c.ConnectionTyp == connectionType).ToArray();
+            var inConnections = InConnections.Where(c => c.ConnectionTyp == connectionType).ToArray();
             if (!inConnections.Any() || inConnections.Length < position)
-                throw new Exception(
-                    logic.NodeName + " has no " + connectionType + " connection on position " + position);
+            {
+                Debug.WriteLine(NodeName + " has no " + connectionType + " connection on position " + position);
+                return null;
+            }
 
             var connection = inConnections[position].In;
-            
-            if(connection.Out == null)
-                throw new Exception(
-                    logic.NodeName + ": Connection " + connection.ConnectionId + " is not connected ");
+
+            if (connection.Out == null)
+            {
+                Debug.WriteLine(NodeName + ": Connection " + connection.ConnectionId + " is not connected ");
+                return null;
+            }
 
 
             return connection;

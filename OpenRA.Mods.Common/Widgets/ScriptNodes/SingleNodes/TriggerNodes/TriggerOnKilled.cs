@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
@@ -30,9 +31,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Tick(Actor self)
         {
-            if (!enabled || !actors.Any()) 
+            if (!enabled || !actors.Any())
                 return;
-            
+
             var idles = actors.ToList();
             foreach (var actor in idles.Where(actor => actor.IsDead && actors.Contains(actor)))
             {
@@ -53,16 +54,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Execute(World world)
         {
-            var inCon = InConnections.First(ic => ic.ConnectionTyp == ConnectionType.ActorList);
+            var inCon = GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
 
-            if (inCon.In == null)
-                throw new YamlException(NodeId + ": Actorlist not connected");
+            if (inCon == null)
+            {
+                Debug.WriteLine(NodeId + ": Actor list not connected");
+                return;
+            }
 
-            if (inCon.In.ActorGroup != null && inCon.In.ActorGroup.Any(a => !a.IsDead) &&
-                inCon.In.ActorGroup.Any(a => !a.IsDead))
-                foreach (var actor in inCon.In.ActorGroup)
+            if (inCon.ActorGroup != null && inCon.ActorGroup.Any(a => !a.IsDead) &&
+                inCon.ActorGroup.Any(a => !a.IsDead))
+                foreach (var actor in inCon.ActorGroup)
                     actors.Add(actor);
-            
+
             ForwardExec(this, 1);
         }
 

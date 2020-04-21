@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using OpenRA.Effects;
 using OpenRA.Primitives;
@@ -21,32 +22,39 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
         public override void Execute(World world)
         {
-            if (InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo).In == null ||
-                InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo).In.ActorInfo == null)
-                throw new YamlException(NodeId + "Actor Actor Info not connected");
+            var actorInfo = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
+            if (actorInfo == null || actorInfo.ActorInfo == null)
+            {
+                Debug.WriteLine(NodeId + "Actor Actor Info not connected");
+                return;
+            }
 
-            if (InConnections.First(c => c.ConnectionTyp == ConnectionType.Location).In == null ||
-                InConnections.First(c => c.ConnectionTyp == ConnectionType.Location).In.Location == null)
-                throw new YamlException(NodeId + "Actor Location Info not connected");
+            var location = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+            if (location == null || location.Location == null)
+            {
+                Debug.WriteLine(NodeId + "Actor Location Info not connected");
+                return;
+            }
 
-            if (InConnections.First(c => c.ConnectionTyp == ConnectionType.Player).In == null ||
-                InConnections.First(c => c.ConnectionTyp == ConnectionType.Player).In.Player == null)
-                throw new YamlException(NodeId + "Actor Player not connected");
+            var player = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+            if (player == null || player.Player == null)
+            {
+                Debug.WriteLine(NodeId + "Actor Player not connected");
+                return;
+            }
 
             var typeDict = new TypeDictionary
             {
-                new OwnerInit(InConnections.First(c => c.ConnectionTyp == ConnectionType.Player).In.Player.Name)
+                new OwnerInit(player.Player.Name)
             };
 
-            typeDict.Add(new LocationInit(InConnections.First(c => c.ConnectionTyp == ConnectionType.Location).In
-                .Location.Value));
+            typeDict.Add(new LocationInit(location.Location.Value));
 
-            if (InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer).In != null)
-                typeDict.Add(new FacingInit(InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer).In
-                    .Number.Value));
+            var rotation = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
+            if (rotation != null)
+                typeDict.Add(new FacingInit(rotation.Number.Value));
 
-            var newActor = world.CreateActor(false,
-                InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo).In.ActorInfo.Name, typeDict);
+            var newActor = world.CreateActor(false, actorInfo.String, typeDict);
 
             Action actorAction = () =>
             {

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
@@ -16,10 +17,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             if (NodeType == NodeType.FinActorsInCircle)
             {
-                var integ = InConnections.First(c => c.ConnectionTyp == ConnectionType.LocationRange).In;
+                var integ = GetLinkedConnectionFromInConnection(ConnectionType.LocationRange, 0);
 
                 if (integ == null)
-                    throw new YamlException(NodeId + "FindActorsInCircle Location and Range not connected");
+                {
+                    Debug.WriteLine(NodeId + "FindActorsInCircle Location and Range not connected");
+                    return;
+                }
 
                 outCon.ActorGroup = world.FindActorsInCircle(world.Map.CenterOfCell(integ.Location.Value),
                         WDist.FromCells(integ.Number.Value))
@@ -27,10 +31,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             }
             else if (NodeType == NodeType.FindActorsOnFootprint)
             {
-                var integ = InConnections.First(c => c.ConnectionTyp == ConnectionType.CellArray).In;
+                var integ = GetLinkedConnectionFromInConnection(ConnectionType.CellArray, 0);
+                ;
 
                 if (integ == null)
-                    throw new YamlException(NodeId + "Cell Array not connected");
+                {
+                    Debug.WriteLine(NodeId + "Cell Array not connected");
+                    return;
+                }
 
                 outCon.ActorGroup = world.Actors
                     .Where(a => !a.IsDead && a.IsInWorld && integ.CellArray.Contains(a.Location)).ToArray();

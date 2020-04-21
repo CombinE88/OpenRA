@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 
@@ -23,14 +24,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void DoAfterConnections()
         {
-            var boolean = InConnections.FirstOrDefault(ic => ic.ConnectionTyp == ConnectionType.Repeatable);
-            repeat = boolean.In != null;
+            var boolean = GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0);
+            repeat = boolean != null;
         }
 
         public override void Execute(World world)
         {
             enabled = true;
-            ForwardExec(this , 1);
+            ForwardExec(this, 1);
         }
 
         public override void Tick(Actor self)
@@ -38,25 +39,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
             if (!enabled || triggerOnEnter && !repeat)
                 return;
 
-            if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.LocationRange).In == null
-                || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.LocationRange).In.Location == null
-                || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.LocationRange).In.Number == null)
-                throw new YamlException(NodeId + "Location and Range not connected");
+            var locationRange = GetLinkedConnectionFromInConnection(ConnectionType.LocationRange, 0);
 
-            if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In == null ||
-                !InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In.PlayerGroup.Any())
-                throw new YamlException(NodeId + "player Group not connected");
+            if (locationRange == null || locationRange.Location == null || locationRange.Number == null)
+            {
+                Debug.WriteLine(NodeId + "Location and Range not connected");
+                return;
+            }
+
+            var playerGroup = GetLinkedConnectionFromInConnection(ConnectionType.PlayerGroup, 0);
+
+            if (playerGroup == null || playerGroup.PlayerGroup.Any())
+            {
+                Debug.WriteLine(NodeId + "player Group not connected");
+                return;
+            }
 
             var actors = self.World
                 .FindActorsInCircle(
-                    self.World.Map.CenterOfCell(InConnections
-                        .First(ic => ic.ConnectionTyp == ConnectionType.LocationRange).In.Location.Value),
-                    WDist.FromCells(InConnections.First(ic => ic.ConnectionTyp == ConnectionType.LocationRange).In
-                        .Number.Value))
+                    self.World.Map.CenterOfCell(locationRange.Location.Value),
+                    WDist.FromCells(locationRange.Number.Value))
                 .Where(a => !a.IsDead
                             && a.IsInWorld
                             && a.TraitOrDefault<Mobile>() != null
-                            && InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In.PlayerGroup
+                            && playerGroup.PlayerGroup
                                 .Contains(a.Owner.PlayerReference))
                 .ToArray();
 

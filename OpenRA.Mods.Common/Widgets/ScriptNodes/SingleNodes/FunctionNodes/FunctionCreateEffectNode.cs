@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using OpenRA.Mods.Common.Effects;
 
@@ -12,26 +13,34 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
         public override void Execute(World world)
         {
-            if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Location).In == null
-                || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Location).In.Location == null)
-                throw new YamlException(NodeId + "Location not connected");
+            var location = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+            if (location == null || location.Location == null)
+            {
+                Debug.WriteLine(NodeId + "Location not connected");
+                return;
+            }
 
-            if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In == null
-                || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String == null)
-                throw new YamlException(NodeId + "String Image not connected");
+            var image = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+            if (image == null || image.String == null)
+            {
+                Debug.WriteLine(NodeId + "String Image not connected");
+                return;
+            }
 
-            if (InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In == null
-                || InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In.String == null)
-                throw new YamlException(NodeId + "String Sequence not connected");
+            var sequence = GetLinkedConnectionFromInConnection(ConnectionType.Location, 1);
+            if (sequence == null || sequence.String == null)
+            {
+                Debug.WriteLine(NodeId + "String Sequence not connected");
+                return;
+            }
 
             world.AddFrameEndTask(w =>
             {
                 w.Add(new SpriteEffect(
-                    w.Map.CenterOfCell(InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Location).In
-                        .Location.Value),
+                    w.Map.CenterOfCell(location.Location.Value),
                     w,
-                    InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String,
-                    InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In.String,
+                    image.String,
+                    sequence.String,
                     "terrain"));
             });
 

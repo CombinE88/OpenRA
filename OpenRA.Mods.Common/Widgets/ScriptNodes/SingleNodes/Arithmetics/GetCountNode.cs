@@ -73,20 +73,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
         public override void Tick(Actor self)
         {
-            var outcon = OutConnections.First(c => c.ConnectionTyp == ConnectionType.Integer);
-            var incon = InConnections.First(c => c.ConnectionTyp == ConnectionType.Universal);
+            var outcon = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+            var incon = GetLinkedConnectionFromInConnection(ConnectionType.Universal, 0);
             var integ = 0;
 
-            if (incon.In == null)
+            if (incon == null)
                 return;
 
-            if (incon.In.ConnectionTyp == ConnectionType.Integer && incon.In.Number != null)
+            if (incon.ConnectionTyp == ConnectionType.Integer && incon.Number != null)
             {
-                outcon.Number = incon.In.Number.Value;
+                outcon.Number = incon.Number.Value;
             }
-            else if (incon.In.ConnectionTyp == ConnectionType.ActorList)
+            else if (incon.ConnectionTyp == ConnectionType.ActorList)
             {
-                foreach (var actor in incon.In.ActorGroup)
+                foreach (var actor in incon.ActorGroup)
                     if (Methode == CompareMethod.AliveActors && !actor.IsDead && actor.IsInWorld)
                         integ++;
                     else if (Methode == CompareMethod.All)
@@ -94,9 +94,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
                 outcon.Number = integ;
             }
-            else if (incon.In.ConnectionTyp == ConnectionType.PlayerGroup)
+            else if (incon.ConnectionTyp == ConnectionType.PlayerGroup)
             {
-                foreach (var player in incon.In.PlayerGroup)
+                foreach (var player in incon.PlayerGroup)
                 {
                     var play = self.World.Players.First(p => p.PlayerReference == player);
                     if (!play.NonCombatant && play.Playable)
@@ -110,21 +110,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
                 outcon.Number = integ;
             }
-            else if (incon.In.ConnectionTyp == ConnectionType.ActorInfoArray)
+            else if (incon.ConnectionTyp == ConnectionType.ActorInfoArray)
             {
-                outcon.Number = incon.In.ActorInfos.Length;
+                outcon.Number = incon.ActorInfos.Length;
             }
-            else if (incon.In.ConnectionTyp == ConnectionType.CellPath)
+            else if (incon.ConnectionTyp == ConnectionType.CellPath)
             {
-                outcon.Number = incon.In.CellArray.Count;
+                outcon.Number = incon.CellArray.Count;
             }
-            else if (incon.In.ConnectionTyp == ConnectionType.CellArray)
+            else if (incon.ConnectionTyp == ConnectionType.CellArray)
             {
-                outcon.Number = incon.In.CellArray.Count;
+                outcon.Number = incon.CellArray.Count;
             }
-            else if (incon.In.ConnectionTyp == ConnectionType.LocationRange && incon.In.Number != null)
+            else if (incon.ConnectionTyp == ConnectionType.LocationRange && incon.Number != null)
             {
-                outcon.Number = incon.In.Number.Value;
+                outcon.Number = incon.Number.Value;
             }
             else
             {

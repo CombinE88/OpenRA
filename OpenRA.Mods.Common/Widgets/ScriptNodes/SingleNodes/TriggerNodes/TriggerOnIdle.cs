@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
@@ -15,13 +16,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Execute(World world)
         {
-            var inCon = InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Actor);
+            var inCon = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
 
-            if (inCon.In == null)
-                throw new YamlException(NodeId + ": Actor not connected");
+            if (inCon == null)
+            {
+                Debug.WriteLine(NodeId + ": Actor not connected");
+                return;
+            }
 
-            if (!inCon.In.Actor.IsDead && inCon.In.Actor.IsInWorld)
-                idleActors.Add(inCon.In.Actor);
+            if (!inCon.Actor.IsDead && inCon.Actor.IsInWorld)
+                idleActors.Add(inCon.Actor);
 
             enabled = true;
 
@@ -30,7 +34,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Tick(Actor self)
         {
-            if (!enabled || !idleActors.Any(a => !a.IsDead))
+            if (!enabled || idleActors.All(a => a.IsDead))
                 return;
 
             var newList = idleActors.ToList();
@@ -43,7 +47,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 OutConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).Actor = actor;
                 ForwardExec(this, 0);
 
-                if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Repeatable).In != null)
+                if (GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0) != null)
                     idleActors.Remove(actor);
             }
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Eluant;
 using OpenRA.Activities;
@@ -43,48 +44,58 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             foreach (var mc in movementClasses)
                 domainIndexes[mc] = new MovementClassDomainIndex(world, mc);
 
-            if (InConnections.First(c => c.ConnectionTyp == ConnectionType.Player).In == null ||
-                InConnections.First(c => c.ConnectionTyp == ConnectionType.Player).In.Player == null)
-                throw new YamlException(NodeId + "Reinforcement Player not connected");
+            var player = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+            if (player == null || player.Player == null)
+            {
+                Debug.WriteLine(NodeId + "Reinforcement Player not connected");
+                return;
+            }
 
-            if (InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).In == null ||
-                InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).In.ActorInfos == null ||
-                !InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).In.ActorInfos.Any())
-                throw new YamlException(NodeId + "Reinforcement ActorGroup not connected or empty");
+            var actorInfoArray = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfoArray, 0);
+            if (actorInfoArray == null || actorInfoArray.ActorInfos == null || !actorInfoArray.ActorInfos.Any())
+            {
+                Debug.WriteLine(NodeId + "Reinforcement ActorGroup not connected or empty");
+                return;
+            }
 
-            if (InConnections.First(c => c.ConnectionTyp == ConnectionType.CellPath).In == null ||
-                InConnections.First(c => c.ConnectionTyp == ConnectionType.CellPath).In.CellArray == null ||
-                !InConnections.First(c => c.ConnectionTyp == ConnectionType.CellPath).In.CellArray.Any())
-                throw new YamlException(NodeId + "Reinforcement Entry Path not connected or empty");
+            var cellPath = GetLinkedConnectionFromInConnection(ConnectionType.CellPath, 0);
+            if (cellPath == null || cellPath.CellArray == null || cellPath.CellArray.Any())
+            {
+                Debug.WriteLine(NodeId + "Reinforcement Entry Path not connected or empty");
+                return;
+            }
 
             if (NodeType == NodeType.Reinforcements)
             {
                 var actors = new List<string>();
-                foreach (var act in InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).In
+                foreach (var act in actorInfoArray
                     .ActorInfos) actors.Add(act.Name);
 
-                var inNumber = InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer).In;
+                var inNumber = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
 
                 Reinforce(
                     world,
-                    world.Players.First(p =>
-                        p.InternalName == InConnections.First(c => c.ConnectionTyp == ConnectionType.Player).In.Player
-                            .Name),
+                    world.Players.First(p => p.InternalName == player.Player.Name),
                     actors.ToArray(),
-                    InConnections.First(c => c.ConnectionTyp == ConnectionType.CellPath).In.CellArray.ToArray(),
+                    cellPath.CellArray.ToArray(),
                     inNumber != null ? inNumber.Number.Value : 25);
             }
 
             if (NodeType == NodeType.ReinforcementsWithTransport)
             {
-                if (InConnections.Last(c => c.ConnectionTyp == ConnectionType.CellPath).In == null ||
-                    InConnections.Last(c => c.ConnectionTyp == ConnectionType.CellPath).In.CellArray == null ||
-                    !InConnections.Last(c => c.ConnectionTyp == ConnectionType.CellPath).In.CellArray.Any())
-                    throw new YamlException(NodeId + "Reinforcement Exit Path not connected or empty");
+                var exitpath = GetLinkedConnectionFromInConnection(ConnectionType.CellPath, 1);
+                if (exitpath == null || exitpath.CellArray == null || exitpath.CellArray.Any())
+                {
+                    Debug.WriteLine(NodeId + "Reinforcement exit path not connected or empty");
+                    return;
+                }
 
-                if (InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo).In == null ||
-                    InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo).In.ActorInfo == null)
-                    throw new YamlException(NodeId + "Reinforcement Player not connected");
+                var transport = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
+                if (transport == null || transport.ActorInfo == null)
+                {
+                    Debug.WriteLine(NodeId + "Transport actor not connected");
+                    return;
+                }
 
                 var actors = new List<string>();
                 foreach (var act in InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).In
@@ -93,12 +104,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 ReinforceWithTransport(
                     world,
                     world.Players.First(p =>
-                        p.InternalName == InConnections.First(c => c.ConnectionTyp == ConnectionType.Player).In.Player
+                        p.InternalName == player.Player
                             .Name),
-                    InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo).In.ActorInfo.Name,
+                    transport.ActorInfo.Name,
                     actors.ToArray(),
-                    InConnections.First(c => c.ConnectionTyp == ConnectionType.CellPath).In.CellArray.ToArray(),
-                    InConnections.Last(c => c.ConnectionTyp == ConnectionType.CellPath).In.CellArray.ToArray());
+                    cellPath.CellArray.ToArray(),
+                    exitpath.CellArray.ToArray());
             }
 
             ForwardExec(this, 1);
@@ -109,7 +120,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
         {
             ActorInfo ai;
             if (!world.Map.Rules.Actors.TryGetValue(actorType, out ai))
+            {
                 throw new LuaException("Unknown actor type '{0}'".F(actorType));
+                return null;
+            }
 
             var initDict = new TypeDictionary();
 

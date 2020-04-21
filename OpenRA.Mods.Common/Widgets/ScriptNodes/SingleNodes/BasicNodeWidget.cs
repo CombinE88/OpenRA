@@ -373,19 +373,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                         OutConnections[i].ConnectionTyp.ToString(),
                         new int2(OutConnections[i].InWidgetPosition.X + 22, OutConnections[i].InWidgetPosition.Y + 4),
                         Color.White, Color.Black, 1);
-
-                if (IsIncorrectConnected())
-                    Screen.NodeScriptContainerWidget.FontBold.DrawTextWithShadow(
-                        "!",
-                        new int2(RenderBounds.X - 20, RenderBounds.Y),
-                        Color.Yellow, Color.Black, 1);
             }
 
-            /* WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X, WidgetBackground.Y, 2, 2), Color.Blue);
-            WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X + WidgetBackground.Width, WidgetBackground.Y, 2, 2), Color.Blue);
-            WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X, WidgetBackground.Y + WidgetBackground.Height, 2, 2), Color.Blue);
-            WidgetUtils.FillRectWithColor(new Rectangle(WidgetBackground.X + WidgetBackground.Width, WidgetBackground.Y + WidgetBackground.Height, 2, 2), Color.Blue);
-            */
+            if (!IsIncorrectConnected())
+                return;
+
+            var warningLocation = new int2(RenderBounds.X + 6, RenderBounds.Y + Bounds.Height - 40);
+            Game.Renderer.RgbaColorRenderer.FillTriangle(new int2(warningLocation.X + 15, warningLocation.Y),
+                new int2(warningLocation.X, warningLocation.Y + 30),
+                new int2(warningLocation.X + 30, warningLocation.Y + 30), Color.Gold);
+            Screen.NodeScriptContainerWidget.FontBold.DrawTextWithShadow(
+                "!",
+                new int2(warningLocation.X + 10, warningLocation.Y + 5),
+                Color.Black, Color.Black, 1);
         }
 
         public override Widget Clone()

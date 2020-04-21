@@ -30,8 +30,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void DoAfterConnections()
         {
-            var boolean = InConnections.FirstOrDefault(ic => ic.ConnectionTyp == ConnectionType.Repeatable);
-            repeat = boolean.In != null;
+            var boolean = GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0);
+            repeat = boolean != null;
         }
 
         public override void Tick(Actor self)
@@ -39,9 +39,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
             if (!enabled || triggerOnEnter && !repeat)
                 return;
 
-            var cellArray = GetLinkedConnectionFromInConnection(this, InConnections, ConnectionType.TimerConnection, 0);
+            var cellArray = GetLinkedConnectionFromInConnection(ConnectionType.TimerConnection, 0);
             var playerGroup =
-                GetLinkedConnectionFromInConnection(this, InConnections, ConnectionType.TimerConnection, 0);
+                GetLinkedConnectionFromInConnection(ConnectionType.TimerConnection, 0);
 
             if (!cellArray.CellArray.Any() || !playerGroup.PlayerGroup.Any())
                 return;

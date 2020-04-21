@@ -14,9 +14,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
         public override void Execute(World world)
         {
-            var incon = InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer);
-            if (incon.In != null && incon.In.Number != null)
-                repeat += incon.In.Number.Value;
+            var incon = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+            if (incon != null && incon.Number != null)
+                repeat += incon.Number.Value;
         }
 
         public override void Tick(Actor self)

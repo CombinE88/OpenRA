@@ -79,8 +79,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
         public override void Tick(Actor self)
         {
-            var incon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer).In;
-            var incon2 = InConnections.Last(c => c.ConnectionTyp == ConnectionType.Integer).In;
+            var incon1 = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+            var incon2 = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 1);
             var outcon = OutConnections.First(c => c.ConnectionTyp == ConnectionType.Integer);
 
             if (incon1 == null || incon2 == null)

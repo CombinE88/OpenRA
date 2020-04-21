@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
@@ -89,17 +90,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 
         public override void Execute(World world)
         {
-            var inCo = InConnections.First(c => c.ConnectionTyp == ConnectionType.Condition);
+            var inCo = GetLinkedConnectionFromInConnection(ConnectionType.Condition, 0);
 
-            if (inCo.In == null)
-                throw new YamlException(NodeId + "Condition not connected");
+            if (inCo == null)
+                Debug.WriteLine(NodeId + "Condition not connected");
 
-            if (inCo.In.Logic.CheckCondition(world) && Methode == CompareMethod.True ||
-                !inCo.In.Logic.CheckCondition(world) && Methode == CompareMethod.False)
+            if (inCo.Logic.CheckCondition(world) && Methode == CompareMethod.True ||
+                !inCo.Logic.CheckCondition(world) && Methode == CompareMethod.False)
                 ForwardExec(this, 0);
 
-            else if (!inCo.In.Logic.CheckCondition(world) && Methode == CompareMethod.True ||
-                     inCo.In.Logic.CheckCondition(world) && Methode == CompareMethod.False)
+            else if (!inCo.Logic.CheckCondition(world) && Methode == CompareMethod.True ||
+                     inCo.Logic.CheckCondition(world) && Methode == CompareMethod.False)
                 ForwardExec(this, 1);
         }
     }
@@ -115,79 +116,97 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
         {
             if (NodeType == NodeType.CompareActor)
             {
-                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor);
-                var actCon2 = InConnections.Last(c => c.ConnectionTyp == ConnectionType.Actor);
+                var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
+                var actCon2 = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 1);
 
-                if (actCon1.In == null)
-                    throw new YamlException(NodeId + "Actor 1 not connected");
+                if (actCon1 == null)
+                    Debug.WriteLine(NodeId + "Actor 1 not connected");
 
-                if (actCon2.In == null)
-                    throw new YamlException(NodeId + "Actor 2 not connected");
+                if (actCon2 == null)
+                    Debug.WriteLine(NodeId + "Actor 2 not connected");
 
-                if (actCon1.In.Actor == null || actCon2.In.Actor == null)
+                if (actCon1.Actor == null || actCon2.Actor == null)
                     return false;
 
-                return actCon1.In.Actor.Equals(actCon2.In.Actor);
+                return actCon1.Actor.Equals(actCon2.Actor);
             }
 
             if (NodeType == NodeType.CompareNumber)
             {
-                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer);
-                var actCon2 = InConnections.Last(c => c.ConnectionTyp == ConnectionType.Integer);
+                var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+                var actCon2 = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 1);
 
-                if (actCon1.In == null)
-                    throw new YamlException(NodeId + "Number 1 not connected");
+                if (actCon1 == null)
+                {
+                    Debug.WriteLine(NodeId + "Number 1 not connected");
+                    return false;
+                }
 
-                if (actCon2.In == null)
-                    throw new YamlException(NodeId + "Number 2 not connected");
+                if (actCon2 == null)
+                {
+                    Debug.WriteLine(NodeId + "Number 2 not connected");
+                    return false;
+                }
 
-                if (actCon1.In.Number == null || actCon2.In.Number == null)
+                if (actCon1.Number == null || actCon2.Number == null)
                     return false;
 
-                return actCon1.In.Number.Value.Equals(actCon2.In.Number.Value);
+                return actCon1.Number.Value.Equals(actCon2.Number.Value);
             }
 
             if (NodeType == NodeType.CompareActorInfo)
             {
-                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo);
-                var actCon2 = InConnections.Last(c => c.ConnectionTyp == ConnectionType.ActorInfo);
+                var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
+                var actCon2 = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 1);
 
-                if (actCon1.In == null)
-                    throw new YamlException(NodeId + "Actor Info 1 not connected");
+                if (actCon1 == null)
+                {
+                    Debug.WriteLine(NodeId + "Actor Info 1 not connected");
+                    return false;
+                }
 
-                if (actCon2.In == null)
-                    throw new YamlException(NodeId + "Actor Info 2 not connected");
+                if (actCon2 == null)
+                {
+                    Debug.WriteLine(NodeId + "Actor Info 2 not connected");
+                    return false;
+                }
 
-                if (actCon1.In.ActorInfo == null || actCon2.In.ActorInfo == null)
+                if (actCon1.ActorInfo == null || actCon2.ActorInfo == null)
                     return false;
 
-                return actCon1.In.ActorInfo.Equals(actCon2.In.ActorInfo);
+                return actCon1.ActorInfo.Equals(actCon2.ActorInfo);
             }
 
             if (NodeType == NodeType.IsAlive)
             {
-                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor);
+                var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
 
-                if (actCon1.In == null)
-                    throw new YamlException(NodeId + "Actor not connected");
+                if (actCon1 == null)
+                {
+                    Debug.WriteLine(NodeId + "Actor not connected");
+                    return false;
+                }
 
-                if (actCon1.In.ActorInfo == null)
+                if (actCon1.ActorInfo == null)
                     return false;
 
-                return !actCon1.In.Actor.IsDead;
+                return !actCon1.Actor.IsDead;
             }
 
             if (NodeType == NodeType.IsDead)
             {
-                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor);
+                var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
 
-                if (actCon1.In == null)
-                    throw new YamlException(NodeId + "Actor not connected");
+                if (actCon1 == null)
+                {
+                    Debug.WriteLine(NodeId + "Actor not connected");
+                    return false;
+                }
 
-                if (actCon1.In.ActorInfo == null)
+                if (actCon1.ActorInfo == null)
                     return false;
 
-                return actCon1.In.Actor.IsDead;
+                return actCon1.Actor.IsDead;
             }
 
             if (NodeType == NodeType.IsPlaying
@@ -197,15 +216,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 || NodeType == NodeType.HasWon
                 || NodeType == NodeType.HasLost)
             {
-                var actCon1 = InConnections.First(c => c.ConnectionTyp == ConnectionType.Player);
+                var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
 
-                if (actCon1.In == null)
-                    throw new YamlException(NodeId + "Player not connected");
+                if (actCon1 == null)
+                {
+                    Debug.WriteLine(NodeId + "Player not connected");
+                    return false;
+                }
 
-                if (actCon1.In.Player == null)
+                if (actCon1.Player == null)
                     return false;
 
-                var player = world.Players.FirstOrDefault(p => p.InternalName == actCon1.In.Player.Name);
+                var player = world.Players.FirstOrDefault(p => p.InternalName == actCon1.Player.Name);
 
                 if (player == null)
                     return false;

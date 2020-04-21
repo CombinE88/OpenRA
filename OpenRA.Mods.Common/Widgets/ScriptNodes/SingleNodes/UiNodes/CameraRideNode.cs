@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
@@ -22,29 +23,41 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
         {
             if (ingameNodeScriptSystem.WorldRenderer == null || active)
                 return;
-            var numb = InConnections.First(c => c.ConnectionTyp == ConnectionType.Integer);
-            var inPly = InConnections.First(c => c.ConnectionTyp == ConnectionType.Player);
-            var inCon = InConnections.First(c => c.ConnectionTyp == ConnectionType.Location);
-            var inCon2 = InConnections.Last(c => c.ConnectionTyp == ConnectionType.Location);
-            if (numb.In == null)
-                throw new YamlException(NodeId + "Time not connected");
-            if (inPly.In == null)
-                throw new YamlException(NodeId + "Player not connected");
-            if (inCon.In == null)
-                throw new YamlException(NodeId + "Target Location not connected");
-            if (inPly.In.Player == null || world.LocalPlayer == null || numb.In.Number == null)
+            var numb = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+            var inPly = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+            var inCon = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+            var inCon2 = GetLinkedConnectionFromInConnection(ConnectionType.Location, 1);
+            if (numb == null)
+            {
+                Debug.WriteLine(NodeId + "Time not connected");
                 return;
-            if (inCon.In.Location == null)
+            }
+
+            if (inPly == null)
+            {
+                Debug.WriteLine(NodeId + "Player not connected");
+                return;
+            }
+
+            if (inCon == null)
+            {
+                Debug.WriteLine(NodeId + "Target Location not connected");
+                return;
+            }
+
+            if (inPly.Player == null || world.LocalPlayer == null || numb.Number == null)
+                return;
+            if (inCon.Location == null)
                 return;
 
-            if (inCon2.In == null || inCon2.In.Location == null)
+            if (inCon2 == null || inCon2.Location == null)
                 source = ingameNodeScriptSystem.WorldRenderer.Viewport.CenterPosition;
             else
-                source = world.Map.CenterOfCell(inCon2.In.Location.Value);
+                source = world.Map.CenterOfCell(inCon2.Location.Value);
 
-            target = world.Map.CenterOfCell(inCon.In.Location.Value);
-            ply = world.Players.First(p => p.InternalName == inPly.In.Player.Name);
-            maxLength = numb.In.Number.Value;
+            target = world.Map.CenterOfCell(inCon.Location.Value);
+            ply = world.Players.First(p => p.InternalName == inPly.Player.Name);
+            maxLength = numb.Number.Value;
             active = true;
 
             ForwardExec(this, 0);
@@ -54,7 +67,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
         {
             if (!active)
                 return;
-            
+
             if (maxLength > currentLength)
             {
                 currentLength++;

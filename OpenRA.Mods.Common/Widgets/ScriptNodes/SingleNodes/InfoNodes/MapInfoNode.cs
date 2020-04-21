@@ -28,7 +28,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 ConnectionType.LocationRange,
                 ConnectionType.Player,
                 ConnectionType.String,
-                ConnectionType.Repeatable
+                ConnectionType.Enabled
             };
 
             var typString = new List<string>
@@ -216,7 +216,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                         .First(p => p.Name == connection.Player.Name);
                 }
             }
-            else if (connection.ConnectionTyp == ConnectionType.Repeatable)
+            else if (connection.ConnectionTyp == ConnectionType.Enabled)
             {
                 var wid = new LabelWidget();
                 wid.Text = "True";

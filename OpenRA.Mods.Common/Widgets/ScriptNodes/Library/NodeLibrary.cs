@@ -223,7 +223,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
                             new Tuple<ConnectionType, string>(ConnectionType.Integer, "Timer duration"),
-                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, "Determent whether or not the timer repeats periodically"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, "Determent whether or not the timer repeats periodically"),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "Setup and start the timer")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -319,7 +319,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         {
                             new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, "Only actor of this player group can trigger"),
                             new Tuple<ConnectionType, string>(ConnectionType.CellArray, "Cells"),
-                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, "Trigger can repeat more than once"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, "Trigger can repeat more than once"),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "Setup the trigger")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -339,7 +339,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         {
                             new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, "Only actor of this player group can trigger"),
                             new Tuple<ConnectionType, string>(ConnectionType.LocationRange, "Cells"),
-                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, "Trigger can repeat more than once"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, "Trigger can repeat more than once"),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "Setup the trigger")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -358,7 +358,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
                             new Tuple<ConnectionType, string>(ConnectionType.Actor, "Actor that fires the trigger"),
-                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, "Trigger can repeat more than once"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, "Trigger can repeat more than once"),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "Setup the trigger")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -433,13 +433,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Target actor")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "")
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, "Actor type"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, "Cell position of the actor"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "Owner of the actor")
                         }
                     }
                 },
@@ -449,13 +449,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         ConstructorClass = typeof(GroupPlayerGroup),
                         LogicClass = typeof(GroupPlayerLogic),
 
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
-                        },
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, "")
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, "Group of grouped player's")
                         }
                     }
                 },
@@ -467,7 +463,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, "")
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, "Group of grouped actor's")
                         }
                     }
                 },
@@ -566,15 +562,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Queue order actor"),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, "Queue order to all actor in list"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Attack target Actor"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, "Allows movement"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, "Follow the attacker"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Queue this activity")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after queuing the attack")
                         }
                     }
                 },
@@ -586,14 +583,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Queue order actor"),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, "Queue order to all actor in list"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, "Repeat hunting when actor becomes idle"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Queue this activity")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after queuing the attack")
                         }
                     }
                 },
@@ -626,7 +623,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         {
                             new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -795,7 +792,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
@@ -813,7 +810,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.Repeatable, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },

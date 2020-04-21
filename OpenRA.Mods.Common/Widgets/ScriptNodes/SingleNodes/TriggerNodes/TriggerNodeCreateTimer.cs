@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
@@ -48,8 +49,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Tick(Actor self)
         {
-            if (InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Repeatable) != null
-                && InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Repeatable).In != null)
+            if (InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Enabled) != null
+                && InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Enabled).In != null)
                 repeating = true;
             else if (repeating)
                 repeating = false;
@@ -89,12 +90,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
         public override void Execute(World world)
         {
-            var timerConnection = GetLinkedConnectionFromInConnection(this, InConnections, ConnectionType.TimerConnection, 0);
+            var timerConnection = GetLinkedConnectionFromInConnection(ConnectionType.TimerConnection, 0);
 
             var timer = timerConnection.Logic as TriggerLogicCreateTimer;
 
             if (timer == null)
-                throw new YamlException(NodeId + "Timer not found");
+            {
+                Debug.WriteLine(NodeId + "Timer not found");
+                return;
+            }
 
             switch (NodeType)
             {

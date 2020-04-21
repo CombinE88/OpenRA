@@ -74,7 +74,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.StringArray:
                     Color = Color.DarkSlateGray;
                     break;
-                case ConnectionType.Repeatable:
+                case ConnectionType.Enabled:
                     Color = Color.IndianRed;
                     break;
 
@@ -109,7 +109,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             var myPosition = Widget.InConnections.IndexOf(this);
             var getInConnections = NodeConstructorInfo.NodeConstructorInfos[Widget.NodeType].InConnections;
-            if (!getInConnections.Any() || getInConnections.Count < myPosition)
+            if (getInConnections == null || !getInConnections.Any() || getInConnections.Count < myPosition)
                 return;
 
             Tooltip = getInConnections[myPosition].Item2;
@@ -175,7 +175,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         ActorList,
         String,
         StringArray,
-        Repeatable,
+        Enabled,
 
         // Specific Connections
         TimerConnection,

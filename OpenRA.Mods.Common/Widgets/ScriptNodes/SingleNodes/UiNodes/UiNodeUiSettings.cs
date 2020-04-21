@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
@@ -17,30 +18,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
     public class UiObjectivesNode : NodeWidget
     {
-        readonly DropDownButtonWidget methodeSelection;
-        CompareItem selectedMethode;
+        readonly DropDownButtonWidget methodSelection;
+        CompareItem selectedMethod;
 
         public UiObjectivesNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
             Item = CompareItem.Primary;
 
-            var methodes = new List<CompareItem>
+            var method = new List<CompareItem>
             {
                 CompareItem.Primary,
                 CompareItem.Secondary
             };
 
-            selectedMethode = Item.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
+            selectedMethod = Item.Value;
+            methodSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
             Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
-                var item = ScrollItemWidget.Setup(template, () => selectedMethode == option, () =>
+                var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
-                    selectedMethode = option;
+                    selectedMethod = option;
 
-                    methodeSelection.Text = selectedMethode.ToString();
-                    Item = selectedMethode;
+                    methodSelection.Text = selectedMethod.ToString();
+                    Item = selectedMethod;
                 });
 
                 item.Get<LabelWidget>("LABEL").GetText = () => option.ToString();
@@ -48,16 +49,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                 return item;
             };
 
-            methodeSelection.OnClick = () =>
+            methodSelection.OnClick = () =>
             {
-                methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
+                methodSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, method, setupItem2);
             };
 
-            methodeSelection.Text = selectedMethode.ToString();
+            methodSelection.Text = selectedMethod.ToString();
 
-            AddChild(methodeSelection);
+            AddChild(methodSelection);
 
-            methodeSelection.Bounds =
+            methodSelection.Bounds =
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
         }
 
@@ -67,8 +68,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
             if (NodeInfo.Item != null)
             {
-                selectedMethode = NodeInfo.Item.Value;
-                methodeSelection.Text = NodeInfo.Item.Value.ToString();
+                selectedMethod = NodeInfo.Item.Value;
+                methodSelection.Text = NodeInfo.Item.Value.ToString();
             }
         }
     }
@@ -82,173 +83,181 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
         public override void Execute(World world)
         {
-            if (NodeType == NodeType.UiPlayNotification)
+            switch (NodeType)
             {
-                if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In == null
-                    || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In.PlayerGroup == null
-                    || !InConnections.First(ic => ic.ConnectionTyp == ConnectionType.PlayerGroup).In.PlayerGroup.Any())
-                    throw new YamlException(NodeId + "Ui Player Group not connected");
-
-                if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In == null
-                    || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String == null)
-                    throw new YamlException(NodeId + "Ui Type Notification not connected");
-
-                var speech = "Speech";
-
-                if (InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In != null
-                    && InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In.String != null)
-                    speech = InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In.String;
-
-                foreach (var player in InConnections.First(c => c.ConnectionTyp == ConnectionType.PlayerGroup).In
-                    .PlayerGroup.ToArray())
-                    Game.Sound.PlayNotification(
-                        world.Map.Rules,
-                        world.Players.First(p => p.InternalName == player.Name), speech,
-                        InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String, null);
-            }
-            else if (NodeType == NodeType.UiPlaySound)
-            {
-                if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In == null
-                    || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String == null)
-                    throw new YamlException(NodeId + "Ui Player Group not connected");
-
-                if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Location).In == null
-                    || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Location).In.Location == null)
-                    throw new YamlException(NodeId + "Ui Location not connected");
-
-                var sound = InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String;
-
-                Game.Sound.Play(SoundType.World, sound,
-                    world.Map.CenterOfCell(InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Location).In
-                        .Location.Value));
-            }
-            else if (NodeType == NodeType.UiRadarPing)
-            {
-                if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Location).In == null
-                    || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Location).In.Location == null)
-                    throw new YamlException(NodeId + "Ui Location not connected");
-
-                new RadarPing(() => true,
-                    world.Map.CenterOfCell(InConnections.First(ic => ic.ConnectionTyp == ConnectionType.Location).In
-                        .Location.Value),
-                    Color.White,
-                    25,
-                    200,
-                    15,
-                    4,
-                    0.12f);
-            }
-            else if (NodeType == NodeType.UiTextMessage)
-            {
-                if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In == null
-                    || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String == null)
-                    throw new YamlException(NodeId + "Ui first string not connected");
-
-                if (InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In == null
-                    || InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In.String == null)
-                    throw new YamlException(NodeId + "Ui message string not connected");
-
-                Game.AddChatLine(Color.CornflowerBlue,
-                    InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String,
-                    InConnections.Last(ic => ic.ConnectionTyp == ConnectionType.String).In.String);
-            }
-            else if (NodeType == NodeType.UiAddMissionText)
-            {
-                if (InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In == null
-                    || InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String == null)
-                    throw new YamlException(NodeId + "Ui String not connected");
-
-                var luaLabel = Ui.Root.Get("INGAME_ROOT").Get<LabelWidget>("MISSION_TEXT");
-                luaLabel.GetText = () => InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String).In.String;
-            }
-            else if (NodeType == NodeType.UiNewObjective)
-            {
-                var p = InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Player);
-                var pg = InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.PlayerGroup);
-                var ouCon = OutConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Objective);
-
-                var strg = InConnections.First(ic => ic.ConnectionTyp == ConnectionType.String);
-
-                if (p.In == null && pg.In == null)
-                    throw new YamlException(NodeId + "Ui New Mission needs either a single player or group");
-
-                if (strg.In == null || strg.In.String == null)
-                    throw new YamlException(NodeId + "Ui String not connected");
-
-                if (p.In != null)
+                case NodeType.UiPlayNotification:
                 {
-                    var player = world.Players.First(pl => pl.InternalName == p.In.Player.Name);
-                    var mo = player.PlayerActor.Trait<MissionObjectives>();
-                    ouCon.Number = mo.Add(player, strg.In.String,
-                        Item == CompareItem.Primary ? ObjectiveType.Primary : ObjectiveType.Secondary);
-                    ouCon.Player = p.In.Player;
+                    var playerGroup = GetLinkedConnectionFromInConnection(ConnectionType.PlayerGroup, 0);
+                    if (playerGroup == null || playerGroup.PlayerGroup == null || !playerGroup.PlayerGroup.Any())
+                        Debug.WriteLine(NodeId + "Ui Player Group not connected");
+
+                    var inputString = GetLinkedConnectionFromInConnection(ConnectionType.String, 0);
+                    if (inputString == null || inputString.String == null)
+                        Debug.WriteLine(NodeId + "Ui Type Notification not connected");
+
+                    var speech = "Speech";
+                    var voiceSound = GetLinkedConnectionFromInConnection(ConnectionType.String, 1);
+                    if (voiceSound != null && voiceSound.String != null)
+                        speech = voiceSound.String;
+
+                    foreach (var player in playerGroup.PlayerGroup.ToArray())
+                        Game.Sound.PlayNotification(
+                            world.Map.Rules,
+                            world.Players.First(p => p.InternalName == player.Name), speech,
+                            inputString.String, null);
+                    break;
                 }
-                else if (pg.In != null)
+                case NodeType.UiPlaySound:
                 {
-                    var players = new List<Player>();
-                    foreach (var playdef in pg.In.PlayerGroup)
-                        players.Add(world.Players.First(pl => pl.InternalName == playdef.Name));
+                    var inputString = GetLinkedConnectionFromInConnection(ConnectionType.String, 0);
+                    if (inputString == null || inputString.String == null)
+                        Debug.WriteLine(NodeId + "Ui Player Group not connected");
 
-                    foreach (var player in players)
+                    var location = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+                    if (location == null || location.Location == null)
+                        Debug.WriteLine(NodeId + "Ui Location not connected");
+
+                    Game.Sound.Play(SoundType.World, inputString.String,
+                        world.Map.CenterOfCell(location.Location.Value));
+                    break;
+                }
+                case NodeType.UiRadarPing:
+                {
+                    var location = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+                    if (location == null || location.Location == null)
+                        Debug.WriteLine(NodeId + "Ui Location not connected");
+
+                    new RadarPing(() => true,
+                        world.Map.CenterOfCell(location.Location.Value),
+                        Color.White,
+                        25,
+                        200,
+                        15,
+                        4,
+                        0.12f);
+                    break;
+                }
+                case NodeType.UiTextMessage:
+                {
+                    var inputString = GetLinkedConnectionFromInConnection(ConnectionType.String, 0);
+                    if (inputString == null || inputString.String == null)
+                        Debug.WriteLine(NodeId + "Ui first string not connected");
+
+                    var inputsecondString = GetLinkedConnectionFromInConnection(ConnectionType.String, 1);
+                    if (inputsecondString == null || inputsecondString.String == null)
+                        Debug.WriteLine(NodeId + "Ui message string not connected");
+
+                    Game.AddChatLine(Color.CornflowerBlue, inputString.String, inputsecondString.String);
+                    break;
+                }
+                case NodeType.UiAddMissionText:
+                {
+                    var inputString = GetLinkedConnectionFromInConnection(ConnectionType.String, 0);
+                    if (inputString == null || inputString.String == null)
+                        Debug.WriteLine(NodeId + "Ui String not connected");
+
+                    var luaLabel = Ui.Root.Get("INGAME_ROOT").Get<LabelWidget>("MISSION_TEXT");
+                    luaLabel.GetText = () => inputString.String;
+                    break;
+                }
+                case NodeType.UiNewObjective:
+                {
+                    var singlePlayer = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+                    var playerGroup = GetLinkedConnectionFromInConnection(ConnectionType.PlayerGroup, 0);
+                    var objective = GetLinkedConnectionFromInConnection(ConnectionType.Objective, 0);
+
+                    var text = GetLinkedConnectionFromInConnection(ConnectionType.String, 0);
+
+                    if (singlePlayer == null && playerGroup == null)
+                        Debug.WriteLine(NodeId + "Ui New Mission needs either a single player or group");
+
+                    if (text == null || text.String == null)
+                        Debug.WriteLine(NodeId + "Ui String not connected");
+
+                    if (singlePlayer != null)
                     {
+                        var player = world.Players.First(pl => pl.InternalName == singlePlayer.String);
                         var mo = player.PlayerActor.Trait<MissionObjectives>();
-                        ouCon.Number = mo.Add(player, strg.In.String,
+                        objective.Number = mo.Add(player, text.String,
                             Item == CompareItem.Primary ? ObjectiveType.Primary : ObjectiveType.Secondary);
+                        objective.Player = player.PlayerReference;
                     }
-
-                    ouCon.PlayerGroup = pg.In.PlayerGroup;
-                }
-            }
-            else if (NodeType == NodeType.UiCompleteObjective)
-            {
-                var obj = InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Objective);
-
-                if (obj.In == null)
-                    throw new YamlException(NodeId + "Ui Complete mission needs an Objective input");
-
-                if (obj.In.Player != null)
-                {
-                    var player = world.Players.First(pl => pl.InternalName == obj.In.Player.Name);
-                    var mo = player.PlayerActor.Trait<MissionObjectives>();
-                    mo.MarkCompleted(player, obj.In.Number.Value);
-                }
-                else if (obj.In.PlayerGroup != null)
-                {
-                    var players = new List<Player>();
-                    foreach (var playdef in obj.In.PlayerGroup)
-                        players.Add(world.Players.First(pl => pl.InternalName == playdef.Name));
-
-                    foreach (var player in players)
+                    else if (playerGroup != null)
                     {
-                        var mo = player.PlayerActor.Trait<MissionObjectives>();
-                        mo.MarkCompleted(player, obj.In.Number.Value);
+                        var players = new List<Player>();
+                        foreach (var playdef in playerGroup.PlayerGroup)
+                            players.Add(world.Players.First(pl => pl.InternalName == playdef.Name));
+
+                        foreach (var player in players)
+                        {
+                            var mo = player.PlayerActor.Trait<MissionObjectives>();
+                            objective.Number = mo.Add(player, text.String,
+                                Item == CompareItem.Primary ? ObjectiveType.Primary : ObjectiveType.Secondary);
+                        }
+
+                        objective.PlayerGroup = playerGroup.PlayerGroup;
                     }
+
+                    break;
                 }
-            }
-            else if (NodeType == NodeType.UiFailObjective)
-            {
-                var obj = InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Objective);
-
-                if (obj.In == null)
-                    throw new YamlException(NodeId + "Ui Complete mission needs an Objective input");
-
-                if (obj.In.Player != null)
+                case NodeType.UiCompleteObjective:
                 {
-                    var player = world.Players.First(pl => pl.InternalName == obj.In.Player.Name);
-                    var mo = player.PlayerActor.Trait<MissionObjectives>();
-                    mo.MarkFailed(player, obj.In.Number.Value);
-                }
-                else if (obj.In.PlayerGroup != null)
-                {
-                    var players = new List<Player>();
-                    foreach (var playdef in obj.In.PlayerGroup)
-                        players.Add(world.Players.First(pl => pl.InternalName == playdef.Name));
+                    var obj = GetLinkedConnectionFromInConnection(ConnectionType.Objective, 0);
 
-                    foreach (var player in players)
+                    if (obj == null)
+                        Debug.WriteLine(NodeId + "Ui Complete mission needs an Objective input");
+
+                    if (obj.Player != null)
                     {
+                        var player = world.Players.First(pl => pl.InternalName == obj.Player.Name);
                         var mo = player.PlayerActor.Trait<MissionObjectives>();
-                        mo.MarkFailed(player, obj.In.Number.Value);
+                        mo.MarkCompleted(player, obj.Number.Value);
                     }
+                    else if (obj.PlayerGroup != null)
+                    {
+                        var players = new List<Player>();
+                        foreach (var playdef in obj.PlayerGroup)
+                            players.Add(world.Players.First(pl => pl.InternalName == playdef.Name));
+
+                        foreach (var player in players)
+                        {
+                            var mo = player.PlayerActor.Trait<MissionObjectives>();
+                            mo.MarkCompleted(player, obj.Number.Value);
+                        }
+                    }
+
+                    break;
+                }
+                case NodeType.UiFailObjective:
+                {
+                    var obj = GetLinkedConnectionFromInConnection(ConnectionType.Objective, 0);
+
+                    if (obj == null)
+                    {
+                        Debug.WriteLine(NodeId + "Ui Complete mission needs an Objective input");
+                        return;
+                    }
+
+                    if (obj.Player != null)
+                    {
+                        var player = world.Players.First(pl => pl.InternalName == obj.Player.Name);
+                        var mo = player.PlayerActor.Trait<MissionObjectives>();
+                        mo.MarkFailed(player, obj.Number.Value);
+                    }
+                    else if (obj.PlayerGroup != null)
+                    {
+                        var players = new List<Player>();
+                        foreach (var playdef in obj.PlayerGroup)
+                            players.Add(world.Players.First(pl => pl.InternalName == playdef.Name));
+
+                        foreach (var player in players)
+                        {
+                            var mo = player.PlayerActor.Trait<MissionObjectives>();
+                            mo.MarkFailed(player, obj.Number.Value);
+                        }
+                    }
+
+                    break;
                 }
             }
 

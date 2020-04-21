@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
@@ -12,18 +13,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
         public override void DoAfterConnections()
         {
             if (InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).In == null)
-                throw new YamlException(NodeId + "Actor not connected");
+               Debug.WriteLine(NodeId + "Actor not connected");
         }
 
         public override void Tick(Actor self)
         {
-            var actor = InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).In.Actor;
-            if (InConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).In.Actor == null)
+            var actor = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
+            if (actor.Actor == null)
                 return;
 
-            OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo).ActorInfo = actor.Info;
+            OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfo).ActorInfo = actor.ActorInfo;
             OutConnections.First(c => c.ConnectionTyp == ConnectionType.Location).Location = actor.Location;
-            OutConnections.First(c => c.ConnectionTyp == ConnectionType.Player).Player = actor.Owner.PlayerReference;
+            OutConnections.First(c => c.ConnectionTyp == ConnectionType.Player).Player =
+                actor.Actor.Owner.PlayerReference;
         }
     }
 }
