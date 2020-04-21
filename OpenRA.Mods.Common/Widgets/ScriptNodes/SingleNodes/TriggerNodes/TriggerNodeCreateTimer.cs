@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
@@ -6,6 +8,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerNodeCreateTimer : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.TriggerCreateTimer, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(TriggerLogicCreateTimer),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Timer duration"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled,
+                                "Determent whether or not the timer repeats periodically"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Setup and start the timer")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.TimerConnection, "Reference to the timer"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs when the timer has run out"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after setting up the timer")
+                        }
+                    }
+                },
+            };
         public TriggerNodeCreateTimer(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
         }

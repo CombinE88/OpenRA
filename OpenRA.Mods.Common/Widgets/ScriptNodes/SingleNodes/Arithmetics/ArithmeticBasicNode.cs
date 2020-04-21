@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
@@ -5,6 +7,45 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class ArithmeticBasicLogic : NodeLogic
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.ArithmeticsOr, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ArithmeticBasicLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.ArithmeticsAnd, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ArithmeticBasicLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+        
         bool repeating;
         bool started;
 

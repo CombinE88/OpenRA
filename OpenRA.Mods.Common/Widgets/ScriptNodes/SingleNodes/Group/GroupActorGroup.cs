@@ -1,12 +1,31 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
     public class GroupActorGroup : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.GroupActorGroup, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(GroupActorLogic),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, "Group of grouped actor's")
+                        }
+                    }
+                },
+            };
+
         public GroupActorGroup(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
+            IsIncorrectConnected = () => InConnections.Any(inCon => inCon.In != null);
         }
 
         public override void Tick()
@@ -31,6 +50,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
     public class GroupActorInfoGroup : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.ActorCreateActor, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(GroupActorInfoLogic),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfoArray, "")
+                        }
+                    }
+                },
+            };
+
         public GroupActorInfoGroup(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
         }

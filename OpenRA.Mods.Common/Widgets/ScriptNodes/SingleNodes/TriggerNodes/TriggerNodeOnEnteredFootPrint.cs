@@ -1,10 +1,40 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerNodeOnEnteredFootPrint : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.TriggerOnEnteredFootprint, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(TriggerLogicEnteredFootPrint),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup,
+                                "Only actor of this player group can trigger"),
+                            new Tuple<ConnectionType, string>(ConnectionType.CellArray, "Cells"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled,
+                                "Trigger can repeat more than once"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Setup the trigger")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec,
+                                "Runs when the trigger condition is met"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after the trigger has set up")
+                        }
+                    }
+                },
+            };
+
         public TriggerNodeOnEnteredFootPrint(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen,
             nodeInfo)
         {

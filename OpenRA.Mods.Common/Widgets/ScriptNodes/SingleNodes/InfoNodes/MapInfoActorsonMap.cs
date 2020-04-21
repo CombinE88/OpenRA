@@ -1,12 +1,33 @@
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeEditorTraits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class MapInfoActorsonMap : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.MapInfoActorReference, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(NodeLogic),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor,
+                                "First actor of all selected actors on the map"),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, "List of all selected actors")
+                        }
+                    }
+                },
+            };
+        
         readonly ButtonWidget button;
 
         public MapInfoActorsonMap(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)

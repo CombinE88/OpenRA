@@ -1,15 +1,45 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using OpenRA.Effects;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Primitives;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 {
     public class ActorNodeCreateActor : NodeWidget
     {
-        public ActorNodeCreateActor(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.ActorCreateActor, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorCreateActorLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, "Actor type information"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "Owner of the actor"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, "Cell where the actor spawns"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Facing of the actor 0-255"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Run the node")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Actor that got created"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after the actor is created")
+                        }
+                    }
+                }
+            };
+
+        public ActorNodeCreateActor(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen,
+            nodeInfo)
         {
+            IsIncorrectConnected =
+                () => InConnections.Any(inCon => inCon.In == null && inCon.ConnectionTyp != ConnectionType.Integer);
         }
     }
 

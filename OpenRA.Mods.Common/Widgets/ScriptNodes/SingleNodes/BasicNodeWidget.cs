@@ -13,7 +13,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public readonly string BackgroundCross = "button";
 
-        // BAckground
+        // Background
         public readonly string BackgroundDrag = "button-highlighted";
         public readonly string BackgroundEntries = "button-pressed";
         public readonly EditorViewportControllerWidget Editor;
@@ -24,6 +24,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public ButtonWidget DeleteButton;
 
         // Node Inhalte
+        public static Dictionary<NodeType,BuildNodeConstructorInfo> NodeConstructorInformation;
         public Rectangle DragBar;
         public Rectangle FreeWidgetEntries;
 
@@ -57,18 +58,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public bool Selected;
         public int SizeX;
         public int SizeY;
-        public AdvancedTextFieldType Textfield;
         public Rectangle WidgetBackground;
         public Rectangle WidgetEntries;
 
         // Visual Error
-        public bool IncorrectConnected;
         public Func<bool> IsIncorrectConnected;
 
         [ObjectCreator.UseCtorAttribute]
         public BasicNodeWidget(NodeEditorNodeScreenWidget screen)
         {
-            IsIncorrectConnected = () => InConnections.Any(inCon => inCon.In == null);
+            IsIncorrectConnected = () =>
+                InConnections.Any(inCon => inCon.In == null && inCon.ConnectionTyp != ConnectionType.Enabled);
 
             Editor = screen.NodeScriptContainerWidget.Parent.Get<EditorViewportControllerWidget>("MAP_EDITOR");
             Screen = screen;
@@ -103,34 +103,20 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             void
             SetOuts
             (
-                List
-                    <
-                        OutConnection
-                    >
-                    o
+                List<OutConnection> o
             )
         {
-            OutConnections
-                =
-                o
-                ;
+            OutConnections = o;
         }
 
         public
             void
             SetIns
             (
-                List
-                    <
-                        InConnection
-                    >
-                    i
+                List<InConnection> i
             )
         {
-            InConnections
-                =
-                i
-                ;
+            InConnections = i;
         }
 
         public override void Tick()
@@ -392,5 +378,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         {
             return new BasicNodeWidget(Screen);
         }
+    }
+
+    public class BuildNodeConstructorInfo
+    {
+        public Type LogicClass;
+        public Type WidgetType;
+        
+        public List<Tuple<ConnectionType, string>> InConnections;
+        public List<Tuple<ConnectionType, string>> OutConnections;
     }
 }

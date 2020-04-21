@@ -2,11 +2,33 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class ArithmeticMathNode : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.ArithmeticsMath, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ArithmeticMathNodeLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "")
+                        }
+                    }
+                },
+            };
+        
         readonly DropDownButtonWidget methodeSelection;
         CompareMethod selectedMethod;
 

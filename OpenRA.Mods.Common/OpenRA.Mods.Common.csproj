@@ -601,7 +601,6 @@
     <Compile Include="Widgets\DropDownMenuExpandButton.cs" />
     <Compile Include="Widgets\DropDownMenuWidget.cs" />
     <Compile Include="Widgets\Logic\MusicHotkeyLogic.cs" />
-    <Compile Include="Widgets\ScriptNodes\AdvancedTextFieldWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\Connections.cs" />
     <Compile Include="Widgets\ScriptNodes\Easing.cs" />
     <Compile Include="Widgets\ScriptNodes\EditorNodeBrushes\EditorNodeBrush.cs" />
@@ -649,6 +648,7 @@
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\TextBoxSelectNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\SetCameraPositionNode.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\UiNodes\UiNodeUiSettings.cs" />
+    <Compile Include="Widgets\ScriptNodes\SingleNodes\UndefinedNodeWidget.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Variables\GetVariable.cs" />
     <Compile Include="Widgets\ScriptNodes\SingleNodes\Variables\SettVariable.cs" />
     <Compile Include="WorldExtensions.cs" />

@@ -15,6 +15,54 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 {
     public class FunctionNodeReinforcements : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.Reinforcements, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(FunctionLogicReinforcements),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfoArray, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.CellPath, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.ReinforcementsWithTransport, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(FunctionLogicReinforcements),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfoArray, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.CellPath, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.CellPath, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         public FunctionNodeReinforcements(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
         }

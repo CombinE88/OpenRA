@@ -4,11 +4,35 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
     public class FilterActorListByNode : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.FilterActorGroup, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(FilterActorListByLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         readonly DropDownButtonWidget itemSelection;
         readonly DropDownButtonWidget methodeSelection;
         CompareItem selectedItem;

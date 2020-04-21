@@ -1,10 +1,38 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
     public class CameraRideNodeLogic : NodeLogic
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.CameraRide, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(CameraRideNodeLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         bool active;
         int currentLength;
         readonly IngameNodeScriptSystem ingameNodeScriptSystem;

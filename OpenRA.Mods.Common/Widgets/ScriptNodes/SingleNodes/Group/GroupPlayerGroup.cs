@@ -1,12 +1,31 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
     public class GroupPlayerGroup : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.GroupPlayerGroup, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(GroupPlayerLogic),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, "Group of grouped player's")
+                        }
+                    }
+                },
+            };
+        
         public GroupPlayerGroup(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
+            IsIncorrectConnected = () => InConnections.Any(inCon => inCon.In != null);
         }
 
         public override void Tick()

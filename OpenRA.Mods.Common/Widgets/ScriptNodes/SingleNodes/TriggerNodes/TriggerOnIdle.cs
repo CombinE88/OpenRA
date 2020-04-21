@@ -1,11 +1,38 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerOnIdle : NodeLogic
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.TriggerOnIdle, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(TriggerOnIdle),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Actor that fires the trigger"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled,
+                                "Trigger can repeat more than once"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Setup the trigger")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec,
+                                "Runs when the trigger condition is met"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after the trigger has set up")
+                        }
+                    }
+                },
+            };
+
         readonly List<Actor> idleActors = new List<Actor>();
         bool enabled;
 

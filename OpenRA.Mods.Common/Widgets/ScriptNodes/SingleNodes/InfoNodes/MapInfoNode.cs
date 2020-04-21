@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeEditorTraits;
 using OpenRA.Widgets;
 
@@ -11,6 +12,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class MapInfoNode : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.MapInfoNode, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(MapInfoLogicNode)
+                    }
+                }
+            };
+
         readonly ButtonWidget addButton;
         readonly DropDownButtonWidget createInfoList;
         ConnectionType nodeType;

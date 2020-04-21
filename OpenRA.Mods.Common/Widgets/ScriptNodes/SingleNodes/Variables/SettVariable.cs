@@ -2,12 +2,34 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables
 {
     public class SetVariableNode : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.SetVariable, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(SetVariableLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         readonly DropDownButtonWidget availableVariables;
 
         public SetVariableNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)

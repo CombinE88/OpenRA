@@ -1,11 +1,36 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerOnKilled : NodeLogic
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.TriggerOnKilled, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(TriggerOnKilled),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Actor that fires the trigger"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Setup the trigger")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec,
+                                "Runs when the trigger condition is met"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after the trigger has set up")
+                        }
+                    }
+                },
+            };
+
         readonly List<Actor> actors = new List<Actor>();
         bool enabled;
 

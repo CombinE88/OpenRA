@@ -1,11 +1,34 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using OpenRA.Effects;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 {
     public class TimedExecutionLogic : NodeLogic
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.TimedExecution, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(TimedExecutionLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         public TimedExecutionLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
             ingameNodeScriptSystem)
         {
@@ -15,7 +38,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
         {
             Action delayedAction = () => { ForwardExec(this, 0); };
 
-            var conInInt = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);;
+            var conInInt = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+            ;
             var delay = 0;
             if (!(conInInt == null || conInInt == null || conInInt.Number == null))
                 delay = conInInt.Number.Value;

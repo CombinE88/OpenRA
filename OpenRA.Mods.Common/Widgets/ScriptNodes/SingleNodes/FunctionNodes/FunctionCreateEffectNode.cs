@@ -1,11 +1,36 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using OpenRA.Mods.Common.Effects;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 {
     public class FunctionCreateEffectLogic : NodeLogic
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.CreateEffect, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(FunctionCreateEffectLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         public FunctionCreateEffectLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
             nodeInfo, ingameNodeScriptSystem)
         {

@@ -11,6 +11,95 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
     public class UiNodeUiSettings : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.UiPlayNotification, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.UiPlaySound, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.UiRadarPing, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.UiTextMessage, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.UiAddMissionText, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         public UiNodeUiSettings(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
         }
@@ -18,6 +107,31 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
     public class UiObjectivesNode : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.UiNewObjective, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(UiLogicUiSettings),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.PlayerGroup, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Objective, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
+
         readonly DropDownButtonWidget methodSelection;
         CompareItem selectedMethod;
 
@@ -53,11 +167,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             {
                 methodSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, method, setupItem2);
             };
-
             methodSelection.Text = selectedMethod.ToString();
-
             AddChild(methodSelection);
-
             methodSelection.Bounds =
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
         }
@@ -65,7 +176,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
         public override void AddOutConConstructor(OutConnection connection)
         {
             base.AddOutConConstructor(connection);
-
             if (NodeInfo.Item != null)
             {
                 selectedMethod = NodeInfo.Item.Value;

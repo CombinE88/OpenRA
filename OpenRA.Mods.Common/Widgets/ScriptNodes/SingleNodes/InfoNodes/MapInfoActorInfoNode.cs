@@ -1,13 +1,32 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Primitives;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class MapInfoActorInfoNode : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.MapInfoActorInfo, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(MapInfoLogicNode),
+
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo,
+                                "Output: yaml name of choosen Actortype")
+                        }
+                    }
+                }
+            };
+
         readonly TextFieldWidget textField;
 
         readonly DropDownButtonWidget playerSelection;

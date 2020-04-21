@@ -1,10 +1,34 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 {
     public class GetActorInformationsLogic : NodeLogic
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.ActorGetInformations, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(GetActorInformationsLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Target actor")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, "Actor type"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, "Cell position of the actor"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "Owner of the actor")
+                        }
+                    }
+                }
+            };
         public GetActorInformationsLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
             nodeInfo, ingameNodeScriptSystem)
         {

@@ -3,11 +3,34 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class ArithmecCompareNode : NodeWidget
     {
+        
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.CompareActors, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ArithmecCompareLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Universal, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Universal, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Universal, "")
+                        }
+                    }
+                }
+            };
+        
         readonly DropDownButtonWidget itemSelection;
         readonly DropDownButtonWidget methodeSelection;
         CompareItem selectedItem;

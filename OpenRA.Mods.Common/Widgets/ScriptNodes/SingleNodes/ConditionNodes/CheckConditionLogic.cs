@@ -9,6 +9,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 {
     public class CheckConditionNode : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.CheckCondition, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(CheckConditionLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Condition, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+        
         readonly LabelWidget labal1;
         readonly LabelWidget labal2;
         readonly DropDownButtonWidget methodeSelection;

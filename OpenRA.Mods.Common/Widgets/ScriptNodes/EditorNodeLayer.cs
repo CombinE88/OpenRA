@@ -4,6 +4,7 @@ using System.Linq;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
 using OpenRA.Traits;
 
@@ -62,6 +63,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             var nodeId = infos.Last();
 
             var nodeTypes = (NodeType[]) Enum.GetValues(typeof(NodeType));
+            
             var nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
 
             var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);

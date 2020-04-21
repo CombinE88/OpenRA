@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,8 +11,189 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 {
     public class ActorNodeQueueAbility : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.ActorQueueSell, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueFindResources, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueAttackMoveActivity, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueHunt, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Queue order actor"),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList,
+                                "Queue order to all actor in list"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled,
+                                "Repeat hunting when actor becomes idle"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Queue this activity")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after queuing the attack")
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueAttack, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Queue order actor"),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList,
+                                "Queue order to all actor in list"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "Attack target Actor"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, "Allows movement"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Enabled, "Follow the attacker"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Queue this activity")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after queuing the attack")
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorQueueMove, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorChangeOwner, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorRemove, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.ActorKill, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(ActorLogicQueueAbility),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Run the node")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         public ActorNodeQueueAbility(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
+            IsIncorrectConnected = () =>
+            {
+                var connections = InConnections.Any(inCon =>
+                    inCon.In == null && inCon.ConnectionTyp != ConnectionType.Actor &&
+                    inCon.ConnectionTyp != ConnectionType.ActorList && inCon.ConnectionTyp != ConnectionType.Enabled);
+                var containsEither = InConnections.Any(c => c.In != null && c.ConnectionTyp == ConnectionType.Actor) ||
+                                     InConnections.Any(c =>
+                                         c.In != null && c.ConnectionTyp == ConnectionType.ActorList);
+
+                return containsEither && connections;
+            };
         }
     }
 

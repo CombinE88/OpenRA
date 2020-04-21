@@ -1,10 +1,36 @@
-using System.Linq;
+using System;
+using System.Collections.Generic;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
     public class GlobalLightningNodeLogic : NodeLogic
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.GlobalLightning, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(GlobalLightningNodeLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Color: Red 0-256"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Color: Green 0-256"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Color: Blue 0-256"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Alpha: 0-256"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         readonly bool hasLighting;
         readonly GlobalLightingPaletteEffect lighting;
 
@@ -37,7 +63,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                 lighting.Blue = b;
                 lighting.Ambient = a;
             }
-            
+
             ForwardExec(this);
         }
     }

@@ -2,15 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
     public class TextBoxSelectNode : NodeWidget
     {
+        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
+            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+            {
+                {
+                    NodeType.ActorCreateActor, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(TextBoxSelectLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+            };
+
         readonly List<ButtonWidget> parralelButtons = new List<ButtonWidget>();
 
         public TextBoxSelectNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
+            IsIncorrectConnected = () =>
+                InConnections.Any(inCon => inCon.In != null) && InConnections.FirstOrDefault(inCon =>
+                    inCon.In != null && inCon.ConnectionTyp == ConnectionType.String) != null;
+
             ButtonWidget addButton;
             AddChild(addButton = new ButtonWidget(screen.NodeScriptContainerWidget.ModData));
             addButton.Bounds = new Rectangle(FreeWidgetEntries.X + 10, FreeWidgetEntries.Y + 21,
@@ -90,7 +116,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             inCons = InConnections.Where(i => i.ConnectionTyp == ConnectionType.String).ToList();
             inCons.Remove(inCons.First());
 
-            Text =  GetLinkedConnectionFromInConnection(ConnectionType.String, 0).String;
+            Text = GetLinkedConnectionFromInConnection(ConnectionType.String, 0).String;
 
             foreach (var inCon in inCons) Options.Add(new Tuple<InConnection, string>(inCon, inCon.In.String));
 
