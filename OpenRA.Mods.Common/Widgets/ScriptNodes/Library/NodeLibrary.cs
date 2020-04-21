@@ -99,8 +99,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
             foreach (var nodeInfo in nodeInfos)
             {
-                foreach (var type in Assembly.GetAssembly(typeof(NodeLogic)).GetTypes().Where(type =>
-                    type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeLogic))))
+                foreach (var type in Assembly.GetAssembly(typeof(NodeWidget)).GetTypes().Where(type =>
+                    type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeWidget))))
                 {
                     var dictObject = type.GetField("NodeBuilder").GetValue(null);
                     var dictionary = (Dictionary<NodeType, BuildNodeConstructorInfo>) dictObject;
@@ -109,8 +109,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                         continue;
 
                     var createNode = (NodeLogic) dictionary[nodeInfo.NodeType].LogicClass
-                        .GetConstructor(new[] {typeof(NodeEditorNodeScreenWidget), typeof(NodeLogic)})
-                        .Invoke(new object[] {inss, nodeInfo});
+                        .GetConstructor(new[] {typeof(NodeInfo), typeof(IngameNodeScriptSystem)})
+                        .Invoke(new object[] {nodeInfo, inss});
 
                     nodeList.Add(createNode);
                 }

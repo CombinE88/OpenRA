@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
@@ -89,6 +90,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
+                        }
+                    }
+                },
+                {
+                    NodeType.CreateEffect, new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(FunctionCreateEffectLogic),
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.String, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },

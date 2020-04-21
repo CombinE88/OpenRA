@@ -191,7 +191,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
             var connection = inConnections[position].In;
 
-            if (connection.Out == null)
+            if (connection == null)
             {
                 Debug.WriteLine(NodeName + ": Connection " + connection.ConnectionId + " is not connected ");
                 return null;

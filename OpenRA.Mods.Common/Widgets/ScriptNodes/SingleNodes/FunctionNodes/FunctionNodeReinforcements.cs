@@ -82,6 +82,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
         public override void Execute(World world)
         {
+            
             domainIndex = world.WorldActor.Trait<DomainIndex>();
             domainIndexes = new Dictionary<uint, MovementClassDomainIndex>();
             tileSet = world.Map.Rules.TileSet;
@@ -107,7 +108,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             }
 
             var cellPath = GetLinkedConnectionFromInConnection(ConnectionType.CellPath, 0);
-            if (cellPath == null || cellPath.CellArray == null || cellPath.CellArray.Any())
+            if (cellPath == null || cellPath.CellArray == null || !cellPath.CellArray.Any())
             {
                 Debug.WriteLine(NodeId + "Reinforcement Entry Path not connected or empty");
                 return;
@@ -132,7 +133,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             if (NodeType == NodeType.ReinforcementsWithTransport)
             {
                 var exitpath = GetLinkedConnectionFromInConnection(ConnectionType.CellPath, 1);
-                if (exitpath == null || exitpath.CellArray == null || exitpath.CellArray.Any())
+                if (exitpath == null || exitpath.CellArray == null || !exitpath.CellArray.Any())
                 {
                     Debug.WriteLine(NodeId + "Reinforcement exit path not connected or empty");
                     return;

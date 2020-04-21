@@ -379,11 +379,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             return new BasicNodeWidget(Screen);
         }
     }
-
     public class BuildNodeConstructorInfo
     {
         public Type LogicClass;
         public Type WidgetType;
+        public string[] Name;
         
         public List<Tuple<ConnectionType, string>> InConnections;
         public List<Tuple<ConnectionType, string>> OutConnections;

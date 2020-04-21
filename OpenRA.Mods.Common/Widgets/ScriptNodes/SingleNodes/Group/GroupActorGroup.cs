@@ -54,7 +54,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             new Dictionary<NodeType, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.ActorCreateActor, new BuildNodeConstructorInfo
+                    NodeType.GroupActorInfoGroup, new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GroupActorInfoLogic),
 

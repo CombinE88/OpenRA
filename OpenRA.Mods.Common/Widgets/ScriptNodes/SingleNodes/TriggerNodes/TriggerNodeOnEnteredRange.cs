@@ -79,7 +79,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
             var playerGroup = GetLinkedConnectionFromInConnection(ConnectionType.PlayerGroup, 0);
 
-            if (playerGroup == null || playerGroup.PlayerGroup.Any())
+            if (playerGroup == null || !playerGroup.PlayerGroup.Any())
             {
                 Debug.WriteLine(NodeId + "player Group not connected");
                 return;
