@@ -15,6 +15,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                     "ArithmeticsMath", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ArithmeticMathNodeLogic),
+                        Nesting = new[] {"Arithmetic's"},
+                        Name = "Math",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

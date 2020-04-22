@@ -9,14 +9,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class ArithmecCompareNode : NodeWidget
     {
-        
+        // TODO: Nicht sicher ob nötig
+
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    "CompareActors", new BuildNodeConstructorInfo
+                    "CompareUniversal", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ArithmecCompareLogic),
+                        Nesting = new[] {"Arithmetic's"},
+                        Name = "Compare Universal",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -30,7 +33,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                     }
                 }
             };
-        
+
+
         readonly DropDownButtonWidget itemSelection;
         readonly DropDownButtonWidget methodeSelection;
         CompareItem selectedItem;

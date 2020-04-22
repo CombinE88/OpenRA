@@ -16,6 +16,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables
                     "SetVariable", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(SetVariableLogic),
+                        Nesting = new[] {"Variable Nodes"},
+                        Name = "Set Variable",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

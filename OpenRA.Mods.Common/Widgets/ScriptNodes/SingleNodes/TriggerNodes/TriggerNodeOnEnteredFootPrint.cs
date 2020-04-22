@@ -15,6 +15,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                     "TriggerOnEnteredFootprint", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerLogicEnteredFootPrint),
+                        Nesting = new[] {"Trigger"},
+                        Name = "On Entered Footprint",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

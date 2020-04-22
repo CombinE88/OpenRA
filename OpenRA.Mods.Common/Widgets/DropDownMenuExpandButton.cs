@@ -5,13 +5,13 @@ namespace OpenRA.Mods.Common.Widgets
 {
     public class DropDownMenuExpandButton : ButtonWidget
     {
-        DropDownMenuWidget dropMenu;
+        public DropDownMenuWidget DropMenu;
 
         public DropDownMenuExpandButton(ModData modData, Rectangle bounds) : base(modData)
         {
             Bounds = new Rectangle(bounds.X, bounds.Y, bounds.Width + 25, bounds.Height);
 
-            dropMenu = new DropDownMenuWidget()
+            DropMenu = new DropDownMenuWidget()
             {
                 Visible = false
             };
@@ -19,9 +19,9 @@ namespace OpenRA.Mods.Common.Widgets
             OnClick = () =>
             {
                 DropDownMenuWidget.Collapse(Parent);
-                dropMenu.Visible = true;
-                dropMenu.Bounds = new Rectangle(Bounds.X + Bounds.Width, 0, dropMenu.Bounds.Width,
-                    dropMenu.Bounds.Height);
+                DropMenu.Visible = true;
+                DropMenu.Bounds = new Rectangle(Bounds.X + Bounds.Width, 0, DropMenu.Bounds.Width,
+                    DropMenu.Bounds.Height);
             };
 
             AddChild(new ImageWidget()
@@ -31,12 +31,12 @@ namespace OpenRA.Mods.Common.Widgets
                 GetImageCollection = () => "scrollbar"
             });
 
-            AddChild(dropMenu);
+            AddChild(DropMenu);
         }
 
         public void AddDropDownMenu(Widget element)
         {
-            dropMenu.AddDropDownMenu(element);
+            DropMenu.AddDropDownMenu(element);
         }
     }
 }

@@ -13,6 +13,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                     "TriggerTick", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerLogicTick),
+                        Nesting = new[] {"Trigger"},
+                        Name = "Every Tick",
 
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {

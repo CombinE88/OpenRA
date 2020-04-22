@@ -16,6 +16,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                     "ActorCreateActor", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerLogicOnEnteredRange),
+                        Nesting = new[] {"Trigger"},
+                        Name = "On Entered Range",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

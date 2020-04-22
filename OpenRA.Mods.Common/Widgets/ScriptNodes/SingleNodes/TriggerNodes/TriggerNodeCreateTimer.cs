@@ -16,6 +16,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                     "TriggerCreateTimer", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerLogicCreateTimer),
+                        Nesting = new[] {"Timer"},
+                        Name = "Create Timer",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

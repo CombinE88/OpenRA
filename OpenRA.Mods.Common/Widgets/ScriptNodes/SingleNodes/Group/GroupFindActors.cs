@@ -15,6 +15,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     "FindActorsOnFootprint", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GroupFindActorsLogic),
+                        Nesting = new[] {"Actor/Player Group"},
+                        Name = "Find Actors on Footprint",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -32,6 +34,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     "FinActorsInCircle", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GroupFindActorsLogic),
+                        Nesting = new[] {"Actor/Player Group"},
+                        Name = "Find Actors in Range",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

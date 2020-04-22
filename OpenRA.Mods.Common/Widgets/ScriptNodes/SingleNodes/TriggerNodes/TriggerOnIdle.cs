@@ -15,6 +15,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                     "TriggerOnIdle", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerOnIdle),
+                        Nesting = new[] {"Trigger"},
+                        Name = "On Actor Idle",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

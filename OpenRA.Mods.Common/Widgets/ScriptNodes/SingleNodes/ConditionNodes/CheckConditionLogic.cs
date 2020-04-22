@@ -16,6 +16,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                     "CheckCondition", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(CheckConditionLogic),
+                        Nesting = new[] {"Conditions"},
+                        Name = "Check Condition",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

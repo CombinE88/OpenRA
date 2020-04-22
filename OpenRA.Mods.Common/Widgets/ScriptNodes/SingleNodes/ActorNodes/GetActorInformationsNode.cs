@@ -15,6 +15,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorGetInformations", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GetActorInformationsLogic),
+                        Nesting = new[] {"Actor Activity"},
+                        Name = "Actor Information of Actor",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

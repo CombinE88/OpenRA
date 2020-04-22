@@ -14,6 +14,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                     "ArithmeticsOr", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ArithmeticBasicLogic),
+                        Nesting = new[] {"Arithmetic's"},
+                        Name = "Forward Or",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -31,6 +33,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                     "ArithmeticsAnd", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ArithmeticBasicLogic),
+                        Nesting = new[] {"Arithmetic's"},
+                        Name = "Forward And",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

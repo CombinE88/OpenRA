@@ -15,6 +15,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                     "TriggerOnKilled", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerOnKilled),
+                        Nesting = new[] {"Trigger"},
+                        Name = "On Actor Killed",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -29,7 +31,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                         }
                     }
                 },
+                {
+                    "TriggerOnAllKilled", new BuildNodeConstructorInfo
+                    {
+                        LogicClass = typeof(TriggerOnAllKilled),
+                        Nesting = new[] {"Trigger"},
+                        Name = "On all Actors Killed",
+
+                        InConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.ActorList, "Actor Group that fires the trigger"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Setup the trigger")
+                        },
+                        OutConnections = new List<Tuple<ConnectionType, string>>
+                        {
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec,
+                                "Runs when the trigger condition is met"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "Runs after the trigger has set up")
+                        }
+                    }
+                },
             };
+        
 
         readonly List<Actor> actors = new List<Actor>();
         bool enabled;

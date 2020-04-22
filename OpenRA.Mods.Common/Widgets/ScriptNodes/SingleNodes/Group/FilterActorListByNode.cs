@@ -17,6 +17,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     "FilterActorGroup", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(FilterActorListByLogic),
+                        Nesting = new[] {"Actor/Player Group"},
+                        Name = "Filter Actors in Group",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

@@ -17,6 +17,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorCreateActor", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorCreateActorLogic),
+                        Nesting = new []{"Functions"},
+                        Name = "Create Actor",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

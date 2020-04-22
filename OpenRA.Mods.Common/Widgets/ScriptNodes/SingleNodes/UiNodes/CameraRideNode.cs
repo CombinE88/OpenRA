@@ -14,6 +14,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     "CameraRide", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(CameraRideNodeLogic),
+                        Nesting = new[] {"User Interface", "General UI"},
+                        Name = "Camera Ride",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

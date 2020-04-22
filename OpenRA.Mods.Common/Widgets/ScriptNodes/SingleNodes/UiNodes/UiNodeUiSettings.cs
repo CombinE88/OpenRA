@@ -18,6 +18,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     "UiPlayNotification", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
+                        Nesting = new[] {"User Interface", "General UI"},
+                        Name = "Play Notification",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -36,11 +38,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     "UiPlaySound", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
+                        Nesting = new[] {"User Interface", "General UI"},
+                        Name = "Play Sound",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, "Location to play the sound at"),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, "Sound"),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -53,6 +57,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     "UiRadarPing", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
+                        Nesting = new[] {"User Interface", "General UI"},
+                        Name = "Radar Ping",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -69,11 +75,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     "UiTextMessage", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
+                        Nesting = new[] {"User Interface", "General UI"},
+                        Name = "Text Message",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
                             new Tuple<ConnectionType, string>(ConnectionType.String, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, "Message"),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -86,28 +94,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     "UiAddMissionText", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
+                        Nesting = new[] {"User Interface", "General UI"},
+                        Name = "Show Mission Text",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        }
-                    }
-                },
-                {
-                    "CreateEffect", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(FunctionCreateEffectLogic),
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.String, "Mission text"),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -132,6 +124,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     "UiNewObjective", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
+                        Nesting = new[] {"User Interface", "Objectives"},
+                        Name = "Create new Objective",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

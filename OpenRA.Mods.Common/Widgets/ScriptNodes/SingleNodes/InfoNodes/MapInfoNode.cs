@@ -18,7 +18,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                 {
                     "MapInfoNode", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(MapInfoLogicNode)
+                        LogicClass = typeof(MapInfoLogicNode),
+                        Nesting = new[] {"Info Nodes"},
+                        Name = "Global Info",
                     }
                 }
             };

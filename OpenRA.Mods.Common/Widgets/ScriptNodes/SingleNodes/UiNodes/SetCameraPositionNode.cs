@@ -14,6 +14,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     "SetCameraPosition", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(SetCameraPositionNode),
+                        Nesting = new[] {"User Interface", "General UI"},
+                        Name = "Set Camera Location",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

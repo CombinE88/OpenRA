@@ -13,6 +13,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     "GlobalLightning", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GlobalLightningNodeLogic),
+                        Nesting = new[] {"User Interface", "General UI"},
+                        Name = "Set Global Lightning",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

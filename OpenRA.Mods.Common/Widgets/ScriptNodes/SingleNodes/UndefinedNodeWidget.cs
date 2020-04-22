@@ -18,6 +18,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "TimerReset", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TimerLogics),
+                        Nesting = new[] {"Timer"},
+                        Name = "Reset Timer",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -34,6 +36,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "TimerStart", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TimerLogics),
+                        Nesting = new[] {"Timer"},
+                        Name = "Start Timer",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -50,6 +54,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "TimerStop", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TimerLogics),
+                        Nesting = new[] {"Timer"},
+                        Name = "Stop Timer",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -66,6 +72,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "TriggerOnAllKilled", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerOnAllKilled),
+                        Nesting = new[] {"Trigger"},
+                        Name = "On All Actors Killed",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -85,6 +93,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "UiCompleteObjective", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
+                        Nesting = new[] {"User Interface", "Objectives"},
+                        Name = "Complete Objective",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -97,82 +107,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                         }
                     }
                 },
-                {
-                    "TextChoice", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(TextBoxSelectLogic),
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.String, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        }
-                    }
-                },
-                {
-                    "SetCameraPosition", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(SetCameraPositionNode),
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        }
-                    }
-                },
-                {
-                    "CameraRide", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(CameraRideNodeLogic),
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Player, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        }
-                    }
-                },
-                {
-                    "GlobalLightning", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(GlobalLightningNodeLogic),
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Color: Red 0-256"),
-                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Color: Green 0-256"),
-                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Color: Blue 0-256"),
-                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Input Alpha: 0-256"),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        }
-                    }
-                },
+                // TOOD: DoMultiple is missing, keep it missing? Find usecase first
                 {
                     "TimedExecution", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TimedExecutionLogic),
+                        Nesting = new[] {"Functions"},
+                        Name = "Timed Execution",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -190,6 +131,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "UiFailObjective", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
+                        Nesting = new[] {"User Interface", "Objectives"},
+                        Name = "Fail Objective",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -206,6 +149,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "CompareActor", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Actor Conditions"},
+                        Name = "Same Actor",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -222,6 +167,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "CompareActorInfo", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Actor Conditions"},
+                        Name = "Same Actor Type",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -238,6 +185,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "IsAlive", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Actor Conditions"},
+                        Name = "is Alive",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -253,6 +202,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "IsDead", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Actor Conditions"},
+                        Name = "is Dead",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -268,6 +219,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "CompareNumber", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions"},
+                        Name = "Equal Number",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -284,6 +237,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "IsPlaying", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Player Conditions"},
+                        Name = "Still Playing",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -299,6 +254,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "IsBot", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Player Conditions"},
+                        Name = "Is a Bot",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -314,6 +271,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "IsHumanPlayer", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Player Conditions"},
+                        Name = "Is Human Player",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -329,6 +288,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "IsNoncombatant", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Player Conditions"},
+                        Name = "Is Noncombatant",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -344,6 +305,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "HasWon", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Player Conditions"},
+                        Name = "Has Won",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -359,6 +322,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     "HasLost", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
+                        Nesting = new[] {"Conditions", "Player Conditions"},
+                        Name = "Has Lost",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -370,23 +335,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                         }
                     }
                 },
-                {
-                    "ActorGetInformations", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(GetActorInformationsLogic),
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.ActorInfo, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Player, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Actor, "")
-                        }
-                    }
-                }
             };
 
         public UndefinedNodeWidget(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)

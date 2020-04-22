@@ -22,6 +22,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     "Reinforcements", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(FunctionLogicReinforcements),
+                        Nesting = new []{"Functions"},
+                         Name = "Reinforcements",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -43,6 +45,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     "ReinforcementsWithTransport", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(FunctionLogicReinforcements),
+                        Nesting = new []{"Functions"},
+                        Name = "Reinforcements (Transport)",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

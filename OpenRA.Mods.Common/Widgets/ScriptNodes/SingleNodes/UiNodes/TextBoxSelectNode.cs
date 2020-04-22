@@ -11,9 +11,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    "ActorCreateActor", new BuildNodeConstructorInfo
+                    "TextChoice", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TextBoxSelectLogic),
+                        Nesting = new[] {"User Interface", "General UI"},
+                        Name = "Text Choice",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

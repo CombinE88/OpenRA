@@ -7,28 +7,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 {
     public class TimedExecutionLogic : NodeLogic
     {
-        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
-            new Dictionary<string, BuildNodeConstructorInfo>()
-            {
-                {
-                    "TimedExecution", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(TimedExecutionLogic),
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        }
-                    }
-                },
-            };
-
         public TimedExecutionLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
             ingameNodeScriptSystem)
         {

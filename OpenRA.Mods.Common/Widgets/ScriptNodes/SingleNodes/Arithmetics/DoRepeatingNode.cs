@@ -7,6 +7,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class DoRepeatingNodeLogic : NodeLogic
     {
+        // TODO: Nötig?
+        /*
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
             {
@@ -27,7 +29,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                     }
                 },
             };
-        
+            */
+
         int repeat;
         int repeatwaiter;
 

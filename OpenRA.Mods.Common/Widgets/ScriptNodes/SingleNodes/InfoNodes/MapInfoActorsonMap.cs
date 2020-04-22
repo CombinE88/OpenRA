@@ -17,6 +17,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     "MapInfoActorReference", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(NodeLogic),
+                        Nesting = new[] {"Info Nodes"},
+                        Name = "Actor on Map",
 
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {

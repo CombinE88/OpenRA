@@ -18,6 +18,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorQueueSell", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
+                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Name = "Sell",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -36,6 +38,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorQueueFindResources", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
+                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Name = "Find Resources",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -53,6 +57,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorQueueAttackMoveActivity", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
+                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Name = "Attack Move",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -71,6 +77,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorQueueHunt", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
+                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Name = "Hunt",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -91,6 +99,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorQueueAttack", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
+                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Name = "Attack",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -112,13 +122,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorQueueMove", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
+                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Name = "Move",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
                             new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.ActorList, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Close enough"),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -131,6 +143,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorChangeOwner", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
+                        Nesting = new []{"Actor Activity"},
+                        Name = "Change Owner",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -149,7 +163,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorRemove", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
-
+                        Nesting = new []{"Actor Activity"},
+                        Name = "Remove",
+                        
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
                             new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
@@ -166,6 +182,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     "ActorKill", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
+                        Nesting = new []{"Actor Activity"},
+                        Name = "Kill",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

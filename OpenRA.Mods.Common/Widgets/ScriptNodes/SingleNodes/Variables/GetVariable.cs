@@ -15,6 +15,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables
                     "GetVariable", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GetVariableLogic),
+                        Nesting = new[] {"Variable Nodes"},
+                        Name = "Get Variable",
 
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {

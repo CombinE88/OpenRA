@@ -14,6 +14,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     "GroupPlayerGroup", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GroupPlayerLogic),
+                        Nesting = new[] {"Actor/Player Group"},
+                        Name = "Group Player",
 
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {

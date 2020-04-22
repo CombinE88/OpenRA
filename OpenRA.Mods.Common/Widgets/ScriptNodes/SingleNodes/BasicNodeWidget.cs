@@ -24,7 +24,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public ButtonWidget DeleteButton;
 
         // Node Inhalte
-        public static Dictionary<string,BuildNodeConstructorInfo> NodeConstructorInformation;
+        public static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation;
         public Rectangle DragBar;
         public Rectangle FreeWidgetEntries;
 
@@ -379,12 +379,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             return new BasicNodeWidget(Screen);
         }
     }
+
     public class BuildNodeConstructorInfo
     {
         public Type LogicClass;
         public Type WidgetType;
-        public string[] Name;
-        
+        public string Name = "placeholder";
+        public string[] Nesting = {"placeholder", "placeholder2"};
+
         public List<Tuple<ConnectionType, string>> InConnections;
         public List<Tuple<ConnectionType, string>> OutConnections;
     }

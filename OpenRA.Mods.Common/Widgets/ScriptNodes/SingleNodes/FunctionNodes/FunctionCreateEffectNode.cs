@@ -15,6 +15,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     "CreateEffect", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(FunctionCreateEffectLogic),
+                        Nesting = new []{"Functions"},
+                        Name = "Reinforcements (Create Effect)",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {

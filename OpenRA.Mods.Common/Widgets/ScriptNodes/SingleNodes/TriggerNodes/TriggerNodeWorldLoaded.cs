@@ -13,6 +13,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                     "TriggerWorldLoaded", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerLogicWorldLoaded),
+                        Nesting = new[] {"Trigger"},
+                        Name = "World Loaded",
 
                         OutConnections = new List<Tuple<ConnectionType, string>>
                         {

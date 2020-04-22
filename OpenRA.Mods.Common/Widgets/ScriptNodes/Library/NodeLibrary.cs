@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Reflection;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
@@ -117,6 +119,109 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
             }
 
             return nodeList;
+        }
+
+        public static DropDownMenuWidget BuildWidgetMenu(ModData modData,
+            NodeScriptContainerWidget nodeScriptContainerWidget, NodeEditorNodeScreenWidget nodeEditorNodeScreenWidget)
+        {
+            var dropDownMenuWidget = new DropDownMenuWidget
+            {
+                Bounds = new Rectangle(0, 0, 180, 75),
+                Visible = false
+            };
+
+            foreach (var type in Assembly.GetAssembly(typeof(NodeWidget)).GetTypes().Where(type =>
+                type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeWidget))))
+            {
+                var dictObject = type.GetField("NodeConstructorInformation").GetValue(null);
+
+                if (dictObject == null)
+                    continue;
+
+                var dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
+
+                if (!dictionary.Any())
+                    continue;
+
+                foreach (var entry in dictionary)
+                {
+                    var createNodeWidget = new ButtonWidget(nodeScriptContainerWidget.ModData)
+                    {
+                        Bounds = new Rectangle(0, 0,
+                            nodeScriptContainerWidget.FontRegular.Measure(entry.Value.Name).X + 25, 25),
+                        Text = entry.Value.Name,
+                        Align = TextAlign.Left,
+                        OnClick = () =>
+                        {
+                            nodeEditorNodeScreenWidget.AddNode(entry.Key);
+                            DropDownMenuWidget.Collapse(dropDownMenuWidget);
+                            dropDownMenuWidget.Visible = false;
+                        }
+                    };
+
+                    if (!entry.Value.Nesting.Any())
+                    {
+                        dropDownMenuWidget.AddDropDownMenu(createNodeWidget);
+                        continue;
+                    }
+
+                    var label = entry.Value.Nesting.First();
+
+                    var dropDownWidgetExpander =
+                        new DropDownMenuExpandButton(nodeScriptContainerWidget.ModData,
+                            new Rectangle(0, 0, 160, 25))
+                        {
+                            Text = label
+                        };
+
+                    var getGroundsChild = (DropDownMenuExpandButton) dropDownMenuWidget.Children.FirstOrDefault(c =>
+                        c is DropDownMenuExpandButton &&
+                        ((DropDownMenuExpandButton) c).Text == label);
+
+                    if (getGroundsChild == null)
+                    {
+                        getGroundsChild = dropDownWidgetExpander;
+                        dropDownMenuWidget.AddDropDownMenu(getGroundsChild);
+                    }
+
+                    if (entry.Value.Nesting.Length < 2)
+                    {
+                        getGroundsChild.AddDropDownMenu(createNodeWidget);
+                        continue;
+                    }
+
+                    var i = 1;
+                    while (i < entry.Value.Nesting.Length)
+                    {
+                        label = entry.Value.Nesting[i];
+
+                        if (getGroundsChild.Children.FirstOrDefault(child => child is DropDownMenuWidget) != null)
+                            dropDownWidgetExpander = (DropDownMenuExpandButton) getGroundsChild.Children
+                                .FirstOrDefault(child => child is DropDownMenuWidget).Children.FirstOrDefault(c =>
+                                    c is DropDownMenuExpandButton &&
+                                    ((DropDownMenuExpandButton) c).Text == label);
+
+                        if (dropDownWidgetExpander == null)
+                        {
+                            dropDownWidgetExpander =
+                                new DropDownMenuExpandButton(nodeScriptContainerWidget.ModData,
+                                    new Rectangle(0, 0, 160, 25))
+                                {
+                                    Text = label
+                                };
+                            getGroundsChild.AddDropDownMenu(dropDownWidgetExpander);
+                        }
+
+                        getGroundsChild = dropDownWidgetExpander;
+
+                        i++;
+                    }
+
+                    dropDownWidgetExpander.AddDropDownMenu(createNodeWidget);
+                }
+            }
+
+            return dropDownMenuWidget;
         }
     }
 }

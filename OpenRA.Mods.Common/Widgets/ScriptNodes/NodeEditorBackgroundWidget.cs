@@ -265,6 +265,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         //// TODO Move to static class and make Static
         void CreateLeftClickDropDownMenu()
         {
+            DropDownMenuWidget = NodeLibrary.BuildWidgetMenu(nodeScriptContainerWidget.ModData,
+                nodeScriptContainerWidget, screenWidget);
+            /*
             DropDownMenuWidget = new DropDownMenuWidget
             {
                 Bounds = new Rectangle(0, 0, 180, 75),
@@ -437,11 +440,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             };
 
             conditionsSubMenu.AddDropDownMenu(checkConditionButton);
-            conditionsSubMenu.AddDropDownMenu(GetSubMenu("Actor Conditions", actorConditionNodes));
+            conditionsSubMenu.AddDropDownMenu(GetSubMenu("ctor ConditionsA", actorConditionNodes));
             conditionsSubMenu.AddDropDownMenu(GetSubMenu("Player Conditions", playerConditionNodes));
 
             DropDownMenuWidget.AddDropDownMenu(conditionsSubMenu);
 
+            */
 
             AddChild(DropDownMenuWidget);
         }
