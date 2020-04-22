@@ -15,11 +15,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 {
     public class FunctionNodeReinforcements : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.Reinforcements, new BuildNodeConstructorInfo
+                    "Reinforcements", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(FunctionLogicReinforcements),
 
@@ -40,7 +40,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     }
                 },
                 {
-                    NodeType.ReinforcementsWithTransport, new BuildNodeConstructorInfo
+                    "ReinforcementsWithTransport", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(FunctionLogicReinforcements),
 
@@ -114,7 +114,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 return;
             }
 
-            if (NodeType == NodeType.Reinforcements)
+            if (NodeType == "Reinforcements")
             {
                 var actors = new List<string>();
                 foreach (var act in actorInfoArray
@@ -130,7 +130,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     inNumber != null ? inNumber.Number.Value : 25);
             }
 
-            if (NodeType == NodeType.ReinforcementsWithTransport)
+            if (NodeType == "ReinforcementsWithTransport")
             {
                 var exitpath = GetLinkedConnectionFromInConnection(ConnectionType.CellPath, 1);
                 if (exitpath == null || exitpath.CellArray == null || !exitpath.CellArray.Any())

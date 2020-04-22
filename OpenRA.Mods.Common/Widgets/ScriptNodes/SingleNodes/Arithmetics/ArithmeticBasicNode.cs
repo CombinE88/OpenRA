@@ -7,11 +7,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class ArithmeticBasicLogic : NodeLogic
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.ArithmeticsOr, new BuildNodeConstructorInfo
+                    "ArithmeticsOr", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ArithmeticBasicLogic),
 
@@ -28,7 +28,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                     }
                 },
                 {
-                    NodeType.ArithmeticsAnd, new BuildNodeConstructorInfo
+                    "ArithmeticsAnd", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ArithmeticBasicLogic),
 
@@ -63,7 +63,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
         public override void ExecuteTick(Actor self)
         {
-            if (NodeInfo.NodeType == NodeType.ArithmeticsOr && (repeating || !started))
+            if (NodeInfo.NodeType == "ArithmeticsOr" && (repeating || !started))
             {
                 foreach (var conn in InConnections.Where(c => c.ConnectionTyp == ConnectionType.Exec))
                     if (conn.Execute)
@@ -74,7 +74,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                         break;
                     }
             }
-            else if (NodeInfo.NodeType == NodeType.ArithmeticsAnd && (repeating || !started))
+            else if (NodeInfo.NodeType == "ArithmeticsAnd" && (repeating || !started))
             {
                 if (!InConnections.First(c => c.ConnectionTyp == ConnectionType.Exec).Execute)
                     return;

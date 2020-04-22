@@ -14,7 +14,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public readonly string NodeId;
         public readonly NodeInfo NodeInfo;
         public readonly string NodeName;
-        public readonly NodeType NodeType;
+        public readonly string NodeType;
 
         public List<InConnection> InConnections = new List<InConnection>();
 

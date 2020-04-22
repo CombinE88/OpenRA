@@ -115,7 +115,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 foreach (var node in screenWidget.Nodes.Where(n =>
                 {
                     var node = n as GetVariableNode;
-                    return node != null && node.NodeType == NodeType.GetVariable &&
+                    return node != null && node.NodeType == "GetVariable" &&
                            node.VariableReference == variableItem;
                 }))
                     ((GetVariableNode) node).Update(false);
@@ -123,7 +123,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 foreach (var node in screenWidget.Nodes.Where(n =>
                 {
                     var node = n as SetVariableNode;
-                    return node != null && node.NodeType == NodeType.SetVariable &&
+                    return node != null && node.NodeType == "SetVariable" &&
                            node.VariableReference == variableItem;
                 }))
                     ((SetVariableNode) node).Update(false);
@@ -196,7 +196,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     foreach (var node in screenWidget.Nodes.Where(n =>
                     {
                         var node = n as GetVariableNode;
-                        return node != null && node.NodeType == NodeType.GetVariable &&
+                        return node != null && node.NodeType == "GetVariable" &&
                                node.VariableReference == variableItem;
                     }))
                         ((GetVariableNode) node).Update(true);
@@ -204,7 +204,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     foreach (var node in screenWidget.Nodes.Where(n =>
                     {
                         var node = n as SetVariableNode;
-                        return node != null && node.NodeType == NodeType.SetVariable &&
+                        return node != null && node.NodeType == "SetVariable" &&
                                node.VariableReference == variableItem;
                     }))
                         ((SetVariableNode) node).Update(true);
@@ -226,7 +226,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 foreach (var node in screenWidget.Nodes.Where(n =>
                 {
                     var node = n as GetVariableNode;
-                    return node != null && node.NodeType == NodeType.GetVariable &&
+                    return node != null && node.NodeType == "GetVariabl" &&
                            node.VariableReference == variableItem;
                 }))
                 {
@@ -237,7 +237,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 foreach (var node in screenWidget.Nodes.Where(n =>
                 {
                     var node = n as SetVariableNode;
-                    return node != null && node.NodeType == NodeType.SetVariable &&
+                    return node != null && node.NodeType == "SetVariable" &&
                            node.VariableReference == variableItem;
                 }))
                 {
@@ -271,38 +271,38 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 Visible = false
             };
 
-            var infoNodes = new Dictionary<NodeType, string>
+            var infoNodes = new Dictionary<string, string>
             {
-                {NodeType.MapInfoNode, "Global Info"},
-                {NodeType.MapInfoActorInfo, "Actor Type Info"},
-                {NodeType.MapInfoActorReference, "Actor on Map"}
+                     {"MapInfoNode", "Global Info"},
+                     {"MapInfoActorInfo", "Actor Type Info"},
+                     {"MapInfoActorReference", "Actor on Map"}
             };
 
             DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Info Nodes", infoNodes));
 
-            var variableNodes = new Dictionary<NodeType, string>
+            var variableNodes = new Dictionary<string, string>
             {
-                {NodeType.GetVariable, "Variable: Get"},
-                {NodeType.SetVariable, "Variable: Set"}
+                     {"GetVariable", "Variable: Get"},
+                     {"SetVariable", "Variable: Set"}
             };
 
             DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Variable Nodes", variableNodes));
 
-            var actorNodes = new Dictionary<NodeType, string>
+            var actorNodes = new Dictionary<string, string>
             {
-                {NodeType.ActorGetInformations, "Informations of Actor"},
-                {NodeType.ActorKill, "Kill"},
-                {NodeType.ActorRemove, "Remove"},
-                {NodeType.ActorChangeOwner, "Change Owner"}
+                     {"ActorGetInformations", "Informations of Actor"},
+                     {"ActorKill", "Kill"},
+                     {"ActorRemove", "Remove"},
+                     {"ActorChangeOwner", "Change Owner"}
             };
-            var actorQueueNodes = new Dictionary<NodeType, string>
+            var actorQueueNodes = new Dictionary<string, string>
             {
-                {NodeType.ActorQueueMove, "Queue Move"},
-                {NodeType.ActorQueueAttack, "Queue Attack"},
-                {NodeType.ActorQueueHunt, "Queue Hunt"},
-                {NodeType.ActorQueueAttackMoveActivity, "Queue AttackMoveActivity"},
-                {NodeType.ActorQueueSell, "Queue Sell"},
-                {NodeType.ActorQueueFindResources, "QueueFindResources"}
+                     {"ActorQueueMove", "Queue Move"},
+                     {"ActorQueueAttack", "Queue Attack"},
+                     {"ActorQueueHunt", "Queue Hunt"},
+                     {"ActorQueueAttackMoveActivity", "Queue AttackMoveActivity"},
+                     {"ActorQueueSell", "Queue Sell"},
+                     {"ActorQueueFindResources", "QueueFindResources"}
             };
 
             var actorSubMenu = GetSubMenu("Actor Activity", actorNodes);
@@ -310,82 +310,82 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             DropDownMenuWidget.AddDropDownMenu(actorSubMenu);
 
-            var triggerNodes = new Dictionary<NodeType, string>
+            var triggerNodes = new Dictionary<string, string>
             {
-                {NodeType.TriggerWorldLoaded, "World Loaded"},
-                {NodeType.TriggerTick, "On Tick"},
-                {NodeType.TriggerOnEnteredFootprint, "On Entered Footprint"},
-                {NodeType.TriggerOnEnteredRange, "On Entered Range"},
-                {NodeType.TriggerOnIdle, "On Actor Idle"},
-                {NodeType.TriggerOnKilled, "On Actor Killed"},
-                {NodeType.TriggerOnAllKilled, "On All Actors Killed"}
+                     {"TriggerWorldLoaded", "World Loaded"},
+                     {"TriggerTick", "On Tick"},
+                     {"TriggerOnEnteredFootprint", "On Entered Footprint"},
+                     {"TriggerOnEnteredRange", "On Entered Range"},
+                     {"TriggerOnIdle", "On Actor Idle"},
+                     {"TriggerOnKilled", "On Actor Killed"},
+                     {"TriggerOnAllKilled", "On All Actors Killed"}
             };
 
             DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Trigger", triggerNodes));
 
-            var timerNodes = new Dictionary<NodeType, string>
+            var timerNodes = new Dictionary<string, string>
             {
-                {NodeType.TriggerCreateTimer, "Create Timer"},
-                {NodeType.TimerStop, "Stop Timer"},
-                {NodeType.TimerStart, "Start Timer"},
-                {NodeType.TimerReset, "Reset Timer"}
+                     {"TriggerCreateTimer", "Create Timer"},
+                     {"TimerStop", "Stop Timer"},
+                     {"TimerStart", "Start Timer"},
+                     {"TimerReset", "Reset Timer"}
             };
 
             DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Timer", timerNodes));
 
-            var groupNodes = new Dictionary<NodeType, string>
+            var groupNodes = new Dictionary<string, string>
             {
-                {NodeType.GroupPlayerGroup, "Player Group"},
-                {NodeType.GroupActorInfoGroup, "Actor Info Group"},
-                {NodeType.GroupActorGroup, "Actor Group"},
-                {NodeType.FinActorsInCircle, "Find Actors in Circle"},
-                {NodeType.FindActorsOnFootprint, "Find Actors on Footprint"},
-                {NodeType.FilterActorGroup, "Filter Actors in Group"}
+                     {"GroupPlayerGroup", "Player Group"},
+                     {"GroupActorInfoGroup", "Actor Info Group"},
+                     {"GroupActorGroup", "Actor Group"},
+                     {"FinActorsInCircle", "Find Actors in Circle"},
+                     {"FindActorsOnFootprint", "Find Actors on Footprint"},
+                     {"FilterActorGroup", "Filter Actors in Group"}
             };
 
             DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Actor/Player Group", groupNodes));
 
-            var arithmeticNodes = new Dictionary<NodeType, string>
+            var arithmeticNodes = new Dictionary<string, string>
             {
-                {NodeType.ArithmeticsAnd, "And Trigger"},
-                {NodeType.ArithmeticsOr, "Or Trigger"},
-                {NodeType.ArithmeticsMath, "Math"},
-                {NodeType.Count, "Get Count"},
-                {NodeType.CompareActors, "Compare: Actors"}
+                     {"ArithmeticsAnd", "And Trigger"},
+                     {"ArithmeticsOr", "Or Trigger"},
+                     {"ArithmeticsMath", "Math"},
+                     {"Count", "Get Count"},
+                     {"CompareActors", "Compare: Actors"}
             };
 
             DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Arithmetic's", arithmeticNodes));
 
-            var functionNodes = new Dictionary<NodeType, string>
+            var functionNodes = new Dictionary<string, string>
             {
-                {NodeType.ActorCreateActor, "Create Actor"},
-                {NodeType.Reinforcements, "Reinforcements"},
-                {NodeType.ReinforcementsWithTransport, "Reinforcements (Transport)"},
-                {NodeType.CreateEffect, "Create Effect"},
-                {NodeType.TimedExecution, "Timed Execution"},
-                {NodeType.DoMultiple, "Repeating: Action"}
+                     {"ActorCreateActor", "Create Actor"},
+                     {"Reinforcements", "Reinforcements"},
+                     {"ReinforcementsWithTransport", "Reinforcements (Transport)"},
+                     {"CreateEffect", "Create Effect"},
+                     {"TimedExecution", "Timed Execution"},
+                     {"DoMultiple", "Repeating: Action"}
             };
 
             DropDownMenuWidget.AddDropDownMenu(GetSubMenu("Functions", functionNodes));
 
-            var uiNodes = new Dictionary<NodeType, string>
+            var uiNodes = new Dictionary<string, string>
             {
-                {NodeType.UiPlayNotification, "Play Notification"},
-                {NodeType.UiPlaySound, "Play Play Sound Location"},
-                {NodeType.UiRadarPing, "Radar Ping"},
-                {NodeType.UiTextMessage, "Chat Text message"},
-                {NodeType.TextChoice, "Text Choice"},
-                {NodeType.SetCameraPosition, "Set Camera Location"},
-                {NodeType.CameraRide, "Camera Ride"},
-                {NodeType.GlobalLightning, "Change Global Lightning"}
+                     {"UiPlayNotification", "Play Notification"},
+                     {"UiPlaySound", "Play Play Sound Location"},
+                     {"UiRadarPing", "Radar Ping"},
+                     {"UiTextMessage", "Chat Text message"},
+                     {"TextChoice", "Text Choice"},
+                     {"SetCameraPosition", "Set Camera Location"},
+                     {"CameraRide", "Camera Ride"},
+                     {"GlobalLightning", "Change Global Lightning"}
             };
 
-            var uiObjectiveNodes = new Dictionary<NodeType, string>
+            var uiObjectiveNodes = new Dictionary<string, string>
             {
-                {NodeType.UiNewObjective, "Add Objective"},
-                {NodeType.UiCompleteObjective, "Complete Objective"},
-                {NodeType.UiFailObjective, "Fail Objective"},
-                {NodeType.UiAddMissionText, "Show Mission Text"}
+                     {"UiNewObjective", "Add Objective"},
+                     {"UiCompleteObjective", "Complete Objective"},
+                     {"UiFailObjective", "Fail Objective"},
+                     {"UiAddMissionText", "Show Mission Text"}
             };
 
             var uiSubMenu =
@@ -399,23 +399,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             DropDownMenuWidget.AddDropDownMenu(uiSubMenu);
 
-            var actorConditionNodes = new Dictionary<NodeType, string>
+            var actorConditionNodes = new Dictionary<string, string>
             {
-                {NodeType.CompareActor, "Same actor"},
-                {NodeType.CompareNumber, "Same number"},
-                {NodeType.CompareActorInfo, "Same Actor Type"},
-                {NodeType.IsDead, "Actor is dead"},
-                {NodeType.IsAlive, "Actor is alive"}
+                     {"CompareActor", "Same actor"},
+                     {"CompareNumber", "Same number"},
+                     {"CompareActorInfo", "Same Actor Type"},
+                     {"IsDead", "Actor is dead"},
+                     {"IsAlive", "Actor is alive"}
             };
 
-            var playerConditionNodes = new Dictionary<NodeType, string>
+            var playerConditionNodes = new Dictionary<string, string>
             {
-                {NodeType.IsPlaying, "Player is Playing"},
-                {NodeType.HasLost, "Player has Lost"},
-                {NodeType.HasWon, "Player has Won"},
-                {NodeType.IsHumanPlayer, "Player is Human"},
-                {NodeType.IsBot, "Player is Bot"},
-                {NodeType.IsNoncombatant, "Player is Noncombatant"}
+                     {"IsPlaying", "Player is Playing"},
+                     {"HasLost", "Player has Lost"},
+                     {"HasWon", "Player has Won"},
+                     {"IsHumanPlayer", "Player is Human"},
+                     {"IsBot", "Player is Bot"},
+                     {"IsNoncombatant", "Player is Noncombatant"}
             };
 
             var conditionsSubMenu =
@@ -430,7 +430,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 Text = "Check Condition",
                 OnClick = () =>
                 {
-                    screenWidget.AddNode(NodeType.CheckCondition);
+                    screenWidget.AddNode("CheckCondition");
                     DropDownMenuWidget.Collapse(DropDownMenuWidget);
                     DropDownMenuWidget.Visible = false;
                 }
@@ -446,7 +446,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             AddChild(DropDownMenuWidget);
         }
 
-        DropDownMenuExpandButton GetSubMenu(string label, Dictionary<NodeType, string> types)
+        DropDownMenuExpandButton GetSubMenu(string label, Dictionary<string, string> types)
         {
             var actorNodes =
                 new DropDownMenuExpandButton(nodeScriptContainerWidget.ModData, new Rectangle(0, 0, 160, 25))

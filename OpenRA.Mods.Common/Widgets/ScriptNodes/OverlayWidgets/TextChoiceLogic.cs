@@ -39,7 +39,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.OverlayWidgets
             {
                 brw.Visible = false;
                 foreach (var nodeLogic in ingameNodeScriptSystem.NodeLogics.Where(
-                    l => l.NodeType == NodeType.TextChoice))
+                    l => l.NodeType == "TextChoice"))
                 {
                     var textNode = (TextBoxSelectLogic) nodeLogic;
                     if (!textNode.Listen)

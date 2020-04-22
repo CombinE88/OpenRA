@@ -62,9 +62,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             var nodeName = infos.First();
             var nodeId = infos.Last();
 
-            var nodeTypes = (NodeType[]) Enum.GetValues(typeof(NodeType));
-            
-            var nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
+            var nodeType = nodes.Value.Value;
 
             var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
@@ -225,7 +223,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public List<MiniYamlNode> Save()
         {
             var nodes = NodeInfos.Select(nodeInfo => new MiniYamlNode(nodeInfo.NodeName + "@" + nodeInfo.NodeId,
-                nodeInfo.NodeType.ToString(), SaveEntries(nodeInfo))).ToList();
+                nodeInfo.NodeType, SaveEntries(nodeInfo))).ToList();
             nodes.AddRange(VariableInfos.Select(variableInfo =>
                 new MiniYamlNode("Variable@" + variableInfo.VariableName, variableInfo.VarType.ToString())));
 
@@ -376,14 +374,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public CompareMethod? Method;
         public string NodeId;
         public string NodeName;
-        public NodeType NodeType;
+        public string NodeType;
         public int? OffsetPosX;
         public int? OffsetPosY;
         public List<OutConReference> OutConnectionsReference;
         public string VariableReference;
 
         public NodeInfo(
-            NodeType nodeType,
+            string nodeType,
             string nodeId,
             string nodeName)
         {

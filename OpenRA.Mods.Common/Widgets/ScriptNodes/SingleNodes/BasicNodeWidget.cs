@@ -24,7 +24,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public ButtonWidget DeleteButton;
 
         // Node Inhalte
-        public static Dictionary<NodeType,BuildNodeConstructorInfo> NodeConstructorInformation;
+        public static Dictionary<string,BuildNodeConstructorInfo> NodeConstructorInformation;
         public Rectangle DragBar;
         public Rectangle FreeWidgetEntries;
 
@@ -44,7 +44,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public NodeInfo NodeInfo;
 
         public string NodeName = "General Widget";
-        public NodeType NodeType;
+        public string NodeType;
         public int OffsetPosX;
         public int OffsetPosY;
         public Rectangle RemoveInput;

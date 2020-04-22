@@ -12,11 +12,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class MapInfoNode : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.MapInfoNode, new BuildNodeConstructorInfo
+                    "MapInfoNode", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(MapInfoLogicNode)
                     }

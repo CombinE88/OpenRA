@@ -8,11 +8,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerOnKilled : NodeLogic
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.TriggerOnKilled, new BuildNodeConstructorInfo
+                    "TriggerOnKilled", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerOnKilled),
 

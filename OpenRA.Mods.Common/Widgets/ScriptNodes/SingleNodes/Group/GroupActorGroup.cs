@@ -7,11 +7,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
     public class GroupActorGroup : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.GroupActorGroup, new BuildNodeConstructorInfo
+                    "GroupActorGroup", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GroupActorLogic),
 
@@ -50,11 +50,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
     public class GroupActorInfoGroup : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.GroupActorInfoGroup, new BuildNodeConstructorInfo
+                    "GroupActorInfoGroup", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GroupActorInfoLogic),
 

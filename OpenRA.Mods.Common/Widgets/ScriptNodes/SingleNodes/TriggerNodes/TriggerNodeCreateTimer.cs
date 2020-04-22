@@ -9,11 +9,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerNodeCreateTimer : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.TriggerCreateTimer, new BuildNodeConstructorInfo
+                    "TriggerCreateTimer", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerLogicCreateTimer),
 
@@ -129,13 +129,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
             switch (NodeType)
             {
-                case NodeType.TimerReset:
+                case "TimerReset":
                     timer.ResetTimer();
                     break;
-                case NodeType.TimerStart:
+                case "TimerStart":
                     timer.StartTimer();
                     break;
-                case NodeType.TimerStop:
+                case "TimerStop":
                     timer.StopTimer();
                     break;
             }

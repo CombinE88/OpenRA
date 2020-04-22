@@ -10,11 +10,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 {
     public class MapInfoActorsonMap : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.MapInfoActorReference, new BuildNodeConstructorInfo
+                    "MapInfoActorReference", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(NodeLogic),
 

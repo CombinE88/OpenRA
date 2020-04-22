@@ -7,11 +7,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class DoRepeatingNodeLogic : NodeLogic
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.DoMultiple, new BuildNodeConstructorInfo
+                    "DoMultiple", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(DoRepeatingNodeLogic),
 

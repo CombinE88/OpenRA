@@ -9,11 +9,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerNodeOnEnteredRange : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.ActorCreateActor, new BuildNodeConstructorInfo
+                    "ActorCreateActor", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerLogicOnEnteredRange),
 

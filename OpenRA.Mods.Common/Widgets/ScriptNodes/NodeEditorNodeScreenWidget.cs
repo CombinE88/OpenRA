@@ -88,7 +88,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 VariableInfos.Remove(info);
         }
 
-        public void AddNode(NodeType nodeType, string nodeId = null, string nodeName = null)
+        public void AddNode(string nodeType, string nodeId = null, string nodeName = null)
         {
             var node = NodeLibrary.AddNode(nodeType, this, nodeId, nodeName);
 

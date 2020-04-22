@@ -2,17 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
     public class CameraRideNodeLogic : NodeLogic
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.CameraRide, new BuildNodeConstructorInfo
+                    "CameraRide", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(CameraRideNodeLogic),
 

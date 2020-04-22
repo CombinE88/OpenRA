@@ -1,17 +1,16 @@
 using System;
 using System.Collections.Generic;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
     public class GlobalLightningNodeLogic : NodeLogic
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.GlobalLightning, new BuildNodeConstructorInfo
+                    "GlobalLightning", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GlobalLightningNodeLogic),
 

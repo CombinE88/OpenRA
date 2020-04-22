@@ -6,11 +6,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerNodeTick : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.TriggerTick, new BuildNodeConstructorInfo
+                    "TriggerTick", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerLogicTick),
 

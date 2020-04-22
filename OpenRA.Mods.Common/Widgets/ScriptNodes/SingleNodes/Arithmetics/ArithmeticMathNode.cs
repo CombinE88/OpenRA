@@ -8,11 +8,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {
     public class ArithmeticMathNode : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.ArithmeticsMath, new BuildNodeConstructorInfo
+                    "ArithmeticsMath", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ArithmeticMathNodeLogic),
 

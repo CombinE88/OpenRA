@@ -7,11 +7,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
     public class GroupPlayerGroup : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.GroupPlayerGroup, new BuildNodeConstructorInfo
+                    "GroupPlayerGroup", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GroupPlayerLogic),
 

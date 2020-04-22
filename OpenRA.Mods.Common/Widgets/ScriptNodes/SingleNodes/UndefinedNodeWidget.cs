@@ -11,11 +11,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 {
     public class UndefinedNodeWidget : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.TimerReset, new BuildNodeConstructorInfo
+                    "TimerReset", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TimerLogics),
 
@@ -31,7 +31,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.TimerStart, new BuildNodeConstructorInfo
+                    "TimerStart", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TimerLogics),
 
@@ -47,7 +47,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.TimerStop, new BuildNodeConstructorInfo
+                    "TimerStop", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TimerLogics),
 
@@ -63,7 +63,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.TriggerOnAllKilled, new BuildNodeConstructorInfo
+                    "TriggerOnAllKilled", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerOnAllKilled),
 
@@ -82,7 +82,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.UiCompleteObjective, new BuildNodeConstructorInfo
+                    "UiCompleteObjective", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
 
@@ -98,7 +98,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.TextChoice, new BuildNodeConstructorInfo
+                    "TextChoice", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TextBoxSelectLogic),
 
@@ -114,7 +114,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.SetCameraPosition, new BuildNodeConstructorInfo
+                    "SetCameraPosition", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(SetCameraPositionNode),
 
@@ -131,7 +131,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.SetCameraPosition, new BuildNodeConstructorInfo
+                    "CameraRide", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(CameraRideNodeLogic),
 
@@ -151,7 +151,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.GlobalLightning, new BuildNodeConstructorInfo
+                    "GlobalLightning", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GlobalLightningNodeLogic),
 
@@ -170,7 +170,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.TimedExecution, new BuildNodeConstructorInfo
+                    "TimedExecution", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TimedExecutionLogic),
 
@@ -187,7 +187,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.UiFailObjective, new BuildNodeConstructorInfo
+                    "UiFailObjective", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
 
@@ -203,7 +203,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.CompareActor, new BuildNodeConstructorInfo
+                    "CompareActor", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -219,7 +219,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.CompareActorInfo, new BuildNodeConstructorInfo
+                    "CompareActorInfo", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -235,7 +235,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.IsAlive, new BuildNodeConstructorInfo
+                    "IsAlive", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -250,7 +250,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.IsDead, new BuildNodeConstructorInfo
+                    "IsDead", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -265,7 +265,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.CompareNumber, new BuildNodeConstructorInfo
+                    "CompareNumber", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -281,7 +281,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.IsPlaying, new BuildNodeConstructorInfo
+                    "IsPlaying", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -296,7 +296,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.IsBot, new BuildNodeConstructorInfo
+                    "IsBot", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -311,7 +311,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.IsHumanPlayer, new BuildNodeConstructorInfo
+                    "IsHumanPlayer", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -326,7 +326,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.IsNoncombatant, new BuildNodeConstructorInfo
+                    "IsNoncombatant", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -341,7 +341,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.HasWon, new BuildNodeConstructorInfo
+                    "HasWon", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -356,7 +356,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.HasLost, new BuildNodeConstructorInfo
+                    "HasLost", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ProvideCondition),
 
@@ -371,7 +371,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    NodeType.ActorGetInformations, new BuildNodeConstructorInfo
+                    "ActorGetInformations", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GetActorInformationsLogic),
 

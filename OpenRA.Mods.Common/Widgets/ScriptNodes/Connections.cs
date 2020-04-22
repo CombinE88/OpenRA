@@ -109,8 +109,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             var myPosition = Widget.InConnections.IndexOf(this);
 
-            var dictObject = Widget.GetType().GetField("NodeBuilder").GetValue(null);
-            var dictionary = (Dictionary<NodeType, BuildNodeConstructorInfo>) dictObject;
+            var dictObject = Widget.GetType().GetField("NodeConstructorInformation").GetValue(null);
+            var dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
             var getInConnections = dictionary[Widget.NodeType].InConnections;
 
             if (getInConnections == null || !getInConnections.Any() || getInConnections.Count < myPosition)
@@ -151,8 +151,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         {
             var myPosition = Widget.OutConnections.IndexOf(this);
 
-            var dictObject = Widget.GetType().GetField("NodeBuilder").GetValue(null);
-            var dictionary = (Dictionary<NodeType, BuildNodeConstructorInfo>) dictObject;
+            var dictObject = Widget.GetType().GetField("NodeConstructorInformation").GetValue(null);
+            var dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
             var getOutConnections = dictionary[Widget.NodeType].OutConnections;
 
             if (getOutConnections == null || !getOutConnections.Any() || getOutConnections.Count < myPosition)

@@ -7,11 +7,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 {
     public class TimedExecutionLogic : NodeLogic
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.TimedExecution, new BuildNodeConstructorInfo
+                    "TimedExecution", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TimedExecutionLogic),
 

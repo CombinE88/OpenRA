@@ -9,11 +9,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables
 {
     public class SetVariableNode : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.SetVariable, new BuildNodeConstructorInfo
+                    "SetVariable", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(SetVariableLogic),
 

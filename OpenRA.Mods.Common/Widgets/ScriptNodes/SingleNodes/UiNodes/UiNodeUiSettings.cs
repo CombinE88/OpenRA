@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
 using OpenRA.Widgets;
 
@@ -12,11 +11,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 {
     public class UiNodeUiSettings : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.UiPlayNotification, new BuildNodeConstructorInfo
+                    "UiPlayNotification", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
 
@@ -34,7 +33,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     }
                 },
                 {
-                    NodeType.UiPlaySound, new BuildNodeConstructorInfo
+                    "UiPlaySound", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
 
@@ -51,7 +50,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     }
                 },
                 {
-                    NodeType.UiRadarPing, new BuildNodeConstructorInfo
+                    "UiRadarPing", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
 
@@ -67,7 +66,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     }
                 },
                 {
-                    NodeType.UiTextMessage, new BuildNodeConstructorInfo
+                    "UiTextMessage", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
 
@@ -84,7 +83,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     }
                 },
                 {
-                    NodeType.UiAddMissionText, new BuildNodeConstructorInfo
+                    "UiAddMissionText", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
 
@@ -100,7 +99,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     }
                 },
                 {
-                    NodeType.CreateEffect, new BuildNodeConstructorInfo
+                    "CreateEffect", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(FunctionCreateEffectLogic),
 
@@ -126,11 +125,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
     public class UiObjectivesNode : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.UiNewObjective, new BuildNodeConstructorInfo
+                    "UiNewObjective", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(UiLogicUiSettings),
 
@@ -214,7 +213,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
         {
             switch (NodeType)
             {
-                case NodeType.UiPlayNotification:
+                case "UiPlayNotification":
                 {
                     var playerGroup = GetLinkedConnectionFromInConnection(ConnectionType.PlayerGroup, 0);
                     if (playerGroup == null || playerGroup.PlayerGroup == null || !playerGroup.PlayerGroup.Any())
@@ -236,7 +235,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                             inputString.String, null);
                     break;
                 }
-                case NodeType.UiPlaySound:
+                case "UiPlaySound":
                 {
                     var inputString = GetLinkedConnectionFromInConnection(ConnectionType.String, 0);
                     if (inputString == null || inputString.String == null)
@@ -250,7 +249,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                         world.Map.CenterOfCell(location.Location.Value));
                     break;
                 }
-                case NodeType.UiRadarPing:
+                case "UiRadarPing":
                 {
                     var location = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
                     if (location == null || location.Location == null)
@@ -266,7 +265,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                         0.12f);
                     break;
                 }
-                case NodeType.UiTextMessage:
+                case "UiTextMessage":
                 {
                     var inputString = GetLinkedConnectionFromInConnection(ConnectionType.String, 0);
                     if (inputString == null || inputString.String == null)
@@ -279,7 +278,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     Game.AddChatLine(Color.CornflowerBlue, inputString.String, inputsecondString.String);
                     break;
                 }
-                case NodeType.UiAddMissionText:
+                case "UiAddMissionText":
                 {
                     var inputString = GetLinkedConnectionFromInConnection(ConnectionType.String, 0);
                     if (inputString == null || inputString.String == null)
@@ -289,7 +288,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                     luaLabel.GetText = () => inputString.String;
                     break;
                 }
-                case NodeType.UiNewObjective:
+                case "UiNewObjective":
                 {
                     var singlePlayer = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
                     var playerGroup = GetLinkedConnectionFromInConnection(ConnectionType.PlayerGroup, 0);
@@ -329,7 +328,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
                     break;
                 }
-                case NodeType.UiCompleteObjective:
+                case "UiCompleteObjective":
                 {
                     var obj = GetLinkedConnectionFromInConnection(ConnectionType.Objective, 0);
 
@@ -357,7 +356,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
                     break;
                 }
-                case NodeType.UiFailObjective:
+                case "UiFailObjective":
                 {
                     var obj = GetLinkedConnectionFromInConnection(ConnectionType.Objective, 0);
 

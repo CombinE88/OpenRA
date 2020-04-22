@@ -9,11 +9,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 {
     public class CheckConditionNode : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.CheckCondition, new BuildNodeConstructorInfo
+                    "CheckCondition", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(CheckConditionLogic),
 
@@ -30,7 +30,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                     }
                 },
             };
-        
+
         readonly LabelWidget labal1;
         readonly LabelWidget labal2;
         readonly DropDownButtonWidget methodeSelection;
@@ -136,7 +136,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 
         public override bool CheckCondition(World world)
         {
-            if (NodeType == NodeType.CompareActor)
+            if (NodeType == "CompareActor")
             {
                 var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
                 var actCon2 = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 1);
@@ -153,7 +153,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 return actCon1.Actor.Equals(actCon2.Actor);
             }
 
-            if (NodeType == NodeType.CompareNumber)
+            if (NodeType == "CompareNumber")
             {
                 var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
                 var actCon2 = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 1);
@@ -176,7 +176,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 return actCon1.Number.Value.Equals(actCon2.Number.Value);
             }
 
-            if (NodeType == NodeType.CompareActorInfo)
+            if (NodeType == "CompareActorInfo")
             {
                 var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
                 var actCon2 = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 1);
@@ -199,7 +199,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 return actCon1.ActorInfo.Equals(actCon2.ActorInfo);
             }
 
-            if (NodeType == NodeType.IsAlive)
+            if (NodeType == "IsAlive")
             {
                 var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
 
@@ -215,7 +215,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 return !actCon1.Actor.IsDead;
             }
 
-            if (NodeType == NodeType.IsDead)
+            if (NodeType == "IsDead")
             {
                 var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
 
@@ -231,12 +231,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 return actCon1.Actor.IsDead;
             }
 
-            if (NodeType == NodeType.IsPlaying
-                || NodeType == NodeType.IsBot
-                || NodeType == NodeType.IsHumanPlayer
-                || NodeType == NodeType.IsNoncombatant
-                || NodeType == NodeType.HasWon
-                || NodeType == NodeType.HasLost)
+            if (NodeType == "IsPlaying"
+                || NodeType == "IsBot"
+                || NodeType == "IsHumanPlayer"
+                || NodeType == "IsNoncombatant"
+                || NodeType == "HasWon"
+                || NodeType == "HasLost")
             {
                 var actCon1 = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
 
@@ -254,22 +254,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 if (player == null)
                     return false;
 
-                if (NodeType == NodeType.IsPlaying)
+                if (NodeType == "IsPlaying")
                     return player.WinState == WinState.Undefined && !player.Spectating;
 
-                if (NodeType == NodeType.IsBot)
+                if (NodeType == "IsBot")
                     return player.IsBot;
 
-                if (NodeType == NodeType.IsHumanPlayer)
+                if (NodeType == "IsHumanPlayer")
                     return !player.IsBot && !player.NonCombatant && player.Playable;
 
-                if (NodeType == NodeType.IsNoncombatant)
+                if (NodeType == "IsNoncombatant")
                     return player.NonCombatant;
 
-                if (NodeType == NodeType.HasWon)
+                if (NodeType == "HasWon")
                     return player.WinState == WinState.Won;
 
-                if (NodeType == NodeType.HasLost)
+                if (NodeType == "HasLost")
                     return player.WinState == WinState.Lost;
             }
 

@@ -8,11 +8,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {
     public class TriggerOnIdle : NodeLogic
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.TriggerOnIdle, new BuildNodeConstructorInfo
+                    "TriggerOnIdle", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(TriggerOnIdle),
 

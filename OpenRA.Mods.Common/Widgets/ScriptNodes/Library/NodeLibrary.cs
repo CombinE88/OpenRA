@@ -26,8 +26,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 foreach (var type in Assembly.GetAssembly(typeof(BasicNodeWidget)).GetTypes().Where(type =>
                     type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeWidget))))
                 {
-                    var dictObject = type.GetField("NodeBuilder").GetValue(null);
-                    var dictionary = (Dictionary<NodeType, BuildNodeConstructorInfo>) dictObject;
+                    var dictObject = type.GetField("NodeConstructorInformation").GetValue(null);
+                    var dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
 
                     if (!dictionary.ContainsKey(nodeInfo.NodeType))
                         continue;
@@ -43,29 +43,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
             return nodes;
         }
 
-        public static NodeWidget AddNode(NodeType nodeType, NodeEditorNodeScreenWidget nensw, string nodeId = null,
+        public static NodeWidget AddNode(string nodeType, NodeEditorNodeScreenWidget nensw, string nodeId = null,
             string nodeName = null)
         {
             NodeWidget nodeWidget = null;
-            var dictionary = new Dictionary<NodeType, BuildNodeConstructorInfo>();
+            var dictionary = new Dictionary<string, BuildNodeConstructorInfo>();
 
             var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 
             foreach (var type in Assembly.GetAssembly(typeof(BasicNodeWidget)).GetTypes().Where(type =>
                 type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeWidget))))
             {
-                var dictObject = type.GetField("NodeBuilder").GetValue(null);
-                dictionary = (Dictionary<NodeType, BuildNodeConstructorInfo>) dictObject;
+                var dictObject = type.GetField("NodeConstructorInformation").GetValue(null);
+                dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
 
                 if (!dictionary.ContainsKey(nodeType))
                     continue;
 
                 if (dictionary[nodeType].WidgetType == typeof(TriggerNodeWorldLoaded) &&
-                    nensw.Nodes.Any(n => n.GetType() == dictionary[nodeType].WidgetType))
+                    nensw.Nodes.Any(n => n.GetType() == typeof(TriggerNodeWorldLoaded)))
                     continue;
 
                 if (dictionary[nodeType].WidgetType == typeof(TriggerNodeTick) &&
-                    nensw.Nodes.Any(n => n.GetType() == dictionary[nodeType].WidgetType))
+                    nensw.Nodes.Any(n => n.GetType() == typeof(TriggerNodeTick)))
                     continue;
 
                 nodeWidget = (NodeWidget) type
@@ -102,8 +102,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 foreach (var type in Assembly.GetAssembly(typeof(NodeWidget)).GetTypes().Where(type =>
                     type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeWidget))))
                 {
-                    var dictObject = type.GetField("NodeBuilder").GetValue(null);
-                    var dictionary = (Dictionary<NodeType, BuildNodeConstructorInfo>) dictObject;
+                    var dictObject = type.GetField("NodeConstructorInformation").GetValue(null);
+                    var dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
 
                     if (!dictionary.ContainsKey(nodeInfo.NodeType) || dictionary[nodeInfo.NodeType].LogicClass == null)
                         continue;
@@ -118,93 +118,5 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
             return nodeList;
         }
-    }
-
-    public enum NodeType
-    {
-        // MapInfo
-        MapInfoNode,
-        MapInfoActorInfo,
-        MapInfoActorReference,
-
-        // Actor
-        ActorCreateActor,
-        ActorGetInformations,
-        ActorQueueMove,
-        ActorQueueAttack,
-        ActorQueueHunt,
-        ActorQueueAttackMoveActivity,
-        ActorQueueSell,
-        ActorQueueFindResources,
-        ActorKill,
-        ActorRemove,
-        ActorChangeOwner,
-
-        // Trigger,
-        TriggerWorldLoaded,
-        TriggerCreateTimer,
-        TimerStart,
-        TimerReset,
-        TimerStop,
-        TriggerTick,
-        TriggerOnEnteredFootprint,
-        TriggerOnEnteredRange,
-        TriggerOnIdle,
-        TriggerOnKilled,
-
-        // Actor Groups
-        GroupPlayerGroup,
-        GroupActorGroup,
-        GroupActorInfoGroup,
-        TriggerOnAllKilled,
-        FinActorsInCircle,
-        FindActorsOnFootprint,
-        FilterActorGroup,
-
-        // Arithmetic
-        ArithmeticsAnd,
-        ArithmeticsOr,
-        CompareActors,
-        DoMultiple,
-        Count,
-        ArithmeticsMath,
-
-        // Complex Functions
-        Reinforcements,
-        ReinforcementsWithTransport,
-        CreateEffect,
-        TimedExecution,
-
-        // UI Nodes
-        UiPlayNotification,
-        UiPlaySound,
-        UiRadarPing,
-        UiTextMessage,
-        UiAddMissionText,
-        UiNewObjective,
-        UiCompleteObjective,
-        UiFailObjective,
-        GlobalLightning,
-        SetCameraPosition,
-        CameraRide,
-        TextChoice,
-
-        // Conditions
-        CheckCondition,
-        CompareActor,
-        CompareNumber,
-        CompareActorInfo,
-        IsAlive,
-        IsDead,
-        IsPlaying,
-        HasWon,
-        HasLost,
-        IsBot,
-        IsHumanPlayer,
-        IsNoncombatant,
-
-        // Variables
-        SetVariable,
-        GetVariable
     }
 }

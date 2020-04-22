@@ -11,11 +11,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 {
     public class ActorNodeQueueAbility : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.ActorQueueSell, new BuildNodeConstructorInfo
+                    "ActorQueueSell", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
 
@@ -33,7 +33,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     }
                 },
                 {
-                    NodeType.ActorQueueFindResources, new BuildNodeConstructorInfo
+                    "ActorQueueFindResources", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
 
@@ -50,7 +50,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     }
                 },
                 {
-                    NodeType.ActorQueueAttackMoveActivity, new BuildNodeConstructorInfo
+                    "ActorQueueAttackMoveActivity", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
 
@@ -68,7 +68,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     }
                 },
                 {
-                    NodeType.ActorQueueHunt, new BuildNodeConstructorInfo
+                    "ActorQueueHunt", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
 
@@ -88,7 +88,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     }
                 },
                 {
-                    NodeType.ActorQueueAttack, new BuildNodeConstructorInfo
+                    "ActorQueueAttack", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
 
@@ -109,7 +109,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     }
                 },
                 {
-                    NodeType.ActorQueueMove, new BuildNodeConstructorInfo
+                    "ActorQueueMove", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
 
@@ -128,7 +128,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     }
                 },
                 {
-                    NodeType.ActorChangeOwner, new BuildNodeConstructorInfo
+                    "ActorChangeOwner", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
 
@@ -146,7 +146,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     }
                 },
                 {
-                    NodeType.ActorRemove, new BuildNodeConstructorInfo
+                    "ActorRemove", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
 
@@ -163,7 +163,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                     }
                 },
                 {
-                    NodeType.ActorKill, new BuildNodeConstructorInfo
+                    "ActorKill", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(ActorLogicQueueAbility),
 
@@ -230,7 +230,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
             switch (NodeInfo.NodeType)
             {
-                case NodeType.ActorQueueMove:
+                case "ActorQueueMove":
                 {
                     var location = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
                     if (location == null || location.Location == null)
@@ -255,7 +255,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                                     WDist.FromCells(i)));
                     break;
                 }
-                case NodeType.ActorQueueAttack:
+                case "ActorQueueAttack":
                 {
                     var targetActor = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 1);
                     if (targetActor == null || targetActor.Actor == null)
@@ -285,7 +285,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                                     first != null ? first.Number ?? 0 : 0));
                     break;
                 }
-                case NodeType.ActorQueueHunt:
+                case "ActorQueueHunt":
                 {
                     var idleHunting = GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0) != null;
 
@@ -310,7 +310,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
                     break;
                 }
-                case NodeType.ActorQueueAttackMoveActivity:
+                case "ActorQueueAttackMoveActivity":
                 {
                     var attackLocation = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
                     if (attackLocation == null)
@@ -333,7 +333,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                                     new Move(actors, attackLocation.Location.Value, WDist.FromCells(2))));
                     break;
                 }
-                case NodeType.ActorQueueSell:
+                case "ActorQueueSell":
                 {
                     if (actor != null && actor.Trait<Sellable>() != null)
                         actor.Trait<Sellable>().Sell(actor);
@@ -353,7 +353,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
                     break;
                 }
-                case NodeType.ActorQueueFindResources:
+                case "ActorQueueFindResources":
                 {
                     if (actor != null && !actor.IsDead && actor.IsInWorld && actor.Trait<Harvester>() != null)
                         actor.QueueActivity(new FindResources(actor));
@@ -364,7 +364,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                                 actor.QueueActivity(new FindResources(actors));
                     break;
                 }
-                case NodeType.ActorKill:
+                case "ActorKill":
                 {
                     if (actor != null && !actor.IsDead && actor.IsInWorld)
                         actor.Kill(actor);
@@ -375,7 +375,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                                 actors.Kill(actors);
                     break;
                 }
-                case NodeType.ActorRemove:
+                case "ActorRemove":
                 {
                     if (actor != null && !actor.IsDead && actor.IsInWorld)
                         actor.Dispose();
@@ -386,7 +386,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                                 actors.Dispose();
                     break;
                 }
-                case NodeType.ActorChangeOwner:
+                case "ActorChangeOwner":
                 {
                     var newPlayer = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
                     if (newPlayer == null)

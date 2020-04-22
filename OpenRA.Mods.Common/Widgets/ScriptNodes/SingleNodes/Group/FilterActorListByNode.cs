@@ -10,11 +10,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
     public class FilterActorListByNode : NodeWidget
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.FilterActorGroup, new BuildNodeConstructorInfo
+                    "FilterActorGroup", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(FilterActorListByLogic),
 

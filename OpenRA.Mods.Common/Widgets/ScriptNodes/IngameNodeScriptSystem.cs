@@ -45,7 +45,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             }
 
             if (ticker == 3)
-                foreach (var logic in NodeLogics.Where(l => l.NodeType == NodeType.TriggerWorldLoaded))
+                foreach (var logic in NodeLogics.Where(l => l.NodeType == "TriggerWorldLoaded"))
                     logic.Execute(self.World);
 
             if (ticker < 4) ticker++;
@@ -94,8 +94,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             var nodeName = infos.First();
             var nodeId = infos.Last();
 
-            var nodeTypes = (NodeType[]) Enum.GetValues(typeof(NodeType));
-            var nodeType = nodeTypes.First(e => e.ToString() == nodes.Value.Value);
+            var nodeType = nodes.Value.Value;
 
             var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
 

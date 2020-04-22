@@ -8,11 +8,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
     public class GroupFindActorsLogic : NodeLogic
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.FindActorsOnFootprint, new BuildNodeConstructorInfo
+                    "FindActorsOnFootprint", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GroupFindActorsLogic),
 
@@ -29,7 +29,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     }
                 },
                 {
-                    NodeType.FinActorsInCircle, new BuildNodeConstructorInfo
+                    "FinActorsInCircle", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GroupFindActorsLogic),
 
@@ -56,7 +56,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
         {
             var outCon = OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList);
 
-            if (NodeType == NodeType.FinActorsInCircle)
+            if (NodeType == "FinActorsInCircle")
             {
                 var integ = GetLinkedConnectionFromInConnection(ConnectionType.LocationRange, 0);
 
@@ -70,7 +70,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                         WDist.FromCells(integ.Number.Value))
                     .Where(a => !a.IsDead && a.IsInWorld).ToArray();
             }
-            else if (NodeType == NodeType.FindActorsOnFootprint)
+            else if (NodeType == "FindActorsOnFootprint")
             {
                 var integ = GetLinkedConnectionFromInConnection(ConnectionType.CellArray, 0);
                 ;

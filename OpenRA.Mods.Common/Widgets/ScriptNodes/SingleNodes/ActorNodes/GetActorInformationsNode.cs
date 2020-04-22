@@ -8,11 +8,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 {
     public class GetActorInformationsLogic : NodeLogic
     {
-        public static Dictionary<NodeType, BuildNodeConstructorInfo> NodeBuilder =
-            new Dictionary<NodeType, BuildNodeConstructorInfo>()
+        public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
+            new Dictionary<string, BuildNodeConstructorInfo>()
             {
                 {
-                    NodeType.ActorGetInformations, new BuildNodeConstructorInfo
+                    "ActorGetInformations", new BuildNodeConstructorInfo
                     {
                         LogicClass = typeof(GetActorInformationsLogic),
 
