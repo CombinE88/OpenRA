@@ -30,30 +30,30 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 },
             };
         
-        readonly DropDownButtonWidget methodeSelection;
-        CompareMethod selectedMethod;
+        readonly DropDownButtonWidget methodSelection;
+        string selectedMethod;
 
         public GetCountNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Method = CompareMethod.All;
+            Method = "All";
 
-            var methodes = new List<CompareMethod>
+            var methodes = new List<string>
             {
-                CompareMethod.All,
-                CompareMethod.PlayerIsPlaying,
-                CompareMethod.AliveActors
+                "All",
+                "PlayerIsPlaying",
+                "AliveActors"
             };
 
-            selectedMethod = Method.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
+            selectedMethod = Method;
+            methodSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
+            Func<string, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
                     selectedMethod = option;
 
-                    methodeSelection.Text = selectedMethod.ToString();
+                    methodSelection.Text = selectedMethod.ToString();
                     Method = selectedMethod;
                 });
 
@@ -62,16 +62,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 return item;
             };
 
-            methodeSelection.OnClick = () =>
+            methodSelection.OnClick = () =>
             {
-                methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
+                methodSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
             };
 
-            methodeSelection.Text = selectedMethod.ToString();
+            methodSelection.Text = selectedMethod.ToString();
 
-            AddChild(methodeSelection);
+            AddChild(methodSelection);
 
-            methodeSelection.Bounds =
+            methodSelection.Bounds =
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
         }
 
@@ -81,8 +81,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
             if (NodeInfo.Method != null)
             {
-                selectedMethod = NodeInfo.Method.Value;
-                methodeSelection.Text = NodeInfo.Method.Value.ToString();
+                selectedMethod = NodeInfo.Method;
+                methodSelection.Text = NodeInfo.Method;
             }
         }
     }
@@ -110,9 +110,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
             else if (incon.ConnectionTyp == ConnectionType.ActorList)
             {
                 foreach (var actor in incon.ActorGroup)
-                    if (Methode == CompareMethod.AliveActors && !actor.IsDead && actor.IsInWorld)
+                    if (Method == "AliveActors" && !actor.IsDead && actor.IsInWorld)
                         integ++;
-                    else if (Methode == CompareMethod.All)
+                    else if (Method == "All")
                         integ++;
 
                 outcon.Number = integ;
@@ -124,9 +124,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                     var play = self.World.Players.First(p => p.PlayerReference == player);
                     if (!play.NonCombatant && play.Playable)
                     {
-                        if (Methode == CompareMethod.PlayerIsPlaying && play.WinState == WinState.Undefined)
+                        if (Method == "PlayerIsPlaying" && play.WinState == WinState.Undefined)
                             integ++;
-                        else if (Methode == CompareMethod.All)
+                        else if (Method == "All")
                             integ++;
                     }
                 }

@@ -8,9 +8,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 {
     public class NodeLogic
     {
-        public readonly CompareItem? Item;
+        public readonly string Item;
 
-        public readonly CompareMethod? Methode;
+        public readonly string Method;
         public readonly string NodeId;
         public readonly NodeInfo NodeInfo;
         public readonly string NodeName;
@@ -28,7 +28,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             NodeType = nodeInfo.NodeType;
             NodeInfo = nodeInfo;
             NodeName = nodeInfo.NodeName;
-            Methode = nodeInfo.Method;
+            Method = nodeInfo.Method;
             Item = nodeInfo.Item;
         }
 

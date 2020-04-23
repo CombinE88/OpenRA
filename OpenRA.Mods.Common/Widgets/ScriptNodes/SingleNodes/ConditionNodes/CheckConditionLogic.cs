@@ -35,29 +35,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 
         readonly LabelWidget labal1;
         readonly LabelWidget labal2;
-        readonly DropDownButtonWidget methodeSelection;
-        CompareMethod selectedMethod;
+        readonly DropDownButtonWidget methodSelection;
+        string selectedMethod;
 
         public CheckConditionNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Method = CompareMethod.True;
+            Method = "True";
 
-            var methodes = new List<CompareMethod>
+            var methodes = new List<string>
             {
-                CompareMethod.True,
-                CompareMethod.False
+                "True",
+                "False"
             };
 
-            selectedMethod = Method.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
+            selectedMethod = Method;
+            methodSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
+            Func<string, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
                     selectedMethod = option;
 
-                    methodeSelection.Text = selectedMethod.ToString();
+                    methodSelection.Text = selectedMethod.ToString();
                     Method = selectedMethod;
                 });
 
@@ -66,14 +66,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 return item;
             };
 
-            methodeSelection.OnClick = () =>
+            methodSelection.OnClick = () =>
             {
-                methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
+                methodSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
             };
 
-            methodeSelection.Text = selectedMethod.ToString();
+            methodSelection.Text = selectedMethod.ToString();
 
-            methodeSelection.Bounds =
+            methodSelection.Bounds =
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
 
             labal1 = new LabelWidget();
@@ -90,7 +90,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
             AddChild(labal1);
             AddChild(labal2);
 
-            AddChild(methodeSelection);
+            AddChild(methodSelection);
         }
 
         public override void AddOutConConstructor(OutConnection connection)
@@ -99,8 +99,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
 
             if (NodeInfo.Method != null)
             {
-                selectedMethod = NodeInfo.Method.Value;
-                methodeSelection.Text = NodeInfo.Method.Value.ToString();
+                selectedMethod = NodeInfo.Method;
+                methodSelection.Text = NodeInfo.Method;
             }
         }
     }
@@ -119,12 +119,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
             if (inCo == null)
                 Debug.WriteLine(NodeId + "Condition not connected");
 
-            if (inCo.Logic.CheckCondition(world) && Methode == CompareMethod.True ||
-                !inCo.Logic.CheckCondition(world) && Methode == CompareMethod.False)
+            if (inCo.Logic.CheckCondition(world) && Method == "True" ||
+                !inCo.Logic.CheckCondition(world) && Method == "False")
                 ForwardExec(this, 0);
 
-            else if (!inCo.Logic.CheckCondition(world) && Methode == CompareMethod.True ||
-                     inCo.Logic.CheckCondition(world) && Methode == CompareMethod.False)
+            else if (!inCo.Logic.CheckCondition(world) && Method == "True" ||
+                     inCo.Logic.CheckCondition(world) && Method == "False")
                 ForwardExec(this, 1);
         }
     }

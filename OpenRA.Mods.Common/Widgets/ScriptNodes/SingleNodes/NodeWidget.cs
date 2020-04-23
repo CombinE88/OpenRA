@@ -9,8 +9,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
     public class NodeWidget : BasicNodeWidget
     {
         int inConnectionCounter = 1;
-        public CompareItem? Item = null;
-        public CompareMethod? Method = null;
+        public string Item = null;
+        public string Method = null;
         int outConnectionCounter = 1;
         public VariableInfo VariableReference = null;
 

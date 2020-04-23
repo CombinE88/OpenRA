@@ -118,14 +118,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     }
                     case "Method":
                     {
-                        var methodes = (CompareMethod[]) Enum.GetValues(typeof(CompareMethod));
-                        nodeInfo.Method = methodes.First(e => e.ToString() == node.Value.Value);
+                        nodeInfo.Method = node.Value.Value;
                         break;
                     }
                     case "Item":
                     {
-                        var item = (CompareItem[]) Enum.GetValues(typeof(CompareItem));
-                        nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
+                        nodeInfo.Item = node.Value.Value;
                         break;
                     }
                     case "VariableReference":

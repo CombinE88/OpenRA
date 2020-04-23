@@ -86,14 +86,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                     }
                     case "Method":
                     {
-                        var methodes = (CompareMethod[]) Enum.GetValues(typeof(CompareMethod));
-                        nodeInfo.Method = methodes.First(e => e.ToString() == node.Value.Value);
+                        nodeInfo.Method = node.Value.Value;
                         break;
                     }
                     case "Item":
                     {
-                        var item = (CompareItem[]) Enum.GetValues(typeof(CompareItem));
-                        nodeInfo.Item = item.First(e => e.ToString() == node.Value.Value);
+                        nodeInfo.Item = node.Value.Value;
                         break;
                     }
                     case "VariableReference":
@@ -238,10 +236,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             };
 
             if (nodeInfo.Method != null)
-                nodes.Add(new MiniYamlNode("Methode", nodeInfo.Method.ToString()));
+                nodes.Add(new MiniYamlNode("Method", nodeInfo.Method));
 
             if (nodeInfo.Item != null)
-                nodes.Add(new MiniYamlNode("Item", nodeInfo.Item.ToString()));
+                nodes.Add(new MiniYamlNode("Item", nodeInfo.Item));
 
             if (nodeInfo.VariableReference != null)
                 nodes.Add(new MiniYamlNode("VariableReference", nodeInfo.VariableReference));
@@ -369,15 +367,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
     public class NodeInfo
     {
         public List<InConReference> InConnectionsReference;
-        public CompareItem? Item;
+        public List<OutConReference> OutConnectionsReference;
 
-        public CompareMethod? Method;
+        public string Item;
+        public string Method;
+
         public string NodeId;
         public string NodeName;
         public string NodeType;
+
         public int? OffsetPosX;
         public int? OffsetPosY;
-        public List<OutConReference> OutConnectionsReference;
         public string VariableReference;
 
         public NodeInfo(
@@ -418,39 +418,5 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public string WidgetNodeReference;
 
         public string WidgetReferenceId;
-    }
-
-    public enum CompareItem
-    {
-        Health,
-        Damage,
-        Speed,
-        LocationX,
-        LocationY,
-        Primary,
-        Secondary,
-        Owner,
-        Building,
-        Unit,
-        Aircraft,
-        ActorTypes,
-        IsIdle
-    }
-
-    public enum CompareMethod
-    {
-        Max,
-        Min,
-        Divide,
-        Multiply,
-        Add,
-        Subtract,
-        All,
-        PlayerIsPlaying,
-        AliveActors,
-        Contains,
-        ContainsNot,
-        True,
-        False
     }
 }

@@ -31,31 +31,31 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 },
             };
         
-        readonly DropDownButtonWidget methodeSelection;
-        CompareMethod selectedMethod;
+        readonly DropDownButtonWidget methodSelection;
+        string selectedMethod;
 
         public ArithmeticMathNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Method = CompareMethod.Add;
+            Method = "Add";
 
-            var methodes = new List<CompareMethod>
+            var methodes = new List<string>
             {
-                CompareMethod.Add,
-                CompareMethod.Subtract,
-                CompareMethod.Multiply,
-                CompareMethod.Divide
+                "Add",
+                "Subtract",
+                "Multiply",
+                "Divide"
             };
 
-            selectedMethod = Method.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
+            selectedMethod = Method;
+            methodSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
+            Func<string, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
                     selectedMethod = option;
 
-                    methodeSelection.Text = selectedMethod.ToString();
+                    methodSelection.Text = selectedMethod.ToString();
                     Method = selectedMethod;
                 });
 
@@ -64,16 +64,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 return item;
             };
 
-            methodeSelection.OnClick = () =>
+            methodSelection.OnClick = () =>
             {
-                methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
+                methodSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
             };
 
-            methodeSelection.Text = selectedMethod.ToString();
+            methodSelection.Text = selectedMethod.ToString();
 
-            AddChild(methodeSelection);
+            AddChild(methodSelection);
 
-            methodeSelection.Bounds =
+            methodSelection.Bounds =
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
         }
 
@@ -83,8 +83,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
             if (NodeInfo.Method != null)
             {
-                selectedMethod = NodeInfo.Method.Value;
-                methodeSelection.Text = NodeInfo.Method.Value.ToString();
+                selectedMethod = NodeInfo.Method;
+                methodSelection.Text = NodeInfo.Method;
             }
         }
     }
@@ -113,15 +113,15 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
             if (incon1.Number == null || incon2.Number == null)
                 return;
 
-            if (Methode == CompareMethod.Add)
+            if (Method == "Add")
                 outcon.Number = incon1.Number.Value + incon2.Number.Value;
-            else if (Methode == CompareMethod.Subtract)
+            else if (Method == "Subtract")
                 outcon.Number = incon1.Number.Value - incon2.Number.Value >= 0
                     ? incon1.Number.Value - incon2.Number.Value
                     : 0;
-            else if (Methode == CompareMethod.Multiply)
+            else if (Method == "Multiply")
                 outcon.Number = incon1.Number.Value * incon2.Number.Value;
-            else if (Methode == CompareMethod.Divide)
+            else if (Method == "Divide")
                 outcon.Number = incon1.Number.Value / (incon2.Number.Value > 0 ? incon2.Number.Value : 1);
         }
     }

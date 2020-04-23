@@ -36,62 +36,62 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             };
 
         readonly DropDownButtonWidget itemSelection;
-        readonly DropDownButtonWidget methodeSelection;
-        CompareItem selectedItem;
-        CompareMethod selectedMethod;
+        readonly DropDownButtonWidget methodSelection;
+        string selectedItem;
+        string selectedMethod;
 
         public FilterActorListByNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Method = CompareMethod.Contains;
-            Item = CompareItem.Owner;
+            Method = "Contains";
+            Item = "Owner";
 
-            var methodes = new List<CompareMethod>
+            var methodes = new List<string>
             {
-                CompareMethod.Contains,
-                CompareMethod.ContainsNot
+                "Contains",
+                "ContainsNot"
             };
 
-            selectedMethod = Method.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
+            selectedMethod = Method;
+            methodSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
+            Func<string, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
                     selectedMethod = option;
 
-                    methodeSelection.Text = selectedMethod.ToString();
+                    methodSelection.Text = selectedMethod;
                     Method = selectedMethod;
                 });
 
-                item.Get<LabelWidget>("LABEL").GetText = () => option.ToString();
+                item.Get<LabelWidget>("LABEL").GetText = () => option;
 
                 return item;
             };
 
-            methodeSelection.OnClick = () =>
+            methodSelection.OnClick = () =>
             {
-                methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
+                methodSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
             };
 
-            methodeSelection.Text = selectedMethod.ToString();
+            methodSelection.Text = selectedMethod.ToString();
 
-            AddChild(methodeSelection);
+            AddChild(methodSelection);
 
-            var items = new List<CompareItem>
+            var items = new List<string>
             {
-                CompareItem.Owner,
-                CompareItem.Building,
-                CompareItem.Aircraft,
-                CompareItem.Unit,
-                CompareItem.ActorTypes,
-                CompareItem.IsIdle
+                "Owner",
+                "Building",
+                "Aircraft",
+                "Unit",
+                "ActorTypes",
+                "IsIdle"
             };
 
-            selectedItem = Item.Value;
+            selectedItem = Item;
             itemSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
+            Func<string, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => selectedItem == option, () =>
                 {
@@ -115,7 +115,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             AddChild(itemSelection);
 
-            methodeSelection.Bounds =
+            methodSelection.Bounds =
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
             itemSelection.Bounds =
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 100, FreeWidgetEntries.Width, 25);
@@ -127,14 +127,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             if (NodeInfo.Method != null)
             {
-                selectedMethod = NodeInfo.Method.Value;
-                methodeSelection.Text = NodeInfo.Method.Value.ToString();
+                selectedMethod = NodeInfo.Method;
+                methodSelection.Text = NodeInfo.Method;
             }
 
             if (NodeInfo.Item != null)
             {
-                selectedItem = NodeInfo.Item.Value;
-                itemSelection.Text = NodeInfo.Item.Value.ToString();
+                selectedItem = NodeInfo.Item;
+                itemSelection.Text = NodeInfo.Item;
             }
         }
     }
@@ -157,7 +157,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 return;
             }
 
-            if (Item == CompareItem.Owner)
+            if (Item == "Owner")
             {
                 var ply = GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
 
@@ -167,35 +167,35 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     return;
                 }
 
-                if (Methode == CompareMethod.Contains)
+                if (Method == "Contains")
                     actOut.ActorGroup = actIn.ActorGroup
                         .Where(c => c.Owner == world.Players.First(p => p.InternalName == ply.Player.Name)).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup
                         .Where(c => c.Owner == world.Players.First(p => p.InternalName != ply.Player.Name)).ToArray();
             }
-            else if (Item == CompareItem.Aircraft)
+            else if (Item == "Aircraft")
             {
-                if (Methode == CompareMethod.Contains)
+                if (Method == "Contains")
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Aircraft>() != null).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Aircraft>() == null).ToArray();
             }
-            else if (Item == CompareItem.Building)
+            else if (Item == "Building")
             {
-                if (Methode == CompareMethod.Contains)
+                if (Method == "Contains")
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Building>() != null).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Building>() == null).ToArray();
             }
-            else if (Item == CompareItem.Unit)
+            else if (Item == "Unit")
             {
-                if (Methode == CompareMethod.Contains)
+                if (Method == "Contains")
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Mobile>() != null).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.Trait<Mobile>() == null).ToArray();
             }
-            else if (Item == CompareItem.ActorTypes)
+            else if (Item == "ActorTypes")
             {
                 var strings = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfoArray, 0);
                 if (strings == null)
@@ -204,14 +204,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     return;
                 }
 
-                if (Methode == CompareMethod.Contains)
+                if (Method == "Contains")
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => strings.ActorInfos.Contains(c.Info)).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => !strings.ActorInfos.Contains(c.Info)).ToArray();
             }
-            else if (Item == CompareItem.IsIdle)
+            else if (Item == "IsIdle")
             {
-                if (Methode == CompareMethod.Contains)
+                if (Method == "Contains")
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => c.IsIdle).ToArray();
                 else
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => !c.IsIdle).ToArray();

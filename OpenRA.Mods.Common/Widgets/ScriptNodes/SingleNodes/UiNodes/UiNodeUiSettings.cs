@@ -145,22 +145,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
 
         readonly DropDownButtonWidget methodSelection;
-        CompareItem selectedMethod;
+        string selectedMethod;
 
         public UiObjectivesNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Item = CompareItem.Primary;
+            Item = "Primary";
 
-            var method = new List<CompareItem>
+            var method = new List<string>
             {
-                CompareItem.Primary,
-                CompareItem.Secondary
+                "Primary",
+                "Secondary"
             };
 
-            selectedMethod = Item.Value;
+            selectedMethod = Item;
             methodSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
+            Func<string, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
@@ -190,8 +190,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             base.AddOutConConstructor(connection);
             if (NodeInfo.Item != null)
             {
-                selectedMethod = NodeInfo.Item.Value;
-                methodSelection.Text = NodeInfo.Item.Value.ToString();
+                selectedMethod = NodeInfo.Item;
+                methodSelection.Text = NodeInfo.Item;
             }
         }
     }
@@ -301,7 +301,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                         var player = world.Players.First(pl => pl.InternalName == singlePlayer.String);
                         var mo = player.PlayerActor.Trait<MissionObjectives>();
                         objective.Number = mo.Add(player, text.String,
-                            Item == CompareItem.Primary ? ObjectiveType.Primary : ObjectiveType.Secondary);
+                            Item == "Primary" ? ObjectiveType.Primary : ObjectiveType.Secondary);
                         objective.Player = player.PlayerReference;
                     }
                     else if (playerGroup != null)
@@ -314,7 +314,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                         {
                             var mo = player.PlayerActor.Trait<MissionObjectives>();
                             objective.Number = mo.Add(player, text.String,
-                                Item == CompareItem.Primary ? ObjectiveType.Primary : ObjectiveType.Secondary);
+                                Item == "Primary" ? ObjectiveType.Primary : ObjectiveType.Secondary);
                         }
 
                         objective.PlayerGroup = playerGroup.PlayerGroup;

@@ -36,31 +36,31 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
 
         readonly DropDownButtonWidget itemSelection;
-        readonly DropDownButtonWidget methodeSelection;
-        CompareItem selectedItem;
-        CompareMethod selectedMethod;
+        readonly DropDownButtonWidget methodSelection;
+        string selectedItem;
+        string selectedMethod;
 
         public ArithmecCompareNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            Method = CompareMethod.Max;
-            Item = CompareItem.Health;
+            Method = "Max";
+            Item = "Health";
 
-            var methodes = new List<CompareMethod>
+            var methodes = new List<string>
             {
-                CompareMethod.Max,
-                CompareMethod.Min
+                "Max",
+                "Min"
             };
 
-            selectedMethod = Method.Value;
-            methodeSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
+            selectedMethod = Method;
+            methodSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareMethod, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
+            Func<string, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => selectedMethod == option, () =>
                 {
                     selectedMethod = option;
 
-                    methodeSelection.Text = selectedMethod.ToString();
+                    methodSelection.Text = selectedMethod.ToString();
                     Method = selectedMethod;
                 });
 
@@ -69,28 +69,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 return item;
             };
 
-            methodeSelection.OnClick = () =>
+            methodSelection.OnClick = () =>
             {
-                methodeSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
+                methodSelection.ShowDropDown("LABEL_DROPDOWN_TEMPLATE", 270, methodes, setupItem2);
             };
 
-            methodeSelection.Text = selectedMethod.ToString();
+            methodSelection.Text = selectedMethod.ToString();
 
-            AddChild(methodeSelection);
+            AddChild(methodSelection);
 
-            var items = new List<CompareItem>
+            var items = new List<string>
             {
-                CompareItem.Health,
-                CompareItem.Damage,
-                CompareItem.Speed,
-                CompareItem.LocationX,
-                CompareItem.LocationY
+                "Health",
+                "Damage",
+                "Speed",
+                "LocationX",
+                "LocationY"
             };
 
-            selectedItem = Item.Value;
+            selectedItem = Item;
             itemSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
 
-            Func<CompareItem, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
+            Func<string, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
                 var item = ScrollItemWidget.Setup(template, () => selectedItem == option, () =>
                 {
@@ -114,7 +114,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
             AddChild(itemSelection);
 
-            methodeSelection.Bounds =
+            methodSelection.Bounds =
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
             itemSelection.Bounds =
                 new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 100, FreeWidgetEntries.Width, 25);
@@ -126,14 +126,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 
             if (NodeInfo.Method != null)
             {
-                selectedMethod = NodeInfo.Method.Value;
-                methodeSelection.Text = NodeInfo.Method.Value.ToString();
+                selectedMethod = NodeInfo.Method;
+                methodSelection.Text = NodeInfo.Method;
             }
 
             if (NodeInfo.Item != null)
             {
-                selectedItem = NodeInfo.Item.Value;
-                itemSelection.Text = NodeInfo.Item.Value.ToString();
+                selectedItem = NodeInfo.Item;
+                itemSelection.Text = NodeInfo.Item;
             }
         }
     }
@@ -162,7 +162,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                 0
             };
 
-            if (Item == CompareItem.Damage)
+            if (Item == "Damage")
             {
                 if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null && inc[0].In.Actor.Trait<Health>() != null)
@@ -173,7 +173,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                         ints[1] = inc[1].In.Actor.Trait<Health>().MaxHP - inc[1].In.Actor.Trait<Health>().HP;
             }
 
-            if (Item == CompareItem.Health)
+            if (Item == "Health")
             {
                 if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null && inc[0].In.Actor.Trait<Health>() != null)
@@ -184,7 +184,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                         ints[1] = inc[1].In.Actor.Trait<Health>().MaxHP;
             }
 
-            if (Item == CompareItem.Speed)
+            if (Item == "Speed")
             {
                 if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null && inc[0].In.Actor.Info.TraitInfo<MobileInfo>() != null)
@@ -195,7 +195,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                         ints[1] = inc[1].In.Actor.Info.TraitInfo<MobileInfo>().Speed;
             }
 
-            if (Item == CompareItem.LocationX)
+            if (Item == "LocationX")
             {
                 if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null)
@@ -206,7 +206,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                         ints[1] = inc[1].In.Actor.Location.X;
             }
 
-            if (Item == CompareItem.LocationY)
+            if (Item == "LocationY")
             {
                 if (inc[0].In.ConnectionTyp == ConnectionType.Actor)
                     if (inc[0].In.Actor != null)
@@ -217,7 +217,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
                         ints[1] = inc[1].In.Actor.Location.Y;
             }
 
-            if (Methode == CompareMethod.Max)
+            if (Method == "Max")
                 OutConnections.First(c => c.ConnectionTyp == ConnectionType.Universal).Actor =
                     inc[ints.IndexOf(Math.Max(ints[0], ints[1]))].In.Actor;
         }
