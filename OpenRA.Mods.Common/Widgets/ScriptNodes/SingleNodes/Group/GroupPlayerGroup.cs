@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 {
@@ -27,7 +28,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
         
         public GroupPlayerGroup(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
         {
-            IsIncorrectConnected = () => InConnections.Any(inCon => inCon.In != null);
+            IsIncorrectConnected = () => InConnections.All(inCon => inCon.In == null);
         }
 
         public override void Tick()

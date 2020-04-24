@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using OpenRA.Effects;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Primitives;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.FunctionNodeInfos
 {
-    public class ActorNodeCreateActor : NodeWidget
+    public class CreatActorInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -16,8 +16,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 {
                     "ActorCreateActor", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorCreateActorLogic),
-                        Nesting = new []{"Functions"},
+                        Nesting = new[] {"Functions"},
                         Name = "Create Actor",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -37,38 +36,32 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
                 }
             };
 
-        public ActorNodeCreateActor(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen,
-            nodeInfo)
-        {
-            IsIncorrectConnected =
-                () => InConnections.Any(inCon => inCon.In == null && inCon.ConnectionTyp != ConnectionType.Integer);
-        }
-    }
-
-    public class ActorCreateActorLogic : NodeLogic
-    {
-        public ActorCreateActorLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
+        public CreatActorInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
         }
 
-        public override void Execute(World world)
+        public override bool WidgetIsIncorrectConnected(NodeWidget widget)
         {
-            var actorInfo = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
+            return widget.InConnections.Any(inCon => inCon.In == null && inCon.ConnectionTyp != ConnectionType.Integer);
+        }
+
+        public override void LogicExecute(World world, NodeLogic logic)
+        {
+            var actorInfo = logic.GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
             if (actorInfo == null || actorInfo.ActorInfo == null)
             {
                 Debug.WriteLine(NodeId + "Actor Actor Info not connected");
                 return;
             }
 
-            var location = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+            var location = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
             if (location == null || location.Location == null)
             {
                 Debug.WriteLine(NodeId + "Actor Location Info not connected");
                 return;
             }
 
-            var player = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+            var player = logic.GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
             if (player == null || player.Player == null)
             {
                 Debug.WriteLine(NodeId + "Actor Player not connected");
@@ -82,8 +75,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
 
             typeDict.Add(new LocationInit(location.Location.Value));
 
-            var rotation = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
-            if (rotation != null)
+            var rotation = logic.GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
+            if (rotation != null && rotation.Number != null)
                 typeDict.Add(new FacingInit(rotation.Number.Value));
 
             var newActor = world.CreateActor(false, actorInfo.String, typeDict);
@@ -92,9 +85,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
             {
                 world.Add(newActor);
 
-                OutConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).Actor = newActor;
+                logic.OutConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).Actor = newActor;
 
-                ForwardExec(this);
+                NodeLogic.ForwardExec(logic);
             };
 
             world.AddFrameEndTask(w => w.Add(new DelayedAction(0, actorAction)));

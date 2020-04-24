@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics
 {

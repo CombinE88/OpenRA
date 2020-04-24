@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using OpenRA.Mods.Common.Effects;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.FunctionNodeInfos
 {
-    public class FunctionCreateEffectLogic : NodeLogic
+    public class CreateEffectInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -14,9 +14,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 {
                     "CreateEffect", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(FunctionCreateEffectLogic),
-                        Nesting = new []{"Functions"},
-                        Name = "Reinforcements (Create Effect)",
+                        Nesting = new[] {"Functions"},
+                        Name = "Create Effect",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -33,28 +32,27 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 },
             };
 
-        public FunctionCreateEffectLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
-            nodeInfo, ingameNodeScriptSystem)
+        public CreateEffectInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
         }
 
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-            var location = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+            var location = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
             if (location == null || location.Location == null)
             {
                 Debug.WriteLine(NodeId + "Location not connected");
                 return;
             }
 
-            var image = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+            var image = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
             if (image == null || image.String == null)
             {
                 Debug.WriteLine(NodeId + "String Image not connected");
                 return;
             }
 
-            var sequence = GetLinkedConnectionFromInConnection(ConnectionType.Location, 1);
+            var sequence = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 1);
             if (sequence == null || sequence.String == null)
             {
                 Debug.WriteLine(NodeId + "String Sequence not connected");
@@ -71,7 +69,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     "terrain"));
             });
 
-            ForwardExec(this);
+            NodeLogic.ForwardExec(logic);
         }
     }
 }

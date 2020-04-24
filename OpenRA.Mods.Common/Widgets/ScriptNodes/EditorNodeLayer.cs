@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
 using OpenRA.Traits;
@@ -64,7 +66,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
             var nodeType = nodes.Value.Value;
 
-            var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
+            NodeInfo nodeInfo = null;
+
+            foreach (var type in Assembly.GetAssembly(typeof(NodeInfo)).GetTypes().Where(type =>
+                type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeInfo))))
+            {
+                var dictObject = type.GetField("NodeConstructorInformation").GetValue(null);
+                var dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
+
+                if (!dictionary.ContainsKey(nodeType))
+                    continue;
+
+                nodeInfo = (NodeInfo) type
+                    .GetConstructor(new[] {typeof(string), typeof(string), typeof(string)})
+                    .Invoke(new object[] {nodeType, nodeId, nodeName});
+            }
+
+            if (nodeInfo == null)
+                return;
 
             var inCons = new List<InConReference>();
             var outCons = new List<OutConReference>();
@@ -362,33 +381,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public TriggerLogicCreateTimer Timer = null;
         public string VariableName;
         public VariableType VarType;
-    }
-
-    public class NodeInfo
-    {
-        public List<InConReference> InConnectionsReference;
-        public List<OutConReference> OutConnectionsReference;
-
-        public string Item;
-        public string Method;
-
-        public string NodeId;
-        public string NodeName;
-        public string NodeType;
-
-        public int? OffsetPosX;
-        public int? OffsetPosY;
-        public string VariableReference;
-
-        public NodeInfo(
-            string nodeType,
-            string nodeId,
-            string nodeName)
-        {
-            NodeType = nodeType;
-            NodeName = nodeName;
-            NodeId = nodeId;
-        }
     }
 
     public class OutConReference

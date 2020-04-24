@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 {

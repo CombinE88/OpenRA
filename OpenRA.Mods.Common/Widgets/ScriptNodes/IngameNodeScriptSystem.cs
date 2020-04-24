@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Traits;
 

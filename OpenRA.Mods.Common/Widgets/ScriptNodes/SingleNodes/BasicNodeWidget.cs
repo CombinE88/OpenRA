@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
@@ -10,8 +11,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
     public class BasicNodeWidget : Widget
     {
         public readonly string Background = "dialog";
-
-        public readonly string BackgroundCross = "button";
 
         // Background
         public readonly string BackgroundDrag = "button-highlighted";
@@ -24,7 +23,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         public ButtonWidget DeleteButton;
 
         // Node Inhalte
-        public static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation;
         public Rectangle DragBar;
         public Rectangle FreeWidgetEntries;
 
@@ -67,9 +65,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
         [ObjectCreator.UseCtorAttribute]
         public BasicNodeWidget(NodeEditorNodeScreenWidget screen)
         {
-            IsIncorrectConnected = () =>
-                InConnections.Any(inCon => inCon.In == null && inCon.ConnectionTyp != ConnectionType.Enabled);
-
             Editor = screen.NodeScriptContainerWidget.Parent.Get<EditorViewportControllerWidget>("MAP_EDITOR");
             Screen = screen;
 
@@ -90,7 +85,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             AddChild(DeleteButton = new ButtonWidget(Screen.NodeScriptContainerWidget.ModData)
             {
                 Text = "X",
-                Bounds = new Rectangle(Bounds.X + Bounds.Width - 26, Bounds.Y + 1, 25, 25)
+                Bounds = new Rectangle(Bounds.X + Bounds.Width - 26, Bounds.Y + 1, 25, 25),
             });
 
             AddChild(NodeIDTextfield = new TextFieldWidget());

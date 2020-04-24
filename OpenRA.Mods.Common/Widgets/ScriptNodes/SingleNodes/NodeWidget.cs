@@ -3,21 +3,26 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 {
     public class NodeWidget : BasicNodeWidget
     {
-        int inConnectionCounter = 1;
         public string Item = null;
         public string Method = null;
+
         int outConnectionCounter = 1;
+        int inConnectionCounter = 1;
+
         public VariableInfo VariableReference = null;
 
         public NodeWidget(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen)
         {
             if (nodeInfo == null)
                 throw new NotImplementedException();
+
+            IsIncorrectConnected = () => nodeInfo.WidgetIsIncorrectConnected(this);
 
             NodeInfo = nodeInfo;
 
@@ -39,8 +44,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             }
 
             NodeType = nodeInfo.NodeType;
-            NodeName = nodeInfo.NodeName ?? NodeType.ToString();
+            NodeName = nodeInfo.NodeName ?? NodeType;
             NodeIDTextfield.Text = NodeName;
+
+            NodeInfo.WidgetInitialize(this);
         }
 
         public NodeInfo BuildNodeInfo()
@@ -233,6 +240,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public virtual void AddOutConConstructor(OutConnection outConnection)
         {
+            NodeInfo.WidgetAddOutConConstructor(outConnection, this);
+        }
+
+        public override void Tick()
+        {
+            base.Tick();
+            NodeInfo.WidgetTick(this);
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+            NodeInfo.WidgetDraw(this);
         }
     }
 }

@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using OpenRA.Mods.Common.Activities;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Traits;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
 {
     public class ActorNodeQueueAbility : NodeWidget
     {

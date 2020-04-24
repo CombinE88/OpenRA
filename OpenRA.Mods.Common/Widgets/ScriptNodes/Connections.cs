@@ -107,9 +107,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public void AddTooltip()
         {
-            var myPosition = Widget.InConnections.IndexOf(this);
+            // TODO Fix tooltip
+            /*var myPosition = Widget.InConnections.IndexOf(this);
 
-            var dictObject = Widget.GetType().GetField("NodeConstructorInformation").GetValue(null);
+            var dictObject = Widget.NodeInfo.GetType().GetField("NodeConstructorInformation").GetValue(null);
             var dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
             var getInConnections = dictionary[Widget.NodeType].InConnections;
 
@@ -117,6 +118,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 return;
 
             Tooltip = getInConnections[myPosition].Item2;
+            */
         }
     }
 
@@ -149,6 +151,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
 
         public void AddTooltip()
         {
+            // TODO Fix Tooltip
+            /*
             var myPosition = Widget.OutConnections.IndexOf(this);
 
             var dictObject = Widget.GetType().GetField("NodeConstructorInformation").GetValue(null);
@@ -159,6 +163,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 return;
 
             Tooltip = getOutConnections[myPosition].Item2;
+            */
         }
     }
 

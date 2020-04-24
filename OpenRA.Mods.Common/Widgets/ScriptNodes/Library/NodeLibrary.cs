@@ -1,19 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Reflection;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Arithmetics;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Variables;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 {
@@ -21,12 +13,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
     {
         public static List<NodeWidget> LoadInNodes(NodeEditorNodeScreenWidget nensw, List<NodeInfo> nodeInfos)
         {
+            // TODO Check for Duplications and cast exception
+
             var nodes = new List<NodeWidget>();
             foreach (var nodeInfo in nodeInfos)
             {
                 Type choosenType;
-                foreach (var type in Assembly.GetAssembly(typeof(BasicNodeWidget)).GetTypes().Where(type =>
-                    type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeWidget))))
+                foreach (var type in Assembly.GetAssembly(typeof(NodeInfo)).GetTypes().Where(type =>
+                    type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeInfo))))
                 {
                     var dictObject = type.GetField("NodeConstructorInformation").GetValue(null);
                     var dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
@@ -34,9 +28,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     if (!dictionary.ContainsKey(nodeInfo.NodeType))
                         continue;
 
-                    var createNode = (NodeWidget) type
-                        .GetConstructor(new[] {typeof(NodeEditorNodeScreenWidget), typeof(NodeInfo)})
-                        .Invoke(new object[] {nensw, nodeInfo});
+                    var createNode = new NodeWidget(nensw, nodeInfo);
+
+
+                    createNode.DeleteButton.OnClick = () => { nensw.RemoveNode(createNode); };
 
                     nodes.Add(createNode);
                 }
@@ -51,10 +46,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
             NodeWidget nodeWidget = null;
             var dictionary = new Dictionary<string, BuildNodeConstructorInfo>();
 
-            var nodeInfo = new NodeInfo(nodeType, nodeId, nodeName);
-
-            foreach (var type in Assembly.GetAssembly(typeof(BasicNodeWidget)).GetTypes().Where(type =>
-                type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeWidget))))
+            foreach (var type in Assembly.GetAssembly(typeof(NodeInfo)).GetTypes().Where(type =>
+                type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeInfo))))
             {
                 var dictObject = type.GetField("NodeConstructorInformation").GetValue(null);
                 dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
@@ -70,9 +63,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     nensw.Nodes.Any(n => n.GetType() == typeof(TriggerNodeTick)))
                     continue;
 
-                nodeWidget = (NodeWidget) type
-                    .GetConstructor(new[] {typeof(NodeEditorNodeScreenWidget), typeof(NodeInfo)})
-                    .Invoke(new object[] {nensw, nodeInfo});
+                var nodeInfo = (NodeInfo) type
+                    .GetConstructor(new[] {typeof(string), typeof(string), typeof(string)})
+                    .Invoke(new object[] {nodeType, nodeId, nodeName});
+
+                nodeWidget = new NodeWidget(nensw, nodeInfo);
 
                 break;
             }
@@ -101,8 +96,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 
             foreach (var nodeInfo in nodeInfos)
             {
-                foreach (var type in Assembly.GetAssembly(typeof(NodeWidget)).GetTypes().Where(type =>
-                    type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeWidget))))
+                foreach (var type in Assembly.GetAssembly(typeof(NodeInfo)).GetTypes().Where(type =>
+                    type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeInfo))))
                 {
                     var dictObject = type.GetField("NodeConstructorInformation").GetValue(null);
                     var dictionary = (Dictionary<string, BuildNodeConstructorInfo>) dictObject;
@@ -110,9 +105,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                     if (!dictionary.ContainsKey(nodeInfo.NodeType) || dictionary[nodeInfo.NodeType].LogicClass == null)
                         continue;
 
-                    var createNode = (NodeLogic) dictionary[nodeInfo.NodeType].LogicClass
-                        .GetConstructor(new[] {typeof(NodeInfo), typeof(IngameNodeScriptSystem)})
-                        .Invoke(new object[] {nodeInfo, inss});
+                    var createNode = new NodeLogic(nodeInfo, inss);
 
                     nodeList.Add(createNode);
                 }
@@ -130,8 +123,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 Visible = false
             };
 
-            foreach (var type in Assembly.GetAssembly(typeof(NodeWidget)).GetTypes().Where(type =>
-                type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeWidget))))
+            foreach (var type in Assembly.GetAssembly(typeof(NodeInfo)).GetTypes().Where(type =>
+                type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(NodeInfo))))
             {
                 var dictObject = type.GetField("NodeConstructorInformation").GetValue(null);
 

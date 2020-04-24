@@ -135,7 +135,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             RunningNodeId = count;
         }
 
-        void RemoveNode(NodeWidget widget)
+        public void RemoveNode(NodeWidget widget)
         {
             Nodes.Remove(widget);
             RemoveChild(widget);
@@ -208,6 +208,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
             {
                 Nodes.Add(node);
                 AddChild(node);
+                
+                node.DeleteButton.OnClick = () => { RemoveNode(node); };
 
                 if (node == null)
                     continue;

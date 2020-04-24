@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.UINodeInfos
 {
-    public class CameraRideNodeLogic : NodeLogic
+    public class CameraRideNodeLogic : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -36,26 +37,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
         bool active;
         int currentLength;
-        readonly IngameNodeScriptSystem ingameNodeScriptSystem;
         int maxLength;
-        Player ply;
         WPos source;
         WPos target;
 
-        public CameraRideNodeLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
+        public CameraRideNodeLogic(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
-            this.ingameNodeScriptSystem = ingameNodeScriptSystem;
         }
 
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-            if (ingameNodeScriptSystem.WorldRenderer == null || active)
+            if (logic.IngameNodeScriptSystem.WorldRenderer == null || active)
                 return;
-            var numb = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
-            var inPly = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
-            var inCon = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
-            var inCon2 = GetLinkedConnectionFromInConnection(ConnectionType.Location, 1);
+            var numb = logic.GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+            var inPly = logic.GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+            var inCon = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+            var inCon2 = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 1);
             if (numb == null)
             {
                 Debug.WriteLine(NodeId + "Time not connected");
@@ -80,19 +77,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                 return;
 
             if (inCon2 == null || inCon2.Location == null)
-                source = ingameNodeScriptSystem.WorldRenderer.Viewport.CenterPosition;
+                source = logic.IngameNodeScriptSystem.WorldRenderer.Viewport.CenterPosition;
             else
                 source = world.Map.CenterOfCell(inCon2.Location.Value);
 
             target = world.Map.CenterOfCell(inCon.Location.Value);
-            ply = world.Players.First(p => p.InternalName == inPly.Player.Name);
             maxLength = numb.Number.Value;
             active = true;
 
-            ForwardExec(this, 0);
+            NodeLogic.ForwardExec(logic, 0);
         }
 
-        public override void Tick(Actor self)
+        public override void LogicTick(Actor self, NodeLogic logic)
         {
             if (!active)
                 return;
@@ -103,13 +99,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
             }
             else if (active)
             {
-                ForwardExec(this, 1);
+                NodeLogic.ForwardExec(logic, 1);
                 active = false;
             }
 
             var pos = source + (target - source) / maxLength * currentLength;
 
-            ingameNodeScriptSystem.WorldRenderer.Viewport.Center(pos);
+            logic.IngameNodeScriptSystem.WorldRenderer.Viewport.Center(pos);
         }
     }
 }

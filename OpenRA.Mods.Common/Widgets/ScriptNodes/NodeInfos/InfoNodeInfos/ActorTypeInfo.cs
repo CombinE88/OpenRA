@@ -1,15 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Primitives;
+using OpenRA.Widgets;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.InfoNodeInfos
 {
-    public class MapInfoActorInfoNode : NodeWidget
+    public class ActorTypeInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -29,20 +30,24 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     }
                 }
             };
+        
 
-        readonly TextFieldWidget textField;
-
-        readonly DropDownButtonWidget playerSelection;
-
-        readonly ActorPreviewWidget preview;
+        TextFieldWidget textField;
+        DropDownButtonWidget playerSelection;
+        ActorPreviewWidget preview;
+        
         ActorInfo selectedActorInfo;
 
-        public MapInfoActorInfoNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
+        public ActorTypeInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
+        {
+        }
+
+        public override void WidgetInitialize(NodeWidget widget)
         {
             textField = new TextFieldWidget();
-            AddChild(textField);
+            widget.AddChild(textField);
 
-            var ruleActors = Screen.NodeScriptContainerWidget.World.Map.Rules.Actors.Values
+            var ruleActors = widget.Screen.NodeScriptContainerWidget.World.Map.Rules.Actors.Values
                 .Where(a =>
                 {
                     if (a.Name.Contains('^'))
@@ -67,10 +72,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             selectedActorInfo = ruleActors.First();
 
-            AddChild(playerSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData));
-            AddChild(preview = new ActorPreviewWidget(screen.WorldRenderer));
+            widget.AddChild(playerSelection = new DropDownButtonWidget(widget.Screen.NodeScriptContainerWidget.ModData));
+            widget.AddChild(preview = new ActorPreviewWidget(widget.Screen.WorldRenderer));
 
-            preview.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 90);
+            preview.Bounds = new Rectangle(widget.FreeWidgetEntries.X, widget.FreeWidgetEntries.Y + 77, widget.FreeWidgetEntries.Width, 90);
 
             Func<ActorInfo, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
@@ -82,11 +87,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                                            selectedActorInfo.Name + ")";
                     playerSelection.TextColor = Color.White;
 
-                    OutConnections.First().ActorInfo = selectedActorInfo;
+                    widget.OutConnections.First().ActorInfo = selectedActorInfo;
 
                     var td2 = new TypeDictionary();
                     td2.Add(new OwnerInit("Neutral"));
-                    td2.Add(new FactionInit(screen.World.WorldActor.Trait<EditorActorLayer>().Players.Players.Values
+                    td2.Add(new FactionInit(widget.Screen.World.WorldActor.Trait<EditorActorLayer>().Players.Players.Values
                         .First().Faction));
                     foreach (var api in selectedActorInfo.TraitInfos<IActorPreviewInitInfo>())
                     foreach (var o in api.ActorPreviewInits(selectedActorInfo, ActorPreviewType.MapEditorSidebar))
@@ -116,13 +121,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
             playerSelection.Text = selectedActorInfo.TraitInfo<TooltipInfo>().Name + "(" + selectedActorInfo.Name + ")";
             playerSelection.Bounds =
-                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 51, FreeWidgetEntries.Width, 25);
+                new Rectangle(widget.FreeWidgetEntries.X, widget.FreeWidgetEntries.Y + 51, widget.FreeWidgetEntries.Width, 25);
             textField.Bounds =
-                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 25, FreeWidgetEntries.Width, 25);
+                new Rectangle(widget.FreeWidgetEntries.X, widget.FreeWidgetEntries.Y + 25, widget.FreeWidgetEntries.Width, 25);
 
             var td = new TypeDictionary();
             td.Add(new OwnerInit("Neutral"));
-            td.Add(new FactionInit(screen.World.WorldActor.Trait<EditorActorLayer>().Players.Players.Values.First()
+            td.Add(new FactionInit(widget.Screen.World.WorldActor.Trait<EditorActorLayer>().Players.Players.Values.First()
                 .Faction));
             foreach (var api in selectedActorInfo.TraitInfos<IActorPreviewInitInfo>())
             foreach (var o in api.ActorPreviewInits(selectedActorInfo, ActorPreviewType.MapEditorSidebar))
@@ -130,10 +135,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
             preview.SetPreview(selectedActorInfo, td);
         }
 
-        public override void AddOutConConstructor(OutConnection connection)
+        public override void WidgetAddOutConConstructor(OutConnection connection, NodeWidget widget)
         {
-            base.AddOutConConstructor(connection);
-
             if (connection.ActorInfo != null)
             {
                 playerSelection.Text = connection.ActorInfo.TraitInfo<TooltipInfo>().Name + "(" +
@@ -142,7 +145,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
 
                 var td = new TypeDictionary();
                 td.Add(new OwnerInit("Neutral"));
-                td.Add(new FactionInit(Screen.World.WorldActor.Trait<EditorActorLayer>().Players.Players.Values.First()
+                td.Add(new FactionInit(widget.Screen.World.WorldActor.Trait<EditorActorLayer>().Players.Players.Values.First()
                     .Faction));
                 foreach (var api in selectedActorInfo.TraitInfos<IActorPreviewInitInfo>())
                 foreach (var o in api.ActorPreviewInits(selectedActorInfo, ActorPreviewType.MapEditorSidebar))

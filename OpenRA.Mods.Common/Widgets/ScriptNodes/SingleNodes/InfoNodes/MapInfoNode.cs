@@ -6,6 +6,7 @@ using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeEditorTraits;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes

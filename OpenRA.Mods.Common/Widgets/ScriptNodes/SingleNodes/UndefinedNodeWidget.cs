@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ActorNodes;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes;
 
@@ -90,65 +88,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                     }
                 },
                 {
-                    "UiCompleteObjective", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(UiLogicUiSettings),
-                        Nesting = new[] {"User Interface", "Objectives"},
-                        Name = "Complete Objective",
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Objective, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        }
-                    }
-                },
-                // TOOD: DoMultiple is missing, keep it missing? Find usecase first
-                {
-                    "TimedExecution", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(TimedExecutionLogic),
-                        Nesting = new[] {"Functions"},
-                        Name = "Timed Execution",
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Integer, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        }
-                    }
-                },
-                {
-                    "UiFailObjective", new BuildNodeConstructorInfo
-                    {
-                        LogicClass = typeof(UiLogicUiSettings),
-                        Nesting = new[] {"User Interface", "Objectives"},
-                        Name = "Fail Objective",
-
-                        InConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Objective, ""),
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        },
-                        OutConnections = new List<Tuple<ConnectionType, string>>
-                        {
-                            new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
-                        }
-                    }
-                },
-                {
                     "CompareActor", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Actor Conditions"},
                         Name = "Same Actor",
 
@@ -166,7 +107,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "CompareActorInfo", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Actor Conditions"},
                         Name = "Same Actor Type",
 
@@ -184,7 +124,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "IsAlive", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Actor Conditions"},
                         Name = "is Alive",
 
@@ -201,7 +140,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "IsDead", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Actor Conditions"},
                         Name = "is Dead",
 
@@ -218,7 +156,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "CompareNumber", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions"},
                         Name = "Equal Number",
 
@@ -236,7 +173,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "IsPlaying", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Player Conditions"},
                         Name = "Still Playing",
 
@@ -253,7 +189,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "IsBot", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Player Conditions"},
                         Name = "Is a Bot",
 
@@ -270,7 +205,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "IsHumanPlayer", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Player Conditions"},
                         Name = "Is Human Player",
 
@@ -287,7 +221,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "IsNoncombatant", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Player Conditions"},
                         Name = "Is Noncombatant",
 
@@ -304,7 +237,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "HasWon", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Player Conditions"},
                         Name = "Has Won",
 
@@ -321,7 +253,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 {
                     "HasLost", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ProvideCondition),
                         Nesting = new[] {"Conditions", "Player Conditions"},
                         Name = "Has Lost",
 

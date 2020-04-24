@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,13 +7,13 @@ using OpenRA.Activities;
 using OpenRA.Effects;
 using OpenRA.Mods.Common.Activities;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 using OpenRA.Primitives;
 using OpenRA.Traits;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.FunctionNodeInfos
 {
-    public class FunctionNodeReinforcements : NodeWidget
+    public class ReinforcmentsInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -21,9 +21,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 {
                     "Reinforcements", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(FunctionLogicReinforcements),
-                        Nesting = new []{"Functions"},
-                         Name = "Reinforcements",
+                        Nesting = new[] {"Functions"},
+                        Name = "Reinforcements",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
@@ -44,8 +43,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 {
                     "ReinforcementsWithTransport", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(FunctionLogicReinforcements),
-                        Nesting = new []{"Functions"},
+                        Nesting = new[] {"Functions"},
                         Name = "Reinforcements (Transport)",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -67,26 +65,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 },
             };
 
-        public FunctionNodeReinforcements(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
-        {
-        }
-    }
-
-    public class FunctionLogicReinforcements : NodeLogic
-    {
         DomainIndex domainIndex;
         Dictionary<uint, MovementClassDomainIndex> domainIndexes;
         List<Actor> reinforce = new List<Actor>();
         TileSet tileSet;
 
-        public FunctionLogicReinforcements(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
-            nodeInfo, ingameNodeScriptSystem)
+        public ReinforcmentsInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
         }
 
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-            
             domainIndex = world.WorldActor.Trait<DomainIndex>();
             domainIndexes = new Dictionary<uint, MovementClassDomainIndex>();
             tileSet = world.Map.Rules.TileSet;
@@ -97,21 +86,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             foreach (var mc in movementClasses)
                 domainIndexes[mc] = new MovementClassDomainIndex(world, mc);
 
-            var player = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+            var player = logic.GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
             if (player == null || player.Player == null)
             {
                 Debug.WriteLine(NodeId + "Reinforcement Player not connected");
                 return;
             }
 
-            var actorInfoArray = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfoArray, 0);
+            var actorInfoArray = logic.GetLinkedConnectionFromInConnection(ConnectionType.ActorInfoArray, 0);
             if (actorInfoArray == null || actorInfoArray.ActorInfos == null || !actorInfoArray.ActorInfos.Any())
             {
                 Debug.WriteLine(NodeId + "Reinforcement ActorGroup not connected or empty");
                 return;
             }
 
-            var cellPath = GetLinkedConnectionFromInConnection(ConnectionType.CellPath, 0);
+            var cellPath = logic.GetLinkedConnectionFromInConnection(ConnectionType.CellPath, 0);
             if (cellPath == null || cellPath.CellArray == null || !cellPath.CellArray.Any())
             {
                 Debug.WriteLine(NodeId + "Reinforcement Entry Path not connected or empty");
@@ -124,9 +113,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 foreach (var act in actorInfoArray
                     .ActorInfos) actors.Add(act.Name);
 
-                var inNumber = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+                var inNumber = logic.GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
 
                 Reinforce(
+                    logic,
                     world,
                     world.Players.First(p => p.InternalName == player.Player.Name),
                     actors.ToArray(),
@@ -136,14 +126,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
             if (NodeType == "ReinforcementsWithTransport")
             {
-                var exitpath = GetLinkedConnectionFromInConnection(ConnectionType.CellPath, 1);
+                var exitpath = logic.GetLinkedConnectionFromInConnection(ConnectionType.CellPath, 1);
                 if (exitpath == null || exitpath.CellArray == null || !exitpath.CellArray.Any())
                 {
                     Debug.WriteLine(NodeId + "Reinforcement exit path not connected or empty");
                     return;
                 }
 
-                var transport = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
+                var transport = logic.GetLinkedConnectionFromInConnection(ConnectionType.ActorInfo, 0);
                 if (transport == null || transport.ActorInfo == null)
                 {
                     Debug.WriteLine(NodeId + "Transport actor not connected");
@@ -151,10 +141,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 }
 
                 var actors = new List<string>();
-                foreach (var act in InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).In
+                foreach (var act in logic.InConnections.First(c => c.ConnectionTyp == ConnectionType.ActorInfoArray).In
                     .ActorInfos) actors.Add(act.Name);
 
                 ReinforceWithTransport(
+                    logic,
                     world,
                     world.Players.First(p =>
                         p.InternalName == player.Player
@@ -165,7 +156,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                     exitpath.CellArray.ToArray());
             }
 
-            ForwardExec(this, 1);
+            NodeLogic.ForwardExec(logic, 1);
         }
 
         Actor CreateActor(World world, Player owner, string actorType, bool addToWorld, CPos? entryLocation = null,
@@ -208,7 +199,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
             actor.QueueActivity(move.MoveTo(dest, 2));
         }
 
-        public Actor[] Reinforce(World world, Player owner, string[] actorTypes, CPos[] entryPath, int interval = 25)
+        public Actor[] Reinforce(NodeLogic logic, World world, Player owner, string[] actorTypes, CPos[] entryPath,
+            int interval = 25)
         {
             var actors = new List<Actor>();
             var leng = 0;
@@ -233,14 +225,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
 
             Action worldendAction = () =>
             {
-                OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).ActorGroup = actors.ToArray();
-                ForwardExec(this, 1);
+                logic.OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).ActorGroup =
+                    actors.ToArray();
+                NodeLogic.ForwardExec(logic, 1);
             };
             world.AddFrameEndTask(w => w.Add(new DelayedAction(leng, worldendAction)));
             return actors.ToArray();
         }
 
-        public void ReinforceWithTransport(World world, Player owner, string actorType, string[] cargoTypes,
+        public void ReinforceWithTransport(NodeLogic logic, World world, Player owner, string actorType,
+            string[] cargoTypes,
             CPos[] entryPath, CPos[] exitPath = null, int dropRange = 3)
         {
             var transport = CreateActor(world, owner, actorType, true, entryPath[0],
@@ -311,7 +305,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.FunctionNodes
                 transport.QueueActivity(new WaitFor(() => cargo.IsEmpty(transport)));
             }
 
-            transport.QueueActivity(new CallFunc(() => { ForwardExec(this, 0); }));
+            transport.QueueActivity(new CallFunc(() => { NodeLogic.ForwardExec(logic, 0); }));
             transport.QueueActivity(new Wait(aircraft != null ? 50 : 25));
 
             if (exitPath != null)

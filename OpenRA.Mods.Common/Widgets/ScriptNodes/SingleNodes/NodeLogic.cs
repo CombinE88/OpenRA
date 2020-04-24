@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 {
@@ -131,19 +132,22 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
 
         public virtual void Execute(World world)
         {
+            NodeInfo.LogicExecute(world, this);
         }
 
         public virtual bool CheckCondition(World world)
         {
-            return true;
+            return NodeInfo.LogicCheckCondition(world, this);
         }
 
         public virtual void DoAfterConnections()
         {
+            NodeInfo.LogicDoAfterConnections(this);
         }
 
         public virtual void Tick(Actor self)
         {
+            NodeInfo.LogicTick(self, this);
         }
 
         public virtual void ExecuteTick(Actor self)
@@ -157,7 +161,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 }
         }
 
-        protected static void ForwardExec(NodeLogic self, int connectionNumber = 0)
+        public static void ForwardExec(NodeLogic self, int connectionNumber = 0)
         {
             var connections = self.OutConnections.Where(o => o.ConnectionTyp == ConnectionType.Exec).ToArray();
 
@@ -179,7 +183,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             }
         }
 
-        protected OutConnection GetLinkedConnectionFromInConnection(ConnectionType connectionType,
+        public OutConnection GetLinkedConnectionFromInConnection(ConnectionType connectionType,
             int position)
         {
             var inConnections = InConnections.Where(c => c.ConnectionTyp == connectionType).ToArray();
