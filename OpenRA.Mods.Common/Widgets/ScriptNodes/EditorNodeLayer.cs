@@ -6,8 +6,8 @@ using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.TriggerNodeInfos;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
 using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes
@@ -378,7 +378,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         public int? Number = null;
         public PlayerReference Player = null;
         public PlayerReference[] PlayerGroup = null;
-        public TriggerLogicCreateTimer Timer = null;
+        public CreateTimerInfo Timer = null;
         public string VariableName;
         public VariableType VarType;
     }

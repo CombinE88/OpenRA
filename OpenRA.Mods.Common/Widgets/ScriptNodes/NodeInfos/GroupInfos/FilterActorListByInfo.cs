@@ -4,12 +4,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.GroupInfos
 {
-    public class FilterActorListByNode : NodeWidget
+    public class FilterActorListByInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -17,7 +16,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 {
                     "FilterActorGroup", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(FilterActorListByLogic),
                         Nesting = new[] {"Actor/Player Group"},
                         Name = "Filter Actors in Group",
 
@@ -36,12 +34,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 },
             };
 
-        readonly DropDownButtonWidget itemSelection;
-        readonly DropDownButtonWidget methodSelection;
+        DropDownButtonWidget itemSelection;
+        DropDownButtonWidget methodSelection;
         string selectedItem;
         string selectedMethod;
 
-        public FilterActorListByNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
+        public FilterActorListByInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
+        {
+        }
+
+        public override void WidgetInitialize(NodeWidget widget)
         {
             Method = "Contains";
             Item = "Owner";
@@ -53,7 +55,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             };
 
             selectedMethod = Method;
-            methodSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
+            methodSelection = new DropDownButtonWidget(widget.Screen.NodeScriptContainerWidget.ModData);
 
             Func<string, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
@@ -77,7 +79,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             methodSelection.Text = selectedMethod.ToString();
 
-            AddChild(methodSelection);
+            widget.AddChild(methodSelection);
 
             var items = new List<string>
             {
@@ -90,7 +92,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             };
 
             selectedItem = Item;
-            itemSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
+            itemSelection = new DropDownButtonWidget(widget.Screen.NodeScriptContainerWidget.ModData);
 
             Func<string, ScrollItemWidget, ScrollItemWidget> setupItem = (option, template) =>
             {
@@ -114,43 +116,37 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             itemSelection.Text = selectedItem.ToString();
 
-            AddChild(itemSelection);
+            widget.AddChild(itemSelection);
 
             methodSelection.Bounds =
-                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
+                new Rectangle(widget.FreeWidgetEntries.X, widget.FreeWidgetEntries.Y + 77,
+                    widget.FreeWidgetEntries.Width, 25);
             itemSelection.Bounds =
-                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 100, FreeWidgetEntries.Width, 25);
+                new Rectangle(widget.FreeWidgetEntries.X, widget.FreeWidgetEntries.Y + 100,
+                    widget.FreeWidgetEntries.Width, 25);
         }
 
-        public override void AddOutConConstructor(OutConnection connection)
+        public override void WidgetAddOutConConstructor(OutConnection connection, NodeWidget widget)
         {
-            base.AddOutConConstructor(connection);
+            base.WidgetAddOutConConstructor(connection, widget);
 
-            if (NodeInfo.Method != null)
+            if (Method != null)
             {
-                selectedMethod = NodeInfo.Method;
-                methodSelection.Text = NodeInfo.Method;
+                selectedMethod = Method;
+                methodSelection.Text = Method;
             }
 
-            if (NodeInfo.Item != null)
+            if (Item != null)
             {
-                selectedItem = NodeInfo.Item;
-                itemSelection.Text = NodeInfo.Item;
+                selectedItem = Item;
+                itemSelection.Text = Item;
             }
         }
-    }
 
-    public class FilterActorListByLogic : NodeLogic
-    {
-        public FilterActorListByLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-        }
-
-        public override void Execute(World world)
-        {
-            var actIn = GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
-            var actOut = OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList);
+            var actIn = logic.GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
+            var actOut = logic.OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList);
 
             if (actIn == null)
             {
@@ -160,7 +156,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             if (Item == "Owner")
             {
-                var ply = GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
+                var ply = logic.GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
 
                 if (ply == null)
                 {
@@ -198,7 +194,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             }
             else if (Item == "ActorTypes")
             {
-                var strings = GetLinkedConnectionFromInConnection(ConnectionType.ActorInfoArray, 0);
+                var strings = logic.GetLinkedConnectionFromInConnection(ConnectionType.ActorInfoArray, 0);
                 if (strings == null)
                 {
                     Debug.WriteLine(NodeId + "Actor Types not connected");
@@ -218,7 +214,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     actOut.ActorGroup = actIn.ActorGroup.Where(c => !c.IsIdle).ToArray();
             }
 
-            ForwardExec(this);
+            NodeLogic.ForwardExec(logic);
         }
     }
 }

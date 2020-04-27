@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.GroupInfos
 {
-    public class GroupFindActorsLogic : NodeLogic
+    public class GroupFindActorsInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -15,7 +14,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 {
                     "FindActorsOnFootprint", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(GroupFindActorsLogic),
+                        LogicClass = typeof(GroupFindActorsInfo),
                         Nesting = new[] {"Actor/Player Group"},
                         Name = "Find Actors on Footprint",
 
@@ -34,13 +33,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 {
                     "FinActorsInCircle", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(GroupFindActorsLogic),
+                        LogicClass = typeof(GroupFindActorsInfo),
                         Nesting = new[] {"Actor/Player Group"},
                         Name = "Find Actors in Range",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
-                            new Tuple<ConnectionType, string>(ConnectionType.LocationRange, ""),
+                            new Tuple<ConnectionType, string>(ConnectionType.Integer, "Range in cells"),
+                            new Tuple<ConnectionType, string>(ConnectionType.Location, ""),
                             new Tuple<ConnectionType, string>(ConnectionType.Exec, "")
                         },
                         OutConnections = new List<Tuple<ConnectionType, string>>
@@ -52,22 +52,28 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 },
             };
 
-        public GroupFindActorsLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
+        public GroupFindActorsInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
         }
 
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-            var outCon = OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList);
+            var outCon = logic.OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList);
 
             if (NodeType == "FinActorsInCircle")
             {
-                var integ = GetLinkedConnectionFromInConnection(ConnectionType.LocationRange, 0);
+                var integ = logic.GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+                var cell = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
 
                 if (integ == null)
                 {
-                    Debug.WriteLine(NodeId + "FindActorsInCircle Location and Range not connected");
+                    Debug.WriteLine(NodeId + "FindActorsInCircle Integer (Range) not connected");
+                    return;
+                }
+
+                if (cell == null)
+                {
+                    Debug.WriteLine(NodeId + "FindActorsInCircle Location not connected");
                     return;
                 }
 
@@ -77,7 +83,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
             }
             else if (NodeType == "FindActorsOnFootprint")
             {
-                var integ = GetLinkedConnectionFromInConnection(ConnectionType.CellArray, 0);
+                var integ = logic.GetLinkedConnectionFromInConnection(ConnectionType.CellArray, 0);
                 ;
 
                 if (integ == null)
@@ -90,7 +96,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     .Where(a => !a.IsDead && a.IsInWorld && integ.CellArray.Contains(a.Location)).ToArray();
             }
 
-            ForwardExec(this);
+            NodeLogic.ForwardExec(logic);
         }
     }
 }

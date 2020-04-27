@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.TriggerNodeInfos
 {
-    public class TriggerOnIdle : NodeLogic
+    public class TriggerOnIdleInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -15,7 +14,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 {
                     "TriggerOnIdle", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(TriggerOnIdle),
+                        LogicClass = typeof(TriggerOnIdleInfo),
                         Nesting = new[] {"Trigger"},
                         Name = "On Actor Idle",
 
@@ -39,14 +38,13 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
         readonly List<Actor> idleActors = new List<Actor>();
         bool enabled;
 
-        public TriggerOnIdle(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
+        public TriggerOnIdleInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
         }
 
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-            var inCon = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
+            var inCon = logic.GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
 
             if (inCon == null)
             {
@@ -59,10 +57,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
             enabled = true;
 
-            ForwardExec(this, 1);
+            NodeLogic.ForwardExec(logic, 1);
         }
 
-        public override void Tick(Actor self)
+        public override void LogicTick(Actor self, NodeLogic logic)
         {
             if (!enabled || idleActors.All(a => a.IsDead))
                 return;
@@ -74,10 +72,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
             var idles = idleActors.ToList();
             foreach (var actor in idles.Where(actor => actor.IsIdle))
             {
-                OutConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).Actor = actor;
-                ForwardExec(this, 0);
+                logic.OutConnections.First(c => c.ConnectionTyp == ConnectionType.Actor).Actor = actor;
+                NodeLogic.ForwardExec(logic, 0);
 
-                if (GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0) != null)
+                if (logic.GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0) != null)
                     idleActors.Remove(actor);
             }
         }

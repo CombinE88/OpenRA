@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.GroupInfos
 {
-    public class GroupPlayerGroup : NodeWidget
+    public class GroupPlayerGroupInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -14,7 +13,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                 {
                     "GroupPlayerGroup", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(GroupPlayerLogic),
                         Nesting = new[] {"Actor/Player Group"},
                         Name = "Group Player",
 
@@ -25,45 +23,40 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
                     }
                 },
             };
-        
-        public GroupPlayerGroup(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
+
+        public GroupPlayerGroupInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
-            IsIncorrectConnected = () => InConnections.All(inCon => inCon.In == null);
         }
 
-        public override void Tick()
+        public override void WidgetInitialize(NodeWidget widget)
         {
-            var none = InConnections.Where(c => c.In == null).ToArray();
+            widget.IsIncorrectConnected = () => widget.InConnections.All(inCon => inCon.In == null);
+        }
+
+        public override void WidgetTick(NodeWidget widget)
+        {
+            var none = widget.InConnections.Where(c => c.In == null).ToArray();
 
             if (none.Length < 1)
             {
-                var inCon = new InConnection(ConnectionType.Player, this);
-                AddInConnection(inCon);
+                var inCon = new InConnection(ConnectionType.Player, widget);
+                widget.AddInConnection(inCon);
             }
             else if (none.Length > 1)
             {
                 foreach (var con in none)
                     if (con != none.First())
-                        InConnections.Remove(con);
+                        widget.InConnections.Remove(con);
             }
-
-            base.Tick();
         }
-    }
 
-    public class GroupPlayerLogic : NodeLogic
-    {
         List<PlayerReference> players = new List<PlayerReference>();
 
-        public GroupPlayerLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
-        {
-        }
 
-        public override void DoAfterConnections()
+        public override void LogicDoAfterConnections(NodeLogic logic)
         {
             var changePlayers = new List<PlayerReference>();
-            foreach (var info in InConnections.Where(c =>
+            foreach (var info in logic.InConnections.Where(c =>
             {
                 if (c.ConnectionTyp != ConnectionType.Player)
                     return false;
@@ -80,13 +73,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             players = changePlayers;
 
-            OutConnections.First(c => c.ConnectionTyp == ConnectionType.PlayerGroup).PlayerGroup = players.ToArray();
+            logic.OutConnections.First(c => c.ConnectionTyp == ConnectionType.PlayerGroup).PlayerGroup =
+                players.ToArray();
         }
 
-        public override void Tick(Actor self)
+        public override void LogicTick(Actor self, NodeLogic logic)
         {
             var changePlayers = new List<PlayerReference>();
-            foreach (var info in InConnections.Where(c =>
+            foreach (var info in logic.InConnections.Where(c =>
             {
                 if (c.ConnectionTyp != ConnectionType.Player)
                     return false;
@@ -103,7 +97,8 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.Group
 
             players = changePlayers;
 
-            OutConnections.First(c => c.ConnectionTyp == ConnectionType.PlayerGroup).PlayerGroup = players.ToArray();
+            logic.OutConnections.First(c => c.ConnectionTyp == ConnectionType.PlayerGroup).PlayerGroup =
+                players.ToArray();
         }
     }
 }

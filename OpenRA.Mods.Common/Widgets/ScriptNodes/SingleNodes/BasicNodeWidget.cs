@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Server;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
@@ -294,27 +295,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             {
                 if (InConnections[i].ConnectionTyp == ConnectionType.Exec)
                 {
-                    WidgetUtils.FillRectWithColor(
-                        new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1,
-                            InConnections[i].InWidgetPosition.Width + 2,
-                            InConnections[i].InWidgetPosition.Width + 2), Color.Black);
-                    WidgetUtils.FillRectWithColor(InConnections[i].InWidgetPosition, InConnections[i].Color);
-                    WidgetUtils.FillRectWithColor(
-                        new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2,
-                            InConnections[i].InWidgetPosition.Width - 4,
-                            InConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                    DrawRectangleConnection(InConnections[i].InWidgetPosition,InConnections[i].Color);
                 }
                 else
                 {
-                    WidgetUtils.FillEllipseWithColor(
-                        new Rectangle(InConnections[i].InWidgetPosition.X - 1, InConnections[i].InWidgetPosition.Y - 1,
-                            InConnections[i].InWidgetPosition.Width + 2,
-                            InConnections[i].InWidgetPosition.Width + 2), Color.Black);
-                    WidgetUtils.FillEllipseWithColor(InConnections[i].InWidgetPosition, InConnections[i].Color);
-                    WidgetUtils.FillEllipseWithColor(
-                        new Rectangle(InConnections[i].InWidgetPosition.X + 2, InConnections[i].InWidgetPosition.Y + 2,
-                            InConnections[i].InWidgetPosition.Width - 4,
-                            InConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                    DrawCircularConnection(InConnections[i].InWidgetPosition,InConnections[i].Color);
                 }
 
                 Screen.NodeScriptContainerWidget.FontSmall.DrawTextWithShadow(InConnections[i].ConnectionTyp.ToString(),
@@ -326,27 +311,11 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
             {
                 if (OutConnections[i].ConnectionTyp == ConnectionType.Exec)
                 {
-                    WidgetUtils.FillRectWithColor(
-                        new Rectangle(OutConnections[i].InWidgetPosition.X - 1,
-                            OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
-                            OutConnections[i].InWidgetPosition.Width + 2), Color.Black);
-                    WidgetUtils.FillRectWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].Color);
-                    WidgetUtils.FillRectWithColor(
-                        new Rectangle(OutConnections[i].InWidgetPosition.X + 2,
-                            OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
-                            OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                    DrawRectangleConnection(OutConnections[i].InWidgetPosition,OutConnections[i].Color);
                 }
                 else
                 {
-                    WidgetUtils.FillEllipseWithColor(
-                        new Rectangle(OutConnections[i].InWidgetPosition.X - 1,
-                            OutConnections[i].InWidgetPosition.Y - 1, OutConnections[i].InWidgetPosition.Width + 2,
-                            OutConnections[i].InWidgetPosition.Width + 2), Color.Black);
-                    WidgetUtils.FillEllipseWithColor(OutConnections[i].InWidgetPosition, OutConnections[i].Color);
-                    WidgetUtils.FillEllipseWithColor(
-                        new Rectangle(OutConnections[i].InWidgetPosition.X + 2,
-                            OutConnections[i].InWidgetPosition.Y + 2, OutConnections[i].InWidgetPosition.Width - 4,
-                            OutConnections[i].InWidgetPosition.Width - 4), Color.Black);
+                    DrawCircularConnection(OutConnections[i].InWidgetPosition,OutConnections[i].Color);
                 }
 
                 if (Screen.CurrentBrush == NodeBrush.Connecting)
@@ -367,6 +336,32 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes
                 "!",
                 new int2(warningLocation.X + 10, warningLocation.Y + 5),
                 Color.Black, Color.Black, 1);
+        }
+
+        void DrawRectangleConnection(Rectangle position, Color color)
+        {
+            WidgetUtils.FillRectWithColor(
+                new Rectangle(position.X - 1,
+                    position.Y - 1, position.Width + 2,
+                    position.Width + 2), Color.Black);
+            WidgetUtils.FillRectWithColor(position, color);
+            WidgetUtils.FillRectWithColor(
+                new Rectangle(position.X + 2,
+                    position.Y + 2, position.Width - 4,
+                    position.Width - 4), Color.Black);
+        }
+        
+        void DrawCircularConnection(Rectangle position, Color color)
+        {
+            WidgetUtils.FillEllipseWithColor(
+                new Rectangle(position.X - 1,
+                    position.Y - 1, position.Width + 2,
+                    position.Width + 2), Color.Black);
+            WidgetUtils.FillEllipseWithColor(position, color);
+            WidgetUtils.FillEllipseWithColor(
+                new Rectangle(position.X + 2,
+                    position.Y + 2, position.Width - 4,
+                    position.Width - 4), Color.Black);
         }
 
         public override Widget Clone()

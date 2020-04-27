@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ConditionInfos
 {
-    public class CheckConditionNode : NodeWidget
+    public class CheckConditionInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -16,7 +15,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 {
                     "CheckCondition", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(CheckConditionLogic),
                         Nesting = new[] {"Conditions"},
                         Name = "Check Condition",
 
@@ -34,12 +32,16 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
                 },
             };
 
-        readonly LabelWidget labal1;
-        readonly LabelWidget labal2;
-        readonly DropDownButtonWidget methodSelection;
+        LabelWidget labal1;
+        LabelWidget labal2;
+        DropDownButtonWidget methodSelection;
         string selectedMethod;
 
-        public CheckConditionNode(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
+        public CheckConditionInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
+        {
+        }
+
+        public override void WidgetInitialize(NodeWidget widget)
         {
             Method = "True";
 
@@ -50,7 +52,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
             };
 
             selectedMethod = Method;
-            methodSelection = new DropDownButtonWidget(Screen.NodeScriptContainerWidget.ModData);
+            methodSelection = new DropDownButtonWidget(widget.Screen.NodeScriptContainerWidget.ModData);
 
             Func<string, ScrollItemWidget, ScrollItemWidget> setupItem2 = (option, template) =>
             {
@@ -75,62 +77,55 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.ConditionNodes
             methodSelection.Text = selectedMethod.ToString();
 
             methodSelection.Bounds =
-                new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 77, FreeWidgetEntries.Width, 25);
+                new Rectangle(widget.FreeWidgetEntries.X, widget.FreeWidgetEntries.Y + 77,
+                    widget.FreeWidgetEntries.Width, 25);
 
             labal1 = new LabelWidget();
             labal2 = new LabelWidget();
 
-            labal1.Bounds = new Rectangle(FreeWidgetEntries.X + 150, FreeWidgetEntries.Y + 45,
-                FreeWidgetEntries.Width - 150, 25);
-            labal2.Bounds = new Rectangle(FreeWidgetEntries.X + 150, FreeWidgetEntries.Y + 125,
-                FreeWidgetEntries.Width - 150, 25);
+            labal1.Bounds = new Rectangle(widget.FreeWidgetEntries.X + 150, widget.FreeWidgetEntries.Y + 45,
+                widget.FreeWidgetEntries.Width - 150, 25);
+            labal2.Bounds = new Rectangle(widget.FreeWidgetEntries.X + 150, widget.FreeWidgetEntries.Y + 125,
+                widget.FreeWidgetEntries.Width - 150, 25);
 
             labal1.Text = "True";
             labal2.Text = "False";
 
-            AddChild(labal1);
-            AddChild(labal2);
+            widget.AddChild(labal1);
+            widget.AddChild(labal2);
 
-            AddChild(methodSelection);
+            widget.AddChild(methodSelection);
         }
 
-        public override void AddOutConConstructor(OutConnection connection)
+        public override void WidgetAddOutConConstructor(OutConnection connection, NodeWidget widget)
         {
-            base.AddOutConConstructor(connection);
+            base.WidgetAddOutConConstructor(connection, widget);
 
-            if (NodeInfo.Method != null)
+            if (Method != null)
             {
-                selectedMethod = NodeInfo.Method;
-                methodSelection.Text = NodeInfo.Method;
+                selectedMethod = Method;
+                methodSelection.Text = Method;
             }
         }
-    }
 
-    public class CheckConditionLogic : NodeLogic
-    {
-        public CheckConditionLogic(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-        }
-
-        public override void Execute(World world)
-        {
-            var inCo = GetLinkedConnectionFromInConnection(ConnectionType.Condition, 0);
+            var inCo = logic.GetLinkedConnectionFromInConnection(ConnectionType.Condition, 0);
 
             if (inCo == null)
                 Debug.WriteLine(NodeId + "Condition not connected");
 
             if (inCo.Logic.CheckCondition(world) && Method == "True" ||
                 !inCo.Logic.CheckCondition(world) && Method == "False")
-                ForwardExec(this, 0);
+                NodeLogic.ForwardExec(logic, 0);
 
             else if (!inCo.Logic.CheckCondition(world) && Method == "True" ||
                      inCo.Logic.CheckCondition(world) && Method == "False")
-                ForwardExec(this, 1);
+                NodeLogic.ForwardExec(logic, 1);
         }
     }
 
-    public class ProvideCondition : NodeLogic
+   public class ProvideCondition : NodeLogic
     {
         public ProvideCondition(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
             ingameNodeScriptSystem)

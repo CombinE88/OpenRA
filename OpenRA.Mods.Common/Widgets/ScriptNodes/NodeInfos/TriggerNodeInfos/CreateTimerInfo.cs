@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.TriggerNodeInfos
 {
-    public class TriggerNodeCreateTimer : NodeWidget
+    public class CreateTimerInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -16,7 +14,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 {
                     "TriggerCreateTimer", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(TriggerLogicCreateTimer),
                         Nesting = new[] {"Timer"},
                         Name = "Create Timer",
 
@@ -36,29 +33,23 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                     }
                 },
             };
-        public TriggerNodeCreateTimer(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
+
+        public CreateTimerInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
         }
-    }
-
-    public class TriggerLogicCreateTimer : NodeLogic
-    {
+        
         bool repeating;
 
         int timer;
+        
         bool timerDone;
         int timerMax;
         bool timerStarted;
 
-        public TriggerLogicCreateTimer(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
-            nodeInfo, ingameNodeScriptSystem)
-        {
-        }
-
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
             timerStarted = true;
-            ForwardExec(this, 1);
+            NodeLogic.ForwardExec(logic, 1);
         }
 
         public void StopTimer()
@@ -77,10 +68,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
             timerStarted = true;
         }
 
-        public override void Tick(Actor self)
+        public override void LogicTick(Actor self, NodeLogic logic)
         {
-            if (InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Enabled) != null
-                && InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Enabled).In != null)
+            if (logic.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Enabled) != null
+                && logic.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Enabled).In != null)
                 repeating = true;
             else if (repeating)
                 repeating = false;
@@ -97,51 +88,17 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 timer = 0;
                 if (!repeating)
                     timerDone = true;
-                ForwardExec(this, 0);
+                NodeLogic.ForwardExec(logic, 0);
             }
         }
 
-        public override void DoAfterConnections()
+        public override void LogicDoAfterConnections(NodeLogic logic)
         {
-            var conInInt = InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Integer);
+            var conInInt = logic.InConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Integer);
             if (conInInt == null || conInInt.In.Number == null)
                 throw new YamlException(NodeId + "Timer time not connected");
 
             timerMax = conInInt.In.Number.Value * 25;
-        }
-    }
-
-    internal class TimerLogics : NodeLogic
-    {
-        public TimerLogics(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
-        {
-        }
-
-        public override void Execute(World world)
-        {
-            var timerConnection = GetLinkedConnectionFromInConnection(ConnectionType.TimerConnection, 0);
-
-            var timer = timerConnection.Logic as TriggerLogicCreateTimer;
-
-            if (timer == null)
-            {
-                Debug.WriteLine(NodeId + "Timer not found");
-                return;
-            }
-
-            switch (NodeType)
-            {
-                case "TimerReset":
-                    timer.ResetTimer();
-                    break;
-                case "TimerStart":
-                    timer.StartTimer();
-                    break;
-                case "TimerStop":
-                    timer.StopTimer();
-                    break;
-            }
         }
     }
 }

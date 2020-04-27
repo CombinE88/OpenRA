@@ -56,9 +56,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
                 case ConnectionType.Location:
                     Color = Color.BlueViolet;
                     break;
-                case ConnectionType.LocationRange:
-                    Color = Color.MediumVioletRed;
-                    break;
                 case ConnectionType.CellArray:
                     Color = Color.Violet;
                     break;
@@ -181,7 +178,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Player,
         PlayerGroup,
         Location,
-        LocationRange,
         CellArray,
         CellPath,
         Integer,
@@ -210,7 +206,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes
         Integer,
         ActorList,
         Timer,
-        Objective,
-        LocationRange
+        Objective
     }
 }

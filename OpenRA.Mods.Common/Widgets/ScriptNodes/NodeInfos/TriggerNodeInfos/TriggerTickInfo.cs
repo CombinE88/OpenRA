@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.TriggerNodeInfos
 {
-    public class TriggerNodeTick : NodeWidget
+    public class TriggerTickInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -13,7 +12,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 {
                     "TriggerTick", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(TriggerLogicTick),
                         Nesting = new[] {"Trigger"},
                         Name = "Every Tick",
 
@@ -25,26 +23,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 },
             };
 
-        public TriggerNodeTick(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
-        {
-        }
-    }
-
-    public class TriggerLogicTick : NodeLogic
-    {
-        public TriggerLogicTick(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
+        public TriggerTickInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
         }
 
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-            ForwardExec(this);
+            NodeLogic.ForwardExec(logic);
         }
 
-        public override void Tick(Actor self)
+        public override void LogicTick(Actor self, NodeLogic logic)
         {
-            Execute(self.World);
+            logic.Execute(self.World);
         }
     }
 }

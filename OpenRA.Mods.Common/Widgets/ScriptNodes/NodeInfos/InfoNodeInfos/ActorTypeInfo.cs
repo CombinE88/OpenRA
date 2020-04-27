@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes;
 using OpenRA.Primitives;
 using OpenRA.Widgets;
 
@@ -18,7 +17,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.InfoNodeInfos
                 {
                     "MapInfoActorInfo", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(MapInfoLogicNode),
                         Nesting = new[] {"Info Nodes"},
                         Name = "Actor Type",
 

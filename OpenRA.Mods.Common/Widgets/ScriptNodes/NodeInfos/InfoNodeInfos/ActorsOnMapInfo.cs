@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.EditorNodeBrushes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeEditorTraits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.InfoNodeInfos
 {
-    public class MapInfoActorsonMap : NodeWidget
+    public class ActorsOnMapInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -30,47 +29,54 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.InfoNodes
                     }
                 },
             };
-        
-        readonly ButtonWidget button;
 
-        public MapInfoActorsonMap(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
+        ButtonWidget button;
+
+        public ActorsOnMapInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
-            button = new ButtonWidget(screen.NodeScriptContainerWidget.ModData);
-            AddChild(button);
-            button.Bounds = new Rectangle(FreeWidgetEntries.X, FreeWidgetEntries.Y + 34, FreeWidgetEntries.Width, 25);
+        }
+
+        public override void WidgetInitialize(NodeWidget widget)
+        {
+            button = new ButtonWidget(widget.Screen.NodeScriptContainerWidget.ModData);
+            widget.AddChild(button);
+            button.Bounds = new Rectangle(widget.FreeWidgetEntries.X, widget.FreeWidgetEntries.Y + 34,
+                widget.FreeWidgetEntries.Width, 25);
             button.Text = "Add Actor";
             button.OnClick = () =>
             {
-                Editor.SetBrush(new EditorNodeBrushBrush(
+                widget.Editor.SetBrush(new EditorNodeBrushBrush(
                     CellPicking.Actor,
-                    OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList),
-                    Editor,
-                    Screen.NodeScriptContainerWidget.WorldRenderer,
+                    widget.OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList),
+                    widget.Editor,
+                    widget.Screen.NodeScriptContainerWidget.WorldRenderer,
                     () =>
                     {
                         button.Text =
-                            OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList).ActorPreviews != null
-                                ? "Group: " + OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList)
+                            widget.OutConnections.First(c => c.ConnectionTyp == ConnectionType.ActorList)
+                                .ActorPreviews != null
+                                ? "Group: " + widget.OutConnections
+                                      .First(c => c.ConnectionTyp == ConnectionType.ActorList)
                                       .ActorPreviews.Count()
                                 : "None";
                     }));
             };
         }
 
-        public override void AddOutConConstructor(OutConnection connection)
+        public override void WidgetAddOutConConstructor(OutConnection connection, NodeWidget widget)
         {
-            base.AddOutConConstructor(connection);
+            base.WidgetAddOutConConstructor(connection, widget);
 
             if (connection.ActorPreviews != null && connection.ActorPreviews.Any())
                 button.Text = "Group: " + connection.ActorPreviews.Length;
         }
 
-        public override void Tick()
+        public override void WidgetTick(NodeWidget widget)
         {
-            base.Tick();
+            base.WidgetTick(widget);
 
-            var first = OutConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.ActorList);
-            var second = OutConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Actor);
+            var first = widget.OutConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.ActorList);
+            var second = widget.OutConnections.FirstOrDefault(c => c.ConnectionTyp == ConnectionType.Actor);
 
             if (first != null && second != null)
                 second.ActorPrev = first.ActorPreviews != null && first.ActorPreviews.Any()

@@ -4,8 +4,8 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.TriggerNodeInfos;
 using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
 {
@@ -55,12 +55,12 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.Library
                 if (!dictionary.ContainsKey(nodeType))
                     continue;
 
-                if (dictionary[nodeType].WidgetType == typeof(TriggerNodeWorldLoaded) &&
-                    nensw.Nodes.Any(n => n.GetType() == typeof(TriggerNodeWorldLoaded)))
+                if (dictionary[nodeType].WidgetType == typeof(TriggerWorldLoadedInfo) &&
+                    nensw.Nodes.Any(n => n.GetType() == typeof(TriggerWorldLoadedInfo)))
                     continue;
 
-                if (dictionary[nodeType].WidgetType == typeof(TriggerNodeTick) &&
-                    nensw.Nodes.Any(n => n.GetType() == typeof(TriggerNodeTick)))
+                if (dictionary[nodeType].WidgetType == typeof(TriggerTickInfo) &&
+                    nensw.Nodes.Any(n => n.GetType() == typeof(TriggerTickInfo)))
                     continue;
 
                 var nodeInfo = (NodeInfo) type

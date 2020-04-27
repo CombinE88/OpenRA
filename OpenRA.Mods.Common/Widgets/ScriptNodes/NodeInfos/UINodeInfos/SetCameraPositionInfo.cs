@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.UINodeInfos
 {
-    public class SetCameraPositionNode : NodeLogic
+    public class SetCameraPositionInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -14,7 +14,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                 {
                     "SetCameraPosition", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(SetCameraPositionNode),
+                        LogicClass = typeof(SetCameraPositionInfo),
                         Nesting = new[] {"User Interface", "General UI"},
                         Name = "Set Camera Location",
 
@@ -32,23 +32,21 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
                 },
             };
 
-        readonly IngameNodeScriptSystem ingameNodeScriptSystem;
+        IngameNodeScriptSystem ingameNodeScriptSystem;
         CPos loc;
         Player ply;
 
-        public SetCameraPositionNode(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
+        public SetCameraPositionInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
-            this.ingameNodeScriptSystem = ingameNodeScriptSystem;
         }
 
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
             if (ingameNodeScriptSystem.WorldRenderer == null)
                 return;
 
-            var inPly = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
-            var inCon = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+            var inPly = logic.GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+            var inCon = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
 
             if (inPly == null)
             {
@@ -76,7 +74,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.UiNodes
 
             ingameNodeScriptSystem.WorldRenderer.Viewport.Center(world.Map.CenterOfCell(loc));
 
-            ForwardExec(this);
+            NodeLogic.ForwardExec(logic);
         }
     }
 }

@@ -9,7 +9,7 @@ using OpenRA.Traits;
 
 namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
 {
-    public class ActorNodeQueueAbility : NodeWidget
+    public class QueueAbilityInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -17,8 +17,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 {
                     "ActorQueueSell", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorLogicQueueAbility),
-                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Nesting = new[] {"Actor Activity", "Queue Activities"},
                         Name = "Sell",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -37,8 +36,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 {
                     "ActorQueueFindResources", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorLogicQueueAbility),
-                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Nesting = new[] {"Actor Activity", "Queue Activities"},
                         Name = "Find Resources",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -56,8 +54,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 {
                     "ActorQueueAttackMoveActivity", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorLogicQueueAbility),
-                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Nesting = new[] {"Actor Activity", "Queue Activities"},
                         Name = "Attack Move",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -76,8 +73,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 {
                     "ActorQueueHunt", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorLogicQueueAbility),
-                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Nesting = new[] {"Actor Activity", "Queue Activities"},
                         Name = "Hunt",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -98,8 +94,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 {
                     "ActorQueueAttack", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorLogicQueueAbility),
-                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Nesting = new[] {"Actor Activity", "Queue Activities"},
                         Name = "Attack",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -121,8 +116,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 {
                     "ActorQueueMove", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorLogicQueueAbility),
-                        Nesting = new []{"Actor Activity", "Queue Activities"},
+                        Nesting = new[] {"Actor Activity", "Queue Activities"},
                         Name = "Move",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -142,8 +136,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 {
                     "ActorChangeOwner", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorLogicQueueAbility),
-                        Nesting = new []{"Actor Activity"},
+                        Nesting = new[] {"Actor Activity"},
                         Name = "Change Owner",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -162,10 +155,9 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 {
                     "ActorRemove", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorLogicQueueAbility),
-                        Nesting = new []{"Actor Activity"},
+                        Nesting = new[] {"Actor Activity"},
                         Name = "Remove",
-                        
+
                         InConnections = new List<Tuple<ConnectionType, string>>
                         {
                             new Tuple<ConnectionType, string>(ConnectionType.Actor, ""),
@@ -181,8 +173,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 {
                     "ActorKill", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(ActorLogicQueueAbility),
-                        Nesting = new []{"Actor Activity"},
+                        Nesting = new[] {"Actor Activity"},
                         Name = "Kill",
 
                         InConnections = new List<Tuple<ConnectionType, string>>
@@ -199,32 +190,29 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 },
             };
 
-        public ActorNodeQueueAbility(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
+        public QueueAbilityInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId, nodeName)
         {
-            IsIncorrectConnected = () =>
+        }
+
+        public override void WidgetInitialize(NodeWidget widget)
+        {
+            widget.IsIncorrectConnected = () =>
             {
-                var connections = InConnections.Any(inCon =>
+                var connections = widget.InConnections.Any(inCon =>
                     inCon.In == null && inCon.ConnectionTyp != ConnectionType.Actor &&
                     inCon.ConnectionTyp != ConnectionType.ActorList && inCon.ConnectionTyp != ConnectionType.Enabled);
-                var containsEither = InConnections.Any(c => c.In != null && c.ConnectionTyp == ConnectionType.Actor) ||
-                                     InConnections.Any(c =>
-                                         c.In != null && c.ConnectionTyp == ConnectionType.ActorList);
+                var containsEither =
+                    widget.InConnections.Any(c => c.In != null && c.ConnectionTyp == ConnectionType.Actor) ||
+                    widget.InConnections.Any(c =>
+                        c.In != null && c.ConnectionTyp == ConnectionType.ActorList);
 
                 return containsEither && connections;
             };
         }
-    }
 
-    public class ActorLogicQueueAbility : NodeLogic
-    {
         readonly List<Actor> idleHunter = new List<Actor>();
 
-        public ActorLogicQueueAbility(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(nodeInfo,
-            ingameNodeScriptSystem)
-        {
-        }
-
-        public override void Tick(Actor self)
+        public override void LogicTick(Actor self, NodeLogic logic)
         {
             var idles = idleHunter.ToArray();
 
@@ -234,10 +222,10 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 else if (idler.IsIdle) idler.QueueActivity(new Hunt(idler));
         }
 
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-            var actorlist = GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
-            var actorCon = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
+            var actorlist = logic.GetLinkedConnectionFromInConnection(ConnectionType.ActorList, 0);
+            var actorCon = logic.GetLinkedConnectionFromInConnection(ConnectionType.Actor, 0);
             if (actorCon == null && actorlist == null)
             {
                 Debug.WriteLine(NodeId + "Queue Activity needs either a single actor or group");
@@ -246,18 +234,18 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
 
             var actor = actorCon.Actor;
 
-            switch (NodeInfo.NodeType)
+            switch (NodeType)
             {
                 case "ActorQueueMove":
                 {
-                    var location = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+                    var location = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
                     if (location == null || location.Location == null)
                     {
                         Debug.WriteLine(NodeId + "Queue Activity Move Location not connected");
                         return;
                     }
 
-                    var integer = GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
+                    var integer = logic.GetLinkedConnectionFromInConnection(ConnectionType.Integer, 0);
                     var i = 0;
                     if (integer != null && integer.Number != null)
                         i = integer.Number.Value;
@@ -275,19 +263,19 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 }
                 case "ActorQueueAttack":
                 {
-                    var targetActor = GetLinkedConnectionFromInConnection(ConnectionType.Actor, 1);
+                    var targetActor = logic.GetLinkedConnectionFromInConnection(ConnectionType.Actor, 1);
                     if (targetActor == null || targetActor.Actor == null)
                     {
                         Debug.WriteLine(NodeId + "Queue Activity Attack Target Actor not connected");
                         return;
                     }
 
-                    var first = GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0);
-                    var last = GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 1);
+                    var first = logic.GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0);
+                    var last = logic.GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 1);
 
                     if (actor != null && !actor.IsDead && actor.IsInWorld)
                         actor.QueueActivity(new Attack(actor,
-                            Target.FromActor(InConnections.Last(c => c.ConnectionTyp == ConnectionType.Actor).In
+                            Target.FromActor(logic.InConnections.Last(c => c.ConnectionTyp == ConnectionType.Actor).In
                                 .Actor),
                             first != null, last != null, first != null ? first.Number ?? 0 : 0));
 
@@ -296,7 +284,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                         foreach (var actors in actorlist.ActorGroup)
                             if (!actors.IsDead && actors.IsInWorld)
                                 actors.QueueActivity(new Attack(actors,
-                                    Target.FromActor(InConnections
+                                    Target.FromActor(logic.InConnections
                                         .Last(c => c.ConnectionTyp == ConnectionType.Actor).In
                                         .Actor),
                                     first != null, last != null,
@@ -305,7 +293,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 }
                 case "ActorQueueHunt":
                 {
-                    var idleHunting = GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0) != null;
+                    var idleHunting = logic.GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0) != null;
 
                     if (actor != null && !actor.IsDead && actor.IsInWorld)
                     {
@@ -330,7 +318,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 }
                 case "ActorQueueAttackMoveActivity":
                 {
-                    var attackLocation = GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
+                    var attackLocation = logic.GetLinkedConnectionFromInConnection(ConnectionType.Location, 0);
                     if (attackLocation == null)
                     {
                         Debug.WriteLine(NodeId + "Queue Activity AttackMove Location not connected");
@@ -406,7 +394,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 }
                 case "ActorChangeOwner":
                 {
-                    var newPlayer = GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
+                    var newPlayer = logic.GetLinkedConnectionFromInConnection(ConnectionType.Player, 0);
                     if (newPlayer == null)
                     {
                         Debug.WriteLine(NodeId + "ChangeOwner Player not connected");
@@ -425,7 +413,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.ActorNodeInfos
                 }
             }
 
-            ForwardExec(this);
+            NodeLogic.ForwardExec(logic);
         }
     }
 }

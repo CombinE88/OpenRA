@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.TriggerNodeInfos
 {
-    public class TriggerNodeWorldLoaded : NodeWidget
+    public class TriggerWorldLoadedInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -13,7 +12,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 {
                     "TriggerWorldLoaded", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(TriggerLogicWorldLoaded),
                         Nesting = new[] {"Trigger"},
                         Name = "World Loaded",
 
@@ -25,21 +23,14 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 },
             };
 
-        public TriggerNodeWorldLoaded(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen, nodeInfo)
-        {
-        }
-    }
-
-    public class TriggerLogicWorldLoaded : NodeLogic
-    {
-        public TriggerLogicWorldLoaded(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
-            nodeInfo, ingameNodeScriptSystem)
+        public TriggerWorldLoadedInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId,
+            nodeName)
         {
         }
 
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
-            ForwardExec(this);
+            NodeLogic.ForwardExec(logic);
         }
     }
 }

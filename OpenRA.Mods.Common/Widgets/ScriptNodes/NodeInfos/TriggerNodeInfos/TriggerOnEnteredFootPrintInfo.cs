@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRA.Mods.Common.Traits;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.Library;
-using OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos;
+using OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes;
 
-namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
+namespace OpenRA.Mods.Common.Widgets.ScriptNodes.NodeInfos.TriggerNodeInfos
 {
-    public class TriggerNodeOnEnteredFootPrint : NodeWidget
+    public class TriggerOnEnteredFootPrintInfo : NodeInfo
     {
         public new static Dictionary<string, BuildNodeConstructorInfo> NodeConstructorInformation =
             new Dictionary<string, BuildNodeConstructorInfo>()
@@ -15,7 +14,6 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 {
                     "TriggerOnEnteredFootprint", new BuildNodeConstructorInfo
                     {
-                        LogicClass = typeof(TriggerLogicEnteredFootPrint),
                         Nesting = new[] {"Trigger"},
                         Name = "On Entered Footprint",
 
@@ -38,43 +36,35 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
                 },
             };
 
-        public TriggerNodeOnEnteredFootPrint(NodeEditorNodeScreenWidget screen, NodeInfo nodeInfo) : base(screen,
-            nodeInfo)
+        public TriggerOnEnteredFootPrintInfo(string nodeType, string nodeId, string nodeName) : base(nodeType, nodeId,
+            nodeName)
         {
         }
-    }
 
-    public class TriggerLogicEnteredFootPrint : NodeLogic
-    {
         bool repeat;
         bool triggerOnEnter;
         bool enabled;
 
-        public TriggerLogicEnteredFootPrint(NodeInfo nodeInfo, IngameNodeScriptSystem ingameNodeScriptSystem) : base(
-            nodeInfo, ingameNodeScriptSystem)
-        {
-        }
-
-        public override void Execute(World world)
+        public override void LogicExecute(World world, NodeLogic logic)
         {
             enabled = true;
-            ForwardExec(this, 1);
+            NodeLogic.ForwardExec(logic, 1);
         }
 
-        public override void DoAfterConnections()
+        public override void LogicDoAfterConnections(NodeLogic logic)
         {
-            var boolean = GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0);
+            var boolean = logic.GetLinkedConnectionFromInConnection(ConnectionType.Enabled, 0);
             repeat = boolean != null;
         }
 
-        public override void Tick(Actor self)
+        public override void LogicTick(Actor self, NodeLogic logic)
         {
             if (!enabled || triggerOnEnter && !repeat)
                 return;
 
-            var cellArray = GetLinkedConnectionFromInConnection(ConnectionType.TimerConnection, 0);
+            var cellArray = logic.GetLinkedConnectionFromInConnection(ConnectionType.TimerConnection, 0);
             var playerGroup =
-                GetLinkedConnectionFromInConnection(ConnectionType.TimerConnection, 0);
+                logic.GetLinkedConnectionFromInConnection(ConnectionType.TimerConnection, 0);
 
             if (!cellArray.CellArray.Any() || !playerGroup.PlayerGroup.Any())
                 return;
@@ -91,7 +81,7 @@ namespace OpenRA.Mods.Common.Widgets.ScriptNodes.SingleNodes.TriggerNodes
 
             if (actors.Any() && !triggerOnEnter)
             {
-                ForwardExec(this, 0);
+                NodeLogic.ForwardExec(logic, 0);
 
                 triggerOnEnter = true;
             }
